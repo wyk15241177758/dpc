@@ -1,4 +1,4 @@
-package com.jt.lucene.bean;
+package com.jt.bean.lucene;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,0 +1,60 @@
+<!DOCTYPE hibernate-configuration PUBLIC
+
+"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+
+"http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+
+<session-factory>
+
+<!-- hibernate的方言，用来确定连接的数据库 -->
+
+<property name="hibernate.dialect">
+
+org.hibernate.dialect.MySQLDialect
+
+</property>
+
+<!-- 数据库的连接类 -->
+
+<property name="hibernate.connection.driver_class">
+
+com.mysql.jdbc.Driver
+
+</property>
+
+<!-- 数据库的连接字符串和用户名密码 -->
+
+<property name="hibernate.connection.url">
+
+jdbc:mysql://localhost:3306/jtqa
+
+</property>
+
+<property name="hibernate.connection.username">
+
+root
+
+</property>
+
+<property name="hibernate.connection.password">
+
+root
+
+</property>
+
+<!-- 在使用hibernate时会显示相应的SQL -->
+
+<property name="show_sql">true</property>
+
+<!-- 会自动完成类到数据表的转换 -->
+
+<property name="hibernate.hbm2ddl.auto">update</property>
+
+ <mapping resource = "com/jt/test/hibernatetest/Product.hbm.xml"/>
+
+
+</session-factory>
+
+</hibernate-configuration>

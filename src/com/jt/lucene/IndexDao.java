@@ -31,6 +31,8 @@ import org.apache.lucene.search.highlight.QueryScorer;
 import org.apache.lucene.search.highlight.Scorer;
 import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
 
+import com.jt.gateway.util.FileUtil;
+
 /**
  * @项目名称：lucene
  * @类名称：IndexDao
@@ -99,7 +101,7 @@ public class IndexDao {
 		boolean status=false;
 		File file=new File(indexPath);
 		if(file.exists()){
-			status=file.delete();
+			status=FileUtil.deleteDir(file);
 		}
 		return status;
 	}

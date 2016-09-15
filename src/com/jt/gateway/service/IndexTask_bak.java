@@ -10,11 +10,11 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.jdom.JDOMException;
 
+import com.jt.bean.lucene.DataField;
+import com.jt.bean.lucene.GwConfig;
 import com.jt.gateway.dao.GwXmlDao;
 import com.jt.gateway.dao.JdbcDaoImpl;
 import com.jt.lucene.IndexDao;
-import com.jt.lucene.bean.DataField;
-import com.jt.lucene.bean.GwConfig;
 
 /**
  * 用于抽取指定关系型数据库中的数据，到指定的全文检索路径下

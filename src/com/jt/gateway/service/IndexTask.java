@@ -11,11 +11,12 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.jdom.JDOMException;
 
+import com.jt.bean.lucene.DataField;
+import com.jt.bean.lucene.GwConfig;
 import com.jt.gateway.dao.GwXmlDao;
 import com.jt.gateway.dao.JdbcDaoImpl;
+import com.jt.gateway.util.FileUtil;
 import com.jt.lucene.IndexDao;
-import com.jt.lucene.bean.DataField;
-import com.jt.lucene.bean.GwConfig;
 /**
  * 用于抽取指定关系型数据库中的数据，到指定的全文检索路径下
  * @author zhengxiaobin
@@ -31,29 +32,11 @@ public class IndexTask {
 	private IndexDao indexDao;
 	private int batchSize=5000;
 	private String taskName;
-	private long beginId;
-	private long endId;
 	private String newIndexPath;
-	public long getBeginId() {
-		return beginId;
-	}
+	
 
-	public void setBeginId(long beginId) {
-		this.beginId = beginId;
-	}
-
-	public long getEndId() {
-		return endId;
-	}
-
-	public void setEndId(long endId) {
-		this.endId = endId;
-	}
-
-	public IndexTask(String taskName,long beginId,long endId) throws IOException, JDOMException{
+	public IndexTask(String taskName) throws IOException, JDOMException{
 		config=GwXmlDao.getConfig(taskName);
-		this.beginId=beginId;
-		this.endId=endId;
 		JdbcDao = new JdbcDaoImpl();
 		newIndexPath=config.getIndexPath()+"_new";
 		indexDao=new IndexDao(newIndexPath);
@@ -74,10 +57,10 @@ public class IndexTask {
 		//删除索引
 		File file=new File(newIndexPath);
 		if(file.exists()){
-			if(file.delete()){
+			if(FileUtil.deleteDir(file)){
 				file.mkdir();
 			}else{
-				logger.error("删除文件"+file.getName()+"错误，请检查");
+				logger.error("删除文件"+file.getAbsolutePath()+"错误，请检查");
 				throw new Exception("删除文件"+file.getName()+"错误，请检查");
 			}
 		}
@@ -137,6 +120,7 @@ public class IndexTask {
 				Thread.sleep(60000);
 				timeWait+=60000;
 			}else{
+				logger.info("锁定原索引文件成功");
 				File indexPath=new File(config.getIndexPath());
 				indexPath.delete();
 				file.renameTo(indexPath);
@@ -144,9 +128,10 @@ public class IndexTask {
 			}
 		}
 		
-		//无论是否成功，均放开检索
+		//无论是否成功，均放开检索，并删除临时索引目录
 		status.setSearchEnable(true);
-		
+		file=new File(newIndexPath);
+		FileUtil.deleteDir(file);
 		if(timeWait>=(5*60*1000)){
 			logger.info("等待超过5分钟，抛出异常");
 			throw new Exception("等待超过5分钟，抛出异常");
@@ -156,6 +141,23 @@ public class IndexTask {
 		
 	}
 	public static void main(String[] args) {
+			try {
+				IndexTask gate=new IndexTask("智能问答数据抽取");
+				gate.createIndex();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JDOMException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	
+		
+		
+		
 //			try {
 //				IndexTask gate=new IndexTask();
 //				gate.createIndex_full();

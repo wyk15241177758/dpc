@@ -14,9 +14,9 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
-import com.jt.lucene.bean.DataField;
-import com.jt.lucene.bean.GwConfig;
-import com.jt.lucene.bean.GwConfigs;
+import com.jt.bean.lucene.DataField;
+import com.jt.bean.lucene.GwConfig;
+import com.jt.bean.lucene.GwConfigs;
 /**
  * //获取配置信息，并写入config返回
  * @author zhengxiaobin

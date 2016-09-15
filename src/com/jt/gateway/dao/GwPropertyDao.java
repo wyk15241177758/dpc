@@ -17,7 +17,7 @@ public class GwPropertyDao {
 	private InputStream in;
 	private File file;
 	public GwPropertyDao(String proName) throws IOException{
-		pro=new Properties();
+		pro=new Properties(); 
 		file=new File(proName);
 		if(!file.exists()){
 			file.createNewFile();

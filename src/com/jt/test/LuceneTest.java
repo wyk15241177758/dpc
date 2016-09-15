@@ -37,7 +37,7 @@ public class LuceneTest {
 		doc.add(new Field("title", "中国人民很厉害", TextField.TYPE_STORED));
 		dao.save(doc);
 	}
-	
+	 
 public static void main(String[] args) {
 	LuceneTest test=new LuceneTest();
 	IndexDao dao=null;

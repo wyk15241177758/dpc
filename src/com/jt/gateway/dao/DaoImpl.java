@@ -26,7 +26,7 @@ public class DaoImpl extends HibernateDaoSupport implements IDao {
 	 * @return list
 	 */
 	public List query(String hql) {
-		
+		 
 		return super.getHibernateTemplate().find( hql );
 	}
 	

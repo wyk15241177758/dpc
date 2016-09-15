@@ -12,7 +12,7 @@ import java.util.Map;
  * @time	2011-05-11
  ************************************/
 public interface JdbcDao {
-
+ 
 	
     
 	/**

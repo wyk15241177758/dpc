@@ -27,7 +27,7 @@ import org.apache.commons.logging.LogFactory;
  * @author 	×ÞÐíºì
  * @time	2011-05-11
  */
-public class JdbcDaoImpl implements JdbcDao{
+public class JdbcDaoImpl implements JdbcDao{ 
 	
 	private Log log = LogFactory.getLog(this.getClass());
 

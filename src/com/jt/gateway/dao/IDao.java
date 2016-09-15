@@ -12,7 +12,7 @@ public interface IDao {
 	 * @return list
 	 */
 	public List query( String hql );
-	
+	 
 	public List query(final String  hql,final List  paramList);
 	
 	

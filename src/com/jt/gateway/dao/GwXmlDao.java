@@ -23,7 +23,7 @@ import com.jt.bean.lucene.GwConfigs;
  *
  */
 public class GwXmlDao {
-	
+	 
 	public static GwConfig getConfig(String taskName) throws JDOMException{
 		GwConfig config=null;
 		//获得配置信息

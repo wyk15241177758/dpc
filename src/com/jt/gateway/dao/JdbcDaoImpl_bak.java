@@ -28,7 +28,7 @@ import org.apache.commons.logging.LogFactory;
  * @time	2011-05-11
  */
 public class JdbcDaoImpl_bak implements JdbcDao{
-	
+	 
 	private Log log = LogFactory.getLog(this.getClass());
 
 	private String sdbdriver = "org.gjt.mm.mysql.Driver";

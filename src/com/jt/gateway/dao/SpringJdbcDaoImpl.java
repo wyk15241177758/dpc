@@ -16,7 +16,7 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
 @SuppressWarnings("deprecation")
 public class SpringJdbcDaoImpl extends JdbcDaoSupport            implements Dao {
 	private Log log = LogFactory.getLog(this.getClass());
-
+ 
 	@Override
 	public int executeQueryForCount(String sql) throws ClassNotFoundException,SQLException {
 		log.info("²éÑ¯×ÜÊý£º"+sql);

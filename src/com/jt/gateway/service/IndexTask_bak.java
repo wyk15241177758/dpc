@@ -13,7 +13,7 @@ import org.jdom.JDOMException;
 import com.jt.bean.lucene.DataField;
 import com.jt.bean.lucene.GwConfig;
 import com.jt.gateway.dao.GwXmlDao;
-import com.jt.gateway.dao.JdbcDaoImpl;
+import com.jt.gateway.dao.JdbcDaoImpl_bak;
 import com.jt.lucene.IndexDao;
 
 /**
@@ -27,7 +27,7 @@ public class IndexTask_bak {
 	private static Logger logger = Logger.getLogger(IndexTask_bak.class);
 
 	private GwConfig config;
-	private JdbcDaoImpl JdbcDao;
+	private JdbcDaoImpl_bak JdbcDao;
 	private IndexDao indexDao;
 	private String taskName;
 	private long beginId;
@@ -51,7 +51,7 @@ public class IndexTask_bak {
 
 	public IndexTask_bak(String taskName) throws IOException, JDOMException {
 		config = GwXmlDao.getConfig(taskName);
-		JdbcDao = new JdbcDaoImpl();
+		JdbcDao = new JdbcDaoImpl_bak();
 		indexDao = new IndexDao(config.getIndexPath());
 	}
 

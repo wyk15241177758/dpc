@@ -14,7 +14,7 @@ import org.jdom.JDOMException;
 import com.jt.bean.lucene.DataField;
 import com.jt.bean.lucene.GwConfig;
 import com.jt.gateway.dao.GwXmlDao;
-import com.jt.gateway.dao.JdbcDaoImpl;
+import com.jt.gateway.dao.JdbcDaoImpl_bak;
 import com.jt.gateway.util.FileUtil;
 import com.jt.lucene.IndexDao;
 /**
@@ -28,7 +28,7 @@ public class IndexTask {
 
 	
 	private GwConfig config;
-	private JdbcDaoImpl JdbcDao ;
+	private JdbcDaoImpl_bak JdbcDao ;
 	private IndexDao indexDao;
 	private int batchSize=5000;
 	private String taskName;
@@ -37,7 +37,7 @@ public class IndexTask {
 
 	public IndexTask(String taskName) throws IOException, JDOMException{
 		config=GwXmlDao.getConfig(taskName);
-		JdbcDao = new JdbcDaoImpl();
+		JdbcDao = new JdbcDaoImpl_bak();
 		newIndexPath=config.getIndexPath()+"_new";
 		indexDao=new IndexDao(newIndexPath);
 	}

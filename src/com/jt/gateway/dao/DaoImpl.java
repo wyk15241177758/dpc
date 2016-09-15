@@ -17,6 +17,7 @@ import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 import com.jt.base.page.Param;
 
 
+
 public class DaoImpl extends HibernateDaoSupport implements IDao {
 
 	/**
@@ -237,7 +238,7 @@ public void updateSql(final String Sql,final List  paramList){
 
 	public void save(Collection c) {
 		// TODO Auto-generated method stub
-		super.getHibernateTemplate().saveOrUpdateAll(c);
+		super.getHibernateTemplate().saveOrUpdate(c);
 	}
 	public void clear(Object obj) {
 		super.getHibernateTemplate().evict(obj);

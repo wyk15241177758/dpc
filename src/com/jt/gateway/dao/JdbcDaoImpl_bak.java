@@ -27,14 +27,14 @@ import org.apache.commons.logging.LogFactory;
  * @author 	邹许红
  * @time	2011-05-11
  */
-public class JdbcDaoImpl implements JdbcDao{
+public class JdbcDaoImpl_bak implements JdbcDao{
 	
 	private Log log = LogFactory.getLog(this.getClass());
 
 	private String sdbdriver = "org.gjt.mm.mysql.Driver";
 	private String sconnStr = "jdbc:mysql://localhost:3306/jtcrawler?useUnicode=true&characterEncoding=utf-8";//设置数据库名称为：pubs
     private String user = "root";  //登录数据库用户名
-    private String passwd = "admin";   //登录数据库密码
+    private String passwd = "root";   //登录数据库密码
 
     
     /**
@@ -445,12 +445,12 @@ public class JdbcDaoImpl implements JdbcDao{
 
 	public static void main(String[] args) throws ClassNotFoundException, SQLException, IOException {
 		
-		JdbcDaoImpl dao = new JdbcDaoImpl();
+		JdbcDaoImpl_bak dao = new JdbcDaoImpl_bak();
 		int[] types1 = {Types.VARCHAR};
 		String[] objValues1 = {"%"};
 		
 		
-		List<Map<String, Object>> list = dao.executeQueryForList("select * from  jobs where job_desc like ?", types1, objValues1);
+		List<Map<String, Object>> list = dao.executeQueryForList("select * from  crawler_fl ", types1, objValues1);
 		
 		System.out.println("list.size()==="+list.size());
 		for (int i = 0; i < list.size(); i++) {

@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -19,7 +20,7 @@ import com.jt.base.page.Param;
 
 
 public class DaoImpl extends HibernateDaoSupport implements IDao {
-
+	
 	/**
 	 * 查询列表（不分页）
 	 * @param hql语句

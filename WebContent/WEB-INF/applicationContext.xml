@@ -45,42 +45,66 @@
 		<property name="username" value="${c3p0.username}"></property>
 		<property name="password" value="${c3p0.passwd}"></property>
 	</bean>
-	<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
-		<property name="dataSource" ref="dataSourceSpring"/>
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"/>
 		<!-- hibernate实体类配置 -->
-		<property name="packagesToScan">
-			<list>
-				<value>com.jt.gateway.entity</value>
+<!-- 		<property name="packagesToScan"> -->
+<!-- 			<list> -->
+<!-- 				<value>com.jt.gateway.entity</value> -->
 			
 <!-- 				<value>com.zxh.ssq.entity</value> -->
+<!-- 			</list> -->
+<!-- 		</property> -->
+		
+		<property name="mappingLocations">
+			<list>
+				<value>classpath*:com/jt/bean/gateway/*.hbm.xml</value>
+				
 			</list>
 		</property>
+		
 		<!-- hibernate相关参数配置 -->
 		<property name="hibernateProperties">
-			<value>
-			hibernate.dialect=org.hibernate.dialect.MySQL5InnoDBDialect
-			hibernate.show_sql=true
-			hibernate.format_sql=false
-			hibernate.query.substitutions=true 1, false 0
-			hibernate.jdbc.batch_size=20
-			hibernate.cache.use_query_cache=true
-			hibernate.current_session_context_class=org.springframework.orm.hibernate4.SpringSessionContext
-			hibernate.cache.region.factory_class=org.hibernate.cache.ehcache.EhCacheRegionFactory
-			hibernate.cache.provider_configuration_file_resource_path=ehcache-hibernate.xml
-			hibernate.cache.use_structured_entries=true
-			hibernate.generate_statistics=false
-			</value>
+		<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLInnoDBDialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.jdbc.batch_size">100</prop>
+				<prop key="hibernate.cache.use_query_cache">true</prop>
+				<prop key="hibernate.cache.use_second_level_cache">true</prop>
+				<prop key="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</prop>
+				<prop key="hibernate.hbm2ddl.auto">true</prop>
+			</props>
 		</property>
 	</bean>	
 	<!-- 事务配置 -->
-	<bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+	<bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 	
+<!-- 定义事务管理拦截器 -->
+	<bean id="baseTransactionProxyBean" lazy-init="true"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+			    <prop key="get*">PROPAGATION_REQUIRED,readOnly</prop>
+		        <prop key="find*">PROPAGATION_REQUIRED,readOnly</prop>
+		        <prop key="execute*">PROPAGATION_REQUIRED</prop>
+		         <prop key="query*">PROPAGATION_REQUIRED,readOnly</prop>
+		        <prop key="add*">PROPAGATION_REQUIRED</prop>
+		        <prop key="create*">PROPAGATION_REQUIRED</prop>
+		        <prop key="update*">PROPAGATION_REQUIRED</prop>
+		        <prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
+	</bean>
 
 	
 	 <!-- 配置 Annotation 驱动，扫描@Transactional注解的类定义事务 -->  
-    <tx:annotation-driven transaction-manager="transactionManager"  /> 
+<!--     <tx:annotation-driven transaction-manager="transactionManager"  />  -->
 	
 	
 	<bean  id="jdbcDao" class="com.jt.gateway.dao.JdbcDaoImpl">
@@ -89,27 +113,15 @@
 		<property name="user"  value="${c3p0.username}"></property>
 		<property name="passwd"  value="${c3p0.passwd}"></property>
 	</bean>
-	<bean  id="dao" class="com.jt.gateway.dao.SpringJdbcDaoImpl">
-	        <property name="dataSource"  ref="dataSource"></property>
+	
+	
+	
+	<bean  id="dao"  class="com.jt.gateway.dao.DaoImpl">
+	<property name="sessionFactory"  ref="sessionFactory"></property>
 	</bean>
 	<!-- 开始 -->
 	
-	<!-- 引用ehCache 的配置-->
-	<bean id="defaultCacheManager"
-		class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
-		<property name="configLocation">
-			<value>classpath:ehcache.xml</value>
-		</property>
-	</bean>
-	<!-- 定义ehCache 的工厂，并设置所使用的Cache name -->
-	<bean id="ehCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
-		<property name="cacheManager">
-			<ref local="defaultCacheManager" />
-		</property>
-		<property name="cacheName">
-			<value>DEFAULT_CACHE</value>
-		</property>
-	</bean>
+
 	
      
     <!--
@@ -119,6 +131,18 @@
 	<context:component-scan base-package="com.jt.crawler.admin.service.impl">
 	</context:component-scan>
 		 -->
+  <context:component-scan base-package="com.jt.test.dao">
+	</context:component-scan>
+	<context:component-scan base-package="com.jt.test.service">
+	</context:component-scan>
+
 	
+<bean id="jobInfImpl"  parent="baseTransactionProxyBean" >
+<property name="target">
+<bean class="com.jt.gateway.service.job.JobInfImpl" autowire="byName">
+</bean>
+</property>
+
 	
+</bean>
 </beans>

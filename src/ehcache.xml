@@ -7,11 +7,5 @@
     timeToLiveSeconds="10000"
     overflowToDisk="true"
 />
-  <cache  name="com.hour41.hibernate.vo.common.City"
-    maxElementsInMemory="10000"
-    eternal="false"
-    timeToIdleSeconds="10000"
-    timeToLiveSeconds="10000"
-    overflowToDisk="true"
-/>
+ 
 </ehcache>

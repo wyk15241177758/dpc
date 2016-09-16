@@ -1,8 +1,6 @@
 package com.jt.bean.gateway;
 
 import java.sql.Timestamp;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * JobInf entity. @author MyEclipse Persistence Tools
@@ -22,78 +20,38 @@ public class JobInf implements java.io.Serializable {
 	private Integer jobStatus;
 	private String cronExpression;
 	private String beanClass;
-	private String orgname;
 	private String description;
 	private String triggerName;
 	private String triggerGroupName;
-	private Integer type;
-	private String savePath;
-	private String localPath;
 	private Timestamp createTime;
 	private Timestamp updateTime;
-	private String prefix;
-	private Integer dataType;
-	private String okPrefix;
-	private Set jobAddControls = new HashSet(0);
-	private Set jobLogs = new HashSet(0);
-	private Set jobFpkzNums = new HashSet(0);
-	private Set operationTaskLog = new HashSet(0);
 	// Constructors
 
 	/** default constructor */
 	public JobInf() {
 	}
 
-	/** minimal constructor */
-	public JobInf(Long jobId, String jobName, String jobGroup,
-			Integer jobStatus, String cronExpression, String beanClass,
-			String orgname, String triggerName, String triggerGroupName,
-			Integer type, Timestamp createTime, Timestamp updateTime, String prefix,
-			Integer dataType) {
-		this.jobId = jobId;
-		this.jobName = jobName;
-		this.jobGroup = jobGroup;
-		this.jobStatus = jobStatus;
-		this.cronExpression = cronExpression;
-		this.beanClass = beanClass;
-		this.orgname = orgname;
-		this.triggerName = triggerName;
-		this.triggerGroupName = triggerGroupName;
-		this.type = type;
-		this.createTime = createTime;
-		this.updateTime = updateTime;
-		this.prefix = prefix;
-		this.dataType = dataType;
-	}
+	
 
-	/** full constructor */
-	public JobInf(Long jobId, String jobName, String jobGroup,
-			Integer jobStatus, String cronExpression, String beanClass,
-			String orgname, String description, String triggerName,
-			String triggerGroupName, Integer type, String savePath, String localPath,
-			Timestamp createTime, Timestamp updateTime, String prefix,
-			Integer dataType, String okPrefix) {
+	// Property accessors
+
+	public JobInf(Long jobId, String jobName, String jobGroup, Integer jobStatus, String cronExpression,
+			String beanClass, String description, String triggerName, String triggerGroupName, Timestamp createTime,
+			Timestamp updateTime) {
+		super();
 		this.jobId = jobId;
 		this.jobName = jobName;
 		this.jobGroup = jobGroup;
 		this.jobStatus = jobStatus;
 		this.cronExpression = cronExpression;
 		this.beanClass = beanClass;
-		this.orgname = orgname;
 		this.description = description;
 		this.triggerName = triggerName;
 		this.triggerGroupName = triggerGroupName;
-		this.type = type;
-		this.savePath = savePath;
-		this.localPath = localPath;
 		this.createTime = createTime;
 		this.updateTime = updateTime;
-		this.prefix = prefix;
-		this.dataType = dataType;
-		this.okPrefix = okPrefix;
 	}
 
-	// Property accessors
 
 	public Long getJobId() {
 		return this.jobId;
@@ -143,13 +101,6 @@ public class JobInf implements java.io.Serializable {
 		this.beanClass = beanClass;
 	}
 
-	public String getOrgname() {
-		return this.orgname;
-	}
-
-	public void setOrgname(String orgname) {
-		this.orgname = orgname;
-	}
 
 	public String getDescription() {
 		return this.description;
@@ -175,29 +126,6 @@ public class JobInf implements java.io.Serializable {
 		this.triggerGroupName = triggerGroupName;
 	}
 
-	public Integer getType() {
-		return this.type;
-	}
-
-	public void setType(Integer type) {
-		this.type = type;
-	}
-
-	public String getSavePath() {
-		return this.savePath;
-	}
-
-	public void setSavePath(String savePath) {
-		this.savePath = savePath;
-	}
-
-	public String getLocalPath() {
-		return this.localPath;
-	}
-
-	public void setLocalPath(String localPath) {
-		this.localPath = localPath;
-	}
 
 	public Timestamp getCreateTime() {
 		return this.createTime;
@@ -214,69 +142,6 @@ public class JobInf implements java.io.Serializable {
 	public void setUpdateTime(Timestamp updateTime) {
 		this.updateTime = updateTime;
 	}
-
-	public String getPrefix() {
-		return this.prefix;
-	}
-
-	public void setPrefix(String prefix) {
-		this.prefix = prefix;
-	}
-
-
-	public Integer getDataType() {
-		return this.dataType;
-	}
-
-	public void setDataType(Integer dataType) {
-		this.dataType = dataType;
-	}
-
-	public String getOkPrefix() {
-		return this.okPrefix;
-	}
-
-	public void setOkPrefix(String okPrefix) {
-		this.okPrefix = okPrefix;
-	}
-
-	
-
-	public Set getJobAddControls() {
-		return jobAddControls;
-	}
-
-	public void setJobAddControls(Set jobAddControls) {
-		this.jobAddControls = jobAddControls;
-	}
-
-	public Set getJobLogs() {
-		return jobLogs;
-	}
-
-	public void setJobLogs(Set jobLogs) {
-		this.jobLogs = jobLogs;
-	}
-
-	public Set getJobFpkzNums() {
-		return jobFpkzNums;
-	}
-
-	public void setJobFpkzNums(Set jobFpkzNums) {
-		this.jobFpkzNums = jobFpkzNums;
-	}
-
-	public Set getOperationTaskLog() {
-		return operationTaskLog;
-	}
-
-	public void setOperationTaskLog(Set operationTaskLog) {
-		this.operationTaskLog = operationTaskLog;
-	}
-
-	
-
-
 
 
 }

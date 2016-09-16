@@ -14,9 +14,9 @@
   <listener>
     <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
   </listener>
- <listener>
-		<listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class>
-	</listener>
+<!--  <listener> -->
+<!-- 		<listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class> -->
+<!-- 	</listener> -->
 	
 	
 	
@@ -39,7 +39,7 @@
   </filter-mapping>
   <filter>
 		<filter-name>sessionViewFilter</filter-name>
-		<filter-class>org.springframework.orm.hibernate4.support.OpenSessionInViewFilter</filter-class>
+		<filter-class>org.springframework.orm.hibernate3.support.OpenSessionInViewFilter</filter-class>
 	</filter>
 	<filter-mapping>
 		<filter-name>sessionViewFilter</filter-name>

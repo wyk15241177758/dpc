@@ -6,7 +6,7 @@
  * @Copyright: Copyright (c) 2014
  *
  * @author Comsys-LZP
- * @date 2014-6-26 ÏÂÎç03:35:05
+ * @date 2014-6-26 ä¸‹åˆ03:35:05
  * @version V2.0
  */
 package com.jt.gateway.service.job;
@@ -14,36 +14,36 @@ package com.jt.gateway.service.job;
 
 
 /**
- * @Description: ²âÊÔÀà
+ * @Description: æµ‹è¯•ç±»
  *
  * @ClassName: QuartzTest
  * @Copyright: Copyright (c) 2014
  *
  * @author Comsys-LZP
- * @date 2014-6-26 ÏÂÎç03:35:05
+ * @date 2014-6-26 ä¸‹åˆ03:35:05
  * @version V2.0
  */
 public class QuartzTest {
 	public static void main(String[] args) {
 		try {
-			String job_name = "¶¯Ì¬ÈÎÎñµ÷¶È";
-			System.out.println("¡¾ÏµÍ³Æô¶¯¡¿¿ªÊ¼(Ã¿1ÃëÊä³öÒ»´Î)...");  
+			String job_name = "åŠ¨æ€ä»»åŠ¡è°ƒåº¦";
+			System.out.println("ã€ç³»ç»Ÿå¯åŠ¨ã€‘å¼€å§‹(æ¯1ç§’è¾“å‡ºä¸€æ¬¡)...");  
 			QuartzManager.addJob(job_name, QuartzJob.class, "0/1 * * * * ?");  
 			
 //			Thread.sleep(5000);  
-//			System.out.println("¡¾ĞŞ¸ÄÊ±¼ä¡¿¿ªÊ¼(Ã¿2ÃëÊä³öÒ»´Î)...");  
+//			System.out.println("ã€ä¿®æ”¹æ—¶é—´ã€‘å¼€å§‹(æ¯2ç§’è¾“å‡ºä¸€æ¬¡)...");  
 //			QuartzManager.modifyJobTime(job_name, "10/2 * * * * ?");  
 //			Thread.sleep(6000);  
-//			System.out.println("¡¾ÒÆ³ı¶¨Ê±¡¿¿ªÊ¼...");  
+//			System.out.println("ã€ç§»é™¤å®šæ—¶ã€‘å¼€å§‹...");  
 //			QuartzManager.removeJob(job_name);  
-//			System.out.println("¡¾ÒÆ³ı¶¨Ê±¡¿³É¹¦");  
+//			System.out.println("ã€ç§»é™¤å®šæ—¶ã€‘æˆåŠŸ");  
 //			
-//			System.out.println("¡¾ÔÙ´ÎÌí¼Ó¶¨Ê±ÈÎÎñ¡¿¿ªÊ¼(Ã¿10ÃëÊä³öÒ»´Î)...");  
+//			System.out.println("ã€å†æ¬¡æ·»åŠ å®šæ—¶ä»»åŠ¡ã€‘å¼€å§‹(æ¯10ç§’è¾“å‡ºä¸€æ¬¡)...");  
 //			QuartzManager.addJob(job_name, QuartzJob.class, "*/10 * * * * ?");  
 //			Thread.sleep(60000);  
-//			System.out.println("¡¾ÒÆ³ı¶¨Ê±¡¿¿ªÊ¼...");  
+//			System.out.println("ã€ç§»é™¤å®šæ—¶ã€‘å¼€å§‹...");  
 //			QuartzManager.removeJob(job_name);  
-//			System.out.println("¡¾ÒÆ³ı¶¨Ê±¡¿³É¹¦");
+//			System.out.println("ã€ç§»é™¤å®šæ—¶ã€‘æˆåŠŸ");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

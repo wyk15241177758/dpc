@@ -1,4 +1,4 @@
-package com.jt.gateway.service;
+package com.jt.gateway.service.operation;
 
 import java.io.Serializable;
 
@@ -6,22 +6,22 @@ import java.io.Serializable;
 public interface BasicService {
 	
 	/**
-	 * ²éÑ¯Ò»Ìõ¶ÔÏó
+	 * æŸ¥è¯¢ä¸€æ¡å¯¹è±¡
 	 * @return
 	 */
 	public Object queryById( Class cla ,  Serializable id );
 	/**
-	 * ±£´æÒ»¸ö¶ÔÏó
+	 * ä¿å­˜ä¸€ä¸ªå¯¹è±¡
 	 * @return
 	 */
 	public void save( Object object );
 	/**
-	 * ĞŞ¸ÄÒ»¸ö¶ÔÏó
+	 * ä¿®æ”¹ä¸€ä¸ªå¯¹è±¡
 	 * @return
 	 */
 	public void update( Object object );
 	/**
-	 * É¾³ı¶à¸ö¶ÔÏó
+	 * åˆ é™¤å¤šä¸ªå¯¹è±¡
 	 * @return
 	 */
 	public void delete( Class cla ,  Serializable[] ids );

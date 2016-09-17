@@ -19,7 +19,7 @@ public class SpringJdbcDaoImpl extends JdbcDaoSupport            implements Dao 
  
 	@Override
 	public int executeQueryForCount(String sql) throws ClassNotFoundException,SQLException {
-		log.info("≤È—Ø◊‹ ˝£∫"+sql);
+		log.info("Êü•ËØ¢ÊÄªÊï∞Ôºö"+sql);
 		try{
 			return super.getJdbcTemplate().queryForObject(sql,Integer.class);
 		}catch( EmptyResultDataAccessException e ){
@@ -29,7 +29,7 @@ public class SpringJdbcDaoImpl extends JdbcDaoSupport            implements Dao 
 
 	@Override
 	public int executeQueryForCount(String sql, int[] types, Object[] values)throws ClassNotFoundException, SQLException {
-		log.info("≤È—Ø◊‹ ˝£∫"+sql);
+		log.info("Êü•ËØ¢ÊÄªÊï∞Ôºö"+sql);
 		try{
 			return super.getJdbcTemplate().queryForObject(sql, values, types,Integer.class);
 		}catch( EmptyResultDataAccessException e ){
@@ -39,7 +39,7 @@ public class SpringJdbcDaoImpl extends JdbcDaoSupport            implements Dao 
 
 	@Override
 	public List<Map<String, Object>> executeQueryForList(String sql)throws ClassNotFoundException, SQLException {
-		log.info("≤È—Ø∂‡Ãı£∫"+sql);
+		log.info("Êü•ËØ¢Â§öÊù°Ôºö"+sql);
 		try{
 			return super.getJdbcTemplate().queryForList(sql);
 		}catch( EmptyResultDataAccessException e ){
@@ -49,7 +49,7 @@ public class SpringJdbcDaoImpl extends JdbcDaoSupport            implements Dao 
 
 	@Override
 	public List<Map<String, Object>> executeQueryForList(String sql,int[] types, Object[] values) throws ClassNotFoundException,SQLException {
-		log.info("≤È—Ø∂‡Ãı£∫"+sql);
+		log.info("Êü•ËØ¢Â§öÊù°Ôºö"+sql);
 		try{
 			return  super.getJdbcTemplate().queryForList(sql, values, types);
 		}catch( EmptyResultDataAccessException e ){
@@ -59,7 +59,7 @@ public class SpringJdbcDaoImpl extends JdbcDaoSupport            implements Dao 
 
 	@Override
 	public Map<String, Object> executeQueryForMap(String sql)throws ClassNotFoundException, SQLException {
-		log.info("≤È—Ø“ªÃı£∫"+sql);
+		log.info("Êü•ËØ¢‰∏ÄÊù°Ôºö"+sql);
 		try{
 			return super.getJdbcTemplate().queryForMap(sql);
 		}catch( EmptyResultDataAccessException e ){
@@ -69,7 +69,7 @@ public class SpringJdbcDaoImpl extends JdbcDaoSupport            implements Dao 
 
 	@Override
 	public Map<String, Object> executeQueryForMap(String sql, int[] types,Object[] values) throws ClassNotFoundException, SQLException {
-		log.info("≤È—Ø“ªÃı£∫"+sql);
+		log.info("Êü•ËØ¢‰∏ÄÊù°Ôºö"+sql);
 		try{
 			return super.getJdbcTemplate().queryForMap(sql, values, types);
 		}catch( EmptyResultDataAccessException e ){
@@ -79,19 +79,19 @@ public class SpringJdbcDaoImpl extends JdbcDaoSupport            implements Dao 
 
 	@Override
 	public int executeUpdate(String sql) throws ClassNotFoundException,SQLException {
-		log.info("∏¸–¬≤Ÿ◊˜£∫"+sql);
+		log.info("Êõ¥Êñ∞Êìç‰ΩúÔºö"+sql);
 		return super.getJdbcTemplate().update(sql);
 	}
 
 	@Override
 	public int executeUpdate(String sql, int[] types, Object[] values)throws ClassNotFoundException, SQLException, FileNotFoundException,IOException {
-		log.info("∏¸–¬≤Ÿ◊˜£∫"+sql);
+		log.info("Êõ¥Êñ∞Êìç‰ΩúÔºö"+sql);
 		return super.getJdbcTemplate().update(sql, values, types);
 	}
 
 	@Override
 	public List<?> executeQueryForList(String sql, Class<?> cla)throws ClassNotFoundException, SQLException {
-		log.info("≤È—Ø∂‡Ãı£∫"+sql);
+		log.info("Êü•ËØ¢Â§öÊù°Ôºö"+sql);
 		try{
 			
 			return super.getJdbcTemplate().queryForList(sql, ParameterizedBeanPropertyRowMapper.newInstance( cla ) );
@@ -101,7 +101,7 @@ public class SpringJdbcDaoImpl extends JdbcDaoSupport            implements Dao 
 	}
 	@Override
 	public List<?> executeQueryForList(String sql, int[] types,Object[] values, Class<?> cla) throws ClassNotFoundException,SQLException {
-		log.info("≤È—Ø∂‡Ãı£∫"+sql);
+		log.info("Êü•ËØ¢Â§öÊù°Ôºö"+sql);
 		try{
 			return super.getJdbcTemplate().queryForList(sql, values, types, ParameterizedBeanPropertyRowMapper.newInstance( cla ) );
 		}catch( EmptyResultDataAccessException e ){
@@ -110,7 +110,7 @@ public class SpringJdbcDaoImpl extends JdbcDaoSupport            implements Dao 
 	}
 	@Override
 	public Object executeQueryForObject(String sql, Class<?> cla)throws ClassNotFoundException, SQLException {
-		log.info("≤È—Ø“ªÃı£∫"+sql);
+		log.info("Êü•ËØ¢‰∏ÄÊù°Ôºö"+sql);
 		try{
 			return super.getJdbcTemplate().queryForObject(sql, ParameterizedBeanPropertyRowMapper.newInstance( cla ) );
 		}catch( EmptyResultDataAccessException e ){
@@ -120,7 +120,7 @@ public class SpringJdbcDaoImpl extends JdbcDaoSupport            implements Dao 
 
 	@Override
 	public Object executeQueryForObject(String sql, int[] types,Object[] values, Class<?> cla) throws ClassNotFoundException,SQLException {
-		log.info("≤È—Ø“ªÃı£∫"+sql);
+		log.info("Êü•ËØ¢‰∏ÄÊù°Ôºö"+sql);
 		try{
 			return super.getJdbcTemplate().queryForObject(sql, values, types, ParameterizedBeanPropertyRowMapper.newInstance( cla ) );
 		}catch( EmptyResultDataAccessException e ){

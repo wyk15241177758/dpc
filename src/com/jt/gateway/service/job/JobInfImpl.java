@@ -12,14 +12,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.jt.base.page.Param;
 import com.jt.bean.gateway.JobInf;
-import com.jt.gateway.service.BasicServicveImpl;
-import com.jt.gateway.service.JobInfService;
+import com.jt.gateway.service.operation.BasicServicveImpl;
 
 
 public class JobInfImpl extends BasicServicveImpl  implements  JobInfService{
 
 	/**
-	 * »ñµÃËùÓĞ ÈÎÎñ
+	 * è·å¾—æ‰€æœ‰ ä»»åŠ¡
 	 */
 	public List<JobInf> getAllJobs(){
 		List<JobInf> list=new ArrayList<JobInf>();
@@ -29,7 +28,7 @@ public class JobInfImpl extends BasicServicveImpl  implements  JobInfService{
 	
 	
 	/**
-	 * Ìí¼ÓÈÎÎñ
+	 * æ·»åŠ ä»»åŠ¡
 	 */
 	public void addTask(JobInf jobInf) {
 		try{
@@ -43,7 +42,7 @@ public class JobInfImpl extends BasicServicveImpl  implements  JobInfService{
 		}
 	}
 	/**
-	 * É¾³ıÈÎÎñ
+	 * åˆ é™¤ä»»åŠ¡
 	 */
 	public void deleteTask(Long id) {
 		stopJob( id);
@@ -55,7 +54,7 @@ public class JobInfImpl extends BasicServicveImpl  implements  JobInfService{
 		
 	}
 	/**
-	 * ¸üĞÂÈÎÎñ
+	 * æ›´æ–°ä»»åŠ¡
 	 */
 	public void updateTask(JobInf jobInf) {
 		stopJob(jobInf.getJobId());
@@ -89,7 +88,7 @@ public class JobInfImpl extends BasicServicveImpl  implements  JobInfService{
 		QuartzManager.startJobs();
 	}
 	/**
-	 * Í£Ö¹ËùÓĞÈÎÎñ
+	 * åœæ­¢æ‰€æœ‰ä»»åŠ¡
 	 */
 	public void stopAllJob() {
 		String hql = "from com.jt.bean.gateway.JobInf where jobStatus = 2";
@@ -102,7 +101,7 @@ public class JobInfImpl extends BasicServicveImpl  implements  JobInfService{
 		QuartzManager.shutdownJobs();
 	}
 	/**
-	 * Í£Ö¹µ¥¸öÈÎÎñ
+	 * åœæ­¢å•ä¸ªä»»åŠ¡
 	 */
 	public void stopJob(Long id) {
 		
@@ -121,7 +120,7 @@ public class JobInfImpl extends BasicServicveImpl  implements  JobInfService{
 		}
 	}
 	/**
-	 * ²éÑ¯Ãû×ÖÖØ¸´
+	 * æŸ¥è¯¢åå­—é‡å¤
 	 */
 	@SuppressWarnings("unchecked")
 	public int repeatName(String name) {
@@ -132,7 +131,7 @@ public class JobInfImpl extends BasicServicveImpl  implements  JobInfService{
 		return list.size();
 	}
 	/**
-	 * ²éÑ¯´¥·¢Æ÷ÃûÖØ¸´
+	 * æŸ¥è¯¢è§¦å‘å™¨åé‡å¤
 	 */
 	@SuppressWarnings("unchecked")
 	public int repeatTrigger(String trigger) {

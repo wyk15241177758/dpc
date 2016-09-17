@@ -7,14 +7,14 @@ import java.util.List;
 import java.util.Map;
 
 /************************************
- * Êı¾İ¿âÁ¬½Ó¶ÔÏó
- * @author 	×ŞĞíºì
+ * æ•°æ®åº“è¿æ¥å¯¹è±¡
+ * @author 	é‚¹è®¸çº¢
  * @time	2011-05-11
  ************************************/ 
 public interface Dao {
  
 	/**
-     * ¸ù¾İsql²éÑ¯ÁĞ±íÊı¾İ(²éÑ¯Ò»Ìõ)£¬²»Ö§³ÖÔ¤±àÒëµÄ·½Ê½
+     * æ ¹æ®sqlæŸ¥è¯¢åˆ—è¡¨æ•°æ®(æŸ¥è¯¢ä¸€æ¡)ï¼Œä¸æ”¯æŒé¢„ç¼–è¯‘çš„æ–¹å¼
      * @param sql
      * @return
      * @throws ClassNotFoundException
@@ -22,7 +22,7 @@ public interface Dao {
      */
     public Object executeQueryForObject(String sql,Class<?> cla) throws ClassNotFoundException, SQLException;
 	/**
-	 * ¸ù¾İsql²éÑ¯ÁĞ±íÊı¾İ(²éÑ¯Ò»Ìõ)£¬Ö§³ÖÔ¤±àÒëµÄ·½Ê½
+	 * æ ¹æ®sqlæŸ¥è¯¢åˆ—è¡¨æ•°æ®(æŸ¥è¯¢ä¸€æ¡)ï¼Œæ”¯æŒé¢„ç¼–è¯‘çš„æ–¹å¼
 	 * @param sql
 	 * @param types
 	 * @param ObjectValues
@@ -32,7 +32,7 @@ public interface Dao {
 	 */
 	public Object executeQueryForObject(String sql , int[] types,Object[] values,Class<?> cla) throws ClassNotFoundException, SQLException ;
 	/**
-     * ¸ù¾İsql²éÑ¯ÁĞ±íÊı¾İ(²éÑ¯¶àÌõ)£¬²»Ö§³ÖÔ¤±àÒëµÄ·½Ê½
+     * æ ¹æ®sqlæŸ¥è¯¢åˆ—è¡¨æ•°æ®(æŸ¥è¯¢å¤šæ¡)ï¼Œä¸æ”¯æŒé¢„ç¼–è¯‘çš„æ–¹å¼
      * @param sql
      * @return
      * @throws ClassNotFoundException
@@ -40,7 +40,7 @@ public interface Dao {
      */
     public List<?> executeQueryForList(String sql,Class<?> cla) throws ClassNotFoundException, SQLException;
 	/**
-	 * ¸ù¾İsql²éÑ¯ÁĞ±íÊı¾İ(²éÑ¯¶àÌõ)£¬Ö§³ÖÔ¤±àÒëµÄ·½Ê½
+	 * æ ¹æ®sqlæŸ¥è¯¢åˆ—è¡¨æ•°æ®(æŸ¥è¯¢å¤šæ¡)ï¼Œæ”¯æŒé¢„ç¼–è¯‘çš„æ–¹å¼
 	 * @param sql
 	 * @param types
 	 * @param ObjectValues
@@ -52,7 +52,7 @@ public interface Dao {
     
     
 	/**
-     * ¸ù¾İsql²éÑ¯ÁĞ±íÊı¾İ(²éÑ¯Ò»Ìõ)£¬²»Ö§³ÖÔ¤±àÒëµÄ·½Ê½
+     * æ ¹æ®sqlæŸ¥è¯¢åˆ—è¡¨æ•°æ®(æŸ¥è¯¢ä¸€æ¡)ï¼Œä¸æ”¯æŒé¢„ç¼–è¯‘çš„æ–¹å¼
      * @param sql
      * @return
      * @throws ClassNotFoundException
@@ -62,7 +62,7 @@ public interface Dao {
 
     
 	/**
-	 * ¸ù¾İsql²éÑ¯ÁĞ±íÊı¾İ(²éÑ¯Ò»Ìõ)£¬Ö§³ÖÔ¤±àÒëµÄ·½Ê½
+	 * æ ¹æ®sqlæŸ¥è¯¢åˆ—è¡¨æ•°æ®(æŸ¥è¯¢ä¸€æ¡)ï¼Œæ”¯æŒé¢„ç¼–è¯‘çš„æ–¹å¼
 	 * @param sql
 	 * @param types
 	 * @param ObjectValues
@@ -73,7 +73,7 @@ public interface Dao {
 	public Map<String, Object> executeQueryForMap(String sql , int[] types,Object[] values) throws ClassNotFoundException, SQLException ;
     
 	/**
-     * ¸ù¾İsql²éÑ¯ÁĞ±íÊı¾İ(²éÑ¯¶àÌõ)£¬²»Ö§³ÖÔ¤±àÒëµÄ·½Ê½
+     * æ ¹æ®sqlæŸ¥è¯¢åˆ—è¡¨æ•°æ®(æŸ¥è¯¢å¤šæ¡)ï¼Œä¸æ”¯æŒé¢„ç¼–è¯‘çš„æ–¹å¼
      * @param sql
      * @return
      * @throws ClassNotFoundException
@@ -82,7 +82,7 @@ public interface Dao {
     public List<Map<String, Object>> executeQueryForList(String sql) throws ClassNotFoundException, SQLException;
     
 	/**
-	 * ¸ù¾İsql²éÑ¯ÁĞ±íÊı¾İ(²éÑ¯¶àÌõ)£¬Ö§³ÖÔ¤±àÒëµÄ·½Ê½
+	 * æ ¹æ®sqlæŸ¥è¯¢åˆ—è¡¨æ•°æ®(æŸ¥è¯¢å¤šæ¡)ï¼Œæ”¯æŒé¢„ç¼–è¯‘çš„æ–¹å¼
 	 * @param sql
 	 * @param types
 	 * @param ObjectValues
@@ -95,7 +95,7 @@ public interface Dao {
 	
 
     /**
-     * Ö´ĞĞ Ôö¡¢É¾¡¢¸Ä¡¢µÈµÄ²Ù×÷£¬²»Ö§³ÖÔ¤±àÒëµÄ·½Ê½
+     * æ‰§è¡Œ å¢ã€åˆ ã€æ”¹ã€ç­‰çš„æ“ä½œï¼Œä¸æ”¯æŒé¢„ç¼–è¯‘çš„æ–¹å¼
      * @param sql
      * @return
      * @throws ClassNotFoundException
@@ -103,7 +103,7 @@ public interface Dao {
      */
 	public int executeUpdate(String sql) throws ClassNotFoundException, SQLException ;
 	/**
-	 * Ô¤±àÒësql²Ù×÷£¬   Ö§³Öinsert £¬ update  £¬ delete  Óï¾ä
+	 * é¢„ç¼–è¯‘sqlæ“ä½œï¼Œ   æ”¯æŒinsert ï¼Œ update  ï¼Œ delete  è¯­å¥
 	 * @param sql
 	 * @param types
 	 * @param ObjectValues
@@ -116,7 +116,7 @@ public interface Dao {
 	public int executeUpdate(String sql , int[] types,Object[] values) throws ClassNotFoundException, SQLException, FileNotFoundException, IOException ;
 	
 	/**
-	 * Ô¤±àÒësql²Ù×÷£¬   Ö§³Ö  select Óï¾ä
+	 * é¢„ç¼–è¯‘sqlæ“ä½œï¼Œ   æ”¯æŒ  select è¯­å¥
 	 * @param sql
 	 * @param types
 	 * @param ObjectValues
@@ -126,7 +126,7 @@ public interface Dao {
 	 */
 	public int executeQueryForCount(String sql ) throws ClassNotFoundException, SQLException ;
 	/**
-	 * Ô¤±àÒësql²Ù×÷£¬   Ö§³Ö  select Óï¾ä
+	 * é¢„ç¼–è¯‘sqlæ“ä½œï¼Œ   æ”¯æŒ  select è¯­å¥
 	 * @param sql
 	 * @param types
 	 * @param ObjectValues

@@ -13,7 +13,7 @@ public class CreateSchedulerFactory {
 		   Properties props = new Properties();
 		    props.put(StdSchedulerFactory.PROP_THREAD_POOL_CLASS,
 		            "org.quartz.simpl.SimpleThreadPool");
-		    props.put("org.quartz.threadPool.threadCount", "250");       //任务线程个数
+		    props.put("org.quartz.threadPool.threadCount", "250");       //浠诲姟绾跨▼涓暟
 		    try {
 				factory=new StdSchedulerFactory(props);
 			} catch (SchedulerException e) {

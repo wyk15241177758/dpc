@@ -4,8 +4,8 @@ import java.io.File;
 
 public class FileUtil {
 	/**
-     * µİ¹éÉ¾³ıÄ¿Â¼ÏÂµÄËùÓĞÎÄ¼ş¼°×ÓÄ¿Â¼ÏÂËùÓĞÎÄ¼ş
-     * @param dir ½«ÒªÉ¾³ıµÄÎÄ¼şÄ¿Â¼
+     * é€’å½’åˆ é™¤ç›®å½•ä¸‹çš„æ‰€æœ‰æ–‡ä»¶åŠå­ç›®å½•ä¸‹æ‰€æœ‰æ–‡ä»¶
+     * @param dir å°†è¦åˆ é™¤çš„æ–‡ä»¶ç›®å½•
      * @return boolean Returns "true" if all deletions were successful.
      *                 If a deletion fails, the method stops attempting to
      *                 delete and returns "false".
@@ -13,7 +13,7 @@ public class FileUtil {
     public static boolean deleteDir(File dir) {
         if (dir.isDirectory()) {
             String[] children = dir.list();
-            //µİ¹éÉ¾³ıÄ¿Â¼ÖĞµÄ×ÓÄ¿Â¼ÏÂ
+            //é€’å½’åˆ é™¤ç›®å½•ä¸­çš„å­ç›®å½•ä¸‹
             for (int i=0; i<children.length; i++) {
                 boolean success = deleteDir(new File(dir, children[i]));
                 if (!success) {
@@ -21,7 +21,7 @@ public class FileUtil {
                 }
             }
         }
-        // Ä¿Â¼´ËÊ±Îª¿Õ£¬¿ÉÒÔÉ¾³ı
+        // ç›®å½•æ­¤æ—¶ä¸ºç©ºï¼Œå¯ä»¥åˆ é™¤
         return dir.delete();
     }
 }

@@ -14,11 +14,11 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
-import com.jt.bean.lucene.DataField;
-import com.jt.bean.lucene.GwConfig;
-import com.jt.bean.lucene.GwConfigs;
+import com.jt.bean.gateway.DataField;
+import com.jt.bean.gateway.GwConfig;
+import com.jt.bean.gateway.GwConfigs;
 /**
- * //获取配置信息，并写入config返回
+ * //鑾峰彇閰嶇疆淇℃伅锛屽苟鍐欏叆config杩斿洖
  * @author zhengxiaobin
  *
  */
@@ -26,7 +26,7 @@ public class GwXmlDao {
 	 
 	public static GwConfig getConfig(String taskName) throws JDOMException{
 		GwConfig config=null;
-		//获得配置信息
+		//鑾峰緱閰嶇疆淇℃伅
 		SAXBuilder builder = new SAXBuilder();
 		Document doc = builder.build(new File("gateway.conf"));
 		Element root = doc.getRootElement();
@@ -58,7 +58,7 @@ public class GwXmlDao {
 	public static GwConfigs getConfigs() throws JDOMException{
 		GwConfigs configs=new GwConfigs();
 		GwConfig config=new GwConfig();
-		//获得配置信息
+		//鑾峰緱閰嶇疆淇℃伅
 		SAXBuilder builder = new SAXBuilder();
 		Document doc = builder.build(new File("gateway.conf"));
 		Element root = doc.getRootElement();
@@ -90,7 +90,7 @@ public class GwXmlDao {
 	//test
 	public static void main(String[] args) {
 			try {
-				GwConfig config=GwXmlDao.getConfig("智能问答数据抽取");
+				GwConfig config=GwXmlDao.getConfig("鏅鸿兘闂瓟鏁版嵁鎶藉彇");
 				List<DataField> list=config.getList();
 				String indexPath=config.getIndexPath();
 				System.out.println("indexPath=["+indexPath+"]");

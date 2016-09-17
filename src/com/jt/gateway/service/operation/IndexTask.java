@@ -1,4 +1,4 @@
-package com.jt.gateway.service;
+package com.jt.gateway.service.operation;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,14 +11,14 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.jdom.JDOMException;
 
-import com.jt.bean.lucene.DataField;
-import com.jt.bean.lucene.GwConfig;
+import com.jt.bean.gateway.DataField;
+import com.jt.bean.gateway.GwConfig;
 import com.jt.gateway.dao.GwXmlDao;
-import com.jt.gateway.dao.JdbcDaoImpl_bak;
+import com.jt.gateway.dao.JdbcDaoImpl;
 import com.jt.gateway.util.FileUtil;
 import com.jt.lucene.IndexDao;
 /**
- * ÓÃÓÚ³éÈ¡Ö¸¶¨¹ØÏµĞÍÊı¾İ¿âÖĞµÄÊı¾İ£¬µ½Ö¸¶¨µÄÈ«ÎÄ¼ìË÷Â·¾¶ÏÂ
+ * ç”¨äºæŠ½å–æŒ‡å®šå…³ç³»å‹æ•°æ®åº“ä¸­çš„æ•°æ®ï¼Œåˆ°æŒ‡å®šçš„å…¨æ–‡æ£€ç´¢è·¯å¾„ä¸‹
  * @author zhengxiaobin
  *
  */
@@ -28,7 +28,7 @@ public class IndexTask {
 
 	
 	private GwConfig config;
-	private JdbcDaoImpl_bak JdbcDao ;
+	private JdbcDaoImpl JdbcDao ;
 	private IndexDao indexDao;
 	private int batchSize=5000;
 	private String taskName;
@@ -37,46 +37,46 @@ public class IndexTask {
 
 	public IndexTask(String taskName) throws IOException, JDOMException{
 		config=GwXmlDao.getConfig(taskName);
-		JdbcDao = new JdbcDaoImpl_bak();
+		JdbcDao = new JdbcDaoImpl(config.getSqlDB(),config.getSqlIP(),config.getSqlPort(),config.getSqlUser(),config.getSqlPw());
 		newIndexPath=config.getIndexPath()+"_new";
 		indexDao=new IndexDao(newIndexPath);
 	}
 	
-	//Ö´ĞĞÈÎÎñ£¬²»ÔÊĞíÁ½¸öÏß³ÌÍ¬Ê±µ÷ÓÃ´Ë·½·¨
+	//æ‰§è¡Œä»»åŠ¡ï¼Œä¸å…è®¸ä¸¤ä¸ªçº¿ç¨‹åŒæ—¶è°ƒç”¨æ­¤æ–¹æ³•
 	public synchronized void createIndex() throws Exception {
 		IndexStatus status=IndexStatus.getStatus();
 		Long timeWait=0l;
-		String sql="select max("+config.getIdName()+") as maxid from "+config.getDbName();
+		String sql="select max("+config.getIdName()+") as maxid from "+config.getSqlTable();
 		Map<String,Object> rsMap=null;
 		long maxId;
 		long minId;
 		long temp=0l;
 		List<DataField> list=config.getList();
 		
-		logger.info("¿ªÊ¼Éú³ÉĞÂµÄË÷ÒıÎÄ¼ş");
-		//É¾³ıË÷Òı
+		logger.info("å¼€å§‹ç”Ÿæˆæ–°çš„ç´¢å¼•æ–‡ä»¶");
+		//åˆ é™¤ç´¢å¼•
 		File file=new File(newIndexPath);
 		if(file.exists()){
 			if(FileUtil.deleteDir(file)){
 				file.mkdir();
 			}else{
-				logger.error("É¾³ıÎÄ¼ş"+file.getAbsolutePath()+"´íÎó£¬Çë¼ì²é");
-				throw new Exception("É¾³ıÎÄ¼ş"+file.getName()+"´íÎó£¬Çë¼ì²é");
+				logger.error("åˆ é™¤æ–‡ä»¶"+file.getAbsolutePath()+"é”™è¯¯ï¼Œè¯·æ£€æŸ¥");
+				throw new Exception("åˆ é™¤æ–‡ä»¶"+file.getName()+"é”™è¯¯ï¼Œè¯·æ£€æŸ¥");
 			}
 		}
-		//»ñµÃÊı¾İ×ÜÊı£¬²¢°´ÕÕbatchSize·ÖÅúĞ´ÈëË÷Òı
+		//è·å¾—æ•°æ®æ€»æ•°ï¼Œå¹¶æŒ‰ç…§batchSizeåˆ†æ‰¹å†™å…¥ç´¢å¼•
 		rsMap=JdbcDao.executeQueryForMap(sql);
 		maxId=(long)rsMap.get("maxid");
 		
-		//»ñµÃ×îĞ¡Öµ
-		sql="select min("+config.getIdName()+") as minid from "+config.getDbName();
+		//è·å¾—æœ€å°å€¼
+		sql="select min("+config.getIdName()+") as minid from "+config.getSqlTable();
 		rsMap=JdbcDao.executeQueryForMap(sql);
 		minId=(long)rsMap.get("minid");
 		logger.debug("minId=["+minId+"]");
-		logger.info("IDÇø¼äÎª["+minId+"-"+maxId+"]");
-		//µÚÒ»´ÎÍÆËÍµÄ½áÎ²ID
+		logger.info("IDåŒºé—´ä¸º["+minId+"-"+maxId+"]");
+		//ç¬¬ä¸€æ¬¡æ¨é€çš„ç»“å°¾ID
 		temp=minId+batchSize;
-		//Æ´½Ósql
+		//æ‹¼æ¥sql
 		sql="select ";
 		for(int i=0;i<list.size();i++){
 			DataField df=list.get(i);
@@ -87,14 +87,14 @@ public class IndexTask {
 			}
 		}
 		do {
-			logger.info("¿ªÊ¼ÍÆËÍIDĞ¡ÓÚ"+temp+"µÄÊı¾İ");
-			String curSql=sql+" from "+config.getDbName()+" where "+config.getIdName()+"<"+temp;
+			logger.info("å¼€å§‹æ¨é€IDå°äº"+temp+"çš„æ•°æ®");
+			String curSql=sql+" from "+config.getSqlTable()+" where "+config.getIdName()+"<"+temp;
 			logger.debug("curSql=["+curSql+"]");
 			List<Map<String,Object>> rsList=JdbcDao.executeQueryForList(curSql);
 			for(Map<String,Object> map:rsList){
 				Document doc=null;
 				for(DataField df:list){
-					//Êı¾İ¿âÖĞÄ³Ğ©×Ö¶ÎÎª¿ÕÔòÌø¹ı
+					//æ•°æ®åº“ä¸­æŸäº›å­—æ®µä¸ºç©ºåˆ™è·³è¿‡
 					if(map.get(df.getName())==null){
 						continue;
 					}
@@ -105,22 +105,22 @@ public class IndexTask {
 				}
 				indexDao.save(doc);
 			}
-			logger.info("½áÊøÍÆËÍIDĞ¡ÓÚ"+temp+"µÄÊı¾İ");
+			logger.info("ç»“æŸæ¨é€IDå°äº"+temp+"çš„æ•°æ®");
 			
 			temp+=batchSize;
 		}while(temp<(maxId+batchSize));
 		
-		logger.info("Éú³ÉĞÂË÷ÒıÎÄ¼ş½áÊø£¬³¢ÊÔËø¶¨Ìæ»»Ô­Ë÷ÒıÎÄ¼ş");
-		//½«¿ÉÓÃÖÃÎªfalse
+		logger.info("ç”Ÿæˆæ–°ç´¢å¼•æ–‡ä»¶ç»“æŸï¼Œå°è¯•é”å®šæ›¿æ¢åŸç´¢å¼•æ–‡ä»¶");
+		//å°†å¯ç”¨ç½®ä¸ºfalse
 		status.setSearchEnable(false);
-		//ÅĞ¶Ï¼ìË÷Ïß³ÌÊı£¬Èç¹ûÎª0ÔòÖ±½ÓĞŞ¸ÄË÷ÒıÄ¿Â¼Ãû³Æ£¬·ñÔòÑ­»·µÈ´ı5·ÖÖÓ£¬³¬Ê±±¨´í
+		//åˆ¤æ–­æ£€ç´¢çº¿ç¨‹æ•°ï¼Œå¦‚æœä¸º0åˆ™ç›´æ¥ä¿®æ”¹ç´¢å¼•ç›®å½•åç§°ï¼Œå¦åˆ™å¾ªç¯ç­‰å¾…5åˆ†é’Ÿï¼Œè¶…æ—¶æŠ¥é”™
 		while(timeWait<(5*60*1000)){
 			if(status.getSearchThread()!=0){
-				logger.info("¼ìË÷Ïß³ÌÊı²»Îª0£¬ÒÑµÈ´ı"+(timeWait/1000*60)+"·ÖÖÓ£¬¼ÌĞøµÈ´ı1·ÖÖÓ");
+				logger.info("æ£€ç´¢çº¿ç¨‹æ•°ä¸ä¸º0ï¼Œå·²ç­‰å¾…"+(timeWait/1000*60)+"åˆ†é’Ÿï¼Œç»§ç»­ç­‰å¾…1åˆ†é’Ÿ");
 				Thread.sleep(60000);
 				timeWait+=60000;
 			}else{
-				logger.info("Ëø¶¨Ô­Ë÷ÒıÎÄ¼ş³É¹¦");
+				logger.info("é”å®šåŸç´¢å¼•æ–‡ä»¶æˆåŠŸ");
 				File indexPath=new File(config.getIndexPath());
 				indexPath.delete();
 				file.renameTo(indexPath);
@@ -128,21 +128,21 @@ public class IndexTask {
 			}
 		}
 		
-		//ÎŞÂÛÊÇ·ñ³É¹¦£¬¾ù·Å¿ª¼ìË÷£¬²¢É¾³ıÁÙÊ±Ë÷ÒıÄ¿Â¼
+		//æ— è®ºæ˜¯å¦æˆåŠŸï¼Œå‡æ”¾å¼€æ£€ç´¢ï¼Œå¹¶åˆ é™¤ä¸´æ—¶ç´¢å¼•ç›®å½•
 		status.setSearchEnable(true);
 		file=new File(newIndexPath);
 		FileUtil.deleteDir(file);
 		if(timeWait>=(5*60*1000)){
-			logger.info("µÈ´ı³¬¹ı5·ÖÖÓ£¬Å×³öÒì³£");
-			throw new Exception("µÈ´ı³¬¹ı5·ÖÖÓ£¬Å×³öÒì³£");
+			logger.info("ç­‰å¾…è¶…è¿‡5åˆ†é’Ÿï¼ŒæŠ›å‡ºå¼‚å¸¸");
+			throw new Exception("ç­‰å¾…è¶…è¿‡5åˆ†é’Ÿï¼ŒæŠ›å‡ºå¼‚å¸¸");
 		}else{
-			logger.info("ÍÆËÍ³É¹¦");
+			logger.info("æ¨é€æˆåŠŸ");
 		}
 		
 	}
 	public static void main(String[] args) {
 			try {
-				IndexTask gate=new IndexTask("ÖÇÄÜÎÊ´ğÊı¾İ³éÈ¡");
+				IndexTask gate=new IndexTask("æ™ºèƒ½é—®ç­”æ•°æ®æŠ½å–");
 				gate.createIndex();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

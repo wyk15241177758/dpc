@@ -34,11 +34,11 @@ import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
 import com.jt.gateway.util.FileUtil;
 
 /**
- * @ÏîÄ¿Ãû³Æ£ºlucene
- * @ÀàÃû³Æ£ºIndexDao
- * @ÀàÃèÊö£º
- * @´´½¨ÈË£ºYangChao
- * @´´½¨Ê±¼ä£º2016Äê8ÔÂ31ÈÕ ÉÏÎç10:12:05
+ * @é¡¹ç›®åç§°ï¼šlucene
+ * @ç±»åç§°ï¼šIndexDao
+ * @ç±»æè¿°ï¼š
+ * @åˆ›å»ºäººï¼šYangChao
+ * @åˆ›å»ºæ—¶é—´ï¼š2016å¹´8æœˆ31æ—¥ ä¸Šåˆ10:12:05
  * @version 1.0.0
  */
 public class IndexDao {
@@ -86,7 +86,7 @@ public class IndexDao {
 			Term term = new Term("id", id);
 			IndexWriterConfig config = new IndexWriterConfig(util.getAnalyzer());
 			indexWriter = new IndexWriter(util.getDirectory(), config);
-			indexWriter.deleteDocuments(term);// É¾³ıº¬ÓĞÖ¸¶¨termµÄËùÓĞÎÄµµ
+			indexWriter.deleteDocuments(term);// åˆ é™¤å«æœ‰æŒ‡å®štermçš„æ‰€æœ‰æ–‡æ¡£
 		} catch (Exception e) {
 			logger.error("IndexDao.save error", e);
 		} finally {
@@ -95,7 +95,7 @@ public class IndexDao {
 	}
 
 	public void delAfterId(long beginId,String field){
-		System.out.println("¿ÕÊµÏÖ");
+		System.out.println("ç©ºå®ç°");
 	}
 	public boolean deleteAll(){
 		boolean status=false;
@@ -113,7 +113,7 @@ public class IndexDao {
 			Term term = new Term("id", article.getId().toString());
 			IndexWriterConfig config = new IndexWriterConfig(util.getAnalyzer());
 			indexWriter = new IndexWriter(util.getDirectory(), config);
-			indexWriter.updateDocument(term, doc);// ÏÈÉ¾³ı£¬ºó´´½¨¡£
+			indexWriter.updateDocument(term, doc);// å…ˆåˆ é™¤ï¼Œååˆ›å»ºã€‚
 		} catch (Exception e) {
 			logger.error("IndexDao.save error", e);
 		} finally {
@@ -125,28 +125,28 @@ public class IndexDao {
 		List<Article> list = new ArrayList<Article>();
 		try {
 			DirectoryReader ireader = DirectoryReader.open(util.getDirectory());
-			// 2¡¢µÚ¶ş²½£¬´´½¨ËÑË÷Æ÷
+			// 2ã€ç¬¬äºŒæ­¥ï¼Œåˆ›å»ºæœç´¢å™¨
 			IndexSearcher isearcher = new IndexSearcher(ireader);
 
-			// 3¡¢µÚÈı²½£¬ÀàËÆSQL£¬½øĞĞ¹Ø¼ü×Ö²éÑ¯
+			// 3ã€ç¬¬ä¸‰æ­¥ï¼Œç±»ä¼¼SQLï¼Œè¿›è¡Œå…³é”®å­—æŸ¥è¯¢
 			String[] fields = { "title", "content" };
 			QueryParser parser = new MultiFieldQueryParser(fields, util.getAnalyzer());
 			Query query = parser.parse(queryString);
 
 			TopDocs topDocs = isearcher.search(query, firstResult + maxResult);
-			int count = topDocs.totalHits;// ×Ü¼ÇÂ¼Êı
-			System.out.println("×Ü¼ÇÂ¼ÊıÎª£º" + topDocs.totalHits);// ×Ü¼ÇÂ¼Êı
-			ScoreDoc[] hits = topDocs.scoreDocs;// µÚ¶ş¸ö²ÎÊı£¬Ö¸¶¨×î¶à·µ»ØÇ°nÌõ½á¹û
-			// ¸ßÁÁ
+			int count = topDocs.totalHits;// æ€»è®°å½•æ•°
+			System.out.println("æ€»è®°å½•æ•°ä¸ºï¼š" + topDocs.totalHits);// æ€»è®°å½•æ•°
+			ScoreDoc[] hits = topDocs.scoreDocs;// ç¬¬äºŒä¸ªå‚æ•°ï¼ŒæŒ‡å®šæœ€å¤šè¿”å›å‰næ¡ç»“æœ
+			// é«˜äº®
 			Formatter formatter = new SimpleHTMLFormatter("<font color='red'>", "</font>");
 			Scorer source = new QueryScorer(query);
 			Highlighter highlighter = new Highlighter(formatter, source);
 
-			// ÕªÒª
+			// æ‘˜è¦
 //			Fragmenter fragmenter = new SimpleFragmenter(5);
 //			highlighter.setTextFragmenter(fragmenter);
 
-			// ´¦Àí½á¹û
+			// å¤„ç†ç»“æœ
 			int endIndex = Math.min(firstResult + maxResult, hits.length);
 			for (int i = firstResult; i < endIndex; i++) {
 				Document hitDoc = isearcher.doc(hits[i].doc);
@@ -175,24 +175,24 @@ public class IndexDao {
 	public List<Document> search(String queryString,String field,String sortField,SortField.Type sortFieldType,boolean reverse ,int firstResult, int maxResult) {
 		List<Document> list = new ArrayList<Document>();
 		try {
-			Sort sort=new Sort(new SortField(sortField, sortFieldType,reverse));//Éú³ÉÅÅĞòÀà
+			Sort sort=new Sort(new SortField(sortField, sortFieldType,reverse));//ç”Ÿæˆæ’åºç±»
 			
 			DirectoryReader ireader = DirectoryReader.open(util.getDirectory());
-			// 2¡¢µÚ¶ş²½£¬´´½¨ËÑË÷Æ÷
+			// 2ã€ç¬¬äºŒæ­¥ï¼Œåˆ›å»ºæœç´¢å™¨
 			IndexSearcher isearcher = new IndexSearcher(ireader);
 
-			// 3¡¢µÚÈı²½£¬ÀàËÆSQL£¬½øĞĞ¹Ø¼ü×Ö²éÑ¯
+			// 3ã€ç¬¬ä¸‰æ­¥ï¼Œç±»ä¼¼SQLï¼Œè¿›è¡Œå…³é”®å­—æŸ¥è¯¢
 			QueryParser parser = new QueryParser(field, util.getAnalyzer());
 			Query query = parser.parse(queryString);
 
 			TopDocs topDocs = isearcher.search(query, firstResult + maxResult,sort);
-			ScoreDoc[] hits = topDocs.scoreDocs;// µÚ¶ş¸ö²ÎÊı£¬Ö¸¶¨×î¶à·µ»ØÇ°nÌõ½á¹û
-			// ¸ßÁÁ
+			ScoreDoc[] hits = topDocs.scoreDocs;// ç¬¬äºŒä¸ªå‚æ•°ï¼ŒæŒ‡å®šæœ€å¤šè¿”å›å‰næ¡ç»“æœ
+			// é«˜äº®
 //			Formatter formatter = new SimpleHTMLFormatter("<font color='red'>", "</font>");
 //			Scorer source = new QueryScorer(query);
 //			Highlighter highlighter = new Highlighter(formatter, source);
 			
-			// ´¦Àí½á¹û
+			// å¤„ç†ç»“æœ
 			int endIndex = Math.min(firstResult + maxResult, hits.length);
 			for (int i = firstResult; i < endIndex; i++) {
 				Document hitDoc = isearcher.doc(hits[i].doc);
@@ -209,15 +209,15 @@ public class IndexDao {
 //	public TopDocs search(String queryString,String field,String sortField,boolean reverse ,int firstResult, int maxResult) {
 //		try {
 //			DirectoryReader ireader = DirectoryReader.open(util.getDirectory());
-//			// 2¡¢µÚ¶ş²½£¬´´½¨ËÑË÷Æ÷
+//			// 2ã€ç¬¬äºŒæ­¥ï¼Œåˆ›å»ºæœç´¢å™¨
 //			IndexSearcher isearcher = new IndexSearcher(ireader);
 //
-//			// 3¡¢µÚÈı²½£¬ÀàËÆSQL£¬½øĞĞ¹Ø¼ü×Ö²éÑ¯
+//			// 3ã€ç¬¬ä¸‰æ­¥ï¼Œç±»ä¼¼SQLï¼Œè¿›è¡Œå…³é”®å­—æŸ¥è¯¢
 //			String[] fields = { "title", "content" };
 //			QueryParser parser = new QueryParser(field, util.getAnalyzer());
 //			Query query = parser.parse(queryString);
 //			
-//			Sort sort=new Sort(new SortField(sortField, SortField.Type.LONG,reverse));//Éú³ÉÅÅĞòÀà
+//			Sort sort=new Sort(new SortField(sortField, SortField.Type.LONG,reverse));//ç”Ÿæˆæ’åºç±»
 //			
 //			TopDocs topDocs = isearcher.search(query, firstResult + maxResult,sort);
 //			return topDocs;
@@ -230,10 +230,10 @@ public class IndexDao {
 	public void addLongPoint(Document document, String name, long value) {
 	    Field field = new LongPoint(name, value);
 	    document.add(field);
-	    //ÒªÅÅĞò£¬±ØĞëÌí¼ÓÒ»¸öÍ¬ÃûµÄNumericDocValuesField
+	    //è¦æ’åºï¼Œå¿…é¡»æ·»åŠ ä¸€ä¸ªåŒåçš„NumericDocValuesField
 	    field = new NumericDocValuesField(name, value);
 	    document.add(field);
-	    //Òª´æ´¢Öµ£¬±ØĞëÌí¼ÓÒ»¸öÍ¬ÃûµÄStoredField
+	    //è¦å­˜å‚¨å€¼ï¼Œå¿…é¡»æ·»åŠ ä¸€ä¸ªåŒåçš„StoredField
 	    field = new StoredField(name, value);
 	    document.add(field);
 	}

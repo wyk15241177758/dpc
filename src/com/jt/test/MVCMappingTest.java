@@ -10,7 +10,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.jt.bean.gateway.JobInf;
-import com.jt.gateway.service.JobInfService;
+import com.jt.gateway.service.job.JobInfService;
 
 @Controller
 public class MVCMappingTest {

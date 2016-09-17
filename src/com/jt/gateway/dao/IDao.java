@@ -7,8 +7,8 @@ import java.util.List;
 public interface IDao {
 
 	/**
-	 * ²éÑ¯ÁĞ±í£¨²»·ÖÒ³£©
-	 * @param hqlÓï¾ä
+	 * æŸ¥è¯¢åˆ—è¡¨ï¼ˆä¸åˆ†é¡µï¼‰
+	 * @param hqlè¯­å¥
 	 * @return list
 	 */
 	public List query( String hql );
@@ -20,67 +20,67 @@ public interface IDao {
 	
 	
 	/**
-	 * ²éÑ¯Ò»Ìõ
-	 * @param cla ClassÀà
-	 * @param id  Ö÷¼ü
+	 * æŸ¥è¯¢ä¸€æ¡
+	 * @param cla Classç±»
+	 * @param id  ä¸»é”®
 	 * @return
 	 */
 	public Object queryById( Class cla , Serializable id);
 	/**
-	 * ±£´æÒ»ÌõÊı¾İ
-	 * @param obj ¶ÔÏó
+	 * ä¿å­˜ä¸€æ¡æ•°æ®
+	 * @param obj å¯¹è±¡
 	 * @return
 	 */
 	public void save( Object obj );
 	/**
-	 * ±£´æÒ»ÌõÊı¾İ
-	 * @param obj ¶ÔÏó
+	 * ä¿å­˜ä¸€æ¡æ•°æ®
+	 * @param obj å¯¹è±¡
 	 * @return
 	 */
 	public void save(  Collection c );
 	/**
-	 * ĞŞ¸ÄÒ»ÌõÊı¾İ
-	 * @param obj ¶ÔÏó
+	 * ä¿®æ”¹ä¸€æ¡æ•°æ®
+	 * @param obj å¯¹è±¡
 	 * @return
 	 */
 	public void update( Object obj );
 	/**
-	 * É¾³ıÒ»ÌõÊı¾İ
-	 * @param obj ¶ÔÏó
+	 * åˆ é™¤ä¸€æ¡æ•°æ®
+	 * @param obj å¯¹è±¡
 	 * @return
 	 */
 	public void delete( Object obj );
 	
 	/**
-	 * É¾³ı¶àÌõÊı¾İ
-	 * @param obj ¶ÔÏó
+	 * åˆ é™¤å¤šæ¡æ•°æ®
+	 * @param obj å¯¹è±¡
 	 * @return
 	 */
 	public void delete( Collection c);
 	/**
-	 * Çå¿ÕsessionÖĞµÄÌØ¶¨ÊµÌå
+	 * æ¸…ç©ºsessionä¸­çš„ç‰¹å®šå®ä½“
 	 */
 	public void clear(Object obj);
 	/**
-	 * ĞŞ¸ÄÒ»ÌõÊı¾İ
-	 * @param obj ¶ÔÏó
+	 * ä¿®æ”¹ä¸€æ¡æ•°æ®
+	 * @param obj å¯¹è±¡
 	 * @return
 	 */
 	public void merge(Object obj);
 	/**
-	 * ĞŞ¸ÄÒ»ÌõÊı¾İ
+	 * ä¿®æ”¹ä¸€æ¡æ•°æ®
 	 * @param Sql
 	 * @param paramList
 	 */
 	public void updateSql(final String Sql,final List  paramList);
 	/**
-	 * ĞŞ¸ÄÒ»ÌõÊı¾İ
+	 * ä¿®æ”¹ä¸€æ¡æ•°æ®
 	 * @param hql
 	 * @param paramList
 	 */
 	public void update(final String hql,final List  paramList);
 	/**
-	 * Í¨¹ıID²éÑ¯  
+	 * é€šè¿‡IDæŸ¥è¯¢  
 	 * @param cla
 	 * @param id
 	 * @return

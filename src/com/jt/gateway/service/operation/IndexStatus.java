@@ -1,9 +1,9 @@
-package com.jt.gateway.service;
+package com.jt.gateway.service.operation;
 /**
- * µ¥ÀıÄ£Ê½£¬»ñµÃË÷Òı×´Ì¬£¬ÊÇ·ñ¿ÉÓÃ
+ * å•ä¾‹æ¨¡å¼ï¼Œè·å¾—ç´¢å¼•çŠ¶æ€ï¼Œæ˜¯å¦å¯ç”¨
  * @author zxb
  *
- * 2016Äê9ÔÂ15ÈÕ
+ * 2016å¹´9æœˆ15æ—¥
  */
 public class IndexStatus {
 	private int searchThread;

@@ -2,11 +2,11 @@ package com.jt.lucene;
 import java.util.List;
 
 /**
- * @ÏîÄ¿Ãû³Æ£ºlucene
- * @ÀàÃû³Æ£ºQueryResult
- * @ÀàÃèÊö£º½á¹û¼¯
- * @´´½¨ÈË£ºYangChao
- * @´´½¨Ê±¼ä£º2016Äê8ÔÂ31ÈÕ ÏÂÎç4:56:24
+ * @é¡¹ç›®åç§°ï¼šlucene
+ * @ç±»åç§°ï¼šQueryResult
+ * @ç±»æè¿°ï¼šç»“æœé›†
+ * @åˆ›å»ºäººï¼šYangChao
+ * @åˆ›å»ºæ—¶é—´ï¼š2016å¹´8æœˆ31æ—¥ ä¸‹åˆ4:56:24
  * @version 1.0.0
  */
 public class QueryResult {

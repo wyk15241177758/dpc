@@ -1,13 +1,10 @@
-package com.jt.bean.lucene;
+package com.jt.bean.gateway;
 
 import org.apache.lucene.document.FieldType;
 
 public class DataField {
 	private String name;
-	@Override
-	public String toString() {
-		return "DataField [name=" + name + ", type=" + type + "]";
-	}
+	
 
 	private FieldType type;
 	public String getName() {
@@ -30,5 +27,9 @@ public class DataField {
 	
 	public DataField(){
 		
+	}
+	@Override
+	public String toString() {
+		return "DataField [name=" + name + ", type=" + type + "]";
 	}
 }

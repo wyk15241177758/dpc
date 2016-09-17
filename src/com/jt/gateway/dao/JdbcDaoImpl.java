@@ -23,32 +23,38 @@ import org.apache.commons.logging.LogFactory;
 
 
 /**
- * Êı¾İ¿âÁ¬½Ó¶ÔÏó
- * @author 	×ŞĞíºì
+ * æ•°æ®åº“è¿æ¥å¯¹è±¡
+ * @author 	é‚¹è®¸çº¢
  * @time	2011-05-11
  */
-public class JdbcDaoImpl implements JdbcDao{ 
-	
+public class JdbcDaoImpl implements JdbcDao{
+	 
 	private Log log = LogFactory.getLog(this.getClass());
 
 	private String sdbdriver = "org.gjt.mm.mysql.Driver";
-	private String sconnStr = "jdbc:mysql://localhost:3306/jtcrawler?useUnicode=true&characterEncoding=utf-8";//ÉèÖÃÊı¾İ¿âÃû³ÆÎª£ºpubs
-    private String user = "root";  //µÇÂ¼Êı¾İ¿âÓÃ»§Ãû
-    private String passwd = "admin";   //µÇÂ¼Êı¾İ¿âÃÜÂë
+	private String sconnStr = "jdbc:mysql://localhost:3306/jtcrawler?useUnicode=true&characterEncoding=utf-8";//è®¾ç½®æ•°æ®åº“åç§°ä¸ºï¼špubs
+    private String user = "root";  //ç™»å½•æ•°æ®åº“ç”¨æˆ·å
+    private String passwd = "root";   //ç™»å½•æ•°æ®åº“å¯†ç 
 
     
-    /**
-     * ½¨Á¢Á¬½Ó
+    public JdbcDaoImpl(String dbName,String dbIp,String port, String user, String passwd) {
+    	
+		this.sconnStr = "jdbc:mysql://"+dbIp+":"+port+"/"+dbName+"?useUnicode=true&characterEncoding=utf-8";
+		this.user = user;
+		this.passwd = passwd;
+	}
+	/**
+     * å»ºç«‹è¿æ¥
      * @return
      * @throws ClassNotFoundException
      * @throws SQLException
      */
     public Connection getConnection() throws ClassNotFoundException, SQLException{
-		 Class.forName(sdbdriver); //Ö¸¶¨JDBCÊı¾İ¿âÇı¶¯³ÌĞò
+		 Class.forName(sdbdriver); //æŒ‡å®šJDBCæ•°æ®åº“é©±åŠ¨ç¨‹åº
 		 return DriverManager.getConnection(sconnStr,user,passwd);
     }
 	/**
-     * ¸ù¾İsql²éÑ¯ÁĞ±íÊı¾İ(²éÑ¯Ò»Ìõ)£¬²»Ö§³ÖÔ¤±àÒëµÄ·½Ê½
+     * æ ¹æ®sqlæŸ¥è¯¢åˆ—è¡¨æ•°æ®(æŸ¥è¯¢ä¸€æ¡)ï¼Œä¸æ”¯æŒé¢„ç¼–è¯‘çš„æ–¹å¼
      * @param sql
      * @return
      * @throws ClassNotFoundException
@@ -62,12 +68,12 @@ public class JdbcDaoImpl implements JdbcDao{
 		if( !list.isEmpty() ){
 			return list.get(0);
 		}
-		this.releaseConnection(rs, stmt, connect);//¹Ø±ÕÁ¬½Ó
+		this.releaseConnection(rs, stmt, connect);//å…³é—­è¿æ¥
 		return null;
 	}
 
 	/**
-	 * ¸ù¾İsql²éÑ¯ÁĞ±íÊı¾İ(²éÑ¯Ò»Ìõ)£¬Ö§³ÖÔ¤±àÒëµÄ·½Ê½
+	 * æ ¹æ®sqlæŸ¥è¯¢åˆ—è¡¨æ•°æ®(æŸ¥è¯¢ä¸€æ¡)ï¼Œæ”¯æŒé¢„ç¼–è¯‘çš„æ–¹å¼
 	 * @param sql
 	 * @param types
 	 * @param ObjectValues
@@ -117,7 +123,7 @@ public class JdbcDaoImpl implements JdbcDao{
 
 	
     /**
-     * ¸ù¾İsql²éÑ¯ÁĞ±íÊı¾İ£¬²»Ö§³ÖÔ¤±àÒëµÄ·½Ê½
+     * æ ¹æ®sqlæŸ¥è¯¢åˆ—è¡¨æ•°æ®ï¼Œä¸æ”¯æŒé¢„ç¼–è¯‘çš„æ–¹å¼
      * @param sql
      * @return
      * @throws ClassNotFoundException
@@ -129,12 +135,12 @@ public class JdbcDaoImpl implements JdbcDao{
 		Statement stmt = connect.createStatement();
 		ResultSet rs = stmt.executeQuery(sql);
 		List<Map<String, Object>> list = this.rsToList(rs);
-		this.releaseConnection(rs, stmt, connect);//¹Ø±ÕÁ¬½Ó
+		this.releaseConnection(rs, stmt, connect);//å…³é—­è¿æ¥
 		return list;
 	}
 
     /**
-     * Ö´ĞĞ Ôö¡¢É¾¡¢¸Ä¡¢µÈµÄ²Ù×÷£¬²»Ö§³ÖÔ¤±àÒëµÄ·½Ê½
+     * æ‰§è¡Œ å¢ã€åˆ ã€æ”¹ã€ç­‰çš„æ“ä½œï¼Œä¸æ”¯æŒé¢„ç¼–è¯‘çš„æ–¹å¼
      * @param sql
      * @return
      * @throws ClassNotFoundException
@@ -146,14 +152,14 @@ public class JdbcDaoImpl implements JdbcDao{
 		Statement stmt=connect.createStatement();
 		int count=stmt.executeUpdate(sql);
 
-		this.releaseConnection(stmt, connect);//¹Ø±ÕÁ¬½Ó
+		this.releaseConnection(stmt, connect);//å…³é—­è¿æ¥
 	
 		return count;
 	}
 	
 	
 	/**
-	 * ¸ù¾İsql²éÑ¯ÁĞ±íÊı¾İ£¬Ö§³ÖÔ¤±àÒëµÄ·½Ê½
+	 * æ ¹æ®sqlæŸ¥è¯¢åˆ—è¡¨æ•°æ®ï¼Œæ”¯æŒé¢„ç¼–è¯‘çš„æ–¹å¼
 	 * @param sql
 	 * @param types
 	 * @param ObjectValues
@@ -199,7 +205,7 @@ public class JdbcDaoImpl implements JdbcDao{
 
 
 	/**
-	 * Ô¤±àÒësql²Ù×÷£¬   Ö§³Öinsert £¬ update  £¬ delete  Óï¾ä
+	 * é¢„ç¼–è¯‘sqlæ“ä½œï¼Œ   æ”¯æŒinsert ï¼Œ update  ï¼Œ delete  è¯­å¥
 	 * @param sql
 	 * @param types
 	 * @param ObjectValues
@@ -248,7 +254,7 @@ public class JdbcDaoImpl implements JdbcDao{
 	}
 	
 	/**
-	 * ²éÑ¯Ò»¸öÕûÊı£¬ÀıÈç¼ÇÂ¼×ÜÊı£¨²»Ö§³ÖÔ¤±àÒë£©
+	 * æŸ¥è¯¢ä¸€ä¸ªæ•´æ•°ï¼Œä¾‹å¦‚è®°å½•æ€»æ•°ï¼ˆä¸æ”¯æŒé¢„ç¼–è¯‘ï¼‰
 	 * @param sql
 	 * @param types
 	 * @param ObjectValues
@@ -268,7 +274,7 @@ public class JdbcDaoImpl implements JdbcDao{
 		return 0; 
 	}
 	/**
-	 * ²éÑ¯Ò»¸öÕûÊı£¬ÀıÈç¼ÇÂ¼×ÜÊı£¨Ö§³ÖÔ¤±àÒë£©
+	 * æŸ¥è¯¢ä¸€ä¸ªæ•´æ•°ï¼Œä¾‹å¦‚è®°å½•æ€»æ•°ï¼ˆæ”¯æŒé¢„ç¼–è¯‘ï¼‰
 	 * @param sql
 	 * @param types
 	 * @param ObjectValues
@@ -315,8 +321,8 @@ public class JdbcDaoImpl implements JdbcDao{
 		return 0; 
 	}
 	/**
-	 * ½«ResultSetÖĞµÄ½á¹û°ü×°³ÉlistÖĞ×°MapµÄ½á¹¹
-	 * @author 		ÀîÊÀÃ÷
+	 * å°†ResultSetä¸­çš„ç»“æœåŒ…è£…æˆlistä¸­è£…Mapçš„ç»“æ„
+	 * @author 		æä¸–æ˜
 	 * @time		2011-05-11
 	 * @param		 rs
 	 * @return
@@ -370,7 +376,7 @@ public class JdbcDaoImpl implements JdbcDao{
 	        }
 	    } catch (SQLException se){
 	    	log.info("Close the connection encounter error!\n" + se.getMessage());
-	        throw new SQLException("¹Ø±ÕÁ¬½ÓÒì³££¡");
+	        throw new SQLException("å…³é—­è¿æ¥å¼‚å¸¸ï¼");
 	    }
 	}
 	
@@ -384,7 +390,7 @@ public class JdbcDaoImpl implements JdbcDao{
 	        }
 	    } catch (SQLException se){
 	    	log.info("Close the connection encounter error!\n" + se.getMessage());
-	        throw new SQLException("¹Ø±ÕÁ¬½ÓÒì³££¡");
+	        throw new SQLException("å…³é—­è¿æ¥å¼‚å¸¸ï¼");
 	    }
 	}
 	private void releaseConnection(PreparedStatement pst, Connection connect) throws SQLException{
@@ -397,7 +403,7 @@ public class JdbcDaoImpl implements JdbcDao{
 	        }
 	    } catch (SQLException se){
 	    	log.info("Close the connection encounter error!\n" + se.getMessage());
-	        throw new SQLException("¹Ø±ÕÁ¬½ÓÒì³££¡");
+	        throw new SQLException("å…³é—­è¿æ¥å¼‚å¸¸ï¼");
 	    }
 	}
 	
@@ -414,7 +420,7 @@ public class JdbcDaoImpl implements JdbcDao{
 	        }
 	    } catch (SQLException se){
 	    	log.info("Close the connection encounter error!\n" + se.getMessage());
-	        throw new SQLException("¹Ø±ÕÁ¬½ÓÒì³££¡");
+	        throw new SQLException("å…³é—­è¿æ¥å¼‚å¸¸ï¼");
 	    }
 	}
 	private void releaseConnection(ResultSet rs, PreparedStatement pst, Connection connect) throws SQLException{
@@ -430,7 +436,7 @@ public class JdbcDaoImpl implements JdbcDao{
 	        }
 	    } catch (SQLException se){
 	    	log.info("Close the connection encounter error!\n" + se.getMessage());
-	        throw new SQLException("¹Ø±ÕÁ¬½ÓÒì³££¡");
+	        throw new SQLException("å…³é—­è¿æ¥å¼‚å¸¸ï¼");
 	    }
 	}
 	
@@ -443,21 +449,21 @@ public class JdbcDaoImpl implements JdbcDao{
 
 	
 
-	public static void main(String[] args) throws ClassNotFoundException, SQLException, IOException {
-		
-		JdbcDaoImpl dao = new JdbcDaoImpl();
-		int[] types1 = {Types.VARCHAR};
-		String[] objValues1 = {"%"};
-		
-		
-		List<Map<String, Object>> list = dao.executeQueryForList("select * from  jobs where job_desc like ?", types1, objValues1);
-		
-		System.out.println("list.size()==="+list.size());
-		for (int i = 0; i < list.size(); i++) {
-			System.out.println(  list.get(i) );
-		}
-
-	}
+//	public static void main(String[] args) throws ClassNotFoundException, SQLException, IOException {
+//		
+//		//JdbcDaoImpl dao = new JdbcDaoImpl();
+//		int[] types1 = {Types.VARCHAR};
+//		String[] objValues1 = {"%"};
+//		
+//		
+//		List<Map<String, Object>> list = dao.executeQueryForList("select * from  crawler_fl ", types1, objValues1);
+//		
+//		System.out.println("list.size()==="+list.size());
+//		for (int i = 0; i < list.size(); i++) {
+//			System.out.println(  list.get(i) );
+//		}
+//
+//	}
 	
 	
 //--------------------------------SET/GET----------------------------------------------

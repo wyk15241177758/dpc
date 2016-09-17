@@ -1,4 +1,4 @@
-package com.jt.bean.lucene;
+package com.jt.bean.gateway;
 
 import java.util.ArrayList;
 import java.util.List;

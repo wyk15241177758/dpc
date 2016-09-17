@@ -6,7 +6,7 @@
  * @Copyright: Copyright (c) 2014
  *
  * @author Comsys-LZP
- * @date 2014-6-26 ÏÂÎç03:37:11
+ * @date 2014-6-26 ä¸‹åˆ03:37:11
  * @version V2.0
  */
 package com.jt.gateway.service.job;
@@ -19,20 +19,20 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 /**
- * @Description: ÈÎÎñÖ´ĞĞÀà
+ * @Description: ä»»åŠ¡æ‰§è¡Œç±»
  *
  * @ClassName: QuartzJob
  * @Copyright: Copyright (c) 2014
  *
  * @author Comsys-LZP
- * @date 2014-6-26 ÏÂÎç03:37:11
+ * @date 2014-6-26 ä¸‹åˆ03:37:11
  * @version V2.0
  */
 public class QuartzJob implements Job {
 
 	@Override
 	public void execute(JobExecutionContext arg0) throws JobExecutionException {
-		System.out.println(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())+ "¡ï¡ï¡ï¡ï¡ï¡ï¡ï¡ï¡ï¡ï¡ï");  
+		System.out.println(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())+ "â˜…â˜…â˜…â˜…â˜…â˜…â˜…â˜…â˜…â˜…â˜…");  
 	}
 	
 	

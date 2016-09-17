@@ -22,8 +22,8 @@ import com.jt.base.page.Param;
 public class DaoImpl extends HibernateDaoSupport implements IDao {
 	
 	/**
-	 * ²éÑ¯ÁĞ±í£¨²»·ÖÒ³£©
-	 * @param hqlÓï¾ä
+	 * æŸ¥è¯¢åˆ—è¡¨ï¼ˆä¸åˆ†é¡µï¼‰
+	 * @param hqlè¯­å¥
 	 * @return list
 	 */
 	public List query(String hql) {

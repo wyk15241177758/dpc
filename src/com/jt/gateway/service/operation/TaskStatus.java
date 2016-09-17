@@ -1,4 +1,4 @@
-package com.jt.gateway.service;
+package com.jt.gateway.service.operation;
 
 import java.io.IOException;
 
@@ -43,7 +43,7 @@ public class TaskStatus {
 		return proDao.get("lastStatus");
 	}
 	public static void main(String[] args) {
-		String a="智能问答数据抽取";
+		String a="鏅鸿兘闂瓟鏁版嵁鎶藉彇";
 		try {
 			TaskStatus s=new TaskStatus(a);
 			System.out.println(s.getLastId());

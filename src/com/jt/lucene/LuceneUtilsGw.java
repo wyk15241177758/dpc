@@ -10,11 +10,11 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
 /**
- * @ÏîÄ¿Ãû³Æ£ºlucene
- * @ÀàÃû³Æ£ºLuceneUtils
- * @ÀàÃèÊö£º»ñÈ¡·Ö´ÊÆ÷ºÍË÷ÒıÎ»ÖÃ
- * @´´½¨ÈË£ºYangChao
- * @´´½¨Ê±¼ä£º2016Äê8ÔÂ31ÈÕ ÉÏÎç9:48:06
+ * @é¡¹ç›®åç§°ï¼šlucene
+ * @ç±»åç§°ï¼šLuceneUtils
+ * @ç±»æè¿°ï¼šè·å–åˆ†è¯å™¨å’Œç´¢å¼•ä½ç½®
+ * @åˆ›å»ºäººï¼šYangChao
+ * @åˆ›å»ºæ—¶é—´ï¼š2016å¹´8æœˆ31æ—¥ ä¸Šåˆ9:48:06
  * @version 1.0.0
  */
 public class LuceneUtilsGw {

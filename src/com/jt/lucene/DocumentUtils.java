@@ -7,11 +7,11 @@ import org.apache.lucene.document.TextField;
 
 
 /**
- * @ÏîÄ¿Ãû³Æ£ºlucene
- * @ÀàÃû³Æ£ºDocumentUtils
- * @ÀàÃèÊö£ºÎÄÕÂÊµÌåÀàºÍDocumentµÄ×ª»»¹¤¾ß
- * @´´½¨ÈË£ºYangChao
- * @´´½¨Ê±¼ä£º2016Äê8ÔÂ31ÈÕ ÉÏÎç10:15:22
+ * @é¡¹ç›®åç§°ï¼šlucene
+ * @ç±»åç§°ï¼šDocumentUtils
+ * @ç±»æè¿°ï¼šæ–‡ç« å®ä½“ç±»å’ŒDocumentçš„è½¬æ¢å·¥å…·
+ * @åˆ›å»ºäººï¼šYangChao
+ * @åˆ›å»ºæ—¶é—´ï¼š2016å¹´8æœˆ31æ—¥ ä¸Šåˆ10:15:22
  * @version 1.0.0
  */
 public class DocumentUtils {

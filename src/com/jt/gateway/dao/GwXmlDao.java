@@ -1,14 +1,8 @@
 package com.jt.gateway.dao;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
-import java.util.Properties;
 
-import org.apache.lucene.document.TextField;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -23,7 +17,18 @@ import com.jt.bean.gateway.GwConfigs;
  *
  */
 public class GwXmlDao {
-	 
+	private File file ;
+	private SAXBuilder builder;
+	private Document doc;
+	public GwXmlDao() throws JDOMException{
+		 builder = new SAXBuilder();
+		 Document doc = builder.build(new File("gateway.conf"));
+	}
+	
+	public GwXmlDao(File file) throws JDOMException{
+		 builder = new SAXBuilder();
+		 Document doc = builder.build(file);
+	}
 	public static GwConfig getConfig(String taskName) throws JDOMException{
 		GwConfig config=null;
 		//获得配置信息

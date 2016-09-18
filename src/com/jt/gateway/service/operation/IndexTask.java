@@ -101,7 +101,7 @@ public class IndexTask {
 					doc=new  Document();
 					logger.debug("value=["+map.get(df.getName()).toString()+"]"
 							+ " type= ["+df.getType()+"]");
-					doc.add(new Field(df.getName(), map.get(df.getName()).toString(), df.getType()));
+					doc.add(new Field(df.getName(), map.get(df.getName()).toString(), df.getFieldType()));
 				}
 				indexDao.save(doc);
 			}

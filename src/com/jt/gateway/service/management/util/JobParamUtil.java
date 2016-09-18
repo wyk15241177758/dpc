@@ -1,8 +1,14 @@
 package com.jt.gateway.service.management.util;
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.Gson;
+import com.jt.bean.gateway.DataField;
 import com.jt.bean.gateway.GwConfig;
+import java.lang.reflect.Type;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -32,7 +38,7 @@ public class JobParamUtil {
 		boolean legal=false;
 		JSONArray a=null;
 		JSONObject ob=(JSONObject)(a.get(0));
-		ob.gets
+		
 		//
 		return legal;
 	}
@@ -83,10 +89,23 @@ public class JobParamUtil {
 		this.jobInternal = jobInternal;
 	}
 	public static void main(String[] args) {
-		JobParamUtil util=new JobParamUtil();
-		String hour="1";
-		String min="5";
-//		System.out.println(util.getCronExpression(hour, min));
+		Gson b=new Gson();
+		DataField df1=new DataField();
+		df1.setName("测试标题");
+		df1.setType("STORE");
+		df1.setKey(false);
+		DataField df2=new DataField();
+		df2.setName("测试标题2");
+		df2.setType("STORE");
+		df2.setKey(false);
+		List<DataField> list=new ArrayList<DataField>();
+		list.add(df1);
+		list.add(df2);
+		System.out.println(b.toJson(list));;
+		Type type = new TypeToken<List<DataField>>(){}.getType();
+
+		DataField df=b.fromJson(b.toJson(list), type);
+		System.out.println("df=\n"+df);
 	}
 	
 }

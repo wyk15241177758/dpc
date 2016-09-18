@@ -34,20 +34,23 @@ public class GwXmlDao {
 		for (Object task:tasks) {
 			if(taskName.equalsIgnoreCase(((Element) task).getChild("TASKNAME").getText())){
 				config=new GwConfig();
-				config.setTaskName(((Element) task).getChild("TASKNAME").getText());
 				config.setIndexPath(((Element) task).getChild("INDEXPATH").getText());
-				config.setDbName(((Element) task).getChild("DBNAME").getText());
-				config.setIdName(((Element) task).getChild("IDNAME").getText());
+				config.setSqlDB(((Element) task).getChild("SQLDB").getText());
+				config.setSqlIP(((Element) task).getChild("SQLIP").getText());
+				config.setSqlPort(((Element) task).getChild("SQLPORT").getText());
+				config.setSqlUser(((Element) task).getChild("SQLUSER").getText());
+				config.setSqlPw(((Element) task).getChild("SQLPW").getText());
+				config.setSqlTable(((Element) task).getChild("SQLTABLE").getText());
+				config.setTaskName(((Element) task).getChild("TASKNAME").getText());
 				Element fields=((Element) task).getChild("FIELDS");
 				for(Object e:fields.getChildren()){
 					DataField field=new DataField();
 					field.setName(((Element)e).getChildText("FIELDNAME"));
-					if("store".equalsIgnoreCase(((Element)e).getChildText("FIELDTYPE"))){
-						field.setType(TextField.TYPE_STORED);
-					}else{
-						field.setType(TextField.TYPE_NOT_STORED);
-					}
+					field.setType(((Element)e).getChildText("FIELDTYPE"));
 					config.getList().add(field);
+					if(field.isKey()){
+						config.setIdName(((Element)e).getChildText("FIELDNAME"));
+					}
 				}
 				break;
 			}
@@ -65,19 +68,20 @@ public class GwXmlDao {
 		List tasks = root.getChildren();
 		for (Object task:tasks) {
 			config=new GwConfig();
-			config.setTaskName(((Element) task).getChild("TASKNAME").getText());
-			config.setIndexPath(((Element) task).getChild("INDEXPATH").getText());
-			config.setDbName(((Element) task).getChild("DBNAME").getText());
 			config.setIdName(((Element) task).getChild("IDNAME").getText());
+			config.setIndexPath(((Element) task).getChild("INDEXPATH").getText());
+			config.setSqlDB(((Element) task).getChild("SQLDB").getText());
+			config.setSqlIP(((Element) task).getChild("SQLIP").getText());
+			config.setSqlPort(((Element) task).getChild("SQLPORT").getText());
+			config.setSqlUser(((Element) task).getChild("SQLUSER").getText());
+			config.setSqlPw(((Element) task).getChild("SQLPW").getText());
+			config.setSqlTable(((Element) task).getChild("SQLTABLE").getText());
+			config.setTaskName(((Element) task).getChild("TASKNAME").getText());
 			Element fields=((Element) task).getChild("FIELDS");
 			for(Object e:fields.getChildren()){
 				DataField field=new DataField();
 				field.setName(((Element)e).getChildText("FIELDNAME"));
-				if("store".equalsIgnoreCase(((Element)e).getChildText("FIELDTYPE"))){
-					field.setType(TextField.TYPE_STORED);
-				}else{
-					field.setType(TextField.TYPE_NOT_STORED);
-				}
+				field.setType(((Element)e).getChildText("FIELDTYPE"));
 				config.getList().add(field);
 			}
 			configs.addConfig(config);

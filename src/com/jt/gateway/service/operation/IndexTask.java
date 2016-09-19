@@ -2,7 +2,6 @@ package com.jt.gateway.service.operation;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -13,8 +12,7 @@ import org.jdom.JDOMException;
 
 import com.jt.bean.gateway.DataField;
 import com.jt.bean.gateway.GwConfig;
-import com.jt.gateway.dao.GwXmlDao;
-import com.jt.gateway.dao.JdbcDaoImpl;
+import com.jt.gateway.dao.impl.JdbcDaoImpl;
 import com.jt.gateway.util.FileUtil;
 import com.jt.lucene.IndexDao;
 /**
@@ -26,17 +24,17 @@ public class IndexTask {
 	
 	private static Logger logger = Logger.getLogger(IndexTask.class);
 
-	
+	private GwConfigService configService;
 	private GwConfig config;
 	private JdbcDaoImpl JdbcDao ;
 	private IndexDao indexDao;
 	private int batchSize=5000;
-	private String taskName;
 	private String newIndexPath;
 	
 
 	public IndexTask(String taskName) throws IOException, JDOMException{
-		config=GwXmlDao.getConfig(taskName);
+		configService=new GwConfigService();
+		config=configService.getConfig(taskName);
 		JdbcDao = new JdbcDaoImpl(config.getSqlDB(),config.getSqlIP(),config.getSqlPort(),config.getSqlUser(),config.getSqlPw());
 		newIndexPath=config.getIndexPath()+"_new";
 		indexDao=new IndexDao(newIndexPath);

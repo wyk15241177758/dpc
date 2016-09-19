@@ -11,11 +11,10 @@ import com.jt.bean.gateway.DataField;
 import com.jt.bean.gateway.GwConfig;
 import com.jt.bean.gateway.PageMsg;
 import com.jt.gateway.dao.JdbcDao;
-import com.jt.gateway.dao.JdbcDaoImpl;
+import com.jt.gateway.dao.impl.JdbcDaoImpl;
 import com.jt.gateway.util.CMyString;
 
 import java.lang.reflect.Type;
-import java.sql.SQLException;
 
 
 public class JobParamUtil {
@@ -57,7 +56,7 @@ public class JobParamUtil {
 	}
 	//主方法，判断参数是否合法
 	/**
-	 * 未完成，判断字段是否存在有问题
+	 * 
 	 * @return
 	 */
 	public PageMsg isParamLegal(){
@@ -82,19 +81,24 @@ public class JobParamUtil {
 				return msg;
 			}
 			//包括是否连接正常、字段是否存在
-			sql="select ";
+			sql="select count(1) from information_schema.`COLUMNS` where table_name='"+
+			gwConfig.getSqlTable()+"' and (";
 			for(int i=0;i<gwConfig.getList().size();i++){
 				DataField df=gwConfig.getList().get(i);
 				if(i==0){
-					sql+=df.getName();
+					sql+="column_name='"+df.getName()+"'";
 				}else{
-					sql+=","+df.getName();
+					sql+=" or column_name='"+df.getName()+"'";
 				}
 			}
-			sql+=" from "+gwConfig.getSqlTable();
+			sql+=")";
 				try {
 					System.out.println(sql);
 					int num=dao.executeQueryForCount(sql);
+					if(num!=gwConfig.getList().size()){
+						msg=new PageMsg(false,"数据库表名错误或某个字段不存在");
+						return msg;
+					}
 				} catch(Exception e){
 					msg=new PageMsg(false,"数据库表名或字段错误，错误信息:["+e.getMessage()+"]");
 					return msg;
@@ -155,20 +159,20 @@ public class JobParamUtil {
 		this.jobInternal = jobInternal;
 	}
 	public static void main(String[] args) {
-		DataField df1=new DataField("id", true, "STORE");
-		DataField df2=new DataField("11", true, "STORE");
+		DataField df1=new DataField("FL_ID", true, "STORE");
+		DataField df2=new DataField("FL_NAME", true, "STORE");
 		List <DataField> list=new ArrayList<DataField>();
 		list.add(df1);
 		list.add(df2);
 		GwConfig gwConfig=new GwConfig();
 		gwConfig.setIdName(CMyString.getStrNotNullor0("1", null));
 		gwConfig.setIndexPath(CMyString.getStrNotNullor0("1", null));
-		gwConfig.setSqlDB(CMyString.getStrNotNullor0("qasys", null));
+		gwConfig.setSqlDB(CMyString.getStrNotNullor0("jtcrawler", null));
 		gwConfig.setSqlIP(CMyString.getStrNotNullor0("localhost", null));
 		gwConfig.setSqlPort(CMyString.getStrNotNullor0("3306", null));
 		gwConfig.setSqlPw(CMyString.getStrNotNullor0("root", null));
 		gwConfig.setSqlUser(CMyString.getStrNotNullor0("root", null));
-		gwConfig.setSqlTable(CMyString.getStrNotNullor0("testtable", null));
+		gwConfig.setSqlTable(CMyString.getStrNotNullor0("crawler_fl", null));
 		gwConfig.setTaskName(CMyString.getStrNotNullor0("1", null));
 		gwConfig.setList(list);
 		String jobInternal=getCronExpression("1","");

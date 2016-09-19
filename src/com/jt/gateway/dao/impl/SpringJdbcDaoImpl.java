@@ -1,4 +1,4 @@
-package com.jt.gateway.dao;
+package com.jt.gateway.dao.impl;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -12,6 +12,8 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
+
+import com.jt.gateway.dao.Dao;
 
 @SuppressWarnings("deprecation")
 public class SpringJdbcDaoImpl extends JdbcDaoSupport            implements Dao {

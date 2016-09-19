@@ -3,7 +3,7 @@ package com.jt.bean.gateway;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GwConfigs {
+public class GwConfigs{
 	private List<GwConfig> configs;
 	
 	public GwConfigs(){
@@ -12,7 +12,9 @@ public class GwConfigs {
 	public void addConfig(GwConfig config){
 		configs.add(config);
 	}
-	
+	public boolean removeConfig(GwConfig config){
+		return configs.remove(config);
+	}
 	public GwConfig getConfigByName(String name){
 		GwConfig curConfig=null;
 		for(GwConfig temp:configs){
@@ -31,4 +33,5 @@ public class GwConfigs {
 	public void setConfigs(List<GwConfig> configs) {
 		this.configs = configs;
 	}
+	
 }

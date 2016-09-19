@@ -1,16 +1,20 @@
 package com.jt.gateway.service.management;
 
+import java.io.IOException;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.jdom.JDOMException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.jt.gateway.dao.JdbcDao;
-import com.jt.gateway.dao.JdbcDaoImpl;
+import com.jt.bean.gateway.PageMsg;
 import com.jt.gateway.service.job.JobInfService;
+import com.jt.gateway.service.management.util.JobParamUtil;
+import com.jt.gateway.service.operation.GwConfigService;
 
 /**
  * 
@@ -32,12 +36,22 @@ public class JobManager {
 	
 	
 	@RequestMapping(value="addTask.do")
-	public String addTask(ModelMap model,HttpServletRequest request, HttpServletResponse response){
-		
-		
-		//测试数据库是否可以正常连接
-//		JdbcDao jdbcDao=new JdbcDaoImpl(sconnStr, user, passwd)
-		String msg="";
-		return msg;
+	public String addJob(ModelMap model,HttpServletRequest request, HttpServletResponse response){
+		PageMsg msg=new PageMsg();
+		JobParamUtil paramUtil=new JobParamUtil(request);
+		//参数是否合法
+		if(paramUtil.isParamLegal().isSig()){
+			try {
+				GwConfigService configService=new GwConfigService();
+				configService.addConfig(paramUtil.getGwConfig());
+				//将任务写入到数据库
+			} catch (Exception e) {
+				e.printStackTrace();
+				msg.setMsg("错误信息为:["+e.getMessage()+"]");
+				msg.setSig(false);
+			} 
+		}
+		model.addAttribute(msg);
+		return "addTask";
 	}
 }

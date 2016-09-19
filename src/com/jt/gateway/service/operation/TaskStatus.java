@@ -2,15 +2,15 @@ package com.jt.gateway.service.operation;
 
 import java.io.IOException;
 
-import com.jt.gateway.dao.GwPropertyDao;
+import com.jt.gateway.dao.impl.GwPropertyDaoImpl;
 
 public class TaskStatus {
-	private GwPropertyDao proDao;
+	private GwPropertyDaoImpl proDao;
 	private long lastId;
 	private String lastStatus;
 	
 	public TaskStatus(String taskName) throws IOException {
-		proDao = new GwPropertyDao(taskName);
+		proDao = new GwPropertyDaoImpl(taskName);
 	}
 
 	public void saveTask() throws IOException {

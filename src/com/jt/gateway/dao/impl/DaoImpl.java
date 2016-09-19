@@ -1,4 +1,4 @@
-package com.jt.gateway.dao;
+package com.jt.gateway.dao.impl;
 
 import java.io.Serializable;
 import java.sql.SQLException;
@@ -16,6 +16,7 @@ import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 import com.jt.base.page.Param;
+import com.jt.gateway.dao.IDao;
 
 
 

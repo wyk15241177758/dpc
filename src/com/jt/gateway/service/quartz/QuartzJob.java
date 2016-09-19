@@ -9,7 +9,7 @@
  * @date 2014-6-26 下午03:37:11
  * @version V2.0
  */
-package com.jt.gateway.service.job;
+package com.jt.gateway.service.quartz;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

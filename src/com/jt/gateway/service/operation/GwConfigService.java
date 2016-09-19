@@ -156,7 +156,9 @@ public class GwConfigService {
 		try {
 			doc = builder.build(file);
 		} catch (JDOMException e1) {
+			e1.printStackTrace();
 			return null;
+			
 		}
 		Element root = doc.getRootElement();
 		List tasks = root.getChildren();
@@ -176,10 +178,13 @@ public class GwConfigService {
 					DataField field=new DataField();
 					field.setName(((Element)e).getChildText("FIELDNAME"));
 					field.setType(((Element)e).getChildText("FIELDTYPE"));
-					config.getList().add(field);
-					if(field.isKey()){
+					if("TRUE".equalsIgnoreCase(((Element)e).getChildText("ISKEY"))){
+						field.setKey(true);
 						config.setIdName(((Element)e).getChildText("FIELDNAME"));
+					}else{
+						field.setKey(false);
 					}
+					config.getList().add(field);
 				}
 				break;
 			}

@@ -24,17 +24,16 @@ import com.jt.gateway.service.operation.GwConfigService;
  */
 @Controller
 public class JobManager {
-	private   JobInfService  service;
-	public JobInfService getService() {
-		return service;
+	private   JobInfService  jobService;
+	
+	public JobInfService getJobService() {
+		return jobService;
 	}
+	
 	@Resource(name="jobInfImpl") 
-	public void setService(JobInfService service) {
-		this.service = service;
+	public void setJobService(JobInfService jobService) {
+		this.jobService = jobService;
 	}
-	
-	
-	
 	@RequestMapping(value="addTask.do")
 	public String addJob(ModelMap model,HttpServletRequest request, HttpServletResponse response){
 		PageMsg msg=new PageMsg();
@@ -45,6 +44,7 @@ public class JobManager {
 				GwConfigService configService=new GwConfigService();
 				configService.addConfig(paramUtil.getGwConfig());
 				//将任务写入到数据库
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 				msg.setMsg("错误信息为:["+e.getMessage()+"]");

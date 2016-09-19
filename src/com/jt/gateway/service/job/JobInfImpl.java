@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.jt.base.page.Param;
 import com.jt.bean.gateway.JobInf;
 import com.jt.gateway.service.operation.BasicServicveImpl;
+import com.jt.gateway.service.quartz.QuartzManager;
 
 
 public class JobInfImpl extends BasicServicveImpl  implements  JobInfService{

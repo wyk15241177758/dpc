@@ -9,9 +9,12 @@
  * @date 2014-6-26 下午03:35:05
  * @version V2.0
  */
-package com.jt.gateway.service.job;
+package com.jt.gateway.service.quartz;
 
+import java.util.HashMap;
+import java.util.Map;
 
+import com.jt.gateway.service.operation.IndexTask;
 
 /**
  * @Description: 测试类
@@ -27,8 +30,10 @@ public class QuartzTest {
 	public static void main(String[] args) {
 		try {
 			String job_name = "动态任务调度";
-			System.out.println("【系统启动】开始(每1秒输出一次)...");  
-			QuartzManager.addJob(job_name, QuartzJob.class, "0/1 * * * * ?");  
+			System.out.println("【系统启动】开始(每5秒输出一次)...");  
+			Map<String,String> map=new HashMap<String,String>();
+			map.put("taskName", "智能问答数据抽取");
+			QuartzManager.addJob(job_name, IndexTask.class, "0/5 * * * * ?",map);  
 			
 //			Thread.sleep(5000);  
 //			System.out.println("【修改时间】开始(每2秒输出一次)...");  

@@ -9,6 +9,9 @@ import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.jdom.JDOMException;
+import org.quartz.Job;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
 
 import com.jt.bean.gateway.DataField;
 import com.jt.bean.gateway.GwConfig;
@@ -20,9 +23,9 @@ import com.jt.lucene.IndexDao;
  * @author zhengxiaobin
  *
  */
-public class IndexTask {
+public class IndexTask implements Job{
 	
-	private static Logger logger = Logger.getLogger(IndexTask.class);
+	private Logger logger ;
 
 	private GwConfigService configService;
 	private GwConfig config;
@@ -33,6 +36,7 @@ public class IndexTask {
 	
 
 	public IndexTask(String taskName) throws IOException, JDOMException{
+		logger= Logger.getLogger(IndexTask.class);
 		configService=new GwConfigService();
 		config=configService.getConfig(taskName);
 		JdbcDao = new JdbcDaoImpl(config.getSqlDB(),config.getSqlIP(),config.getSqlPort(),config.getSqlUser(),config.getSqlPw());
@@ -40,6 +44,17 @@ public class IndexTask {
 		indexDao=new IndexDao(newIndexPath);
 	}
 	
+	public IndexTask(){
+		logger= Logger.getLogger(IndexTask.class);
+	}
+	
+	public void init4Quartz(String taskName) throws JDOMException, IOException{
+		configService=new GwConfigService();
+		config=configService.getConfig(taskName);
+		JdbcDao = new JdbcDaoImpl(config.getSqlDB(),config.getSqlIP(),config.getSqlPort(),config.getSqlUser(),config.getSqlPw());
+		newIndexPath=config.getIndexPath()+"_new";
+		indexDao=new IndexDao(newIndexPath);
+	}
 	//执行任务，不允许两个线程同时调用此方法
 	public synchronized void createIndex() throws Exception {
 		IndexStatus status=IndexStatus.getStatus();
@@ -64,12 +79,13 @@ public class IndexTask {
 		}
 		//获得数据总数，并按照batchSize分批写入索引
 		rsMap=JdbcDao.executeQueryForMap(sql);
-		maxId=(long)rsMap.get("maxid");
+		System.out.println(sql);
+		maxId=Long.parseLong(rsMap.get("maxid")+"");
 		
 		//获得最小值
 		sql="select min("+config.getIdName()+") as minid from "+config.getSqlTable();
 		rsMap=JdbcDao.executeQueryForMap(sql);
-		minId=(long)rsMap.get("minid");
+		minId=Long.parseLong(rsMap.get("minid")+"");
 		logger.debug("minId=["+minId+"]");
 		logger.info("ID区间为["+minId+"-"+maxId+"]");
 		//第一次推送的结尾ID
@@ -138,10 +154,27 @@ public class IndexTask {
 		}
 		
 	}
+	@Override
+	public void execute(JobExecutionContext context) throws JobExecutionException {
+		try {
+			init4Quartz(context.getJobDetail().getJobDataMap().getString("taskName"));
+			logger.info("开始执行任务["+config.getTaskName()+"]");
+			System.out.println("config==null is "+(config==null)+" logger = null is "+(logger==null));
+			createIndex();
+		} catch (Exception e) {
+			logger.error("任务["+config.getTaskName()+"]执行失败");
+			logger.error(e);
+			e.printStackTrace();
+		}
+		logger.info("结束执行任务["+config.getTaskName()+"]");
+		
+	}
+	
+	
 	public static void main(String[] args) {
 			try {
 				IndexTask gate=new IndexTask("智能问答数据抽取");
-				gate.createIndex();
+				gate.execute(null);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -151,10 +184,10 @@ public class IndexTask {
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				System.out.println("catch");
 			}
 	
-		
-		
+			
 		
 //			try {
 //				IndexTask gate=new IndexTask();
@@ -171,4 +204,6 @@ public class IndexTask {
 //			}
 		
 	}
+
+	
 }

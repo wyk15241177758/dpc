@@ -12,11 +12,14 @@ public interface JobInfService {
 	
 	public void updateTask(JobInf jobInf) ;
 
-	public void startAllJob();
-	public void stopAllJob() ;
+//	public void startAllJob();
+//	public void stopAllJob() ;
 	public void stopJob(Long id);
 	public int repeatName(String name) ;
 	public int repeatTrigger(String trigger);
 	public void startSimJob(Long id);
+	public JobInf getJobByName(String name);
+	public JobInf getJobById(long jobId);
+	public List<JobInf> getJobsByIds(String ids);
 
 }

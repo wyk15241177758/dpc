@@ -25,7 +25,10 @@ public class JobParamUtil {
 		this.gwConfig = gwConfig;
 		this.jobInternal = jobInternal;
 	}
-	public JobParamUtil(HttpServletRequest request) {
+	public JobParamUtil() {
+	}
+	
+	private void initAddParam(HttpServletRequest request){
 		gwConfig=new GwConfig();
 		gwConfig.setIndexPath(CMyString.getStrNotNullor0(request.getParameter("indexpath"), null));
 		gwConfig.setSqlDB(CMyString.getStrNotNullor0(request.getParameter("sqldb"), null));
@@ -63,8 +66,11 @@ public class JobParamUtil {
 	 * 
 	 * @return
 	 */
-	public PageMsg isParamLegal(){
+	public PageMsg isAddParamLegal(HttpServletRequest request){
 		PageMsg msg=new PageMsg(true, "参数配置校验通过");
+		//初始化参数
+		initAddParam(request);
+		
 		//判断gwconfig的任意字段和jobInternal是否null，为null则非法
 		if(gwConfig.getIdName()==null||gwConfig.getIndexPath()==null||gwConfig.getList()==null||
 				gwConfig.getSqlDB()==null||gwConfig.getSqlIP()==null||gwConfig.getSqlPort()==null||
@@ -97,7 +103,6 @@ public class JobParamUtil {
 			}
 			sql+=")";
 				try {
-					System.out.println(sql);
 					int num=dao.executeQueryForCount(sql);
 					if(num!=gwConfig.getList().size()){
 						msg=new PageMsg(false,"数据库表名错误或某个字段不存在");
@@ -182,7 +187,6 @@ public class JobParamUtil {
 		gwConfig.setList(list);
 		String jobInternal=getCronExpression("1","");
 		JobParamUtil util=new JobParamUtil(gwConfig, jobInternal);
-		System.out.println(util.isParamLegal());;
 	}
 	
 }

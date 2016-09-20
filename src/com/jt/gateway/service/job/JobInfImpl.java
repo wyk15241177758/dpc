@@ -28,6 +28,36 @@ public class JobInfImpl extends BasicServicveImpl  implements  JobInfService{
 		return list;
 	}
 	
+	/**
+	 * 获得某些任务
+	 */
+	public List<JobInf> getJobsByIds(String ids){
+		List<JobInf> list=new ArrayList<JobInf>();
+		list=this.dao.query("from com.jt.bean.gateway.JobInf where jobName in ("+ids+")");
+		return list;
+	}
+	
+	/**
+	 * 获得某个任务
+	 */
+	public JobInf getJobByName(String name){
+		List<JobInf> list=new ArrayList<JobInf>();
+		list=this.dao.query("from com.jt.bean.gateway.JobInf where jobName="+name);
+		if(list.size()!=0){
+			return list.get(0);
+		}else{
+			return null;
+		}
+	}
+	
+	/**
+	 * 获得某个任务
+	 */
+	public JobInf getJobById(long jobId){
+		JobInf inf=null;
+		inf=(JobInf)(this.dao.queryById(JobInf.class, jobId));
+		return inf;
+	}
 	
 	/**
 	 * 添加任务
@@ -39,8 +69,8 @@ public class JobInfImpl extends BasicServicveImpl  implements  JobInfService{
 		jobInf.setCreateTime(time);
 		jobInf.setUpdateTime(time);
 		jobInf.setJobStatus(1);
-		long jobId=Long.parseLong(this.dao.save(jobInf).toString());
-		startSimJob(jobId);;
+		//long jobId=Long.parseLong(this.dao.save(jobInf).toString());
+		//startSimJob(jobId);;
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -82,28 +112,28 @@ public class JobInfImpl extends BasicServicveImpl  implements  JobInfService{
 		this.dao.update(hql, paramList);
 		}
 
-	public void startAllJob() {
-		String hql = "from com.jt.bean.gateway.JobInf where jobStatus = 1";
-		@SuppressWarnings("unchecked")
-		List<JobInf> list = this.dao.query(hql);
-		for (int i = 0; i < list.size(); i++) {
-			QuartzManager.addJob(list.get(i));
-		}
-		QuartzManager.startJobs();
-	}
+//	public void startAllJob() {
+//		String hql = "from com.jt.bean.gateway.JobInf where jobStatus = 1";
+//		@SuppressWarnings("unchecked")
+//		List<JobInf> list = this.dao.query(hql);
+//		for (int i = 0; i < list.size(); i++) {
+//			QuartzManager.addJob(list.get(i));
+//		}
+//		QuartzManager.startJobs();
+//	}
 	/**
 	 * 停止所有任务
 	 */
-	public void stopAllJob() {
-		String hql = "from com.jt.bean.gateway.JobInf where jobStatus = 2";
-		@SuppressWarnings("unchecked")
-		List<JobInf> list = this.dao.query(hql);
-		for (int i = 0; i < list.size(); i++) {
-			JobInf inf=list.get(i);
-			QuartzManager.removeJob(inf.getJobName(), inf.getJobGroup(), inf.getTriggerName(), inf.getTriggerGroupName());
-		}
-		QuartzManager.shutdownJobs();
-	}
+//	public void stopAllJob() {
+//		String hql = "from com.jt.bean.gateway.JobInf where jobStatus = 2";
+//		@SuppressWarnings("unchecked")
+//		List<JobInf> list = this.dao.query(hql);
+//		for (int i = 0; i < list.size(); i++) {
+//			JobInf inf=list.get(i);
+//			QuartzManager.removeJob(inf.getJobName(), inf.getJobGroup(), inf.getTriggerName(), inf.getTriggerGroupName());
+//		}
+//		QuartzManager.shutdownJobs();
+//	}
 	/**
 	 * 停止单个任务
 	 */
@@ -122,6 +152,13 @@ public class JobInfImpl extends BasicServicveImpl  implements  JobInfService{
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+		//修改状态
+		String hql2 = "update com.jt.bean.gateway.JobInf set jobStatus = ? where jobId = ?";
+		paramList=new  ArrayList<Param>();
+		paramList.add(new Param(Types.INTEGER,1));
+		paramList.add(new Param(Types.BIGINT,id));
+		this.dao.update(hql2, paramList);
+		
 	}
 	/**
 	 * 查询名字重复
@@ -146,14 +183,23 @@ public class JobInfImpl extends BasicServicveImpl  implements  JobInfService{
 		return list.size();
 	}
 	
-	此处有问题，需要开始时将状态置为1，结束后将状态置为2
+	//后续优化：此处有问题，需要开始时将状态置为1，结束后将状态置为2
+	//目前仅在页面层控制：点击启动将状态置为2。点击停止状态置为1
 	public void startSimJob(Long id) {
 		JobInf inf=(JobInf) this.dao.queryById(JobInf.class, id);
-		if(inf.getJobStatus()!=1)
+		if(inf.getJobStatus()!=1){
+			logger.info("任务正在运行或已删除");
 			return;
+		}
 		QuartzManager.removeJob(inf.getJobName(), inf.getJobGroup(), inf.getTriggerName(), inf.getTriggerGroupName());
 		QuartzManager.addJob(inf);
 		QuartzManager.startJobs();
+		
+		String hql2 = "update com.jt.bean.gateway.JobInf set jobStatus = ? where jobId = ?";
+		List<Param>  paramList=new  ArrayList<Param>();
+		paramList.add(new Param(Types.INTEGER,2));
+		paramList.add(new Param(Types.BIGINT,id));
+		this.dao.update(hql2, paramList);
 	}
 	
 	

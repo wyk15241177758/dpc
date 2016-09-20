@@ -31,7 +31,7 @@ public interface IDao {
 	 * @param obj 对象
 	 * @return
 	 */
-	public void save( Object obj );
+	public Serializable save( Object obj );
 	/**
 	 * 保存一条数据
 	 * @param obj 对象

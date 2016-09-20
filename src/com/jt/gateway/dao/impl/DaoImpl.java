@@ -120,8 +120,8 @@ public class DaoImpl extends HibernateDaoSupport implements IDao {
 		return this.getHibernateTemplate().load( cla, id);
 	}
 
-	public void save(Object obj) {
-		super.getHibernateTemplate().save( obj );
+	public Serializable save(Object obj) {
+		return super.getHibernateTemplate().save( obj );
 	}
 
 	public void update(Object obj) {

@@ -1,6 +1,9 @@
 package com.jt.gateway.util;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class FileUtil {
 	/**
@@ -23,5 +26,35 @@ public class FileUtil {
         }
         // 目录此时为空，可以删除
         return dir.delete();
+    }
+    //判断文件是否为空
+    public static boolean isContentNull(File file){
+    	boolean isNull=true;
+    	if(file.exists()&&file.isFile()){
+    		FileInputStream fis=null;
+    		try {
+				fis=new FileInputStream(file);
+				if(fis.read()==-1){
+					return true;
+				}else{
+					return false;
+				}
+				
+			} catch (FileNotFoundException e) {
+				return true;
+			}catch(IOException e){
+				return true;
+			}finally{
+				try {
+					if(fis!=null){
+						fis.close();
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+    		
+    	}
+    	return isNull;
     }
 }

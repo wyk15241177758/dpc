@@ -27,7 +27,6 @@ public class JobParamUtil {
 	}
 	public JobParamUtil(HttpServletRequest request) {
 		gwConfig=new GwConfig();
-		gwConfig.setIdName(CMyString.getStrNotNullor0(request.getParameter("idname"), null));
 		gwConfig.setIndexPath(CMyString.getStrNotNullor0(request.getParameter("indexpath"), null));
 		gwConfig.setSqlDB(CMyString.getStrNotNullor0(request.getParameter("sqldb"), null));
 		gwConfig.setSqlIP(CMyString.getStrNotNullor0(request.getParameter("sqlip"), null));
@@ -42,6 +41,11 @@ public class JobParamUtil {
 		try {
 			fieldList=gson.fromJson(request.getParameter("datafields"), type);
 			gwConfig.setList(fieldList);
+			for(DataField df:fieldList){
+				if(df.isKey()){
+					gwConfig.setIdName(df.getName());
+				}
+			}
 		} catch (JsonSyntaxException e) {
 			e.printStackTrace();
 			//出错则赋值为null，便于之后校验参数为空
@@ -125,6 +129,7 @@ public class JobParamUtil {
 		
 		
 		//时间格式: <!-- s m h d m w(?) y(?) -->,   分别对应: 秒>分>小时>日>月>周>年
+		//0/5 0/5 * * ?每隔5小时，5分钟运行一次
 		if(internalHour==0 && internalMin==0){
 			jobInternal=null;
 		}else{
@@ -137,7 +142,7 @@ public class JobParamUtil {
 					jobInternal+=" 0/"+internalHour+" * * ?";
 				}else{
 					if(internalHour==0){
-						jobInternal+="/"+internalMin+" 0 * * ?";
+						jobInternal+="/"+internalMin+" * * * ?";
 					}else{
 						jobInternal+="/"+internalMin+" 0/"+internalHour+" * * ?";
 					}

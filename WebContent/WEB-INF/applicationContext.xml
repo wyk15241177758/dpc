@@ -72,7 +72,7 @@
 				<prop key="hibernate.cache.use_query_cache">true</prop>
 				<prop key="hibernate.cache.use_second_level_cache">true</prop>
 				<prop key="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</prop>
-				<prop key="hibernate.hbm2ddl.auto">true</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
 			</props>
 		</property>
 	</bean>	
@@ -107,16 +107,16 @@
 <!--     <tx:annotation-driven transaction-manager="transactionManager"  />  -->
 	
 	
-	<bean  id="jdbcDao" class="com.jt.gateway.dao.JdbcDaoImpl">
-		<property name="sdbdriver"  value="${c3p0.driverClass}"></property>
-		<property name="sconnStr"  value="${c3p0.jdbcUrl}"></property>
-		<property name="user"  value="${c3p0.username}"></property>
-		<property name="passwd"  value="${c3p0.passwd}"></property>
-	</bean>
+<!-- 	<bean  id="jdbcDao" class="com.jt.gateway.dao.impl.JdbcDaoImpl"> -->
+<!-- 		<property name="sdbdriver"  value="${c3p0.driverClass}"></property> -->
+<!-- 		<property name="sconnStr"  value="${c3p0.jdbcUrl}"></property> -->
+<!-- 		<property name="user"  value="${c3p0.username}"></property> -->
+<!-- 		<property name="passwd"  value="${c3p0.passwd}"></property> -->
+<!-- 	</bean> -->
 	
 	
 	
-	<bean  id="dao"  class="com.jt.gateway.dao.DaoImpl">
+	<bean  id="dao"  class="com.jt.gateway.dao.impl.DaoImpl">
 	<property name="sessionFactory"  ref="sessionFactory"></property>
 	</bean>
 	<!-- 开始 -->

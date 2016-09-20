@@ -14,15 +14,26 @@ public class JobInf implements java.io.Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 7123357245448757320L;
+	@Override
+	public String toString() {
+		return "JobInf [jobId=" + jobId + ", jobName=" + jobName + ", jobGroup=" + jobGroup + ", jobStatus=" + jobStatus
+				+ ", cronExpression=" + cronExpression + ", beanClass=" + beanClass + ", description=" + description
+				+ ", triggerName=" + triggerName + ", triggerGroupName=" + triggerGroupName + ", createTime="
+				+ createTime + ", updateTime=" + updateTime + "]";
+	}
+
 	private Long jobId;
 	private String jobName;
-	private String jobGroup;
+	private String jobGroup="EXTJWEB_JOBGROUP_NAME";
+	//1:未启动
+	//2:已启动
+	//-1:已删除
 	private Integer jobStatus;
 	private String cronExpression;
 	private String beanClass;
 	private String description;
-	private String triggerName;
-	private String triggerGroupName;
+	private String triggerName="TRIGGER_NAME";
+	private String triggerGroupName="TRIGGERGROUP_NAME";
 	private Timestamp createTime;
 	private Timestamp updateTime;
 	// Constructors
@@ -30,8 +41,23 @@ public class JobInf implements java.io.Serializable {
 	/** default constructor */
 	public JobInf() {
 	}
-
 	
+	
+
+	public JobInf(Long jobId, String jobName, Integer jobStatus, String cronExpression, String beanClass,
+			String description, Timestamp createTime, Timestamp updateTime) {
+		super();
+		this.jobId = jobId;
+		this.jobName = jobName;
+		this.jobStatus = jobStatus;
+		this.cronExpression = cronExpression;
+		this.beanClass = beanClass;
+		this.description = description;
+		this.createTime = createTime;
+		this.updateTime = updateTime;
+	}
+
+
 
 	// Property accessors
 

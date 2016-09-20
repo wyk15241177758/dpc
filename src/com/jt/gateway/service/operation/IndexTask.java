@@ -15,6 +15,7 @@ import org.quartz.JobExecutionException;
 
 import com.jt.bean.gateway.DataField;
 import com.jt.bean.gateway.GwConfig;
+import com.jt.bean.gateway.JobInf;
 import com.jt.gateway.dao.impl.JdbcDaoImpl;
 import com.jt.gateway.util.FileUtil;
 import com.jt.lucene.IndexDao;
@@ -79,7 +80,6 @@ public class IndexTask implements Job{
 		}
 		//获得数据总数，并按照batchSize分批写入索引
 		rsMap=JdbcDao.executeQueryForMap(sql);
-		System.out.println(sql);
 		maxId=Long.parseLong(rsMap.get("maxid")+"");
 		
 		//获得最小值
@@ -157,9 +157,9 @@ public class IndexTask implements Job{
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		try {
-			init4Quartz(context.getJobDetail().getJobDataMap().getString("taskName"));
+			JobInf job=(JobInf)(context.getJobDetail().getJobDataMap().get("param"));
+			init4Quartz(job.getJobName());
 			logger.info("开始执行任务["+config.getTaskName()+"]");
-			System.out.println("config==null is "+(config==null)+" logger = null is "+(logger==null));
 			createIndex();
 		} catch (Exception e) {
 			logger.error("任务["+config.getTaskName()+"]执行失败");

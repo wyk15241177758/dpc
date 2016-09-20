@@ -1,10 +1,12 @@
 package com.jt.gateway.service.operation;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -14,6 +16,7 @@ import org.jdom.output.XMLOutputter;
 import com.jt.bean.gateway.DataField;
 import com.jt.bean.gateway.GwConfig;
 import com.jt.bean.gateway.GwConfigs;
+import com.jt.gateway.util.FileUtil;
 /**
  * //配置信息的增删改查
  * @author zhengxiaobin
@@ -23,9 +26,10 @@ public class GwConfigService {
 	private File file ;
 	private SAXBuilder builder;
 	private Document doc;
+	private static Logger logger= Logger.getLogger(GwConfigService.class) ;
 	public GwConfigService() throws JDOMException, IOException{
 		this.file=new File("gateway.conf");
-		 builder = new SAXBuilder();
+		builder = new SAXBuilder();
 	}
 	
 	public GwConfigService(File file) throws JDOMException, IOException{
@@ -34,6 +38,7 @@ public class GwConfigService {
 			file.createNewFile();
 		}
 		 builder = new SAXBuilder();
+		 logger= Logger.getLogger(GwConfigService.class);
 	}
 	
 	public void addConfigs(GwConfigs configs) throws IOException, JDOMException{
@@ -44,12 +49,12 @@ public class GwConfigService {
 		}
 		
 		doc = new Document(root);
-		FileWriter fw = new FileWriter(file);
+		FileOutputStream  fos=new FileOutputStream(file);
+	//	FileWriter fos=new FileWriter(file);
 		XMLOutputter out = new XMLOutputter();
-		
 		out.setEncoding("UTF-8");
-		out.output(doc, fw);
-		fw.close();
+		out.output(doc, fos);
+		fos.close();
 		
 	}
 	
@@ -152,6 +157,9 @@ public class GwConfigService {
 	
 	public  GwConfig getConfig(String taskName){
 		GwConfig config=null;
+		if(FileUtil.isContentNull(file)){
+			return null;
+		}
 		//获得配置信息
 		try {
 			doc = builder.build(file);
@@ -195,10 +203,14 @@ public class GwConfigService {
 	public  GwConfigs getConfigs() {
 		GwConfigs configs=new GwConfigs();
 		GwConfig config=new GwConfig();
+		if(FileUtil.isContentNull(file)){
+			return null;
+		}
 		//获得配置信息
 		try {
 			doc = builder.build(file);
 		} catch (JDOMException e1) {
+			e1.printStackTrace();
 			return null;
 		}
 		Element root = doc.getRootElement();

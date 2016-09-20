@@ -9,12 +9,13 @@
  * @date 2014-6-26 下午03:35:05
  * @version V2.0
  */
-package com.jt.gateway.service.quartz;
+package com.jt.test.quartz;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import com.jt.gateway.service.operation.IndexTask;
+import com.jt.gateway.service.quartz.QuartzManager;
 
 /**
  * @Description: 测试类
@@ -26,7 +27,7 @@ import com.jt.gateway.service.operation.IndexTask;
  * @date 2014-6-26 下午03:35:05
  * @version V2.0
  */
-public class QuartzTest {
+public class QuartzTest2 {
 	public static void main(String[] args) {
 		try {
 			String job_name = "动态任务调度";

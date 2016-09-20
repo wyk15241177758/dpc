@@ -7,8 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.apache.log4j.Logger;
 
 import com.jt.base.page.Param;
 import com.jt.bean.gateway.JobInf;
@@ -17,6 +16,8 @@ import com.jt.gateway.service.quartz.QuartzManager;
 
 
 public class JobInfImpl extends BasicServicveImpl  implements  JobInfService{
+	private static Logger logger= Logger.getLogger(JobInfImpl.class) ;
+
 
 	/**
 	 * 获得所有 任务
@@ -38,7 +39,9 @@ public class JobInfImpl extends BasicServicveImpl  implements  JobInfService{
 		jobInf.setCreateTime(time);
 		jobInf.setUpdateTime(time);
 		jobInf.setJobStatus(1);
-		this.dao.save(jobInf);}catch(Exception e){
+		long jobId=Long.parseLong(this.dao.save(jobInf).toString());
+		startSimJob(jobId);;
+		}catch(Exception e){
 			e.printStackTrace();
 		}
 	}
@@ -142,6 +145,8 @@ public class JobInfImpl extends BasicServicveImpl  implements  JobInfService{
 		List<JobInf> list = this.dao.query(hql, paramList);
 		return list.size();
 	}
+	
+	此处有问题，需要开始时将状态置为1，结束后将状态置为2
 	public void startSimJob(Long id) {
 		JobInf inf=(JobInf) this.dao.queryById(JobInf.class, id);
 		if(inf.getJobStatus()!=1)

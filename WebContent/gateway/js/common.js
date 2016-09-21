@@ -2,25 +2,29 @@
 function paramCheck(){
 	var flag=true;
 	//非空校验
-	$("#setModal[required='true']").each(function(){
-		if($(this).val().length()==0){
-			$("warnmsg").text($(this).attr("desc")+"不能为空");
+	$("[required='true']").each(function(){
+		if($(this).val().length==0){
+			alert($(this).attr("desc")+"不能为空");
+			$(this).focus();
 			flag=false;
 			return false;
 		}
 	})
 	if(flag){
 		//数字校验
-		$("#setModal[num='true']").each(function(){
+		$("[num='true']").each(function(){
 			$(this).val(parseInt($(this).val()));
 			if($(this).val()>$(this).attr("max")){
-				$("warnmsg").text($(this).attr("desc")+"不能大于"+$(this).attr("max"));
+				$("#warnmsg").text();
+				alert($(this).attr("desc")+"不能大于"+$(this).attr("max"));
+				$(this).focus();
 				flag=false;
 				return false;
 			}
 			
 			if($(this).val()<$(this).attr("min")){
-				$("warnmsg").text($(this).attr("desc")+"不能小于"+$(this).attr("mix"));
+				alert($(this).attr("desc")+"不能小于"+$(this).attr("mix"));
+				$(this).focus();
 				flag=false;
 				return false;
 			}
@@ -32,11 +36,14 @@ function paramCheck(){
 function parseFields(){
 	var datafield={isKey:false,type:1,name:1}
 	var array=new Array();
+	
 	$("#data-syn .form-inline").each(function(){
-		var name=$(this).children("[type=text]").val();
+		
+		var name=$(this).children("[type='text']").attr("value");
 		var type=$(this).children("select").val();
-		var isKey=$(this).children("[type=checkbox]").val()=="checked"?true:false;
-		if(name.length==0){
+		var isKey=$(this).children("[type='checkbox']").val()=="checked"?true:false;
+		
+		if((name+"").length==0){
 			return;
 		}
 		datafield.name=name;
@@ -45,7 +52,7 @@ function parseFields(){
 		array.push(datafield);
 	})
 	if(array.length!=0){
-		$("fields_mysql").val(JSON.stringify(array));
+		$("#fields_mysql").attr("value",JSON.stringify(array));
 	}
 }
 
@@ -65,7 +72,7 @@ $(document).ready(function () {
     	e.preventDefault();
     	parseFields();
     	if(!paramCheck()){
-    		 $('#warnModal').modal('show');
+    		 
     	}else{
     		$('#saveModal').modal('show');
     	}

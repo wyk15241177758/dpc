@@ -192,13 +192,14 @@
 			                <div class="form-inline">
 			                    <div class="form-group">
 			                        <label class="control-label">任务名称</label>
-			                        <input type="text" class="form-control" required='true' desc='任务名称'>
+			                        <input type="text" class="form-control"
+			                         required='true' desc='任务名称' name='taskname'>
 			                    </div>
 			                </div>
 			                <div class="form-inline">
 			                    <div class="form-group">
 			                        <label class="control-label">索引存放目录</label>
-			                        <input type="text" class="form-control" required='true' desc='索引存放目录'>
+			                        <input type="text" class="form-control" required='true' desc='索引存放目录' name='indexpath'>
 			                    </div>
 			                </div>
 			                <hr>
@@ -207,14 +208,18 @@
 								<label class="control-label">每隔如下时间执行一次</label>
 							    <div class="form-group">
 							  	<div class="input-group">
-								    <input class="form-control" num='true' required='true' desc='间隔小时' max='23' min='0'>
+								    <input class="form-control" 
+								    name="internalhour"
+								    num='true' type="text" required='true' desc='间隔小时' max='23' min='0'>
 								   
 								    <div class="input-group-addon">时</div>
 							    </div>
 							  </div>
 							  <div class="form-group">
 							  	<div class="input-group">
-							    <input class="form-control" num='true' required='true' desc='间隔分钟' max='59' min='0'>
+							    <input class="form-control"
+							    name="internalmin"
+							     num='true' type="text"  required='true' desc='间隔分钟' max='59' min='0'>
 							    <div class="input-group-addon">分</div>
 							    </div>
 							  </div>
@@ -224,38 +229,58 @@
 		                    <div class="form-inline">
 			                    <div class="form-group">
 			                        <label class="control-label">数据库IP</label>
-			                        <input type="text" class="form-control" required='true' desc='数据库IP'>
+			                        <input type="text" 
+			                        name="sqlip"
+			                        class="form-control" required='true' desc='数据库IP'>
+			                    </div>
+			                </div>
+			                 <div class="form-inline">
+			                    <div class="form-group">
+			                        <label class="control-label">端口</label>
+			                        <input type="text" 
+			                        name="sqlport"
+			                        class="form-control"  num='true'  required='true' desc='数据库端口'>
 			                    </div>
 			                </div>
 			                <div class="form-inline">
 			                    <div class="form-group">
 			                        <label class="control-label">用户名</label>
-			                        <input type="text" class="form-control" required='true' desc='用户名'>
+			                        <input
+			                        name="sqluser"
+			                         type="text" class="form-control" required='true' desc='用户名'>
 			                    </div>
 			                </div>
 			                <div class="form-inline">
 			                    <div class="form-group">
 			                        <label class="control-label">密码</label>
-			                        <input type="text" class="form-control" required='true' desc='密码'>
+			                        <input 
+			                        name="sqlpw"
+			                        type="text" class="form-control" required='true' desc='密码'>
 			                    </div>
 			                </div>
 			                <div class="form-inline">
 			                    <div class="form-group">
 			                        <label class="control-label">库名</label>
-			                        <input type="text" class="form-control" required='true' desc='库名'>
+			                        <input
+			                        name="sqldb"
+			                         type="text" class="form-control" required='true' desc='库名'>
 			                    </div>
 			                </div>
 			                <div class="form-inline">
 			                    <div class="form-group">
 			                        <label class="control-label">表名</label>
-			                        <input type="text" class="form-control" required='true' desc='表名'>
+			                        <input
+			                        name="sqltable"
+			                         type="text" class="form-control" required='true' desc='表名'>
 			                    </div>
 			                </div>
 			                <hr>
 				            <p class="title-right"><strong>MySQL同步字段</strong><button class="glyphicon glyphicon-plus data-add" style=" float: right;"></button></p>
 				            <div id="data-syn">	
 			                </div>
-				            <input type="hidden" id="fields_mysql"  required='true' desc='MySQL同步字段'/>
+				            <input
+				            name="datafields"
+				             type="hidden" id="fields_mysql"  required='true' desc='MySQL同步字段'/>
 				            
 		                </div>
 		                <div class="modal-footer">

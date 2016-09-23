@@ -1,20 +1,21 @@
 package com.jt.gateway.service.management.util;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import com.google.gson.reflect.TypeToken;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 import com.jt.bean.gateway.DataField;
 import com.jt.bean.gateway.GwConfig;
 import com.jt.bean.gateway.PageMsg;
 import com.jt.gateway.dao.JdbcDao;
 import com.jt.gateway.dao.impl.JdbcDaoImpl;
 import com.jt.gateway.util.CMyString;
-
-import java.lang.reflect.Type;
 
 
 public class JobParamUtil {
@@ -43,6 +44,22 @@ public class JobParamUtil {
 		List<DataField> fieldList=null;
 		try {
 			fieldList=gson.fromJson(request.getParameter("datafields"), type);
+			HashSet<String> set=new HashSet<String>();
+			//排重
+			boolean simFlag=false;
+			for(DataField df:fieldList){
+				if(set.contains(df.getName())){
+					simFlag=true;
+					break;
+				}else{
+					set.add(df.getName());
+				}
+			}
+			if(simFlag){
+				gwConfig=null;
+				return;
+			}
+			
 			gwConfig.setList(fieldList);
 			for(DataField df:fieldList){
 				if(df.isKey()){
@@ -72,11 +89,11 @@ public class JobParamUtil {
 		initAddParam(request);
 		
 		//判断gwconfig的任意字段和jobInternal是否null，为null则非法
-		if(gwConfig.getIdName()==null||gwConfig.getIndexPath()==null||gwConfig.getList()==null||
+		if(gwConfig==null||gwConfig.getIdName()==null||gwConfig.getIndexPath()==null||gwConfig.getList()==null||
 				gwConfig.getSqlDB()==null||gwConfig.getSqlIP()==null||gwConfig.getSqlPort()==null||
 				gwConfig.getSqlPw()==null||gwConfig.getSqlTable()==null||gwConfig.getSqlUser()==null
 				||gwConfig.getTaskName()==null||jobInternal==null){
-			msg=new PageMsg(false,"数据库配置字段为空或间隔时间不合法");
+			msg=new PageMsg(false,"数据库配置字段为空或字段重复或间隔时间不合法");
 			return msg;
 		}else{
 			String sql="select 1 from dual";

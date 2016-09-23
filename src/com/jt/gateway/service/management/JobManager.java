@@ -99,7 +99,7 @@ public class JobManager {
 				return;
 			} 
 		}else{
-			msg.setMsg("新增任务["+config.getTaskName()+"]失败，错误信息为:["+paramMsg.getMsg()+"]");
+			msg.setMsg("新增任务失败，错误信息为:["+paramMsg.getMsg()+"]");
 			msg.setSig(false);
 			pw.print(gson.toJson(msg));
 			return;

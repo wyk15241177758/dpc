@@ -89,11 +89,41 @@ public class JobParamUtil {
 		initAddParam(request);
 		
 		//判断gwconfig的任意字段和jobInternal是否null，为null则非法
-		if(gwConfig==null||gwConfig.getIdName()==null||gwConfig.getIndexPath()==null||gwConfig.getList()==null||
-				gwConfig.getSqlDB()==null||gwConfig.getSqlIP()==null||gwConfig.getSqlPort()==null||
-				gwConfig.getSqlPw()==null||gwConfig.getSqlTable()==null||gwConfig.getSqlUser()==null
-				||gwConfig.getTaskName()==null||jobInternal==null){
-			msg=new PageMsg(false,"数据库配置字段为空或字段重复或间隔时间不合法");
+		if(gwConfig==null){
+			msg=new PageMsg(false,"字段重复");
+			return msg;
+		}else if(gwConfig.getIdName()==null){
+			msg=new PageMsg(false,"ID字段为空");
+			return msg;
+		}else if(gwConfig.getIndexPath()==null){
+			msg=new PageMsg(false,"索引目录为空");
+			return msg;
+		}else if(gwConfig.getList()==null){
+			msg=new PageMsg(false,"数据库字段为空");
+			return msg;
+		}else if(gwConfig.getSqlDB()==null){
+			msg=new PageMsg(false,"数据库为空");
+			return msg;
+		}else if(gwConfig.getSqlIP()==null){
+			msg=new PageMsg(false,"数据库IP为空");
+			return msg;
+		}else if(gwConfig.getSqlPort()==null){
+			msg=new PageMsg(false,"数据库端口为空");
+			return msg;
+		}else if(gwConfig.getSqlPw()==null){
+			msg=new PageMsg(false,"数据库密码为空");
+			return msg;
+		}else if(gwConfig.getSqlTable()==null){
+			msg=new PageMsg(false,"数据库表名为空");
+			return msg;
+		}else if(gwConfig.getSqlUser()==null){
+			msg=new PageMsg(false,"数据库用户为空");
+			return msg;
+		}else if(gwConfig.getTaskName()==null){
+			msg=new PageMsg(false,"任务名称为空");
+			return msg;
+		}else if(jobInternal==null){
+			msg=new PageMsg(false,"间隔时间不合法");
 			return msg;
 		}else{
 			String sql="select 1 from dual";

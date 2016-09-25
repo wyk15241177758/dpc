@@ -2,40 +2,40 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="com.jt.bean.gateway.JobInf" table="job_inf" >
-        <id name="jobId" type="java.lang.Long">
-            <column name="JOBID" />
-            <generator class="native" />
-        </id>
-        <property name="jobName" type="java.lang.String">
-            <column name="JOBNAME" length="64" not-null="true" />
-        </property>
-        <property name="jobGroup" type="java.lang.String">
-            <column name="JOBGROUP" length="64" not-null="true" />
-        </property>
-        <property name="jobStatus" type="java.lang.Integer">
-            <column name="JOBSTATUS" not-null="true" />
-        </property>
-        <property name="cronExpression" type="java.lang.String">
-            <column name="CRONEXPRESSION" length="225" not-null="true" />
-        </property>
-        <property name="beanClass" type="java.lang.String">
-            <column name="BEANCLASS" length="125" not-null="true" />
-        </property>
-        <property name="description" type="java.lang.String">
-            <column name="DESCRIPTION" length="65535" />
-        </property>
-        <property name="triggerName" type="java.lang.String">
-            <column name="TRIGGERNAME" length="64" not-null="true" />
-        </property>
-        <property name="triggerGroupName" type="java.lang.String">
-            <column name="TRIGGERGROUPNAME" length="64" not-null="true" />
-        </property>
-        <property name="createTime" type="java.sql.Timestamp">
-            <column name="CREATETIME" length="19" not-null="true" />
-        </property>
-        <property name="updateTime" type="java.sql.Timestamp">
-            <column name="UPDATETIME" length="19" not-null="true" />
-        </property>
-    </class>
+	<class name="com.jt.bean.gateway.JobInf" table="job_inf">
+		<id name="jobId" type="java.lang.Long">
+			<column name="JOBID" />
+			<generator class="native" />
+		</id>
+		<property name="jobName" type="java.lang.String">
+			<column name="JOBNAME" length="64" not-null="true" />
+		</property>
+		<property name="jobGroup" type="java.lang.String">
+			<column name="JOBGROUP" length="64" not-null="true" />
+		</property>
+		<property name="jobStatus" type="java.lang.Integer">
+			<column name="JOBSTATUS" not-null="true" />
+		</property>
+		<property name="cronExpression" type="java.lang.String">
+			<column name="CRONEXPRESSION" length="225" not-null="true" />
+		</property>
+		<property name="beanClass" type="java.lang.String">
+			<column name="BEANCLASS" length="125" not-null="true" />
+		</property>
+		<property name="description" type="java.lang.String">
+			<column name="DESCRIPTION" length="65535" />
+		</property>
+		<property name="triggerName" type="java.lang.String">
+			<column name="TRIGGERNAME" length="64" not-null="true" />
+		</property>
+		<property name="triggerGroupName" type="java.lang.String">
+			<column name="TRIGGERGROUPNAME" length="64" not-null="true" />
+		</property>
+		<property name="createTime" type="java.sql.Timestamp" >
+			<column name="create_time" length="19" not-null="false" />
+		</property>
+		<property name="updateTime" type="java.sql.Timestamp">
+			<column name="update_Time" length="19" not-null="false" />
+		</property>
+	</class>
 </hibernate-mapping>

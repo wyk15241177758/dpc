@@ -48,9 +48,7 @@ function parseFields(){
 		if((name+"").length==0){
 			return;
 		}
-		datafield.name=name;
-		datafield.type=type;
-		datafield.isKey=isKey;
+		var datafield={isKey:isKey,type:type,name:name}
 		array.push(datafield);
 	})
 	//console.log(array);
@@ -60,6 +58,25 @@ function parseFields(){
 }
 
 $(document).ready(function () {
+	//获得任务列表
+	var list_template="<tr><td>{name}</td><td class='center'><span class='label {status_class}'>{status}</span></td><td class='center font-right'><a class='btn btn-success btn-sm' href='#' jobname='{name}' jobid='{jobid}'><i class='glyphicon glyphicon-zoom-in icon-white'></i>查看日志</a><a jobname='{name}' jobid='{jobid}' class='btn btn-info btn-sm btn-setting' href='#'><i class='glyphicon glyphicon-edit icon-white'></i>编辑</a><a jobname='{name}' jobid='{jobid}' class='btn btn-danger btn-sm btn-warn' href='#'><i class='glyphicon glyphicon-trash icon-white'></i>删除</a></td></tr>";
+    $.getJSON("/QASystem/admin/listJobs.do",null,function(data){
+    	for(job in data){
+    		var cur_td="";
+    		cur_td=list_template.replace(/\{name\}/g,data[job].jobName);
+    		cur_td=cur_td.replace(/\{jobid\}/g,data[job].jobId);
+    		if(data[job].jobStatus==1){
+    			cur_td=cur_td.replace(/\{status\}/g,"未启动");
+    			cur_td=cur_td.replace(/\{status_class\}/g,"label-warning");
+    		}else{
+    			cur_td=cur_td.replace(/\{status\}/g,"已启动");
+    			cur_td=cur_td.replace(/\{status_class\}/g,"label-success");
+    		}
+    		$("#tbody_joblist").append(cur_td);
+    	}
+    })
+	
+	
     //设置浮层弹出
     $('.btn-setting').click(function (e) {
         e.preventDefault();
@@ -86,9 +103,23 @@ $(document).ready(function () {
             	}
             })
 //            console.log(param)
-//            $.getJSON("/QASystem/admin/addJob.do",param,function(data){
-//            	console.log(data);
-//            })
+            $.getJSON("/QASystem/admin/addJob.do",param,function(data){
+            	$('#saveModal').modal('hide');
+            	//console.log(data)
+            	//console.log(data.sig==false)
+            	if(data.sig==false){
+            		$('#warnmsg').html(data.msg);
+            		$('#warnModal').modal('show');
+            	}else{
+            		$('#warnmsg').html(data.msg);
+            		$('#warnModal').modal('show');
+            		window.setTimeout(function(){
+            			$('#warnModal').modal('hide');
+            			$('#setModal').modal('hide');
+            		}, 2000)
+            		
+            	}
+            })
     	}
     });
     $('#saveModal').on('show.bs.modal', function () {

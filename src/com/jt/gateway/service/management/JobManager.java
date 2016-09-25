@@ -3,6 +3,7 @@ package com.jt.gateway.service.management;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -64,6 +65,7 @@ public class JobManager {
 	
 	@RequestMapping(value="addJob.do")
 	public void  addJob(HttpServletRequest request, HttpServletResponse response){
+		response.setCharacterEncoding("utf-8");
 		PrintWriter pw=null;
 		try {
 			pw=response.getWriter();
@@ -85,7 +87,10 @@ public class JobManager {
 				}
 				configService.addConfig(config);
 				//将任务写入到数据库
-				JobInf job=new JobInf(null, config.getTaskName(), 1, paramUtil.getJobInternal(), IndexTask.class.getName(), "test", new Timestamp(System.currentTimeMillis()), new Timestamp(System.currentTimeMillis()));
+				JobInf job=new JobInf(null, config.getTaskName(), 1,
+						paramUtil.getJobInternal(), IndexTask.class.getName(), 
+						"test", Timestamp.valueOf("2016-09-25 16:29:00"),
+						 Timestamp.valueOf("2016-09-25 16:29:12"));
 				jobService.addTask(job);
 				msg.setMsg("新增任务["+config.getTaskName()+"]成功");
 				msg.setSig(true);
@@ -107,9 +112,31 @@ public class JobManager {
 		
 	}
 	
+	@RequestMapping(value="addTest.do")
+	public void  addTest(HttpServletRequest request, HttpServletResponse response){
+		response.setCharacterEncoding("utf-8");
+		PrintWriter pw=null;
+		try {
+			pw=response.getWriter();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		JobInf job=new JobInf(null, "test", 1,
+				"0/5 * * * * ?", IndexTask.class.getName(), 
+				"test", new Date(),
+				new Date());
+		jobService.addTask(job);
+		//Time
+	
+		
+	}
+	
+	
+	
 	//删除任务
 	@RequestMapping(value="delJob.do")
 	public void delJob(HttpServletRequest request, HttpServletResponse response){
+		response.setCharacterEncoding("utf-8");
 		PrintWriter pw=null;
 		try {
 			pw=response.getWriter();
@@ -145,6 +172,7 @@ public class JobManager {
 	//修改任务
 	@RequestMapping(value="updateJob.do")
 	public void updateJob(HttpServletRequest request, HttpServletResponse response){
+		response.setCharacterEncoding("utf-8");
 		PrintWriter pw=null;
 		try {
 			pw=response.getWriter();
@@ -193,6 +221,7 @@ public class JobManager {
 	//查询所有
 	@RequestMapping(value="listJobs.do")
 	public void listJobs(HttpServletRequest request, HttpServletResponse response){
+		response.setCharacterEncoding("utf-8");
 		PrintWriter pw=null;
 		try {
 			pw=response.getWriter();
@@ -205,6 +234,7 @@ public class JobManager {
 	//启动
 	@RequestMapping(value="startJobs.do")
 	public void startJobs(HttpServletRequest request, HttpServletResponse response){
+		response.setCharacterEncoding("utf-8");
 		PrintWriter pw=null;
 		String jobIds=CMyString.getStrNotNullor0(request.getParameter("jobids"), null);
 		if(jobIds==null){
@@ -228,6 +258,7 @@ public class JobManager {
 	//启动
 	@RequestMapping(value="startJob.do")
 	public void startJob(HttpServletRequest request, HttpServletResponse response){
+		response.setCharacterEncoding("utf-8");
 		PrintWriter pw=null;
 		long jobId=0l;
 		try {
@@ -257,6 +288,7 @@ public class JobManager {
 	//停止
 	@RequestMapping(value="stopJobs.do")
 	public void stopJobs(HttpServletRequest request, HttpServletResponse response){
+		response.setCharacterEncoding("utf-8");
 		PrintWriter pw=null;
 		String jobIds=CMyString.getStrNotNullor0(request.getParameter("jobids"), null);
 		if(jobIds==null){
@@ -280,6 +312,7 @@ public class JobManager {
 	//停止
 	@RequestMapping(value="stopJob.do")
 	public void stopJob(HttpServletRequest request, HttpServletResponse response){
+		response.setCharacterEncoding("utf-8");
 		PrintWriter pw=null;
 		long jobId=0l;
 		try {

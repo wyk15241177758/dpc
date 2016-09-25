@@ -8,4 +8,11 @@ public class CMyString {
 			return str;
 		}
 	}
+	public static String getNullTag(String str,String tag){
+		if(str==null||str.length()==0){
+			return tag;
+		}else{
+			return null;
+		}
+	}
 }

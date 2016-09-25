@@ -1,6 +1,7 @@
 package com.jt.bean.gateway;
 
 import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  * JobInf entity. @author MyEclipse Persistence Tools
@@ -34,8 +35,8 @@ public class JobInf implements java.io.Serializable {
 	private String description;
 	private String triggerName="TRIGGER_NAME";
 	private String triggerGroupName="TRIGGERGROUP_NAME";
-	private Timestamp createTime;
-	private Timestamp updateTime;
+	private Date createTime;
+	private Date updateTime;
 	// Constructors
 
 	/** default constructor */
@@ -45,7 +46,7 @@ public class JobInf implements java.io.Serializable {
 	
 
 	public JobInf(Long jobId, String jobName, Integer jobStatus, String cronExpression, String beanClass,
-			String description, Timestamp createTime, Timestamp updateTime) {
+			String description, Date createTime, Date updateTime) {
 		super();
 		this.jobId = jobId;
 		this.jobName = jobName;
@@ -62,8 +63,8 @@ public class JobInf implements java.io.Serializable {
 	// Property accessors
 
 	public JobInf(Long jobId, String jobName, String jobGroup, Integer jobStatus, String cronExpression,
-			String beanClass, String description, String triggerName, String triggerGroupName, Timestamp createTime,
-			Timestamp updateTime) {
+			String beanClass, String description, String triggerName, String triggerGroupName, Date createTime,
+			Date updateTime) {
 		super();
 		this.jobId = jobId;
 		this.jobName = jobName;
@@ -153,19 +154,19 @@ public class JobInf implements java.io.Serializable {
 	}
 
 
-	public Timestamp getCreateTime() {
+	public Date getCreateTime() {
 		return this.createTime;
 	}
 
-	public void setCreateTime(Timestamp createTime) {
+	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
 	}
 
-	public Timestamp getUpdateTime() {
+	public Date getUpdateTime() {
 		return this.updateTime;
 	}
 
-	public void setUpdateTime(Timestamp updateTime) {
+	public void setUpdateTime(Date updateTime) {
 		this.updateTime = updateTime;
 	}
 

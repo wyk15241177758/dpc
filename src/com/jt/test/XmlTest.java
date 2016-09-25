@@ -14,10 +14,10 @@ public class XmlTest {
 			Element foo = doc.getRootElement();
 			List allChildren = foo.getChildren();
 			for (int i = 0; i < allChildren.size(); i++) {
-				System.out.print("ÈÎÎñÃû³Æ£º" + ((Element) allChildren.get(i)).getChild("TASKNAME").getText());
-				System.out.print("path£º" + ((Element) allChildren.get(i)).getChild("INDEXPATH").getText());
-				System.out.print("dbname£º" + ((Element) allChildren.get(i)).getChild("DBNAME").getText());
-				System.out.print("idname£º" + ((Element) allChildren.get(i)).getChild("IDNAME").getText());
+				System.out.print("ä»»åŠ¡åç§°ï¼š" + ((Element) allChildren.get(i)).getChild("TASKNAME").getText());
+				System.out.print("pathï¼š" + ((Element) allChildren.get(i)).getChild("INDEXPATH").getText());
+				System.out.print("dbnameï¼š" + ((Element) allChildren.get(i)).getChild("DBNAME").getText());
+				System.out.print("idnameï¼š" + ((Element) allChildren.get(i)).getChild("IDNAME").getText());
 				Element fields=((Element) allChildren.get(i)).getChild("FIELDS");
 				System.out.println("------fields begin");
 				for(Object e:fields.getChildren()){

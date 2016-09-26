@@ -61,6 +61,10 @@ $(document).ready(function () {
 	//获得任务列表
 	var list_template="<tr><td>{name}</td><td class='center'><span class='label {status_class}'>{status}</span></td><td class='center font-right'><a class='btn btn-success btn-sm' href='#' jobname='{name}' jobid='{jobid}'><i class='glyphicon glyphicon-zoom-in icon-white'></i>查看日志</a><a jobname='{name}' jobid='{jobid}' class='btn btn-info btn-sm btn-setting' href='#'><i class='glyphicon glyphicon-edit icon-white'></i>编辑</a><a jobname='{name}' jobid='{jobid}' class='btn btn-danger btn-sm btn-warn' href='#'><i class='glyphicon glyphicon-trash icon-white'></i>删除</a></td></tr>";
     $.getJSON("/QASystem/admin/listJobs.do",null,function(data){
+    	if(data.length==0){
+    		$("#tbody_joblist").append("<td colspan='3'>暂无任务</td>");
+    	}
+    	
     	for(job in data){
     		var cur_td="";
     		cur_td=list_template.replace(/\{name\}/g,data[job].jobName);

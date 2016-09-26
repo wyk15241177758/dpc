@@ -186,11 +186,11 @@ public class JobInfImpl extends BasicServicveImpl  implements  JobInfService{
 	
 	//后续优化：此处有问题，需要开始时将状态置为1，结束后将状态置为2
 	//目前仅在页面层控制：点击启动将状态置为2。点击停止状态置为1
-	public void startSimJob(Long id) {
+	public void startSimJob(Long id) throws Exception {
 		JobInf inf=(JobInf) this.dao.queryById(JobInf.class, id);
 		if(inf.getJobStatus()!=1){
 			logger.info("任务正在运行或已删除");
-			return;
+			throw new Exception("任务正在运行或已删除");
 		}
 		QuartzManager.removeJob(inf.getJobName(), inf.getJobGroup(), inf.getTriggerName(), inf.getTriggerGroupName());
 		QuartzManager.addJob(inf);

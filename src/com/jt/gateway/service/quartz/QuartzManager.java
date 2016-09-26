@@ -30,13 +30,6 @@ import com.jt.gateway.service.job.CreateSchedulerFactory;
  */
 public class QuartzManager {
 	private static SchedulerFactory gSchedulerFactory = CreateSchedulerFactory.getFactory();
-	private static String JOB_GROUP_NAME = "EXTJWEB_JOBGROUP_NAME";
-	private static String TRIGGER_GROUP_NAME = "EXTJWEB_TRIGGERGROUP_NAME";
-	private static String PARAM_NAME="param";
-
-	
-	
-	
 	
 	
 	/**
@@ -56,9 +49,9 @@ public class QuartzManager {
 	public static void addJob(String jobName, Class<?> cls, String time) {
 		try {
 			Scheduler sched = gSchedulerFactory.getScheduler();
-			JobDetail jobDetail = new JobDetail(jobName, JOB_GROUP_NAME, cls);// 任务名，任务组，任务执行类
+			JobDetail jobDetail = new JobDetail(jobName, JobInf.jobGroup, cls);// 任务名，任务组，任务执行类
 			// 触发器
-			CronTrigger trigger = new CronTrigger(jobName, TRIGGER_GROUP_NAME);// 触发器名,触发器组
+			CronTrigger trigger = new CronTrigger(JobInf.triggerName, JobInf.triggerGroupName);// 触发器名,触发器组
 			trigger.setCronExpression(time);// 触发器时间设定
 			sched.scheduleJob(jobDetail, trigger);
 			// 启动
@@ -73,11 +66,11 @@ public class QuartzManager {
 	public static void addJob(String jobName, Class<?> cls, String time,Map paramMap) {
 		try {
 			Scheduler sched = gSchedulerFactory.getScheduler();
-			JobDetail jobDetail = new JobDetail(jobName, JOB_GROUP_NAME, cls);// 任务名，任务组，任务执行类
+			JobDetail jobDetail = new JobDetail(jobName, JobInf.jobGroup, cls);// 任务名，任务组，任务执行类
 			//加入参数
 			jobDetail.getJobDataMap().putAll(paramMap);
 			// 触发器
-			CronTrigger trigger = new CronTrigger(jobName, TRIGGER_GROUP_NAME);// 触发器名,触发器组
+			CronTrigger trigger = new CronTrigger(JobInf.triggerName, JobInf.triggerGroupName);// 触发器名,触发器组
 			trigger.setCronExpression(time);// 触发器时间设定
 			sched.scheduleJob(jobDetail, trigger);
 			// 启动
@@ -137,11 +130,11 @@ public class QuartzManager {
 	public static void addJob(JobInf param) {
 		try {
 			Scheduler sched = gSchedulerFactory.getScheduler();
-			JobDetail jobDetail = new JobDetail(param.getJobName(), param.getJobGroup(), Class.forName(param.getBeanClass()));// 任务名，任务组，任务执行类
+			JobDetail jobDetail = new JobDetail(param.getJobName(),JobInf.jobGroup, Class.forName(param.getBeanClass()));// 任务名，任务组，任务执行类
 			JobDataMap jobMap = jobDetail.getJobDataMap();
-			jobMap.put(PARAM_NAME, param);
+			jobMap.put(JobInf.PARAM_NAME, param);
 			// 触发器
-			CronTrigger trigger = new CronTrigger(param.getTriggerName(), param.getTriggerGroupName());// 触发器名,触发器组
+			CronTrigger trigger = new CronTrigger(JobInf.triggerName, JobInf.triggerGroupName);// 触发器名,触发器组
 			trigger.setCronExpression(param.getCronExpression());// 触发器时间设定
 			sched.scheduleJob(jobDetail, trigger);
 		} catch (Exception e) {
@@ -165,13 +158,13 @@ public class QuartzManager {
 	public static void modifyJobTime(String jobName, String time) {
 		try {
 			Scheduler sched = gSchedulerFactory.getScheduler();
-			CronTrigger trigger = (CronTrigger) sched.getTrigger(jobName,TRIGGER_GROUP_NAME);
+			CronTrigger trigger = (CronTrigger) sched.getTrigger(JobInf.triggerName, JobInf.triggerGroupName);
 			if (trigger == null) {
 				return;
 			}
 			String oldTime = trigger.getCronExpression();
 			if (!oldTime.equalsIgnoreCase(time)) {
-				JobDetail jobDetail = sched.getJobDetail(jobName,JOB_GROUP_NAME);
+				JobDetail jobDetail = sched.getJobDetail(jobName,JobInf.jobGroup);
 				Class<?> objJobClass = jobDetail.getJobClass();
 				removeJob(jobName);
 				addJob(jobName, objJobClass, time);
@@ -228,9 +221,9 @@ public class QuartzManager {
 	public static void removeJob(String jobName) {
 		try {
 			Scheduler sched = gSchedulerFactory.getScheduler();
-			sched.pauseTrigger(jobName, TRIGGER_GROUP_NAME);// 停止触发器
-			sched.unscheduleJob(jobName, TRIGGER_GROUP_NAME);// 移除触发器
-			sched.deleteJob(jobName, JOB_GROUP_NAME);// 删除任务
+			sched.pauseTrigger(jobName, JobInf.triggerGroupName);// 停止触发器
+			sched.unscheduleJob(jobName, JobInf.triggerGroupName);// 移除触发器
+			sched.deleteJob(jobName, JobInf.jobGroup);// 删除任务
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

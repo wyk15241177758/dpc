@@ -157,7 +157,7 @@ public class GwConfigService {
 	
 	public  GwConfig getConfig(String taskName){
 		GwConfig config=null;
-		if(FileUtil.isContentNull(file)){
+		if(FileUtil.isContentNull(file)||taskName==null){
 			return null;
 		}
 		//获得配置信息

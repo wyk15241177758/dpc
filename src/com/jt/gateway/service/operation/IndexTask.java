@@ -36,10 +36,13 @@ public class IndexTask implements Job{
 	private String newIndexPath;
 	
 
-	public IndexTask(String taskName) throws IOException, JDOMException{
+	public IndexTask(String taskName) throws Exception{
 		logger= Logger.getLogger(IndexTask.class);
 		configService=new GwConfigService();
 		config=configService.getConfig(taskName);
+		if(config==null){
+			throw new Exception("config为null");
+		}
 		JdbcDao = new JdbcDaoImpl(config.getSqlDB(),config.getSqlIP(),config.getSqlPort(),config.getSqlUser(),config.getSqlPw());
 		newIndexPath=config.getIndexPath()+"_new";
 		indexDao=new IndexDao(newIndexPath);
@@ -49,9 +52,12 @@ public class IndexTask implements Job{
 		logger= Logger.getLogger(IndexTask.class);
 	}
 	
-	public void init4Quartz(String taskName) throws JDOMException, IOException{
+	public void init4Quartz(String taskName) throws Exception{
 		configService=new GwConfigService();
 		config=configService.getConfig(taskName);
+		if(config==null){
+			throw new Exception("config为null");
+		}
 		JdbcDao = new JdbcDaoImpl(config.getSqlDB(),config.getSqlIP(),config.getSqlPort(),config.getSqlUser(),config.getSqlPw());
 		newIndexPath=config.getIndexPath()+"_new";
 		indexDao=new IndexDao(newIndexPath);
@@ -66,7 +72,9 @@ public class IndexTask implements Job{
 		long minId;
 		long temp=0l;
 		List<DataField> list=config.getList();
-		
+		if(list.size()==0){
+			throw new Exception("获得同步字段长度为空");
+		}
 		logger.info("开始生成新的索引文件");
 		//删除索引
 		File file=new File(newIndexPath);
@@ -106,16 +114,15 @@ public class IndexTask implements Job{
 			logger.debug("curSql=["+curSql+"]");
 			List<Map<String,Object>> rsList=JdbcDao.executeQueryForList(curSql);
 			for(Map<String,Object> map:rsList){
-				Document doc=null;
+				Document doc=new  Document();
 				for(DataField df:list){
-					//数据库中某些字段为空则跳过
-					if(map.get(df.getName())==null){
+					//数据库中某些字段为空则跳过，
+					if(map.get(df.getName().toUpperCase())==null){
 						continue;
 					}
-					doc=new  Document();
-					logger.debug("value=["+map.get(df.getName()).toString()+"]"
+					logger.debug("value=["+map.get(df.getName().toUpperCase()).toString()+"]"
 							+ " type= ["+df.getType()+"]");
-					doc.add(new Field(df.getName(), map.get(df.getName()).toString(), df.getFieldType()));
+					doc.add(new Field(df.getName(), map.get(df.getName().toUpperCase()).toString(), df.getFieldType()));
 				}
 				indexDao.save(doc);
 			}

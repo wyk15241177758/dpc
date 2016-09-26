@@ -2,7 +2,6 @@ package com.jt.gateway.service.management;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -66,6 +65,7 @@ public class JobManager {
 	@RequestMapping(value="addJob.do")
 	public void  addJob(HttpServletRequest request, HttpServletResponse response){
 		response.setCharacterEncoding("utf-8");
+		msg=new PageMsg();
 		PrintWriter pw=null;
 		try {
 			pw=response.getWriter();
@@ -87,10 +87,11 @@ public class JobManager {
 				}
 				configService.addConfig(config);
 				//将任务写入到数据库
+				Date date=new Date();
 				JobInf job=new JobInf(null, config.getTaskName(), 1,
 						paramUtil.getJobInternal(), IndexTask.class.getName(), 
-						"test", Timestamp.valueOf("2016-09-25 16:29:00"),
-						 Timestamp.valueOf("2016-09-25 16:29:12"));
+						"",date,
+						date);
 				jobService.addTask(job);
 				msg.setMsg("新增任务["+config.getTaskName()+"]成功");
 				msg.setSig(true);
@@ -112,30 +113,10 @@ public class JobManager {
 		
 	}
 	
-	@RequestMapping(value="addTest.do")
-	public void  addTest(HttpServletRequest request, HttpServletResponse response){
-		response.setCharacterEncoding("utf-8");
-		PrintWriter pw=null;
-		try {
-			pw=response.getWriter();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-		JobInf job=new JobInf(null, "test", 1,
-				"0/5 * * * * ?", IndexTask.class.getName(), 
-				"test", new Date(),
-				new Date());
-		jobService.addTask(job);
-		//Time
-	
-		
-	}
-	
-	
-	
 	//删除任务
 	@RequestMapping(value="delJob.do")
 	public void delJob(HttpServletRequest request, HttpServletResponse response){
+		msg=new PageMsg();
 		response.setCharacterEncoding("utf-8");
 		PrintWriter pw=null;
 		try {
@@ -172,6 +153,7 @@ public class JobManager {
 	//修改任务
 	@RequestMapping(value="updateJob.do")
 	public void updateJob(HttpServletRequest request, HttpServletResponse response){
+		msg=new PageMsg();
 		response.setCharacterEncoding("utf-8");
 		PrintWriter pw=null;
 		try {
@@ -194,7 +176,10 @@ public class JobManager {
 				}
 				configService.updateConfig(config);
 				//将任务写入到数据库
-				JobInf job=new JobInf(null, config.getTaskName(), 1, paramUtil.getJobInternal(), IndexTask.class.getName(), "test", new Timestamp(System.currentTimeMillis()), new Timestamp(System.currentTimeMillis()));
+				Date date=new Date();
+				JobInf job=new JobInf(null, config.getTaskName(), 
+						1, paramUtil.getJobInternal(), IndexTask.class.getName(),
+						"", date, date);
 				JobInf oldJob=jobService.getJobByName(config.getTaskName());
 				job.setJobId(oldJob.getJobId());
 				job.setCreateTime(oldJob.getCreateTime());
@@ -221,6 +206,7 @@ public class JobManager {
 	//查询所有
 	@RequestMapping(value="listJobs.do")
 	public void listJobs(HttpServletRequest request, HttpServletResponse response){
+		msg=new PageMsg();
 		response.setCharacterEncoding("utf-8");
 		PrintWriter pw=null;
 		try {
@@ -234,8 +220,14 @@ public class JobManager {
 	//启动
 	@RequestMapping(value="startJobs.do")
 	public void startJobs(HttpServletRequest request, HttpServletResponse response){
+		msg=new PageMsg();
 		response.setCharacterEncoding("utf-8");
 		PrintWriter pw=null;
+		try {
+			pw=response.getWriter();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 		String jobIds=CMyString.getStrNotNullor0(request.getParameter("jobids"), null);
 		if(jobIds==null){
 			msg.setMsg("启动任务id=["+jobIds+"]失败,错误信息为[获取参数失败]");
@@ -246,10 +238,16 @@ public class JobManager {
 		List<JobInf> jobs=jobService.getJobsByIds(jobIds);
 		for(JobInf job:jobs){
 			if(jobService.getJobById(job.getJobId())!=null){
-				jobService.startSimJob(job.getJobId());
+				try {
+					jobService.startSimJob(job.getJobId());
+					msg.setMsg("启动任务id=["+job.getJobId()+"]成功");
+				} catch (Exception e) {
+					e.printStackTrace();
+					msg.setMsg("启动任务id=["+job.getJobId()+"]失败");
+
+				}
 			}
 		}
-		msg.setMsg("启动任务id=["+jobIds+"]成功");
 		msg.setSig(true);
 		pw.print(gson.toJson(msg));
 		return;
@@ -258,8 +256,14 @@ public class JobManager {
 	//启动
 	@RequestMapping(value="startJob.do")
 	public void startJob(HttpServletRequest request, HttpServletResponse response){
+		msg=new PageMsg();
 		response.setCharacterEncoding("utf-8");
 		PrintWriter pw=null;
+		try {
+			pw=response.getWriter();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 		long jobId=0l;
 		try {
 			jobId=Long.parseLong(CMyString.getStrNotNullor0(request.getParameter("jobid"), "0"));
@@ -272,11 +276,19 @@ public class JobManager {
 		}
 		JobInf job=jobService.getJobById(jobId);
 		if(jobId!=0&&job!=null){
-			jobService.startSimJob(jobId);
-			msg.setMsg("启动任务["+job.getJobName()+"]成功");
-			msg.setSig(true);
-			pw.print(gson.toJson(msg));
-			return;
+			try {
+				jobService.startSimJob(jobId);
+				msg.setMsg("启动任务["+job.getJobName()+"]成功");
+				msg.setSig(true);
+				pw.print(gson.toJson(msg));
+				return;
+			} catch (Exception e) {
+				e.printStackTrace();
+				msg.setMsg("启动任务["+job.getJobName()+"]失败");
+				msg.setSig(false);
+				pw.print(gson.toJson(msg));
+				return;
+			}
 		}else{
 			msg.setMsg("启动任务id=["+jobId+"]失败,错误信息为[未获得任务ID或不存在指定的任务]");
 			msg.setSig(false);
@@ -288,8 +300,14 @@ public class JobManager {
 	//停止
 	@RequestMapping(value="stopJobs.do")
 	public void stopJobs(HttpServletRequest request, HttpServletResponse response){
+		msg=new PageMsg();
 		response.setCharacterEncoding("utf-8");
 		PrintWriter pw=null;
+		try {
+			pw=response.getWriter();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 		String jobIds=CMyString.getStrNotNullor0(request.getParameter("jobids"), null);
 		if(jobIds==null){
 			msg.setMsg("停止任务id=["+jobIds+"]失败,错误信息为[获取参数失败]");
@@ -312,8 +330,14 @@ public class JobManager {
 	//停止
 	@RequestMapping(value="stopJob.do")
 	public void stopJob(HttpServletRequest request, HttpServletResponse response){
+		msg=new PageMsg();
 		response.setCharacterEncoding("utf-8");
 		PrintWriter pw=null;
+		try {
+			pw=response.getWriter();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 		long jobId=0l;
 		try {
 			jobId=Long.parseLong(CMyString.getStrNotNullor0(request.getParameter("jobid"), "0"));

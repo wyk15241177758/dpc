@@ -1,6 +1,5 @@
 package com.jt.bean.gateway;
 
-import java.sql.Timestamp;
 import java.util.Date;
 
 /**
@@ -15,17 +14,9 @@ public class JobInf implements java.io.Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 7123357245448757320L;
-	@Override
-	public String toString() {
-		return "JobInf [jobId=" + jobId + ", jobName=" + jobName + ", jobGroup=" + jobGroup + ", jobStatus=" + jobStatus
-				+ ", cronExpression=" + cronExpression + ", beanClass=" + beanClass + ", description=" + description
-				+ ", triggerName=" + triggerName + ", triggerGroupName=" + triggerGroupName + ", createTime="
-				+ createTime + ", updateTime=" + updateTime + "]";
-	}
-
 	private Long jobId;
 	private String jobName;
-	private String jobGroup="EXTJWEB_JOBGROUP_NAME";
+
 	//1:未启动
 	//2:已启动
 	//-1:已删除
@@ -33,10 +24,26 @@ public class JobInf implements java.io.Serializable {
 	private String cronExpression;
 	private String beanClass;
 	private String description;
-	private String triggerName="TRIGGER_NAME";
-	private String triggerGroupName="TRIGGERGROUP_NAME";
+	//任务参数名
+	public static String PARAM_NAME="param";
+	//任务组名
+	public static String jobGroup="JOBGROUP_NAME";
+	//触发器名称
+	public static String triggerName="TRIGGER_NAME";
+	//触发器组名
+	public static String triggerGroupName="TRIGGERGROUP_NAME";
+	
 	private Date createTime;
 	private Date updateTime;
+	@Override
+	public String toString() {
+		return "JobInf [jobId=" + jobId + ", jobName=" + jobName + ", jobStatus=" + jobStatus + ", cronExpression="
+				+ cronExpression + ", beanClass=" + beanClass + ", description=" + description + ", createTime="
+				+ createTime + ", updateTime=" + updateTime + "]";
+	}
+
+	
+	
 	// Constructors
 
 	/** default constructor */
@@ -57,29 +64,6 @@ public class JobInf implements java.io.Serializable {
 		this.createTime = createTime;
 		this.updateTime = updateTime;
 	}
-
-
-
-	// Property accessors
-
-	public JobInf(Long jobId, String jobName, String jobGroup, Integer jobStatus, String cronExpression,
-			String beanClass, String description, String triggerName, String triggerGroupName, Date createTime,
-			Date updateTime) {
-		super();
-		this.jobId = jobId;
-		this.jobName = jobName;
-		this.jobGroup = jobGroup;
-		this.jobStatus = jobStatus;
-		this.cronExpression = cronExpression;
-		this.beanClass = beanClass;
-		this.description = description;
-		this.triggerName = triggerName;
-		this.triggerGroupName = triggerGroupName;
-		this.createTime = createTime;
-		this.updateTime = updateTime;
-	}
-
-
 	public Long getJobId() {
 		return this.jobId;
 	}
@@ -96,13 +80,8 @@ public class JobInf implements java.io.Serializable {
 		this.jobName = jobName;
 	}
 
-	public String getJobGroup() {
-		return this.jobGroup;
-	}
 
-	public void setJobGroup(String jobGroup) {
-		this.jobGroup = jobGroup;
-	}
+
 
 	public Integer getJobStatus() {
 		return this.jobStatus;
@@ -137,22 +116,6 @@ public class JobInf implements java.io.Serializable {
 		this.description = description;
 	}
 
-	public String getTriggerName() {
-		return this.triggerName;
-	}
-
-	public void setTriggerName(String triggerName) {
-		this.triggerName = triggerName;
-	}
-
-	public String getTriggerGroupName() {
-		return this.triggerGroupName;
-	}
-
-	public void setTriggerGroupName(String triggerGroupName) {
-		this.triggerGroupName = triggerGroupName;
-	}
-
 
 	public Date getCreateTime() {
 		return this.createTime;
@@ -169,6 +132,43 @@ public class JobInf implements java.io.Serializable {
 	public void setUpdateTime(Date updateTime) {
 		this.updateTime = updateTime;
 	}
+
+
+
+	public static String getJobGroup() {
+		return jobGroup;
+	}
+
+
+
+	public static void setJobGroup(String jobGroup) {
+		JobInf.jobGroup = jobGroup;
+	}
+
+
+
+	public static String getTriggerName() {
+		return triggerName;
+	}
+
+
+
+	public static void setTriggerName(String triggerName) {
+		JobInf.triggerName = triggerName;
+	}
+
+
+
+	public static String getTriggerGroupName() {
+		return triggerGroupName;
+	}
+
+
+
+	public static void setTriggerGroupName(String triggerGroupName) {
+		JobInf.triggerGroupName = triggerGroupName;
+	}
+
 
 
 }

@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-	<class name="com.jt.bean.gateway.JobInf" table="job_inf">
+	<class name="com.jt.bean.gateway.JobInf" table="jobinf">
 		<id name="jobId" type="java.lang.Long">
 			<column name="JOBID" />
 			<generator class="native" />
@@ -32,10 +32,10 @@
 			<column name="TRIGGERGROUPNAME" length="64" not-null="true" />
 		</property>
 		<property name="createTime" type="java.sql.Timestamp" >
-			<column name="create_time" length="19" not-null="false" />
+			<column name="createtime" length="19" not-null="false" />
 		</property>
 		<property name="updateTime" type="java.sql.Timestamp">
-			<column name="update_Time" length="19" not-null="false" />
+			<column name="updateTime" length="19" not-null="false" />
 		</property>
 	</class>
 </hibernate-mapping>

@@ -17,7 +17,7 @@ public interface JobInfService {
 	public void stopJob(Long id);
 	public int repeatName(String name) ;
 	public int repeatTrigger(String trigger);
-	public void startSimJob(Long id);
+	public void startSimJob(Long id)throws Exception;
 	public JobInf getJobByName(String name);
 	public JobInf getJobById(long jobId);
 	public List<JobInf> getJobsByIds(String ids);

@@ -17,7 +17,7 @@ public class MVCMappingTest {
 @RequestMapping(value="hello.do")
 public String hello( ModelMap model){
 	model.addAttribute("word","word");
-	service.addTask(new JobInf(null, "²âÊÔÈÎÎñ", "group", 1, "*", "com.jt.gateway.service.job.QuartzTest", "ÃèÊö", "trigger", "triggerGroup", new Timestamp(System.currentTimeMillis()), new Timestamp(System.currentTimeMillis())));
+//	service.addTask(new JobInf(null, "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½", "group", 1, "*", "com.jt.gateway.service.job.QuartzTest", "ï¿½ï¿½ï¿½ï¿½", "trigger", "triggerGroup", new Timestamp(System.currentTimeMillis()), new Timestamp(System.currentTimeMillis())));
 	return "hello";
 }
 

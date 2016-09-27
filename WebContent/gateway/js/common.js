@@ -56,10 +56,52 @@ function parseFields(){
 		$("#fields_mysql").attr("value",JSON.stringify(array));
 	}
 }
-
+function toggleJob(jqueryObj){
+	var curStatus=jqueryObj.attr("jobstatus");
+	if(curStatus=='未启动'){
+		jqueryObj.attr("jobstatus","已启动");
+		jqueryObj.children("td:nth-child(2)").text("已启动");
+		jqueryObj.children("td:nth-child(2)").children("span").removeClass("label-warning");
+		jqueryObj.children("td:nth-child(2)").children("span").addClass("label-success");
+		jqueryObj.children("td:nth-child(3)").text("启动任务");
+	}else{
+		jqueryObj.attr("jobstatus","未启动");
+		jqueryObj.children("td:nth-child(2)").text("未启动");
+		jqueryObj.children("td:nth-child(2)").children("span").removeClass("label-success");
+		jqueryObj.children("td:nth-child(2)").children("span").addClass("label-warning");
+		jqueryObj.children("td:nth-child(3)").text("停止任务");
+	}
+}
 $(document).ready(function () {
+	//启动停止任务
+	$(document).on("click","[startOrStop_a]",function(){
+		var cur_tr=$(this).parents("tr")
+		var url="/QASystem/admin/startJob.do"
+		if(cur_tr.attr("jobstatus")=='未启动'){
+			$.getJSON(url,{jobid:cur_tr.attr("jobid")},function(data){
+				if(data.sig==true){
+					toggleJob(cur_tr)
+				}else{
+					$("#warnmsg").html(data.msg);
+				}
+			})
+		}
+	})
+	
 	//获得任务列表
-	var list_template="<tr><td>{name}</td><td class='center'><span class='label {status_class}'>{status}</span></td><td class='center font-right'><a class='btn btn-success btn-sm' href='#' jobname='{name}' jobid='{jobid}'><i class='glyphicon glyphicon-zoom-in icon-white'></i>查看日志</a><a jobname='{name}' jobid='{jobid}' class='btn btn-info btn-sm btn-setting' href='#'><i class='glyphicon glyphicon-edit icon-white'></i>编辑</a><a jobname='{name}' jobid='{jobid}' class='btn btn-danger btn-sm btn-warn' href='#'><i class='glyphicon glyphicon-trash icon-white'></i>删除</a></td></tr>";
+	var list_template="<tr jobname='{name}' jobid='{jobid}' jobstatus='{status}'>" +
+			"<td>{name}</td>" +
+			"<td class='center'><span class='label {status_class}'>{status}</span></td>" +
+			"<td class='center font-right'>" +
+			"<a class='btn btn-success btn-sm' startOrStop_a='true' href='#'>" +
+			"<i class='glyphicon glyphicon-zoom-in icon-white'></i>{startOrStop}</a>" +
+			"<a class='btn btn-success btn-sm' href='#'>" +
+			"<i class='glyphicon glyphicon-zoom-in icon-white'></i>查看日志</a>" +
+			"<a class='btn btn-info btn-sm btn-setting' href='#'>" +
+			"<i class='glyphicon glyphicon-edit icon-white'></i>编辑</a>" +
+			"<a class='btn btn-danger btn-sm btn-warn' href='#'>" +
+			"<i class='glyphicon glyphicon-trash icon-white'></i>删除</a>" +
+			"</td></tr>";
     $.getJSON("/QASystem/admin/listJobs.do",null,function(data){
     	if(data.length==0){
     		$("#tbody_joblist").append("<td colspan='3'>暂无任务</td>");
@@ -70,9 +112,12 @@ $(document).ready(function () {
     		cur_td=list_template.replace(/\{name\}/g,data[job].jobName);
     		cur_td=cur_td.replace(/\{jobid\}/g,data[job].jobId);
     		if(data[job].jobStatus==1){
+    			cur_td=cur_td.replace(/\{startOrStop\}/g,"启动任务");
     			cur_td=cur_td.replace(/\{status\}/g,"未启动");
     			cur_td=cur_td.replace(/\{status_class\}/g,"label-warning");
+    			
     		}else{
+    			cur_td=cur_td.replace(/\{startOrStop\}/g,"停止任务");
     			cur_td=cur_td.replace(/\{status\}/g,"已启动");
     			cur_td=cur_td.replace(/\{status_class\}/g,"label-success");
     		}

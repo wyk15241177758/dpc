@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+		<title>新建任务</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="">
+		<meta name="author" content="">
+
+		<!-- The styles -->
+		<link id="bs-css" href="css/bootstrap-cerulean.min.css" rel="stylesheet">
+		<link href="css/app.css" rel="stylesheet">
+        <link href='css/responsive-tables.css' rel='stylesheet'>
+		<!-- jQuery -->
+		<script src="js/jquery.min.js"></script>
+
+		<!-- The HTML5 shim, for IE6-8 support of HTML5 elements -->
+		<!--[if lt IE 9]>
+	    <script src="js/html5shiv.min.js"></script>
+	    <![endif]-->
+
+		<!-- The fav icon -->
+		<link rel="shortcut icon" href="img/favicon1.ico">
+	</head>
+
+	<body>
+	<script>
+	  $(function(){
+		  var a=123
+		 $.get("/QASystem/admin/listJobs.do",null,function(data){
+			 alert(a)
+		 })
+	  })
+	</script>
+
+		<!-- external javascript -->
+		<script src="js/bootstrap.min.js"></script>
+		<!-- library for making tables responsive -->
+		<script src="js/responsive-tables.js"></script>
+		<script src="js/common.js"></script>
+
+	</body>
+
+</html>

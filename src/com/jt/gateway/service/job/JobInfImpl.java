@@ -64,10 +64,6 @@ public class JobInfImpl extends BasicServicveImpl  implements  JobInfService{
 	 */
 	public void addTask(JobInf jobInf) {
 		try{
-		Date create = new Date();
-	//	Timestamp time = new Timestamp(create.getTime());
-		//jobInf.setCreateTime(create);
-		//jobInf.setUpdateTime(create);
 		jobInf.setJobStatus(1);
 		this.dao.save(jobInf);
 		//long jobId=Long.parseLong(this.dao.save(jobInf).toString());

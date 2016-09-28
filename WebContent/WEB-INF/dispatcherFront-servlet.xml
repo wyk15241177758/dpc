@@ -31,10 +31,6 @@
 		</property>
 	</bean>
 
-<!-- <bean id="mvctest" class="com.jt.test.MVCMappingTest"> -->
-<!-- 	<property name="service" ref="jobInfImpl"> -->
-<!-- 	</property> -->
-<!-- </bean> -->
 
 
 </beans>

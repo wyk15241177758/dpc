@@ -136,13 +136,24 @@
 	<context:component-scan base-package="com.jt.test.service">
 	</context:component-scan>
 
+<bean id="jobStatusImpl">
+<property name="logSerivce" ref="jobLogImpl"/>
+<property name="jobStatus" value="2"/>
+</bean>
+
 	
 <bean id="jobInfImpl"  parent="baseTransactionProxyBean" >
 <property name="target">
 <bean class="com.jt.gateway.service.job.JobInfImpl" autowire="byName">
 </bean>
 </property>
-
-	
 </bean>
+
+<bean id="jobLogImpl"  parent="baseTransactionProxyBean" >
+<property name="target">
+<bean class="com.jt.gateway.service.job.JobLogImpl" autowire="byName">
+</bean>
+</property>
+</bean>
+
 </beans>

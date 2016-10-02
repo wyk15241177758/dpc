@@ -21,5 +21,5 @@ public interface JobInfService {
 	public JobInf getJobByName(String name);
 	public JobInf getJobById(long jobId);
 	public List<JobInf> getJobsByIds(String ids);
-
+	public void setJobStatus(Long id,int status);
 }

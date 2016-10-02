@@ -18,7 +18,12 @@ public class JobLogImpl extends BasicServicveImpl implements JobLogService {
 	}
 	
 	public JobLog getLog(long jobId){
-		return (JobLog)queryById(JobLogImpl.class, jobId);
+		return (JobLog) queryById(JobLog.class, jobId);
 	}
-
+	
+	public void saveLog(JobLog log){
+		super.saveOrUpdate(log);
+	}
+	
+	
 }

@@ -1,34 +1,50 @@
 package com.jt.gateway.service.job;
 
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.jt.bean.gateway.JobLog;
 
-public class JobStatusImpl {
-	//停止状态为2，正在执行为1
-	private int jobStatus=2;
+public class JobStatusImpl implements JobStatusService{
 	private JobLogImpl logSerivce;
-	public void startJob(){
-		jobStatus=1;
+	//jobID,jobStatus停止状态为2，正在执行为1
+	private Map<Long,Integer> jobStatusMap;
+	public JobStatusImpl(){
+		jobStatusMap=new HashMap<Long,Integer>();
+	}
+	public void startJob(long jobId){
+		jobStatusMap.put(jobId, 1);
 	}
 	
 	public void endJob(JobLog log){
-		jobStatus=2;
+		jobStatusMap.put(log.getJobId(), 2);
 		if(logSerivce.getLog(log.getJobId())==null){
 			logSerivce.save(log);
 		}else{
 			logSerivce.update(log);
 		}
 	}
-	public int getJobStatus() {
-		return jobStatus;
+	public Integer getJobStatus(long jobId) {
+		return jobStatusMap.get(jobId);
 	}
-	public void setJobStatus(int jobStatus) {
-		this.jobStatus = jobStatus;
+	public void setJobStatus(long jobId,int jobStatus) {
+		jobStatusMap.put(jobId, jobStatus);
 	}
+	
 	public JobLogImpl getLogSerivce() {
 		return logSerivce;
 	}
 	public void setLogSerivce(JobLogImpl logSerivce) {
 		this.logSerivce = logSerivce;
 	}
+	public Map<Long, Integer> getJobStatusMap() {
+		return jobStatusMap;
+	}
+	public void setJobStatusMap(Map<Long, Integer> jobStatusMap) {
+		this.jobStatusMap = jobStatusMap;
+	}
+
+
+	
 }

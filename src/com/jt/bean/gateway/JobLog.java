@@ -2,10 +2,16 @@ package com.jt.bean.gateway;
 
 import java.util.Date;
 
-public class JobLog {
+public class JobLog implements java.io.Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private long jobId;
 	private int status;
-	private Date exeTime;
+	private long exeTime;//执行时长，毫秒
+	private Date start;
+	private Date end;
 	private int indexSize;
 
 	public long getJobId() {
@@ -21,12 +27,24 @@ public class JobLog {
 	public void setStatus(int status) {
 		this.status = status;
 	}
-
-	public Date getExeTime() {
+	
+	public long getExeTime() {
 		return exeTime;
 	}
-	public void setExeTime(Date exeTime) {
+	public void setExeTime(long exeTime) {
 		this.exeTime = exeTime;
+	}
+	public Date getStart() {
+		return start;
+	}
+	public void setStart(Date start) {
+		this.start = start;
+	}
+	public Date getEnd() {
+		return end;
+	}
+	public void setEnd(Date end) {
+		this.end = end;
 	}
 	public int getIndexSize() {
 		return indexSize;

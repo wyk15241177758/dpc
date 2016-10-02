@@ -85,7 +85,7 @@ public class JobInfImpl extends BasicServicveImpl  implements  JobInfService{
 		
 	}
 	/**
-	 * 更新任务
+	 * 更新任务，更新之后再启动任务
 	 */
 	public void updateTask(JobInf jobInf) {
 		stopJob(jobInf.getJobId());
@@ -107,6 +107,11 @@ public class JobInfImpl extends BasicServicveImpl  implements  JobInfService{
 		paramList.add(new Param(Types.TIMESTAMP,time));
 		paramList.add(new Param(Types.BIGINT,jobInf.getJobId()));
 		this.dao.update(hql, paramList);
+		try {
+			startSimJob(jobInf.getJobId());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		}
 
 //	public void startAllJob() {
@@ -132,7 +137,7 @@ public class JobInfImpl extends BasicServicveImpl  implements  JobInfService{
 //		QuartzManager.shutdownJobs();
 //	}
 	/**
-	 * 停止单个任务
+	 * 停止单个任务，仅从quartzmanager中移除。无需修改状态
 	 */
 	public void stopJob(Long id) {
 		
@@ -150,11 +155,11 @@ public class JobInfImpl extends BasicServicveImpl  implements  JobInfService{
 			throw new RuntimeException(e);
 		}
 		//修改状态
-		String hql2 = "update com.jt.bean.gateway.JobInf set jobStatus = ? where jobId = ?";
-		paramList=new  ArrayList<Param>();
-		paramList.add(new Param(Types.INTEGER,1));
-		paramList.add(new Param(Types.BIGINT,id));
-		this.dao.update(hql2, paramList);
+//		String hql2 = "update com.jt.bean.gateway.JobInf set jobStatus = ? where jobId = ?";
+//		paramList=new  ArrayList<Param>();
+//		paramList.add(new Param(Types.INTEGER,1));
+//		paramList.add(new Param(Types.BIGINT,id));
+//		this.dao.update(hql2, paramList);
 		
 	}
 	/**
@@ -180,8 +185,7 @@ public class JobInfImpl extends BasicServicveImpl  implements  JobInfService{
 		return list.size();
 	}
 	
-	//后续优化：此处有问题，需要开始时将状态置为1，结束后将状态置为2
-	//目前仅在页面层控制：点击启动将状态置为2。点击停止状态置为1
+	//开始时将状态置为1，结束后将状态置为2。在IndexTask中控制
 	public void startSimJob(Long id) throws Exception {
 		JobInf inf=(JobInf) this.dao.queryById(JobInf.class, id);
 		if(inf.getJobStatus()!=1){
@@ -192,12 +196,20 @@ public class JobInfImpl extends BasicServicveImpl  implements  JobInfService{
 		QuartzManager.addJob(inf);
 		QuartzManager.startJobs();
 		
+//		String hql2 = "update com.jt.bean.gateway.JobInf set jobStatus = ? where jobId = ?";
+//		List<Param>  paramList=new  ArrayList<Param>();
+//		paramList.add(new Param(Types.INTEGER,2));
+//		paramList.add(new Param(Types.BIGINT,id));
+//		this.dao.update(hql2, paramList);
+	}
+	
+	public void setJobStatus(Long id,int status){
+		JobInf inf=(JobInf) this.dao.queryById(JobInf.class, id);
 		String hql2 = "update com.jt.bean.gateway.JobInf set jobStatus = ? where jobId = ?";
 		List<Param>  paramList=new  ArrayList<Param>();
-		paramList.add(new Param(Types.INTEGER,2));
+		paramList.add(new Param(Types.INTEGER,status));
 		paramList.add(new Param(Types.BIGINT,id));
 		this.dao.update(hql2, paramList);
 	}
-	
 	
 }

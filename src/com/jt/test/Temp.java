@@ -1,21 +1,13 @@
 package com.jt.test;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.sql.Timestamp;
-
-import org.jdom.JDOMException;
-
-import com.jt.bean.gateway.GwConfig;
-import com.jt.gateway.service.operation.GwConfigService;
-import com.jt.gateway.util.FileUtil;
+import java.util.Date;
 
 
 public class Temp {
 public static void main(String[] args) throws Exception {
-	Timestamp stamp=new Timestamp(System.currentTimeMillis());
-	System.out.println(stamp);
-	
+	Date date=new Date();
+	Thread.sleep(1000l);
+	Date date2=new Date();
+	System.out.println(date2.getTime()-date.getTime());
 }
 }

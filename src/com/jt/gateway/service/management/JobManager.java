@@ -19,6 +19,7 @@ import com.jt.bean.gateway.GwConfig;
 import com.jt.bean.gateway.JobInf;
 import com.jt.bean.gateway.PageMsg;
 import com.jt.gateway.service.job.JobInfService;
+import com.jt.gateway.service.job.JobRunningLogService;
 import com.jt.gateway.service.management.util.JobParamUtil;
 import com.jt.gateway.service.operation.GwConfigService;
 import com.jt.gateway.service.operation.IndexTask;
@@ -39,6 +40,8 @@ public class JobManager {
 	private GwConfigService configService;
 	private GwConfig config;
 	private Gson gson;
+	private JobRunningLogService jobRunningLogService;
+
 	public JobManager(){
 		msg=new PageMsg();
 		paramUtil=new JobParamUtil();
@@ -62,6 +65,13 @@ public class JobManager {
 	}
 	
 	
+	public JobRunningLogService getJobRunningLogService() {
+		return jobRunningLogService;
+	}
+	@Resource(name="jobRunningLogImpl") 
+	public void setJobRunningLogService(JobRunningLogService jobRunningLogService) {
+		this.jobRunningLogService = jobRunningLogService;
+	}
 	@RequestMapping(value="addJob.do")
 	public void  addJob(HttpServletRequest request, HttpServletResponse response){
 		response.setCharacterEncoding("utf-8");
@@ -71,6 +81,7 @@ public class JobManager {
 			pw=response.getWriter();
 		} catch (IOException e1) {
 			e1.printStackTrace();
+			return;
 		}
 		PageMsg paramMsg=new PageMsg();
 		//参数是否合法
@@ -123,6 +134,7 @@ public class JobManager {
 			pw=response.getWriter();
 		} catch (IOException e1) {
 			e1.printStackTrace();
+			return;
 		}
 		
 		String taskName=CMyString.getStrNotNullor0(request.getParameter("taskname"), null);
@@ -160,6 +172,7 @@ public class JobManager {
 			pw=response.getWriter();
 		} catch (IOException e1) {
 			e1.printStackTrace();
+			return;
 		}
 		PageMsg paramMsg=new PageMsg();
 		//参数是否合法
@@ -213,6 +226,7 @@ public class JobManager {
 			pw=response.getWriter();
 		} catch (IOException e1) {
 			e1.printStackTrace();
+			return;
 		}
 		List<JobInf> list=jobService.getAllJobs();
 		pw.print(gson.toJson(list));
@@ -227,6 +241,7 @@ public class JobManager {
 			pw=response.getWriter();
 		} catch (IOException e1) {
 			e1.printStackTrace();
+			return;
 		}
 		String jobIds=CMyString.getStrNotNullor0(request.getParameter("jobids"), null);
 		if(jobIds==null){
@@ -263,6 +278,7 @@ public class JobManager {
 			pw=response.getWriter();
 		} catch (IOException e1) {
 			e1.printStackTrace();
+			return;
 		}
 		long jobId=0l;
 		try {
@@ -307,6 +323,7 @@ public class JobManager {
 			pw=response.getWriter();
 		} catch (IOException e1) {
 			e1.printStackTrace();
+			return;
 		}
 		String jobIds=CMyString.getStrNotNullor0(request.getParameter("jobids"), null);
 		if(jobIds==null){
@@ -337,6 +354,7 @@ public class JobManager {
 			pw=response.getWriter();
 		} catch (IOException e1) {
 			e1.printStackTrace();
+			return;
 		}
 		long jobId=0l;
 		try {
@@ -362,5 +380,50 @@ public class JobManager {
 			return;
 		}
 	}	
-		
+	
+	
+	//获得运行日志
+	@RequestMapping(value="getRunningLog.do")
+	public void getRunningLog(HttpServletRequest request, HttpServletResponse response){
+		msg=new PageMsg();
+		response.setCharacterEncoding("utf-8");
+		PrintWriter pw=null;
+		try {
+			pw=response.getWriter();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+			return;
+		}
+		long jobId=0l;
+		try {
+			jobId=Long.parseLong(CMyString.getStrNotNullor0(request.getParameter("jobid"), "0"));
+		} catch (Exception e) {
+			e.printStackTrace();
+			msg.setMsg("获得任务id=["+jobId+"]的运行日志失败,错误信息为[转换jobID类型失败]");
+			msg.setSig(false);
+			pw.print(gson.toJson(msg));
+			return;
+		}
+		JobInf job=jobService.getJobById(jobId);
+		if(jobId!=0&&job!=null){
+			List<String> runningJob=jobRunningLogService.getRunningLog(jobId);
+			String rsMsg="";
+			for(int i=0;i<runningJob.size();i++){
+				if(i==0){
+					rsMsg=runningJob.get(i);
+				}else{
+					rsMsg+=","+runningJob.get(i);
+				}
+			}
+			msg.setMsg(rsMsg);
+			msg.setSig(true);
+			pw.print(gson.toJson(msg));
+			return;
+		}else{
+			msg.setMsg("获得任务id=["+jobId+"]的运行日志失败,错误信息为[未获得任务ID或不存在指定的任务]");
+			msg.setSig(false);
+			pw.print(gson.toJson(msg));
+			return;
+		}
+	}		
 }

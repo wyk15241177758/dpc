@@ -136,11 +136,6 @@
 	<context:component-scan base-package="com.jt.test.service">
 	</context:component-scan>
 
-<bean id="jobStatusImpl">
-<property name="logSerivce" ref="jobLogImpl"/>
-<property name="jobStatus" value="2"/>
-</bean>
-
 	
 <bean id="jobInfImpl"  parent="baseTransactionProxyBean" >
 <property name="target">
@@ -155,5 +150,9 @@
 </bean>
 </property>
 </bean>
+<bean id="jobRunningLogImpl" class="com.jt.gateway.service.job.JobRunningLogImpl"></bean>
+
+<bean id="jobInit" lazy-init="false" class="com.jt.gateway.service.management.JobInit" init-method="init" />
+ 
 
 </beans>

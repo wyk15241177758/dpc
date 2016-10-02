@@ -8,6 +8,6 @@ public interface JobLogService {
 	
 	public List<JobLog> getAllLogs();
 	public JobLog getLog(long jobId);
-	
+	public void saveLog(JobLog log);
 
 }

@@ -255,7 +255,10 @@ public void updateSql(final String Sql,final List  paramList){
 
 		return super.getHibernateTemplate().get(cla, id);
 	}
-
+	
+	public void saveOrUpdate(Object obj){
+		super.getHibernateTemplate().saveOrUpdate(obj);
+	}
 
 	
 }

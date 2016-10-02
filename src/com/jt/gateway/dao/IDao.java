@@ -86,4 +86,5 @@ public interface IDao {
 	 * @return
 	 */
 	public  Object  getById(Class cla , Serializable id);
+	public void saveOrUpdate(Object obj);
 }

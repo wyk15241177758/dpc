@@ -34,7 +34,16 @@ public class BasicServicveImpl implements BasicService {
 	public void update(Object object) {
 		dao.update(object);
 	}
-
+	public void saveOrUpdate(Object obj){
+		dao.saveOrUpdate(obj);
+	}
+//	public void saveOrUpdate(Object object, Class cla,Serializable id){
+//		Object obj=dao.getById(cla, id);
+//		if(obj!=null){
+//			dao.merge(obj);
+//		}
+//	}
+	
 	public IDao getDao() {
 		return dao;
 	}
@@ -43,6 +52,7 @@ public class BasicServicveImpl implements BasicService {
 		this.dao = dao;
 	}
 	
-	
+
+
 
 }

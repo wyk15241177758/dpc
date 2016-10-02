@@ -10,10 +10,16 @@
 			<column name="STATUS" not-null="true" />
 		</property>
 		<property name="indexSize" type="java.lang.Integer">
-			<column name="INDEXSIZE" />
+			<column name="INDEXSIZE"  not-null="false" />
 		</property>
-		<property name="exeTime" type="java.sql.Timestamp" >
+		<property name="exeTime" type="java.lang.Long" >
 			<column name="EXETIME" length="19" not-null="false" />
+		</property>
+		<property name="start" type="java.sql.Timestamp" >
+			<column name="START" length="19" not-null="false" />
+		</property>
+		<property name="end" type="java.sql.Timestamp" >
+			<column name="END" length="19" not-null="false" />
 		</property>
 	</class>
 </hibernate-mapping>

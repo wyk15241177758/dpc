@@ -2,7 +2,7 @@ package com.jt.bean.gateway;
 
 public class PageMsg {
 	private boolean sig;
-	private String msg;
+	private Object msg;
 	public PageMsg(){
 		
 	}
@@ -19,12 +19,14 @@ public class PageMsg {
 		this.sig = sig;
 	}
 	public String getMsg() {
-		return msg;
+		return msg.toString();
 	}
 	public void setMsg(String msg) {
 		this.msg = msg;
 	}
-
+	public void setMsg(Object msg) {
+		this.msg = msg;
+	}
 	@Override
 	public String toString() {
 		return "PageMsg [sig=" + sig + ", msg=" + msg + "]";

@@ -21,7 +21,7 @@ import com.jt.gateway.util.CMyString;
 public class JobParamUtil {
 	private GwConfig gwConfig;
 	private String jobInternal;
-	
+	private Long jobId;
 	public JobParamUtil(GwConfig gwConfig, String jobInternal) {
 		this.gwConfig = gwConfig;
 		this.jobInternal = jobInternal;
@@ -87,7 +87,6 @@ public class JobParamUtil {
 		PageMsg msg=new PageMsg(true, "参数配置校验通过");
 		//初始化参数
 		initAddParam(request);
-		
 		//判断gwconfig的任意字段和jobInternal是否null，为null则非法
 		if(gwConfig==null){
 			msg=new PageMsg(false,"字段重复");
@@ -214,6 +213,12 @@ public class JobParamUtil {
 	}
 	public void setJobInternal(String jobInternal) {
 		this.jobInternal = jobInternal;
+	}
+	public long getJobId() {
+		return jobId;
+	}
+	public void setJobId(long jobId) {
+		this.jobId = jobId;
 	}
 	public static void main(String[] args) {
 		DataField df1=new DataField("FL_ID", true, "STORE");

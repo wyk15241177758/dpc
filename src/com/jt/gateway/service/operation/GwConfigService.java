@@ -29,6 +29,7 @@ public class GwConfigService {
 	private static Logger logger= Logger.getLogger(GwConfigService.class) ;
 	public GwConfigService() throws JDOMException, IOException{
 		this.file=new File(getClass().getResource("/").getFile()+"gateway.conf");
+		System.out.println("file="+file.getAbsolutePath());
 		builder = new SAXBuilder();
 	}
 	
@@ -83,7 +84,6 @@ public class GwConfigService {
 		Element sqlDb = new Element("SQLDB");
 		Element sqlPort = new Element("SQLPORT");
 		Element sqlTable = new Element("SQLTABLE");
-		Element idName = new Element("IDNAME");
 		Element fields = new Element("FIELDS");
 		for(DataField df:config.getList()){
 			Element field = new Element("FIELD");
@@ -107,7 +107,6 @@ public class GwConfigService {
 		sqlDb.addContent(config.getSqlDB());
 		sqlPort.addContent(config.getSqlPort());
 		sqlTable.addContent(config.getSqlTable());
-		idName.addContent(config.getIdName());
 		
 		task.addContent(name);
 		task.addContent(path);
@@ -117,7 +116,6 @@ public class GwConfigService {
 		task.addContent(sqlDb);
 		task.addContent(sqlPort);
 		task.addContent(sqlTable);
-		task.addContent(idName);
 		task.addContent(fields);
 		
 		return task;
@@ -217,7 +215,6 @@ public class GwConfigService {
 		List tasks = root.getChildren();
 		for (Object task:tasks) {
 			config=new GwConfig();
-			config.setIdName(((Element) task).getChild("IDNAME").getText());
 			config.setIndexPath(((Element) task).getChild("INDEXPATH").getText());
 			config.setSqlDB(((Element) task).getChild("SQLDB").getText());
 			config.setSqlIP(((Element) task).getChild("SQLIP").getText());
@@ -231,6 +228,12 @@ public class GwConfigService {
 				DataField field=new DataField();
 				field.setName(((Element)e).getChildText("FIELDNAME"));
 				field.setType(((Element)e).getChildText("FIELDTYPE"));
+				if("TRUE".equalsIgnoreCase(((Element)e).getChildText("ISKEY"))){
+					field.setKey(true);
+					config.setIdName(((Element)e).getChildText("FIELDNAME"));
+				}else{
+					field.setKey(false);
+				}
 				config.getList().add(field);
 			}
 			configs.addConfig(config);

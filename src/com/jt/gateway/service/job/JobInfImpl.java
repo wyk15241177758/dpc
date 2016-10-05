@@ -29,11 +29,20 @@ public class JobInfImpl extends BasicServicveImpl  implements  JobInfService{
 	}
 	
 	/**
+	 * 获得所有 任务，根据指定条件过滤
+	 */
+	public List<JobInf> getAllJobs(String where){
+		List<JobInf> list=new ArrayList<JobInf>();
+		list=this.dao.query("from com.jt.bean.gateway.JobInf where "+where);
+		return list;
+	}
+	
+	/**
 	 * 获得某些任务
 	 */
 	public List<JobInf> getJobsByIds(String ids){
 		List<JobInf> list=new ArrayList<JobInf>();
-		list=this.dao.query("from com.jt.bean.gateway.JobInf where jobName in ("+ids+")");
+		list=this.dao.query("from com.jt.bean.gateway.JobInf where jobId in ("+ids+")");
 		return list;
 	}
 	
@@ -42,7 +51,7 @@ public class JobInfImpl extends BasicServicveImpl  implements  JobInfService{
 	 */
 	public JobInf getJobByName(String name){
 		List<JobInf> list=new ArrayList<JobInf>();
-		list=this.dao.query("from com.jt.bean.gateway.JobInf where jobName="+name);
+		list=this.dao.query("from com.jt.bean.gateway.JobInf where jobName='"+name+"'");
 		if(list.size()!=0){
 			return list.get(0);
 		}else{
@@ -137,7 +146,7 @@ public class JobInfImpl extends BasicServicveImpl  implements  JobInfService{
 //		QuartzManager.shutdownJobs();
 //	}
 	/**
-	 * 停止单个任务，仅从quartzmanager中移除。无需修改状态
+	 * 停止单个任务，仅从quartzmanager中移除。修改状态为1
 	 */
 	public void stopJob(Long id) {
 		
@@ -155,11 +164,11 @@ public class JobInfImpl extends BasicServicveImpl  implements  JobInfService{
 			throw new RuntimeException(e);
 		}
 		//修改状态
-//		String hql2 = "update com.jt.bean.gateway.JobInf set jobStatus = ? where jobId = ?";
-//		paramList=new  ArrayList<Param>();
-//		paramList.add(new Param(Types.INTEGER,1));
-//		paramList.add(new Param(Types.BIGINT,id));
-//		this.dao.update(hql2, paramList);
+		String hql2 = "update com.jt.bean.gateway.JobInf set jobStatus = ? where jobId = ?";
+		paramList=new  ArrayList<Param>();
+		paramList.add(new Param(Types.INTEGER,1));
+		paramList.add(new Param(Types.BIGINT,id));
+		this.dao.update(hql2, paramList);
 		
 	}
 	/**

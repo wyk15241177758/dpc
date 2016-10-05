@@ -201,13 +201,22 @@ public class IndexTask extends ApplicationObjectSupport implements Job{
 			
 			jobService.setJobStatus(job.getJobId(), 2);
 			log=createIndex();
-			//执行后保存本次的运行状况
-			if(log.getStatus()!=1){
+			if(log!=null){
+				//执行后保存本次的运行状况
+				if(log.getStatus()!=1){
+					log.setStatus(0);
+				}
+				jobLogService.saveLog(log);
+			}else{
+				log=new JobLog();
+				log.setJobId(job.getJobId());
+				log.setStart(new Date());
 				log.setStatus(0);
+				jobLogService.saveLog(log);
 			}
-			jobLogService.saveLog(log);
 		} catch (Exception e) {
 			if(log==null){
+				log=new JobLog();
 				log.setJobId(job.getJobId());
 				log.setStart(new Date());
 				log.setStatus(0);

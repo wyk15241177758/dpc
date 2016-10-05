@@ -34,7 +34,7 @@ public class QuartzTest2 {
 			System.out.println("【系统启动】开始(每5秒输出一次)...");  
 			Map<String,String> map=new HashMap<String,String>();
 			map.put("taskName", "智能问答数据抽取");
-			QuartzManager.addJob(job_name, IndexTask.class, "0/5 * * * * ?",map);  
+			//QuartzManager.addJob(job_name, IndexTask.class, "0/5 * * * * ?",map);  
 			
 //			Thread.sleep(5000);  
 //			System.out.println("【修改时间】开始(每2秒输出一次)...");  

@@ -29,7 +29,7 @@ public class JobInf implements java.io.Serializable {
 	//任务组名
 	public static String jobGroup="JOBGROUP_NAME";
 	//触发器名称
-	public static String triggerName="TRIGGER_NAME";
+	private String triggerName="TRIGGER_NAME";
 	//触发器组名
 	public static String triggerGroupName="TRIGGERGROUP_NAME";
 	
@@ -52,8 +52,24 @@ public class JobInf implements java.io.Serializable {
 	
 	
 
+//	public JobInf(Long jobId, String jobName, Integer jobStatus, String cronExpression, String beanClass,
+//			String description, Date createTime, Date updateTime) {
+//		super();
+//		this.jobId = jobId;
+//		this.jobName = jobName;
+//		this.jobStatus = jobStatus;
+//		this.cronExpression = cronExpression;
+//		this.beanClass = beanClass;
+//		this.description = description;
+//		this.createTime = createTime;
+//		this.updateTime = updateTime;
+//	}
+	
+
+
+
 	public JobInf(Long jobId, String jobName, Integer jobStatus, String cronExpression, String beanClass,
-			String description, Date createTime, Date updateTime) {
+			String description, String triggerName, Date createTime, Date updateTime) {
 		super();
 		this.jobId = jobId;
 		this.jobName = jobName;
@@ -61,9 +77,13 @@ public class JobInf implements java.io.Serializable {
 		this.cronExpression = cronExpression;
 		this.beanClass = beanClass;
 		this.description = description;
+		this.triggerName = triggerName;
 		this.createTime = createTime;
 		this.updateTime = updateTime;
 	}
+
+
+
 	public Long getJobId() {
 		return this.jobId;
 	}
@@ -147,14 +167,17 @@ public class JobInf implements java.io.Serializable {
 
 
 
-	public static String getTriggerName() {
+
+
+
+	public String getTriggerName() {
 		return triggerName;
 	}
 
 
 
-	public static void setTriggerName(String triggerName) {
-		JobInf.triggerName = triggerName;
+	public void setTriggerName(String triggerName) {
+		this.triggerName = triggerName;
 	}
 
 

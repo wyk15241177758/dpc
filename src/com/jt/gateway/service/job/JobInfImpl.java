@@ -84,20 +84,21 @@ public class JobInfImpl extends BasicServicveImpl  implements  JobInfService{
 	/**
 	 * 删除任务
 	 */
-	public void deleteTask(Long id) {
-		stopJob( id);
-		String hql = "update com.jt.bean.gateway.JobInf set jobStatus = ? where jobId = ?";
-		List<Param>  paramList=new  ArrayList<Param>();
-		paramList.add(new Param(Types.INTEGER,-1));
-		paramList.add(new Param(Types.BIGINT,id));
-		this.dao.update(hql, paramList);
+	public void deleteTask(JobInf job) {
+		stopJob( job.getJobId());
+		this.dao.delete(job);
 		
 	}
 	/**
 	 * 更新任务，更新之后再启动任务
 	 */
 	public void updateTask(JobInf jobInf) {
-		stopJob(jobInf.getJobId());
+		try {
+			stopJob(jobInf.getJobId());
+		} catch (Exception e1) {
+			e1.printStackTrace();
+			return;
+		}
 		List<Param>  paramList=new  ArrayList<Param>();
 		Date change = new Date();
 		Timestamp time = new Timestamp(change.getTime());

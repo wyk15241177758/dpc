@@ -168,7 +168,7 @@ public class JobManager {
 				return;
 			}
 			try {
-				jobService.deleteTask(job.getJobId());
+				jobService.deleteTask(job);
 			} catch (Exception e) {
 				msg.setMsg("删除任务["+job.getJobName()+"]失败，错误信息:["+e.getMessage()+"]");
 				pw.print(gson.toJson(msg));

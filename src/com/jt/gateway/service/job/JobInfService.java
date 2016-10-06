@@ -8,7 +8,7 @@ public interface JobInfService {
 	
 	public List<JobInf> getAllJobs();
 	public void addTask(JobInf jobInf);
-	public void deleteTask(Long id);
+	public void deleteTask(JobInf job);
 	
 	public void updateTask(JobInf jobInf) ;
 

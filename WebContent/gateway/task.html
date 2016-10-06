@@ -295,12 +295,33 @@
 		                </div>
 		                <div class="modal-footer">
 		                    <a href="#" class="btn btn-default" data-dismiss="modal">关闭</a>
-		                    <a href="#" class="btn btn-primary" data-dismiss="modal">确定</a>
 		                </div>
 		            </div>
 		        </div>
 		    </div>
 		    <!-- 提示浮层结束-->
+
+ 		<!-- 删除提示浮层开始-->
+			<div class="modal fade" id="warnModal-del" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+		         aria-hidden="true">
+		
+		        <div class="modal-dialog">
+		            <div class="modal-content">
+		                <div class="modal-header">
+		                    <button type="button" class="close" data-dismiss="modal">×</button>
+		                    <h3>提示信息</h3>
+		                </div>
+		                <div class="modal-body" >
+		                    <p id="warnmsg-del"></p>
+		                </div>
+		                <div class="modal-footer" id="del-footer">
+		                    <a href="#" class="btn btn-default" data-dismiss="modal">关闭</a>
+		                    <a href="#" class="btn btn-default" data-dismiss="modal" id="delconfirm">确定</a>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+		    <!-- 删除提示浮层结束-->
 
 		    <!-- 保存浮层开始-->
 			<div class="modal fade" id="saveModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"

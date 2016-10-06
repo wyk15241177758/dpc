@@ -168,6 +168,23 @@ function getJobList(){
     	}
     })
 }
+//删除任务
+function deleteJob(curTrJobId){
+	var param={"jobid":curTrJobId};
+	if(curTrJobId!=undefined){
+		  $.getJSON("/QASystem/admin/delJob.do",param,function(data){
+			  if(data==null||typeof(data.sig)=='undefined'
+				  ||typeof(data.msg)=='undefined'){
+					$('#warnmsg').html("删除jobid=["+param.jobid+"]的任务信息失败");
+          		$('#warnModal').modal('show');
+			  }else{
+				$('#warnmsg').html(data.msg);
+        		$('#warnModal').modal('show');
+			  }
+			  getJobList();
+		  })
+	}
+}
 
 $(document).ready(function () {
 	//获得任务列表
@@ -184,7 +201,9 @@ $(document).ready(function () {
     $('.btn-setting').click(function (e) {
         e.preventDefault();
         //先清空现有的输入框内容
-    	$("#setModal").children("input").val("");
+    	$("#setModal").find("input").each(function(){
+    		$(this).val("");
+    	})
     	//任务名称改成可以编辑
     	$("input[name='taskname']").removeAttr("disabled");
     	//改为新增模式
@@ -211,7 +230,9 @@ $(document).ready(function () {
     //点击编辑
     $(document).on("click","a[action='edit_a']",function(){
     	//先清空现有的输入框内容
-    	$("#setModal").children("input").val("");
+    	$("#setModal").find("input").each(function(){
+    		$(this).val("");
+    	})
     	//改为编辑模式
     	$("input[name='saveOrUpdate']").val("update");
     	var curTrJobId=$(this).parents("tr").attr("jobid");
@@ -277,21 +298,31 @@ $(document).ready(function () {
     //删除任务
     $(document).on("click","a[action='delete_a']",function(){
     	var curTrJobId=$(this).parents("tr").attr("jobid");
-    	var param={"jobid":curTrJobId};
-    	if(curTrJobId!=undefined){
-    		  $.getJSON("/QASystem/admin/delJob.do",param,function(data){
-    			  if(data==null||typeof(data.sig)=='undefined'
-    				  ||typeof(data.msg)=='undefined'){
-    					$('#warnmsg').html("删除jobid=["+param.jobid+"]的任务信息失败");
-                		$('#warnModal').modal('show');
-    			  }else{
-    				$('#warnmsg').html(data.msg);
-              		$('#warnModal').modal('show');
-    			  }
-    			  getJobList();
-    		  })
-    	}
+    	var curTrJobName=$(this).parents("tr").attr("jobname");
+    	$('#warnmsg-del').html("确定要删除任务["+curTrJobName+"]吗？删除后无法恢复");
+    	$('#warnmsg-del').attr("deljobid",curTrJobId)
+    	$("#warnModal-del").modal('show');
+//    	
+//    	if(curTrJobId!=undefined){
+//    		  $.getJSON("/QASystem/admin/delJob.do",param,function(data){
+//    			  if(data==null||typeof(data.sig)=='undefined'
+//    				  ||typeof(data.msg)=='undefined'){
+//    					$('#warnmsg').html("删除jobid=["+param.jobid+"]的任务信息失败");
+//                		$('#warnModal').modal('show');
+//    			  }else{
+//    				$('#warnmsg').html(data.msg);
+//              		$('#warnModal').modal('show');
+//    			  }
+//    			  getJobList();
+//    		  })
+//    	}
     })
+    //点击删除确认按钮
+    $("#delconfirm").click(function(){
+    	$("#warnModal-del").show("hidden");
+    	deleteJob($('#warnmsg-del').attr("deljobid"));
+    })
+    
     //保存浮层弹出
     $('.btn-save').click(function (e) {
     	e.preventDefault();
@@ -327,9 +358,10 @@ $(document).ready(function () {
             		window.setTimeout(function(){
             			$('#warnModal').modal('hide');
             			$('#setModal').modal('hide');
+            			//刷新任务列表
+                		getJobList();
             		}, 2000)
-            		//刷新任务列表
-            		getJobList();
+            		
             	}
             })
     	}

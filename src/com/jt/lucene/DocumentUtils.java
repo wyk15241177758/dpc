@@ -26,7 +26,7 @@ public class DocumentUtils {
 
 	public static Article document2Ariticle(Document doc) {
 		Article article = new Article();
-		article.setId(Integer.parseInt(doc.get("id")));
+		//article.setId(Integer.parseInt(doc.get("id")));
 		article.setTitle(doc.get("title"));
 		article.setContent(doc.get("content"));
 		return article;

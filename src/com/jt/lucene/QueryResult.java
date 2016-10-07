@@ -11,13 +11,13 @@ import java.util.List;
  */
 public class QueryResult {
 	private int count;
-	private List list;
+	private List<Article> list;
 
 	public QueryResult() {
 		super();
 	}
 
-	public QueryResult(int count, List list) {
+	public QueryResult(int count, List<Article> list) {
 		super();
 		this.count = count;
 		this.list = list;
@@ -31,11 +31,11 @@ public class QueryResult {
 		this.count = count;
 	}
 
-	public List getList() {
+	public List<Article> getList() {
 		return list;
 	}
 
-	public void setList(List list) {
+	public void setList(List<Article> list) {
 		this.list = list;
 	}
 }

@@ -197,7 +197,7 @@ public class MainPartExtracter {
         }
         questionStructure.setMainPartForTop(mainPartForTop);
         questionStructure.setMainPartForRoot(mainPartForRoot);
-
+System.out.println("mainPartForTop=["+mainPartForTop+"] mainPartForRoot=["+mainPartForRoot+"]");
         if (questionStructure.getMainPart() == null) {
             LOG.error("未能识别主谓宾：" + question);
         } else {

@@ -52,7 +52,7 @@ public class MainPartExtracter {
 
     static {
         //模型
-        String models = "models/chineseFactored.ser.gz";
+        String models = "F:\\Workspace\\git\\QASystem\\nlpresources\\models\\chineseFactored.ser.gz";
         LOG.info("模型：" + models);
         LP = LexicalizedParser.loadModel(models);
         //汉语
@@ -139,7 +139,11 @@ public class MainPartExtracter {
 
         Tree tree = LP.apply(words);
         LOG.info("句法树: ");
-        tree.pennPrint();
+        List<Tree> list=tree.getChildrenAsList();
+        for(Tree t:list){
+        	System.out.println(t.labeledYield());
+        }
+        //tree.pennPrint();
         questionStructure.setTree(tree);
 
         GrammaticalStructure gs = GSF.newGrammaticalStructure(tree);

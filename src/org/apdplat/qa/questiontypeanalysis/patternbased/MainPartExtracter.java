@@ -30,6 +30,7 @@ import org.apdplat.qa.parser.WordParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.stanford.nlp.ling.LabeledWord;
 import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
 import edu.stanford.nlp.trees.GrammaticalStructure;
 import edu.stanford.nlp.trees.GrammaticalStructureFactory;
@@ -125,6 +126,28 @@ public class MainPartExtracter {
         }
         return getMainPart(question, words);
     }
+    
+    /**
+     * 输入主谓宾，返回主谓宾的词性
+     * @param mainPart
+     */
+    public List<LabeledWord> getPortOfSpeech(String mainPart) {
+        List<edu.stanford.nlp.ling.Word> words = new ArrayList<>();
+        String[] qw = mainPart.split("\\s+");
+        for (String item : qw) {
+            item = item.trim();
+            if ("".equals(item)) {
+                continue;
+            }
+            words.add(new edu.stanford.nlp.ling.Word(item));
+        }
+        Tree tree = LP.apply(words);
+        return tree.labeledYield();
+//        for(Tree curTree:tree.getChildrenAsList()){
+//        	curTree.labeledYield()
+//        }
+    }
+    
 
     /**
      * 获取句子的主谓宾
@@ -139,10 +162,10 @@ public class MainPartExtracter {
 
         Tree tree = LP.apply(words);
         LOG.info("句法树: ");
-        List<Tree> list=tree.getChildrenAsList();
-        for(Tree t:list){
-        	System.out.println(t.labeledYield());
-        }
+        tree.pennPrint();
+//        for(Tree t:list){
+//        	System.out.println(t.labeledYield());
+//        }
         //tree.pennPrint();
         questionStructure.setTree(tree);
 
@@ -156,13 +179,13 @@ public class MainPartExtracter {
         Map<String, String> map = new HashMap<>();
         String top = null;
         String root = null;
-        LOG.info("句子依存关系：");
+//        LOG.info("句子依存关系：");
         //依存关系
         List<String> dependencies = new ArrayList<>();
         for (TypedDependency tdl : tdls) {
             String item = tdl.toString();
             dependencies.add(item);
-            LOG.info("\t" + item);
+//            LOG.info("\t" + item);
             if (item.startsWith("top")) {
                 top = item;
             }
@@ -197,11 +220,10 @@ public class MainPartExtracter {
         }
         questionStructure.setMainPartForTop(mainPartForTop);
         questionStructure.setMainPartForRoot(mainPartForRoot);
-System.out.println("mainPartForTop=["+mainPartForTop+"] mainPartForRoot=["+mainPartForRoot+"]");
         if (questionStructure.getMainPart() == null) {
             LOG.error("未能识别主谓宾：" + question);
-        } else {
-            LOG.info("主谓宾：" + questionStructure.getMainPart());
+        }else{
+        	LOG.info("主谓宾:"+questionStructure.getMainPart());
         }
         return questionStructure;
     }
@@ -300,13 +322,13 @@ System.out.println("mainPartForTop=["+mainPartForTop+"] mainPartForRoot=["+mainP
      */
     private String questionParse(String question) {
         //分词
-        LOG.info("对问题进行分词：" + question);
+//        LOG.info("对问题进行分词：" + question);
         List<Word> words = WordParser.parse(question);
         StringBuilder wordStr = new StringBuilder();
         for (Word word : words) {
             wordStr.append(word.getText()).append(" ");
         }
-        LOG.info("分词结果为：" + wordStr.toString().trim());
+//        LOG.info("分词结果为：" + wordStr.toString().trim());
         return wordStr.toString().trim();
     }
 
@@ -315,24 +337,29 @@ System.out.println("mainPartForTop=["+mainPartForTop+"] mainPartForRoot=["+mainP
      * @throws java.lang.Exception
      */
     public static void main(String[] args) throws Exception {
-        MainPartExtracter mainPartExtracter = new MainPartExtracter();
-        String [] arr={"杨浦有什么地方好玩？","孩子转学需要什么手续？","我想自主创业，政府有什么政策？","噪音扰民怎么办?","上海怎么办理居住证 "};
-        for(String str:arr){
-        	System.out.println(str+"-------------------------begin");
-        	QuestionStructure qs = mainPartExtracter.getMainPart(str);
-        	System.out.println("111111");
-//        	System.out.println(mainPartExtracter.getQuestionMainPartPattern(str,qs.getMainPart()));;
-//        LOG.info(qs.getQuestion());
-        	List<Word> list=WordParser.parse(qs.getMainPart());
-        	for(Word word:list){
-        		System.out.println(word.getPartOfSpeech().getPos());
-        		System.out.println(word.getText());
-        	}
-        	System.out.println("22222");
-//        	for (String d : qs.getDependencies()) {
-//        		LOG.info("\t" + d);
-//        	}
-        	System.out.println("-------------------------end");
-        }
+//        MainPartExtracter mainPartExtracter = new MainPartExtracter();
+//        String [] arr={"杨浦有什么地方好玩？","孩子转学需要什么手续？","我想自主创业，政府有什么政策？","噪音扰民怎么办?","上海怎么办理居住证 "};
+//        for(String str:arr){
+//        	QuestionStructure qs=mainPartExtracter.getMainPart(str);
+//        	System.out.println("主谓宾:"+qs.getMainPart());
+//        	System.out.println("新句法树 begin");
+//        	mainPartExtracter.getPortOfSpeech(qs.getMainPart());
+//        	System.out.println("新句法树 end");
+////        	System.out.println(str+"-------------------------begin");
+////        	QuestionStructure qs = mainPartExtracter.getMainPart(str);
+////        	System.out.println("111111");
+//////        	System.out.println(mainPartExtracter.getQuestionMainPartPattern(str,qs.getMainPart()));;
+//////        LOG.info(qs.getQuestion());
+////        	List<Word> list=WordParser.parse(qs.getMainPart());
+////        	for(Word word:list){
+////        		System.out.println(word.getPartOfSpeech().getPos());
+////        		System.out.println(word.getText());
+////        	}
+////        	System.out.println("22222");
+//////        	for (String d : qs.getDependencies()) {
+//////        		LOG.info("\t" + d);
+//////        	}
+////        	System.out.println("-------------------------end");
+//        }
     }
 }

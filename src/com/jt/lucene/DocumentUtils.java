@@ -1,9 +1,9 @@
 package com.jt.lucene;
-import java.util.List;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.TextField;
 
 
 /**
@@ -15,20 +15,30 @@ import org.apache.lucene.document.TextField;
  * @version 1.0.0
  */
 public class DocumentUtils {
-	
-	public static Document article2Document(Article article) {
-		Document doc = new Document();
-		doc.add(new Field("id", article.getId().toString(), TextField.TYPE_STORED));
-		doc.add(new Field("title", article.getTitle(), TextField.TYPE_STORED));
-		doc.add(new Field("content", article.getContent(), TextField.TYPE_STORED));
-		return doc;
+	public static String getColumnIgnoreCase(Document doc,String cloumn){
+		if(doc.get(cloumn)!=null){
+			return doc.get(cloumn);
+		}else if(doc.get(StringUtils.lowerCase(cloumn))!=null){
+			return doc.get(StringUtils.lowerCase(cloumn));
+		}else{
+			return doc.get(StringUtils.upperCase(cloumn));
+		}
 	}
-
 	public static Article document2Ariticle(Document doc) {
 		Article article = new Article();
-		//article.setId(Integer.parseInt(doc.get("id")));
-		article.setTitle(doc.get("title"));
-		article.setContent(doc.get("content"));
+		article.setId(Integer.parseInt(getColumnIgnoreCase(doc,"XQ_ID")));
+		article.setTitle(getColumnIgnoreCase(doc,"XQ_TITLE"));
+		article.setUrl(getColumnIgnoreCase(doc,"XQ_URL"));
+		String time=getColumnIgnoreCase(doc,"LOAD_TIME");
+		SimpleDateFormat sdf=new SimpleDateFormat();
+		try {
+			article.setDate(sdf.parse(time));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		article.setCategory(getColumnIgnoreCase(doc, "SJFL"));
+		article.setChannel(getColumnIgnoreCase(doc, "LM_NAME"));
+		article.setSite(getColumnIgnoreCase(doc, "ZD_NAME"));
 		return article;
 	}
 }

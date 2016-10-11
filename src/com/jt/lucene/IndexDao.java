@@ -64,19 +64,19 @@ public class IndexDao {
 		}
 	}
 	
-	public void save(Article article) {
-		Document doc = DocumentUtils.article2Document(article);
-		IndexWriter indexWriter = null;
-		try {
-			IndexWriterConfig config = new IndexWriterConfig(util.getAnalyzer());
-			indexWriter = new IndexWriter(util.getDirectory(), config);
-			indexWriter.addDocument(doc);
-		} catch (Exception e) {
-			logger.error("IndexDao.save error", e);
-		} finally {
-			LuceneUtilsGw.closeIndexWriter(indexWriter);
-		}
-	}
+//	public void save(Article article) {
+//		Document doc = DocumentUtils.article2Document(article);
+//		IndexWriter indexWriter = null;
+//		try {
+//			IndexWriterConfig config = new IndexWriterConfig(util.getAnalyzer());
+//			indexWriter = new IndexWriter(util.getDirectory(), config);
+//			indexWriter.addDocument(doc);
+//		} catch (Exception e) {
+//			logger.error("IndexDao.save error", e);
+//		} finally {
+//			LuceneUtilsGw.closeIndexWriter(indexWriter);
+//		}
+//	}
 
 	public void delete(String id) {
 		IndexWriter indexWriter = null;
@@ -365,6 +365,149 @@ public class IndexDao {
 		}
 		return null;
 	}
+	
+	
+/**
+ * 检索词的与、或关系统一定义
+ * @param queryString
+ * 支持传入多个检索词
+ * @param occur
+ * 多个检索词之间的关系，Occur.MUST(结果“与”)， Occur.MUST_NOT(结果“不包含”)，Occur.SHOULD(结果“或”)
+ * @param field
+ * 当前应用使用title
+ * @param sortField
+ * 排序字段，传入null则按照相关度排序
+ * @param sortFieldType
+ * 排序字段的类型，如long、int等
+ * @param reverse
+ * 排序方式，顺序(false)还是倒序(true)
+ * @param firstResult
+ * 结果从第几个开始
+ * @param maxResult
+ * 结果到第几个结束，可以传入-1，则限制为1000条
+ * @return
+ */
+	public List<Article> searchArticle(String[] queryString,Occur occur,String field,String sortField,SortField.Type sortFieldType,boolean reverse ,int firstResult, int maxResult) {
+		List<Article> list = new ArrayList<Article>();
+		TopDocs topDocs =null;
+		Sort sort=null;
+		DirectoryReader ireader=null;
+		IndexSearcher isearcher=null;
+		Occur[] occ=new Occur[queryString.length];
+		String[]fields=new String[queryString.length];
+		if(maxResult==-1){
+			maxResult=1000;
+		}
+		try {
+			ireader = DirectoryReader.open(util.getDirectory());
+			// 2、第二步，创建搜索器
+			isearcher = new IndexSearcher(ireader);
+			// 3、第三步，类似SQL，进行关键字查询
+//			parser = new QueryParser(field, util.getAnalyzer());
+			for(int i=0;i<queryString.length;i++){
+				occ[i]=occur;
+				fields[i]=field;
+			}
+			Query query =MultiFieldQueryParser.parse(queryString,fields,occ,util.getAnalyzer());
+
+			
+			if(sortField!=null&&sortFieldType!=null){
+				sort=new Sort(new SortField(sortField, sortFieldType,reverse));//生成排序类
+				topDocs = isearcher.search(query, firstResult + maxResult,sort);
+			}else{
+				topDocs = isearcher.search(query, firstResult + maxResult);
+			}
+			ScoreDoc[] hits = topDocs.scoreDocs;// 第二个参数，指定最多返回前n条结果
+			// 高亮
+//			Formatter formatter = new SimpleHTMLFormatter("<font color='red'>", "</font>");
+//			Scorer source = new QueryScorer(query);
+//			Highlighter highlighter = new Highlighter(formatter, source);
+			
+			// 处理结果
+			int endIndex = Math.min(firstResult + maxResult, hits.length);
+			
+			for (int i = firstResult; i < endIndex; i++) {
+				Document hitDoc = isearcher.doc(hits[i].doc);
+				list.add(DocumentUtils.document2Ariticle(hitDoc));
+			}
+			ireader.close();
+			return list;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	
+/**
+ * 支持定义每个检索词的与、或关系
+ * @param queryString
+ * 支持传入多个检索词
+ * @param occurs
+ * 多个检索词之间的关系，Occur.MUST(结果“与”)， Occur.MUST_NOT(结果“不包含”)，Occur.SHOULD(结果“或”)
+ * @param field
+ * 当前应用使用title
+ * @param sortField
+ * 排序字段，传入null则按照相关度排序
+ * @param sortFieldType
+ * 排序字段的类型，如long、int等
+ * @param reverse
+ * 排序方式，顺序(false)还是倒序(true)
+ * @param firstResult
+ * 结果从第几个开始
+ * @param maxResult
+ * 结果到第几个结束，可以传入-1，则限制为1000条
+ * @return
+ */
+	public List<Article> searchArticle(String[] queryString,Occur[] occurs,String field,String sortField,SortField.Type sortFieldType,boolean reverse ,int firstResult, int maxResult) {
+		List<Article> list = new ArrayList<Article>();
+		TopDocs topDocs =null;
+		Sort sort=null;
+		DirectoryReader ireader=null;
+		IndexSearcher isearcher=null;
+		String[]fields=new String[queryString.length];
+		if(maxResult==-1){
+			maxResult=1000;
+		}
+		try {
+			ireader = DirectoryReader.open(util.getDirectory());
+			// 2、第二步，创建搜索器
+			isearcher = new IndexSearcher(ireader);
+			// 3、第三步，类似SQL，进行关键字查询
+//			parser = new QueryParser(field, util.getAnalyzer());
+			for(int i=0;i<queryString.length;i++){
+				fields[i]=field;
+			}
+			Query query =MultiFieldQueryParser.parse(queryString,fields,occurs,util.getAnalyzer());
+
+			
+			if(sortField!=null&&sortFieldType!=null){
+				sort=new Sort(new SortField(sortField, sortFieldType,reverse));//生成排序类
+				topDocs = isearcher.search(query, firstResult + maxResult,sort);
+			}else{
+				topDocs = isearcher.search(query, firstResult + maxResult);
+			}
+			ScoreDoc[] hits = topDocs.scoreDocs;// 第二个参数，指定最多返回前n条结果
+			// 高亮
+//			Formatter formatter = new SimpleHTMLFormatter("<font color='red'>", "</font>");
+//			Scorer source = new QueryScorer(query);
+//			Highlighter highlighter = new Highlighter(formatter, source);
+			
+			// 处理结果
+			int endIndex = Math.min(firstResult + maxResult, hits.length);
+			
+			for (int i = firstResult; i < endIndex; i++) {
+				Document hitDoc = isearcher.doc(hits[i].doc);
+				list.add(DocumentUtils.document2Ariticle(hitDoc));
+			}
+			ireader.close();
+			return list;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	
 	
 //	public TopDocs search(String queryString,String field,String sortField,boolean reverse ,int firstResult, int maxResult) {

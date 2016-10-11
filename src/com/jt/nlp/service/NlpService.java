@@ -54,8 +54,8 @@ public class NlpService {
 		 List<String> splitedQ=NlpUtil.splitQuestion(question);
 		 for(String str:splitedQ){
 			 List<LabeledWord> mainPartWords=getMainPartWords(str);
+			 LOG.info("标注词性的主谓宾=["+mainPartWords+"]");
 			 for(LabeledWord word:mainPartWords){
-				 LOG.info("111question=["+question+"] 标注词性的主谓宾=["+word+"]");
 				 String temp=doFilterWord(word);
 				 if(temp!=null){
 					 set.add(temp);
@@ -64,24 +64,42 @@ public class NlpService {
 		 }
 		 return set;
 	 }
-	 
-	 //处理过滤检索词
-	 private String doFilterWord(LabeledWord word){
+	 /**
+	  * 必须符合此规则
+	  * @param word
+	  * @return
+	  */
+	 private LabeledWord baseFilterWord(LabeledWord word){
 		 //词
 		 String text=word.value();
-		 //词性
-		 String label=word.tag().value();
-		 
-		 String filteredWord=text;
-		 //过滤只有一个字的词，返回null
+		//过滤只有一个字的词，返回null
 		 if(text.length()<2){
 			 return null;
-		 }
-		 //仅保留词性为remainPartOfSpeech的词
-		 if(remainPartOfSpeech.contains(label)){
-			 return filteredWord;
 		 }else{
-			 return null;
+			 return word;
+		 }
+	 }
+	 
+	 //处理过滤检索词
+	 private String doFilterWord(List<LabeledWord> mainPartWords){
+		 
+		 for(LabeledWord word:mainPartWords){
+			 //词
+			 String text=word.value();
+			 //词性
+			 String label=word.tag().value();
+			 
+			 String filteredWord=text;
+			 //过滤只有一个字的词，返回null
+			 if(text.length()<2){
+				 return null;
+			 }
+			 //仅保留词性为remainPartOfSpeech的词
+			 if(remainPartOfSpeech.contains(label)){
+				 return filteredWord;
+			 }else{
+				 return null;
+			 }
 		 }
 	 }
 	 public static void main(String[] args) {

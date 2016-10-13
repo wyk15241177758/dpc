@@ -146,7 +146,7 @@ public class IndexTask extends ApplicationObjectSupport implements Job{
 					}
 					logger.debug("value=["+map.get(df.getName().toUpperCase()).toString()+"]"
 							+ " type= ["+df.getType()+"]");
-					doc.add(new Field(df.getName(), map.get(df.getName().toUpperCase()).toString(), df.getFieldType()));
+					doc.add(new Field(df.getName().toLowerCase(), map.get(df.getName().toUpperCase()).toString(), df.getFieldType()));
 				}
 				indexDao.save(doc);
 				//记录推送的总数

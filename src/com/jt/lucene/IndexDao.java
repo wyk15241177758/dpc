@@ -44,12 +44,22 @@ public class IndexDao {
 	private LuceneUtilsGw util;
 	private String indexPath;
 	
+	public String getIndexPath() {
+		return indexPath;
+	}
+
+	public void setIndexPath(String indexPath) {
+		this.indexPath = indexPath;
+	}
+
 	public IndexDao(String indexPath) throws IOException{
 		this.indexPath=indexPath;
-		System.out.println("indexPath=["+indexPath+"]");
 		util=new LuceneUtilsGw(indexPath);
 	}
 	
+	public IndexDao(){
+		
+	}
 	public void save(Document doc) {
 		
 		IndexWriter indexWriter = null;
@@ -366,6 +376,19 @@ public class IndexDao {
 		return null;
 	}
 	
+	/**
+	 * 简易检索，各个字段之间是or关系，默认按照相关性排序
+	 * @param queryString
+	 * @param field
+	 * @param firstResult
+	 * @param maxResult
+	 * @return
+	 */
+	public List<Article> searchArticle(String[] queryString,String field,int firstResult, int maxResult) {
+		Occur occur=Occur.SHOULD;
+		return searchArticle(queryString, occur, field, null, null,false, firstResult, maxResult);
+	}
+		
 	
 /**
  * 检索词的与、或关系统一定义
@@ -388,54 +411,11 @@ public class IndexDao {
  * @return
  */
 	public List<Article> searchArticle(String[] queryString,Occur occur,String field,String sortField,SortField.Type sortFieldType,boolean reverse ,int firstResult, int maxResult) {
-		List<Article> list = new ArrayList<Article>();
-		TopDocs topDocs =null;
-		Sort sort=null;
-		DirectoryReader ireader=null;
-		IndexSearcher isearcher=null;
-		Occur[] occ=new Occur[queryString.length];
-		String[]fields=new String[queryString.length];
-		if(maxResult==-1){
-			maxResult=1000;
+		Occur[] occurs=new Occur[queryString.length];
+		for(int i=0;i<occurs.length;i++){
+			occurs[i]=occur;
 		}
-		try {
-			ireader = DirectoryReader.open(util.getDirectory());
-			// 2、第二步，创建搜索器
-			isearcher = new IndexSearcher(ireader);
-			// 3、第三步，类似SQL，进行关键字查询
-//			parser = new QueryParser(field, util.getAnalyzer());
-			for(int i=0;i<queryString.length;i++){
-				occ[i]=occur;
-				fields[i]=field;
-			}
-			Query query =MultiFieldQueryParser.parse(queryString,fields,occ,util.getAnalyzer());
-
-			
-			if(sortField!=null&&sortFieldType!=null){
-				sort=new Sort(new SortField(sortField, sortFieldType,reverse));//生成排序类
-				topDocs = isearcher.search(query, firstResult + maxResult,sort);
-			}else{
-				topDocs = isearcher.search(query, firstResult + maxResult);
-			}
-			ScoreDoc[] hits = topDocs.scoreDocs;// 第二个参数，指定最多返回前n条结果
-			// 高亮
-//			Formatter formatter = new SimpleHTMLFormatter("<font color='red'>", "</font>");
-//			Scorer source = new QueryScorer(query);
-//			Highlighter highlighter = new Highlighter(formatter, source);
-			
-			// 处理结果
-			int endIndex = Math.min(firstResult + maxResult, hits.length);
-			
-			for (int i = firstResult; i < endIndex; i++) {
-				Document hitDoc = isearcher.doc(hits[i].doc);
-				list.add(DocumentUtils.document2Ariticle(hitDoc));
-			}
-			ireader.close();
-			return list;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
+		return searchArticle(queryString, occurs, field, sortField, sortFieldType, reverse, firstResult, maxResult);
 	}
 	
 	

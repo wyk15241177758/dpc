@@ -1,6 +1,7 @@
 package com.jt.lucene;
 
 import java.util.Date;
+import java.util.HashMap;
 
 /**
  * @项目名称：lucene
@@ -11,6 +12,11 @@ import java.util.Date;
  * @version 1.0.0
  */
 public class Article {
+	@Override
+	public String toString() {
+		return "Article [id=" + id + ", title=" + title + ", url=" + url + ", channel=" + channel + ", site=" + site
+				+ ", category=" + category + ", date=" + date + "]";
+	}
 	private Integer id;
 	private String title;
 	private String url;
@@ -18,7 +24,32 @@ public class Article {
 	private String site;
 	private String category;//分类
 	private Date date;
-	
+	//返回与jtcrawler表的字段对应关系，必须小写
+	public static String getMapedFieldName(String articleField) {
+		if(articleField.equalsIgnoreCase("id")){
+			return "xq_id";
+		}
+		if(articleField.equalsIgnoreCase("title")){
+			return "xq_title";
+		}
+		if(articleField.equalsIgnoreCase("url")){
+			return "xq_url";
+		}
+		if(articleField.equalsIgnoreCase("channel")){
+			return "lm_name";
+		}
+		if(articleField.equalsIgnoreCase("site")){
+			return "zd_name";
+		}
+		if(articleField.equalsIgnoreCase("category")){
+			return "sjfl";
+		}
+		if(articleField.equalsIgnoreCase("date")){
+			return "load_time";
+		}
+		return null;
+	}
+
 	public String getChannel() {
 		return channel;
 	}

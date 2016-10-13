@@ -42,6 +42,9 @@ public class NlpService {
 	public List<LabeledWord> getMainPartWords(String question) {
 		QuestionStructure qs = mainPartExtracter.getMainPart(question);
 		String mainPart = qs.getMainPart();
+		if(mainPart==null){
+			return null;
+		}
 		List<LabeledWord> list = mainPartExtracter.getPortOfSpeech(mainPart);
 		LOG.info("question=[" + question + "] 标注词性的主谓宾=[" + list + "]");
 		return list;
@@ -59,7 +62,11 @@ public class NlpService {
 		List<String> splitedQ = NlpUtil.splitQuestion(question);
 		for (String str : splitedQ) {
 			List<LabeledWord> mainPartWords = getMainPartWords(str);
-			set.addAll(doFilterWord(mainPartWords));
+			if(mainPartWords==null){
+				set.add(str);
+			}else{
+				set.addAll(doFilterWord(mainPartWords));
+			}
 		}
 		return set;
 	}
@@ -123,7 +130,8 @@ public class NlpService {
 
 	public static void main(String[] args) {
 		NlpService service = new NlpService();
-		String[] arr = { "杨浦有什么地方好玩？", "孩子转学需要什么手续？", "我想自主创业，政府有什么政策？", "噪音扰民怎么办?", "上海怎么办理居住证 " };
+//		String[] arr = { "杨浦有什么地方好玩？", "孩子转学需要什么手续？", "我想自主创业，政府有什么政策？", "噪音扰民怎么办?", "上海怎么办理居住证 " };
+		String[] arr = {"中国" };
 		for (String str : arr) {
 			System.out.println("问题:" + str + "----------begin");
 			Set<String> set = service.getSearchWords(str);

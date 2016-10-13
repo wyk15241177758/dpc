@@ -123,6 +123,23 @@ public class LuceneSearchService {
 		return dao.searchArticle(queryString, occurs, field, sortField, sortFieldType, reverse, firstResult, maxResult);
 	}
 
+	/**
+	 * 简易检索，各个字段之间是or关系，默认按照相关性排序
+	 * @param queryString
+	 * @param field
+	 * @param firstResult
+	 * @param maxResult
+	 * @return
+	 */
+	public List<Article> searchArticle(String[] queryString,String field,int firstResult, int maxResult){ 
+		System.out.println("检索词为");
+		for(String str:queryString){
+			System.out.println(str);
+		}
+			
+		return dao.searchArticle(queryString, field, firstResult, maxResult);
+	}
+	
 	public IndexDao getDao() {
 		return dao;
 	}

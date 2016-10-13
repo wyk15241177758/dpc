@@ -26,19 +26,27 @@ public class DocumentUtils {
 	}
 	public static Article document2Ariticle(Document doc) {
 		Article article = new Article();
-		article.setId(Integer.parseInt(getColumnIgnoreCase(doc,"XQ_ID")));
-		article.setTitle(getColumnIgnoreCase(doc,"XQ_TITLE"));
-		article.setUrl(getColumnIgnoreCase(doc,"XQ_URL"));
-		String time=getColumnIgnoreCase(doc,"LOAD_TIME");
-		SimpleDateFormat sdf=new SimpleDateFormat();
 		try {
-			article.setDate(sdf.parse(time));
-		} catch (ParseException e) {
-			e.printStackTrace();
+			article.setId(Integer.parseInt(getColumnIgnoreCase(doc,"xq_id")));
+		} catch (NumberFormatException e) {
+			article.setId(0);
 		}
-		article.setCategory(getColumnIgnoreCase(doc, "SJFL"));
-		article.setChannel(getColumnIgnoreCase(doc, "LM_NAME"));
-		article.setSite(getColumnIgnoreCase(doc, "ZD_NAME"));
+		article.setTitle(getColumnIgnoreCase(doc,"xq_title"));
+		article.setUrl(getColumnIgnoreCase(doc,"xq_url"));
+		String time=getColumnIgnoreCase(doc,"load_time");
+		if(time==null){
+			article.setDate(null);
+		}else{
+			SimpleDateFormat sdf=new SimpleDateFormat();
+			try {
+				article.setDate(sdf.parse(time));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+		article.setCategory(getColumnIgnoreCase(doc, "sjfl"));
+		article.setChannel(getColumnIgnoreCase(doc, "lm_name"));
+		article.setSite(getColumnIgnoreCase(doc, "zd_name"));
 		return article;
 	}
 }

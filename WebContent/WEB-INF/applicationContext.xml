@@ -170,5 +170,4 @@
 	<bean id="jobInit" lazy-init="false"
 		class="com.jt.gateway.service.management.JobInit" init-method="init" />
 
-
 </beans>

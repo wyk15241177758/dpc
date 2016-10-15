@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -28,11 +29,12 @@ public class QAManager {
 	public QAService getQaService() {
 		return qaService;
 	}
+	@Resource(name="qaService") 
 	public void setQaService(QAService qaService) {
 		this.qaService = qaService;
 	}
-	@Resource(name="qaSearch") 
-	public void qaSearchService(HttpServletRequest request, HttpServletResponse response) {
+	@RequestMapping(value="qaSearch.do")
+	public void qaSearch(HttpServletRequest request, HttpServletResponse response) {
 		response.setCharacterEncoding("utf-8");
 		msg=new PageMsg();
 		msg.setSig(true);
@@ -58,6 +60,9 @@ public class QAManager {
 			iEnd=Integer.parseInt(sEnd);
 		}catch(Exception e){
 			iEnd=5;
+		}
+		if(question==null){
+			question="";
 		}
 		List<Article> list=qaService.QASearch(question, iBegin,iEnd);
 		if(list!=null){

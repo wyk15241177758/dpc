@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -60,6 +62,16 @@ public class IndexDao {
 	public IndexDao(){
 		
 	}
+	@PostConstruct
+	public void initInSpring(){
+		try {
+			util=new LuceneUtilsGw(indexPath);
+			logger.info("初始化indexdao");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public void save(Document doc) {
 		
 		IndexWriter indexWriter = null;

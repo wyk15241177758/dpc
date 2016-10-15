@@ -8,11 +8,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.jt.lucene.Article;
 import com.jt.lucene.IndexDao;
 
 public class QAService {
+	private static final Logger LOG = LoggerFactory.getLogger(QAService.class);
+
 	private NlpService nlpService;
 	private LuceneSearchService searchService;
 	//本地测试使用
@@ -25,6 +31,12 @@ public class QAService {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	//nlp第一次分析初始化很慢，不知道怎么初始化，直接触发一次检索
+	@PostConstruct
+	public void initNlp(){
+		QASearch("初始化",1);
+		LOG.info("正在初始化NLP");
 	}
 	public QAService(){
 		nlpService=new NlpService();

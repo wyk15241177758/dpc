@@ -53,7 +53,7 @@ public class MainPartExtracter {
 
     static {
         //模型
-        String models = "F:\\Workspace\\git\\QASystem\\nlpresources\\models\\chineseFactored.ser.gz";
+        String models = MainPartExtracter.class.getResource("/").getPath()+"/chineseFactored.ser.gz";
         LOG.info("模型：" + models);
         LP = LexicalizedParser.loadModel(models);
         //汉语

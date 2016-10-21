@@ -23,6 +23,7 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
+import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.highlight.Formatter;
@@ -501,28 +502,6 @@ public class IndexDao {
 	}
 	
 	
-	
-//	public TopDocs search(String queryString,String field,String sortField,boolean reverse ,int firstResult, int maxResult) {
-//		try {
-//			DirectoryReader ireader = DirectoryReader.open(util.getDirectory());
-//			// 2、第二步，创建搜索器
-//			IndexSearcher isearcher = new IndexSearcher(ireader);
-//
-//			// 3、第三步，类似SQL，进行关键字查询
-//			String[] fields = { "title", "content" };
-//			QueryParser parser = new QueryParser(field, util.getAnalyzer());
-//			Query query = parser.parse(queryString);
-//			
-//			Sort sort=new Sort(new SortField(sortField, SortField.Type.LONG,reverse));//生成排序类
-//			
-//			TopDocs topDocs = isearcher.search(query, firstResult + maxResult,sort);
-//			return topDocs;
-//		} catch (Exception e) {
-//			logger.error("IndexDao.search error", e);
-//		}
-//		return null;
-//	}
-	
 	public void addLongPoint(Document document, String name, long value) {
 	    Field field = new LongPoint(name, value);
 	    document.add(field);
@@ -533,5 +512,4 @@ public class IndexDao {
 	    field = new StoredField(name, value);
 	    document.add(field);
 	}
-	
 }

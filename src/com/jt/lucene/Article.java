@@ -7,7 +7,6 @@ import java.util.HashMap;
  * @项目名称：lucene
  * @类名称：Article
  * @类描述：这是一个文章实体类
- * @创建人：YangChao
  * @创建时间：2016年8月30日 下午3:11:38
  * @version 1.0.0
  */

@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.document.TextField;
 
 
 /**
@@ -27,13 +29,13 @@ public class DocumentUtils {
 	public static Article document2Ariticle(Document doc) {
 		Article article = new Article();
 		try {
-			article.setId(Integer.parseInt(getColumnIgnoreCase(doc,"xq_id")));
+			article.setId(Integer.parseInt(getColumnIgnoreCase(doc,article.getMapedFieldName("id"))));
 		} catch (NumberFormatException e) {
 			article.setId(0);
 		}
-		article.setTitle(getColumnIgnoreCase(doc,"xq_title"));
-		article.setUrl(getColumnIgnoreCase(doc,"xq_url"));
-		String time=getColumnIgnoreCase(doc,"load_time");
+		article.setTitle(getColumnIgnoreCase(doc,article.getMapedFieldName("title")));
+		article.setUrl(getColumnIgnoreCase(doc,article.getMapedFieldName("url")));
+		String time=getColumnIgnoreCase(doc,article.getMapedFieldName("date"));
 		if(time==null){
 			article.setDate(null);
 		}else{
@@ -44,9 +46,21 @@ public class DocumentUtils {
 				e.printStackTrace();
 			}
 		}
-		article.setCategory(getColumnIgnoreCase(doc, "sjfl"));
-		article.setChannel(getColumnIgnoreCase(doc, "lm_name"));
-		article.setSite(getColumnIgnoreCase(doc, "zd_name"));
+		article.setCategory(getColumnIgnoreCase(doc, article.getMapedFieldName("category")));
+		article.setChannel(getColumnIgnoreCase(doc, article.getMapedFieldName("channel")));
+		article.setSite(getColumnIgnoreCase(doc, article.getMapedFieldName("site")));
 		return article;
+	}
+	public static Document article2Document(Article article){
+		Document doc  = new Document();
+		doc.add(new Field(article.getMapedFieldName("id"),article.getId()+"",TextField.TYPE_STORED));
+		doc.add(new Field(article.getMapedFieldName("title"),article.getTitle(),TextField.TYPE_STORED));
+		doc.add(new Field(article.getMapedFieldName("url"),article.getUrl(),TextField.TYPE_STORED));
+		doc.add(new Field(article.getMapedFieldName("channel"),article.getChannel(),TextField.TYPE_STORED));
+		doc.add(new Field(article.getMapedFieldName("site"),article.getSite(),TextField.TYPE_STORED));
+		doc.add(new Field(article.getMapedFieldName("category"),article.getCategory(),TextField.TYPE_STORED));
+		SimpleDateFormat sdf=new SimpleDateFormat();
+		doc.add(new Field(article.getMapedFieldName("date"),sdf.format(article.getDate()),TextField.TYPE_STORED));
+		return doc;
 	}
 }

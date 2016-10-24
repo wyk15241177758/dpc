@@ -1,12 +1,10 @@
 package com.jt.test.lucene;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
@@ -18,6 +16,8 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TermQuery;
 import org.apdplat.word.analysis.Hits;
 
+import com.jt.lucene.Article;
+import com.jt.lucene.DocumentUtils;
 import com.jt.lucene.IndexDao;
 import com.jt.lucene.LuceneUtilsGw;
 
@@ -30,17 +30,66 @@ public class LunceneTest {
     	   util=new LuceneUtilsGw(indexPath);
     	   IndexWriterConfig config = new IndexWriterConfig(util.getAnalyzer());
             writer = new IndexWriter(util.getDirectory(),config);
-            List<Field> fieldList=new ArrayList<Field>();
-            fieldList.add(new Field("xq_title","我们为电影《晚上》是一部不错的影片。",TextField.TYPE_STORED));
-            fieldList.add(new Field("xq_title","我们今天晚上没有事。",TextField.TYPE_STORED));
-            fieldList.add(new Field("xq_title","今天晚上看电影。",TextField.TYPE_STORED));
-            fieldList.add(new Field("xq_title","我们认为电影不错电视也不错",TextField.TYPE_STORED));
-            fieldList.add(new Field("xq_title","政府政策亚克西",TextField.TYPE_STORED));
-            for(Field f:fieldList){
-                Document doc1  = new Document();
-                doc1.add(f);
-            	writer.addDocument(doc1);
-            }
+            Article article=new Article();
+            article.setId(1);
+            article.setTitle("我们为电影《晚上》是一部不错的影片");
+            article.setCategory("政务知识");
+            article.setChannel("新闻");
+            article.setDate(new Date());
+            article.setSite("岳阳市政府");
+            article.setUrl("http://yueyang.gov.cn/gggs/shts/9546/content_601504.html");
+            writer.addDocument(DocumentUtils.article2Document(article));
+            article=new Article();
+            article.setId(1);
+            article.setTitle("我们今天晚上没有事");
+            article.setCategory("政务消息");
+            article.setChannel("互动交流");
+            article.setDate(new Date());
+            article.setSite("岳阳市检察院");
+            article.setUrl("http://www.yueyang.gov.cn/webapp/yueyang/email/viewPublic.jsp?id=76276");
+            writer.addDocument(DocumentUtils.article2Document(article));
+            article=new Article();
+            article.setId(1);
+            article.setTitle("今天晚上看电影");
+            article.setCategory("政务知识");
+            article.setChannel("新闻");
+            article.setDate(new Date());
+            article.setSite("岳阳市政府");
+            article.setUrl("http://yueyang.gov.cn/gggs/shts/9546/content_601504.html");
+            writer.addDocument(DocumentUtils.article2Document(article));
+            article=new Article();
+            article.setId(1);
+            article.setTitle("我们认为电影不错电视也不错");
+            article.setCategory("社会常识");
+            article.setChannel("新闻");
+            article.setDate(new Date());
+            article.setSite("岳阳市政府");
+            article.setUrl("http://yueyang.gov.cn/gggs/shts/9546/content_601504.html");
+            writer.addDocument(DocumentUtils.article2Document(article));
+            article=new Article();
+            article.setId(1);
+            article.setTitle("政府政策亚克西");
+            article.setCategory("市场要闻");
+            article.setChannel("新闻");
+            article.setDate(new Date());
+            article.setSite("岳阳市政府");
+            article.setUrl("http://yueyang.gov.cn/gggs/shts/9546/content_601504.html");
+            writer.addDocument(DocumentUtils.article2Document(article));
+            
+//            
+//            List<Field> fieldList=new ArrayList<Field>();
+//            fieldList.add(new Field("xq_title","我们为电影《晚上》是一部不错的影片。",TextField.TYPE_STORED));
+//            fieldList.add(new Field("xq_title","我们今天晚上没有事。",TextField.TYPE_STORED));
+//            fieldList.add(new Field("xq_title","今天晚上看电影。",TextField.TYPE_STORED));
+//            fieldList.add(new Field("xq_title","我们认为电影不错电视也不错",TextField.TYPE_STORED));
+//            fieldList.add(new Field("xq_title","政府政策亚克西",TextField.TYPE_STORED));
+//            for(int i=0;i<fieldList.size();i++){
+//            	Field f=fieldList.get(i);
+//                Document doc1  = new Document();
+//                doc1.add(f);
+//                doc1.add(new Field("xq_id",i+"",TextField.TYPE_STORED));
+//            	writer.addDocument(doc1);
+//            }
             writer.close();
        } 
        catch (Exception e) {
@@ -77,16 +126,15 @@ public class LunceneTest {
     public static void main(String[] args) {    //contests字段上查找含有"我们","今晚"这两个字段的Doument
        Query query;
        IndexSearcher searcher;
-       createIndex();
+//       createIndex();
        
        try {
-    	   TermQueryTest("政府政策亚克西");
-//		IndexDao dao=new IndexDao(indexPath);
-//		String[] queryStr={"我们","电影","电视"};
-//		List<Document> list=dao.search(queryStr, Occur.SHOULD, "xq_title",null,null, false, 0, -1);
-//		for(Document doc:list){
-//			System.out.println(doc.get("xq_title"));
-//		}
+		IndexDao dao=new IndexDao(indexPath);
+		String[] queryStr={"我们","电影","电视"};
+		List<Document> list=dao.search(queryStr, Occur.SHOULD, "xq_title",null,null, false, 0, -1);
+		for(Document doc:list){
+			System.out.println(doc.get("xq_title"));
+		}
        } catch (IOException e1) {
 		e1.printStackTrace();
 	}

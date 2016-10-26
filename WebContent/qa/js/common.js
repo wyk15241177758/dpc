@@ -1,6 +1,7 @@
 $(function(){
 	//竖向tab选项卡
      var $tab_li = $(".tab_title ul li");
+//     $(document).on("click")
      $tab_li.click(function(){
 	    $(this).addClass("slected").siblings().removeClass("slected");
 	    var index = $tab_li.index(this);
@@ -14,6 +15,14 @@ $(function(){
 	    var index = $tab2_li.index(this);
 		 $(".tab2_content > div").eq(index).show().siblings().hide();
 	})
+	
+//	var $tab2_li = $(".tab2_title ul li");
+//     $(".tab2_title ul li").mouseover(function(){
+//	    $(this).addClass("slected2").siblings().removeClass("slected2");
+//	    var index = $(this).parent().children().index(this);
+//	    
+//		 $(".tab2_content > div").eq(index).show().siblings().hide();
+//	})
 
     //显示滚动条
      $("#message").niceScroll({cursorborder:"",cursorcolor:"#9e0001",cursoropacitymax:0.5,boxzoom:true});
@@ -46,7 +55,13 @@ $(function(){
 		focus: controlInput_clear,
 		blur: controlInput_init
 	});
-	
+	//点击回车提交
+	$("#messCon").keypress(function(event){
+		 if (event.keyCode == '13') {
+		     event.preventDefault();
+			 $("#sendMess").click();
+		   }
+	})
 	//使用帮助轮播图
 	$(".slideBox").slide({mainCell:".bd ul",autoPlay:true,delayTime:1000});
 	
@@ -73,15 +88,24 @@ function qaSearch(question){
 	$.getJSON("/QASystem/admin/qaSearch.do",param,function(data){
 		addQuestion(question);
 		addAnswer(data);
-		
+		scrollToBottom();
 	})
 	
 }
+function scrollToBottom(){
+	console.log("scrollHeight=["+$("#message")[0].scrollHeight+"] " +
+			"height=["+$("#message").css("height")+"]");
+	 $("#message").scrollTop( $("#message").scrollTop($("#message")[0].scrollHeight-$("#message").css("height")));
+	 $("#message").scrollTop=$("#message").scrollTop($("#message")[0].scrollHeight-$("#message").css("height"));
+}
+
 //追加问题
 function addQuestion(question){
 	var template="  <ul class='dialog'> <li class='right'></li> <li class='center'>{question}</li> <li class='left'></li> <li class='bottom'></li> </ul>";
 	template=template.replace(/\{question\}/g,question);
 	$("#message").append(template);
+	//移动滚动条
+	scrollToBottom();
 }
 function addAnswer(qalist){
 	var template="<div class='dialog_tab'><div class='tab2_title'><ul>{categoryLi}</ul></div><div class='tab2_content'>{qaDiv}</div></div>";
@@ -123,6 +147,8 @@ function addAnswer(qalist){
 	template=template.replace(/\{categoryLi\}/g,categoryLi);
 	template=template.replace(/\{qaDiv\}/g,qaDiv);
 	$("#message").append(template);
+	//移动滚动条
+	scrollToBottom();
 }
 //横向tab选项卡
 function setTab(m,n){

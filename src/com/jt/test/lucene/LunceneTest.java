@@ -40,7 +40,7 @@ public class LunceneTest {
             article.setUrl("http://yueyang.gov.cn/gggs/shts/9546/content_601504.html");
             writer.addDocument(DocumentUtils.article2Document(article));
             article=new Article();
-            article.setId(1);
+            article.setId(2);
             article.setTitle("我们今天晚上没有事");
             article.setCategory("政务消息");
             article.setChannel("互动交流");
@@ -49,7 +49,7 @@ public class LunceneTest {
             article.setUrl("http://www.yueyang.gov.cn/webapp/yueyang/email/viewPublic.jsp?id=76276");
             writer.addDocument(DocumentUtils.article2Document(article));
             article=new Article();
-            article.setId(1);
+            article.setId(3);
             article.setTitle("今天晚上看电影");
             article.setCategory("政务知识");
             article.setChannel("新闻");
@@ -58,7 +58,7 @@ public class LunceneTest {
             article.setUrl("http://yueyang.gov.cn/gggs/shts/9546/content_601504.html");
             writer.addDocument(DocumentUtils.article2Document(article));
             article=new Article();
-            article.setId(1);
+            article.setId(4);
             article.setTitle("我们认为电影不错电视也不错");
             article.setCategory("社会常识");
             article.setChannel("新闻");
@@ -67,7 +67,7 @@ public class LunceneTest {
             article.setUrl("http://yueyang.gov.cn/gggs/shts/9546/content_601504.html");
             writer.addDocument(DocumentUtils.article2Document(article));
             article=new Article();
-            article.setId(1);
+            article.setId(5);
             article.setTitle("政府政策亚克西");
             article.setCategory("市场要闻");
             article.setChannel("新闻");
@@ -126,7 +126,7 @@ public class LunceneTest {
     public static void main(String[] args) {    //contests字段上查找含有"我们","今晚"这两个字段的Doument
        Query query;
        IndexSearcher searcher;
-//       createIndex();
+       createIndex();
        
        try {
 		IndexDao dao=new IndexDao(indexPath);

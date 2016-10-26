@@ -78,6 +78,7 @@ public class NlpService {
 	 * @return
 	 */
 	private LabeledWord baseFilterWord(LabeledWord word) {
+		if(word==null)return null;
 		// 词
 		String text = word.value();
 		// 过滤只有一个字的词，返回null

@@ -9,20 +9,19 @@ $(function(){
 	})   
         
     //智能查询tab选项卡
-     var $tab2_li = $(".tab2_title ul li");
-     $tab2_li.mouseover(function(){
-	    $(this).addClass("slected2").siblings().removeClass("slected2");
-	    var index = $tab2_li.index(this);
-		 $(".tab2_content > div").eq(index).show().siblings().hide();
-	})
-	
-//	var $tab2_li = $(".tab2_title ul li");
-//     $(".tab2_title ul li").mouseover(function(){
+//     var $tab2_li = $(".tab2_title ul li");
+//     $tab2_li.mouseover(function(){
 //	    $(this).addClass("slected2").siblings().removeClass("slected2");
-//	    var index = $(this).parent().children().index(this);
-//	    
+//	    var index = $tab2_li.index(this);
 //		 $(".tab2_content > div").eq(index).show().siblings().hide();
 //	})
+	
+	//智能查询tab选项卡
+     $(document).on("mouseover",".tab2_title ul li",function(){
+ 	    $(this).addClass("slected2").siblings().removeClass("slected2");
+ 	    var index = $(this).parent().children().index(this);
+ 	    $(this).parents(".tab2_title").siblings().children().eq(index).show().siblings().hide(); 
+     })
 
     //显示滚动条
      $("#message").niceScroll({cursorborder:"",cursorcolor:"#9e0001",cursoropacitymax:0.5,boxzoom:true});
@@ -93,10 +92,15 @@ function qaSearch(question){
 	
 }
 function scrollToBottom(){
-	console.log("scrollHeight=["+$("#message")[0].scrollHeight+"] " +
-			"height=["+$("#message").css("height")+"]");
-	 $("#message").scrollTop( $("#message").scrollTop($("#message")[0].scrollHeight-$("#message").css("height")));
-	 $("#message").scrollTop=$("#message").scrollTop($("#message")[0].scrollHeight-$("#message").css("height"));
+//	$("#message").scrollTop(500)
+	console.log(parseInt($("#message")[0].scrollHeight)-parseInt($("#message").css("height")))
+	$("#message").scrollTop(parseInt($("#message")[0].scrollHeight)-parseInt($("#message").css("height")));
+//	console.log("before scrollHeight=["+$("#message")[0].scrollHeight+"] " +
+//			"height=["+$("#message").css("height")+"] scrollTop=["+$("#message")[0].scrollTop+"]");
+//	 $("#showMessage").scrollTop=$("#message").scrollTop($("#message")[0].scrollHeight-$("#message").css("height"));
+//	 $("#showMessage")[0].scrollTop="200px"
+//	 console.log("after scrollHeight=["+$("#message")[0].scrollHeight+"] " +
+//				"height=["+$("#message").css("height")+"] scrollTop=["+$("#message")[0].scrollTop+"]");
 }
 
 //追加问题
@@ -108,7 +112,7 @@ function addQuestion(question){
 	scrollToBottom();
 }
 function addAnswer(qalist){
-	var template="<div class='dialog_tab'><div class='tab2_title'><ul>{categoryLi}</ul></div><div class='tab2_content'>{qaDiv}</div></div>";
+	var template="<div class='dialog_tab'><div><div class='tab2_title'><ul>{categoryLi}</ul></div><div class='tab2_content'>{qaDiv}</div></div></div>";
 	
 	var answerArray=new Array();
 	//遍历分类，将答案放入对应分类的answerArray中

@@ -61,6 +61,7 @@
 		<property name="mappingLocations">
 			<list>
 				<value>classpath*:com/jt/bean/gateway/*.hbm.xml</value>
+				<value>classpath*:com/jt/keyword/bean/*.hbm.xml</value>
 
 			</list>
 		</property>
@@ -68,13 +69,13 @@
 		<!-- hibernate相关参数配置 -->
 		<property name="hibernateProperties">
 			<props>
-				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLInnoDBDialect</prop>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
 				<prop key="hibernate.show_sql">true</prop>
 				<prop key="hibernate.jdbc.batch_size">100</prop>
 				<prop key="hibernate.cache.use_query_cache">true</prop>
 				<prop key="hibernate.cache.use_second_level_cache">true</prop>
 				<prop key="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</prop>
-				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<prop key="hibernate.hbm2ddl.auto">create</prop>
 			</props>
 		</property>
 	</bean>

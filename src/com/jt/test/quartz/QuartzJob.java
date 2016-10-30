@@ -10,8 +10,7 @@ public class QuartzJob  implements Job{
 
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		JobInf job=(JobInf)(context.getJobDetail().getJobDataMap().get("param"));
-		System.out.println("in quartz jobname=["+job.getJobName()+"]");
+		System.out.println("in quartz ");
 		
 	}
 

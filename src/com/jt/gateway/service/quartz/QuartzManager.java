@@ -20,6 +20,7 @@ import org.quartz.SchedulerFactory;
 
 import com.jt.bean.gateway.JobInf;
 import com.jt.gateway.service.job.CreateSchedulerFactory;
+import com.jt.gateway.service.operation.IndexTask;
 /**
  * @Description: 定时任务管理类
  * @ClassName: QuartzManager
@@ -142,7 +143,20 @@ public class QuartzManager {
 		}
 	}
 
-	
+	/**
+	 * @Description: 添加一个立即执行的任务
+	 * @param param
+	 * @author 邹许红
+	 * @throws Exception 
+	 * 
+	 */
+	public static void startImmediateJob(JobInf param) throws Exception {
+		IndexTask task=new IndexTask();
+		task.init4Quartz(param.getJobName());
+		task.doExecute(param);
+		
+	}
+
 	
 //
 //	/**

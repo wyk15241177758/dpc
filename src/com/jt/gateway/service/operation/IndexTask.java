@@ -306,11 +306,9 @@ public class IndexTask extends ApplicationObjectSupport implements Job{
 			}
 		}
 	
-	@Override
-	public void execute(JobExecutionContext context) throws JobExecutionException {
+	public void doExecute(JobInf job){
 		JobLog log=null;
 		try {
-			job=(JobInf)(context.getJobDetail().getJobDataMap().get("param"));
 			init4Quartz(job.getJobName());
 			logger.info("开始执行任务["+config.getTaskName()+"]");
 			//写入内存日志，先清空再写入
@@ -354,6 +352,59 @@ public class IndexTask extends ApplicationObjectSupport implements Job{
 		}
 		logger.info("结束执行任务["+config.getTaskName()+"]");
 		jobRunningLogService.addRunningLog(job.getJobId(), "结束执行任务["+config.getTaskName()+"]");
+	}
+		
+		
+	@Override
+	public void execute(JobExecutionContext context) throws JobExecutionException {
+		job=(JobInf)(context.getJobDetail().getJobDataMap().get("param"));
+		doExecute(job);
+//		JobLog log=null;
+//		try {
+//			job=(JobInf)(context.getJobDetail().getJobDataMap().get("param"));
+//			init4Quartz(job.getJobName());
+//			logger.info("开始执行任务["+config.getTaskName()+"]");
+//			//写入内存日志，先清空再写入
+//			jobRunningLogService.clearRunningLog(job.getJobId());
+//			jobRunningLogService.addRunningLog(job.getJobId(), "开始执行任务["+config.getTaskName()+"]");
+//			
+//			jobService.setJobStatus(job.getJobId(), 2);
+//			log=createIndex();
+//			if(log!=null){
+//				//执行后保存本次的运行状况
+//				if(log.getStatus()!=1){
+//					log.setStatus(0);
+//				}
+//				jobLogService.saveLog(log);
+//			}else{
+//				log=new JobLog();
+//				log.setJobId(job.getJobId());
+//				log.setStart(new Date());
+//				log.setStatus(0);
+//				jobLogService.saveLog(log);
+//			}
+//		} catch (Exception e) {
+//			if(log==null){
+//				log=new JobLog();
+//				log.setJobId(job.getJobId());
+//				log.setStart(new Date());
+//				log.setStatus(0);
+//				jobLogService.saveLog(log);
+//			}
+//			logger.error("任务["+config.getTaskName()+"]执行失败");
+//			logger.error(e);
+//			jobRunningLogService.addRunningLog(job.getJobId(), "任务["+config.getTaskName()+"]执行失败");
+//			jobRunningLogService.addRunningLog(job.getJobId(), e.getMessage());
+//			e.printStackTrace();
+//		}finally{
+//			//执行结束状态改为1，启动任务时状态已改为2
+//			//无论如何失败，都必须将任务状态置为1，否则下次无法进入
+//			if(jobService!=null){
+//				jobService.setJobStatus(job.getJobId(), 1);
+//			}
+//		}
+//		logger.info("结束执行任务["+config.getTaskName()+"]");
+//		jobRunningLogService.addRunningLog(job.getJobId(), "结束执行任务["+config.getTaskName()+"]");
 	}
 	public static void main(String[] args) {
 		IndexTask task=new IndexTask();

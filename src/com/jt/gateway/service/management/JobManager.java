@@ -135,6 +135,58 @@ public class JobManager {
 		
 	}
 	
+	/**
+	 * 立即执行任务
+	 * @param request
+	 * @param response
+	 */
+	@RequestMapping(value="startImmediate.do")
+	public void  startImmediate(HttpServletRequest request, HttpServletResponse response){
+		response.setCharacterEncoding("utf-8");
+		msg=new PageMsg();
+		PrintWriter pw=null;
+		try {
+			pw=response.getWriter();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+			return;
+		}
+		long jobId=0l;
+		try {
+			jobId=Long.parseLong(CMyString.getStrNotNullor0(request.getParameter("jobid"), "0"));
+		} catch (Exception e) {
+			e.printStackTrace();
+			msg.setMsg("启动实时任务id=["+jobId+"]失败,错误信息为[转换jobID类型失败]");
+			msg.setSig(false);
+			pw.print(gson.toJson(msg));
+			return;
+		}
+		JobInf job=jobService.getJobById(jobId);
+		if(jobId!=0&&job!=null){
+			try {
+				jobService.startImmediateJob(job.getJobId());
+			} catch (Exception e) {
+				e.printStackTrace();
+				msg.setSig(false);
+				msg.setMsg("启动实时任务["+job.getJobName()+"]失败，错误信息为["+e.getMessage()+"]");
+				pw.print(gson.toJson(msg));
+				return;
+			}
+			msg.setSig(true);
+			msg.setMsg("启动实时任务["+job.getJobName()+"]成功");
+			pw.print(gson.toJson(msg));
+			return;
+		}else{
+			msg.setMsg("启动实时任务id=["+jobId+"]失败,错误信息为[未获得任务ID或不存在指定的任务]");
+			msg.setSig(false);
+			pw.print(gson.toJson(msg));
+			return;
+		}
+		
+	}
+	
+	
+	
 	//删除任务
 	@RequestMapping(value="delJob.do")
 	public void delJob(HttpServletRequest request, HttpServletResponse response){

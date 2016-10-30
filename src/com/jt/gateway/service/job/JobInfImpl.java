@@ -18,7 +18,11 @@ import com.jt.gateway.service.quartz.QuartzManager;
 public class JobInfImpl extends BasicServicveImpl  implements  JobInfService{
 	private static Logger logger= Logger.getLogger(JobInfImpl.class) ;
 
-
+	public void startImmediateJob(long id) throws Exception{
+		QuartzManager.startImmediateJob(getJobById(id));
+	}
+	
+	
 	/**
 	 * 获得所有 任务
 	 */

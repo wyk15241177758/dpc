@@ -170,5 +170,15 @@
 
 	<bean id="jobInit" lazy-init="false"
 		class="com.jt.gateway.service.management.JobInit" init-method="init" />
+		
+		
+		
+		<bean id="keyWordService" parent="baseTransactionProxyBean">
+		<property name="target">
+			<bean class="com.jt.keyword.service.impl.KeyWordServiceImpl" autowire="byName">
+			</bean>
+		</property>
+	</bean>
+		
 
 </beans>

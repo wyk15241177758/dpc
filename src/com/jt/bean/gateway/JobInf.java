@@ -29,7 +29,7 @@ public class JobInf implements java.io.Serializable {
 	//任务组名
 	public static String jobGroup="JOBGROUP_NAME";
 	//触发器名称
-	private String triggerName="TRIGGER_NAME";
+	private String triggerName;
 	//触发器组名
 	public static String triggerGroupName="TRIGGERGROUP_NAME";
 	

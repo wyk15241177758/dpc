@@ -306,7 +306,7 @@ public class IndexTask extends ApplicationObjectSupport implements Job{
 			}
 		}
 	
-	public void doExecute(JobInf job){
+	public void doExecute(){
 		JobLog log=null;
 		try {
 			init4Quartz(job.getJobName());
@@ -357,8 +357,8 @@ public class IndexTask extends ApplicationObjectSupport implements Job{
 		
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		job=(JobInf)(context.getJobDetail().getJobDataMap().get("param"));
-		doExecute(job);
+		this.job=(JobInf)(context.getJobDetail().getJobDataMap().get("param"));
+		doExecute();
 //		JobLog log=null;
 //		try {
 //			job=(JobInf)(context.getJobDetail().getJobDataMap().get("param"));
@@ -405,6 +405,12 @@ public class IndexTask extends ApplicationObjectSupport implements Job{
 //		}
 //		logger.info("结束执行任务["+config.getTaskName()+"]");
 //		jobRunningLogService.addRunningLog(job.getJobId(), "结束执行任务["+config.getTaskName()+"]");
+	}
+	public JobInf getJob() {
+		return job;
+	}
+	public void setJob(JobInf job) {
+		this.job = job;
 	}
 	public static void main(String[] args) {
 		IndexTask task=new IndexTask();

@@ -7,9 +7,12 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.google.gson.Gson;
 import com.jt.base.page.Param;
 import com.jt.gateway.dao.IDao;
 import com.jt.keyword.bean.KeyWord;
+import com.jt.keyword.bean.PageResult;
+import com.jt.keyword.bean.QueryResut;
 import com.jt.keyword.service.KeyWordService;
 
 public class KeyWordServiceImpl  implements  KeyWordService{
@@ -88,7 +91,7 @@ public class KeyWordServiceImpl  implements  KeyWordService{
 	    	}
 	    	 sql=sql+"  AND floor=?";
 	 			paramList.add(new Param(Types.INTEGER, 1));
-	    	List list = dao.query(sql);
+	    	List list = dao.query(sql,paramList);
 	    	if(list!=null&&list.size()>0&&list.get(0)!=null){
 	    		
 	    		return   Integer.parseInt(list.get(0).toString());
@@ -119,12 +122,27 @@ public class KeyWordServiceImpl  implements  KeyWordService{
       	hql=hql+"  AND floor=?";
 		paramList.add(new Param(Types.INTEGER, 1));
 	     List<KeyWord> list = dao.query(hql, paramList, begin, pageSize)	;
-   	
-	     
-	     
-	     
-   	
-		return null;
+   	  PageResult  pageResult=new PageResult();
+   	  
+   	pageResult.setPageNum(pageNum);
+   	pageResult.setPageSize(pageSize);
+   	pageResult.setTotalNum(totalNum);
+   	pageResult.setTotalPage(totalPageNum);
+   	List<QueryResut>  queryResuts=new ArrayList<QueryResut>();
+	     if(list!=null){
+	    	 for (int i = 0; i < list.size(); i++) {
+	    		 QueryResut  queryResut=new QueryResut();
+	    		 KeyWord  keyword= list.get(i);
+	    		 queryResut.setId(keyword.id);
+	    		 queryResut.setPid(keyword.parent==null?-1:keyword.parent.id);
+	    		 queryResut.setWordvalue(keyword.wordvalue);
+	    		 queryResuts.add(queryResut);
+			}
+	     }
+	     pageResult.setList(queryResuts);
+   	     Gson  gson=new Gson();
+   	  
+		return gson.toJson(pageResult);
 	}
 
 	@Override
@@ -138,8 +156,21 @@ public class KeyWordServiceImpl  implements  KeyWordService{
        	}
        	hql=hql+"  AND floor=?";
     		paramList.add(new Param(Types.INTEGER, 1));
-      	List list = dao.query(hql, paramList);
-		return null;
+      	List<KeyWord> list = dao.query(hql, paramList);
+       	List<QueryResut>  queryResuts=new ArrayList<QueryResut>();
+	     if(list!=null){
+	    	 for (int i = 0; i < list.size(); i++) {
+	    		 QueryResut  queryResut=new QueryResut();
+	    		 KeyWord  keyword= list.get(i);
+	    		 queryResut.setId(keyword.id);
+	    		 queryResut.setPid(keyword.parent==null?-1:keyword.parent.id);
+	    		 queryResut.setWordvalue(keyword.wordvalue);
+	    		 queryResuts.add(queryResut);
+			}
+	     }
+	     Gson  gson=new Gson();
+			return gson.toJson(queryResuts);
+
 	}
 
 	@Override
@@ -162,12 +193,31 @@ public class KeyWordServiceImpl  implements  KeyWordService{
    	hql=hql+"  AND floor=?";
 		paramList.add(new Param(Types.INTEGER, 1));
 	     List<KeyWord> list = dao.query(hql, paramList, begin, pageSize)	;
-   	
+		  PageResult  pageResult=new PageResult();
+	   	  
+		   	pageResult.setPageNum(pageNum);
+		   	pageResult.setPageSize(pageSize);
+		   	pageResult.setTotalNum(totalNum);
+		   	pageResult.setTotalPage(totalPageNum);
+		   	List<QueryResut>  queryResuts=new ArrayList<QueryResut>();
+			     if(list!=null){
+			    	 for (int i = 0; i < list.size(); i++) {
+			    		 QueryResut  queryResut=new QueryResut();
+			    		 KeyWord  keyword= list.get(i);
+			    		 queryResut.setId(keyword.id);
+			    		 queryResut.setPid(keyword.parent==null?-1:keyword.parent.id);
+			    		 queryResut.setWordvalue(keyword.wordvalue);
+			    		 queryResuts.add(queryResut);
+					}
+			     }
+			     pageResult.setList(queryResuts);
+		   	     Gson  gson=new Gson();
+		   	  
+				return gson.toJson(pageResult);
 	     
 	     
 	     
 		
-		return null;
 	}
 	
 	

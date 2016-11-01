@@ -18,6 +18,8 @@ public class KeyWordAct {
 	@RequestMapping("/test.do")
 	public  void   test(){
 		service.addKeyword(null, null);
+		String s=service.queryPage("", 1, 10, null);
+		String ss=service.queryPage("");
 	}
 	
 	

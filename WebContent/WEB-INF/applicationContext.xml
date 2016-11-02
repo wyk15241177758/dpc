@@ -131,10 +131,7 @@
 	<!-- 看不懂干吗用的先注释 <context:component-scan base-package="com.jt.crawler.admin.dao.impl"> 
 		</context:component-scan> <context:component-scan base-package="com.jt.crawler.admin.service.impl"> 
 		</context:component-scan> -->
-	<context:component-scan base-package="com.jt.test.dao">
-	</context:component-scan>
-	<context:component-scan base-package="com.jt.test.service">
-	</context:component-scan>
+
 
 
 	<bean id="jobInfImpl" parent="baseTransactionProxyBean">
@@ -151,12 +148,12 @@
 		</property>
 	</bean>
 
-	<bean id="indexDao" class=" com.jt.lucene.IndexDao">
+	<bean id="indexDao" class=" com.jt.lucene.IndexDao" lazy-init="false">
 		<property name="indexPath" value="${lucene.indexPath}" />
 	</bean>
 
 
-	<bean id="qaService" class="com.jt.nlp.service.QAService">
+	<bean id="qaService" class="com.jt.nlp.service.QAService" lazy-init="false">
 		<property name="searchService">
 			<bean class="com.jt.nlp.service.LuceneSearchService" autowire="byName">
 				<property name="dao" ref="indexDao" />
@@ -168,9 +165,6 @@
 
 	<bean id="jobRunningLogImpl" class="com.jt.gateway.service.job.JobRunningLogImpl"></bean>
 
-	<bean id="jobInit" lazy-init="false"
-		class="com.jt.gateway.service.management.JobInit" init-method="init" />
-		
 		
 		
 		<bean id="keyWordService" parent="baseTransactionProxyBean">

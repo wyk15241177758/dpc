@@ -14,7 +14,7 @@ public class DataField {
 		this.name = name;
 	}
 	public FieldType getFieldType() {
-		if(type.equalsIgnoreCase("STORE")){
+		if(type.equalsIgnoreCase("存储")){
 			return TextField.TYPE_STORED;
 		}else{
 			return TextField.TYPE_NOT_STORED;

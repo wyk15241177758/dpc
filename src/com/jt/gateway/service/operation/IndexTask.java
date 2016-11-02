@@ -1,14 +1,15 @@
 package com.jt.gateway.service.operation;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.TextField;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -23,7 +24,6 @@ import com.jt.bean.gateway.JobLog;
 import com.jt.gateway.dao.impl.JdbcDaoImpl;
 import com.jt.gateway.service.job.JobInfService;
 import com.jt.gateway.service.job.JobLogService;
-import com.jt.gateway.service.job.JobRunningLogImpl;
 import com.jt.gateway.service.job.JobRunningLogService;
 import com.jt.gateway.util.FileUtil;
 import com.jt.lucene.IndexDao;
@@ -63,7 +63,7 @@ public class IndexTask extends ApplicationObjectSupport implements Job{
 	}
 	//不依赖spring框架，本地测试使用
 	public void init4QuartzTest(String taskName) throws Exception{
-		configService=new GwConfigService(new File("D:\\apache-tomcat-8.0.24\\webapps\\QASystem\\WEB-INF\\gateway.conf"));
+		configService=new GwConfigService(new File("D:\\apache8\\webapps\\QASystem\\WEB-INF\\gateway.conf"));
 		config=configService.getConfig(taskName);
 		if(config==null){
 			throw new Exception("config为null");
@@ -149,6 +149,7 @@ public class IndexTask extends ApplicationObjectSupport implements Job{
 							+ " type= ["+df.getType()+"]");
 					doc.add(new Field(df.getName().toLowerCase(), map.get(df.getName().toUpperCase()).toString(), df.getFieldType()));
 				}
+				logger.debug("保存文档["+doc.toString()+"]");
 				indexDao.save(doc);
 				//记录推送的总数
 				jobSize++;
@@ -175,16 +176,20 @@ public class IndexTask extends ApplicationObjectSupport implements Job{
 				File indexPath=new File(config.getIndexPath());
 				logger.info("锁定原索引文件["+indexPath.getAbsolutePath()+"]成功");
 				jobRunningLogService.addRunningLog(job.getJobId(), "锁定原索引文件成功");
-				indexPath.delete();
-				file.renameTo(indexPath);
+				//renameto方法不可靠，换FileUtils类
+				FileUtils.deleteDirectory(indexPath);
+				FileUtils.copyDirectory(file, indexPath);
+				FileUtils.deleteDirectory(file);
+//				indexPath.delete();
+//				file.renameTo(indexPath);
 				break;
 			}
 		}
 		
 		//无论是否成功，均放开检索，并删除临时索引目录
 		status.setSearchEnable(true);
-		file=new File(newIndexPath);
-		FileUtil.deleteDir(file);
+//		file=new File(newIndexPath);
+//		FileUtil.deleteDir(file);
 		if(timeWait>=(5*60*1000)){
 			logger.info("等待超过5分钟，抛出异常");
 			jobRunningLogService.addRunningLog(job.getJobId(), "等待超过5分钟，抛出异常");
@@ -201,7 +206,12 @@ public class IndexTask extends ApplicationObjectSupport implements Job{
 		return log;
 	}
 	
-	//执行任务，不允许两个线程同时调用此方法
+	/**
+	 * 本地测试使用
+	 * 执行任务，不允许两个线程同时调用此方法
+	 * @param taskName
+	 * @throws Exception
+	 */
 		public synchronized void createIndexTest(String taskName) throws Exception {
 			init4QuartzTest(taskName);
 			int jobSize=0;
@@ -217,7 +227,7 @@ public class IndexTask extends ApplicationObjectSupport implements Job{
 			if(list.size()==0){
 				throw new Exception("获得同步字段长度为空");
 			}
-			logger.info("开始生成新的索引文件");
+			
 			//删除索引
 			File file=new File(newIndexPath);
 			if(file.exists()){
@@ -228,6 +238,7 @@ public class IndexTask extends ApplicationObjectSupport implements Job{
 					throw new Exception("删除文件"+file.getName()+"错误，请检查");
 				}
 			}
+			logger.info("开始在目录["+file.getAbsolutePath()+"]生成新的索引文件");
 			//获得数据总数，并按照batchSize分批写入索引
 			rsMap=JdbcDao.executeQueryForMap(sql);
 			maxId=Long.parseLong(rsMap.get("maxid")+"");
@@ -257,6 +268,8 @@ public class IndexTask extends ApplicationObjectSupport implements Job{
 				logger.debug("curSql=["+curSql+"]");
 				List<Map<String,Object>> rsList=JdbcDao.executeQueryForList(curSql);
 				for(Map<String,Object> map:rsList){
+					jobSize++;
+//					if(jobSize>50)break;
 					Document doc=new  Document();
 					for(DataField df:list){
 						//数据库中某些字段为空则跳过，
@@ -265,11 +278,13 @@ public class IndexTask extends ApplicationObjectSupport implements Job{
 						}
 						logger.debug("value=["+map.get(df.getName().toUpperCase()).toString()+"]"
 								+ " type= ["+df.getType()+"]");
-						doc.add(new Field(df.getName(), map.get(df.getName().toUpperCase()).toString(), df.getFieldType()));
+						doc.add(new Field(df.getName().toLowerCase(), map.get(df.getName().toUpperCase()).toString(), df.getFieldType()));
 					}
+					
+					
+					logger.info("保存文档["+doc.toString()+"]");
 					indexDao.save(doc);
 					//记录推送的总数
-					jobSize++;
 				}
 				logger.info("结束推送ID小于"+temp+"的数据");
 
@@ -287,18 +302,22 @@ public class IndexTask extends ApplicationObjectSupport implements Job{
 					Thread.sleep(60000);
 					timeWait+=60000;
 				}else{
-					logger.info("锁定原索引文件成功");
 					File indexPath=new File(config.getIndexPath());
-					indexPath.delete();
-					file.renameTo(indexPath);
+					logger.info("锁定原索引文件["+indexPath.getAbsolutePath()+"]成功");
+					//renameto方法不可靠，换FileUtils类
+					FileUtils.deleteDirectory(indexPath);
+					FileUtils.copyDirectory(file, indexPath);
+					FileUtils.deleteDirectory(file);
+//					indexPath.delete();
+//					file.renameTo(indexPath);
 					break;
 				}
 			}
 			
 			//无论是否成功，均放开检索，并删除临时索引目录
 			status.setSearchEnable(true);
-			file=new File(newIndexPath);
-			FileUtil.deleteDir(file);
+//			file=new File(newIndexPath);
+//			FileUtil.deleteDir(file);
 			if(timeWait>=(5*60*1000)){
 				logger.info("等待超过5分钟，抛出异常");
 				throw new Exception("等待超过5分钟，抛出异常");

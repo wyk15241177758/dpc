@@ -39,8 +39,9 @@ public class DocumentUtils {
 		if(time==null){
 			article.setDate(null);
 		}else{
-			SimpleDateFormat sdf=new SimpleDateFormat();
+			SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			try {
+				time=time.substring(0, time.indexOf("."));
 				article.setDate(sdf.parse(time));
 			} catch (ParseException e) {
 				e.printStackTrace();

@@ -5,6 +5,8 @@ var list_template="<tr jobid='{jobid}' jobname='{jobname}' jobstatus='{jobstatus
 "<td class='center'><span class='label {status_class}'>{jobstatus}</span></td>" +
 "<td  class='center'>--</td><td  class='center'>--</td><td  class='center'>--条</td>" +
 "<td class='center font-right'>" +
+"<a class='btn btn-success btn-sm' href='javascript:void(0)' action='startImmediate'>" +
+"<i class='glyphicon glyphicon-zoom-in icon-white'></i>立即启动</a>  " +
 "<a class='btn btn-success btn-sm' href='javascript:void(0)' action='joblog_a'>" +
 "<i class='glyphicon glyphicon-zoom-in icon-white'></i>查看日志</a>  " +
 "<a class='btn btn-info btn-sm btn-setting' href='javascript:void(0)'  action='edit_a'>" +
@@ -216,6 +218,22 @@ $(document).ready(function () {
         $('#warnModal').modal('show');
         
     });
+    
+    //点击立即启动按钮，修改全局变量curJobId为点击的jobid，且立即启动
+    $(document).on("click","a[action='startImmediate']",function(){
+    	var curTrJobId=$(this).parents("tr").attr("jobid");
+    	var param={"jobid":curTrJobId};
+    	$.getJSON("/QASystem/admin/startImmediate.do",param,function(data){
+    		//nothing to do
+    	});
+    	if(curTrJobId!=undefined){
+    		curJobId=curTrJobId;
+    		console.log("修改curJobId为"+curJobId)
+    		refreshJobLog();
+    	}
+    })
+    
+    
     
     //点击查看日志按钮，修改全局变量curJobId为点击的jobid
     $(document).on("click","a[action='joblog_a']",function(){

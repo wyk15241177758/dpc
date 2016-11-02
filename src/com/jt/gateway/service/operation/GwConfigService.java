@@ -28,8 +28,7 @@ public class GwConfigService {
 	private Document doc;
 	private static Logger logger= Logger.getLogger(GwConfigService.class) ;
 	public GwConfigService() throws JDOMException, IOException{
-		this.file=new File(getClass().getResource("/").getFile()+"gateway.conf");
-		System.out.println("file="+file.getAbsolutePath());
+		this.file=new File(getClass().getResource("/").getFile()+"../gateway.conf");
 		builder = new SAXBuilder();
 	}
 	

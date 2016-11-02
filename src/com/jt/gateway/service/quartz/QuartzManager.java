@@ -153,7 +153,7 @@ public class QuartzManager {
 	public static void startImmediateJob(JobInf param) throws Exception {
 		IndexTask task=new IndexTask();
 		task.init4Quartz(param.getJobName());
-		task.setJob(null);
+		task.setJob(param);
 		task.doExecute();
 		
 	}

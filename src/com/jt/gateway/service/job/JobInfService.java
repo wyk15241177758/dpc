@@ -23,5 +23,5 @@ public interface JobInfService {
 	public List<JobInf> getJobsByIds(String ids);
 	public void setJobStatus(Long id,int status);
 	public List<JobInf> getAllJobs(String where);
-	public void startImmediateJob(long id) throws Exception;
+	public void startImmediateJob(JobInf job) throws Exception;
 }

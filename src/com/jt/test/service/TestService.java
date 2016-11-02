@@ -3,14 +3,14 @@ package com.jt.test.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.jt.test.dao.TestDao;
+import com.jt.test.dao.IndexDaoTest;
 @Service
 public class TestService {
 	@Autowired
-	private  TestDao dao; 
+	private  IndexDaoTest dao; 
 	public  void  test(){
-		dao.test();
-		System.out.println("ÎÒÊÇservice²ã");
+//		dao.test();
+		System.out.println("ï¿½ï¿½ï¿½ï¿½serviceï¿½ï¿½");
 	}
 
 }

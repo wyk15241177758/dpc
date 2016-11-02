@@ -63,7 +63,7 @@ public class IndexTask extends ApplicationObjectSupport implements Job{
 	}
 	//不依赖spring框架，本地测试使用
 	public void init4QuartzTest(String taskName) throws Exception{
-		configService=new GwConfigService(new File("D:\\apache-tomcat-8.0.24\\webapps\\QASystem\\WEB-INF\\classes\\gateway.conf"));
+		configService=new GwConfigService(new File("D:\\apache-tomcat-8.0.24\\webapps\\QASystem\\WEB-INF\\gateway.conf"));
 		config=configService.getConfig(taskName);
 		if(config==null){
 			throw new Exception("config为null");
@@ -94,8 +94,7 @@ public class IndexTask extends ApplicationObjectSupport implements Job{
 		if(list.size()==0){
 			throw new Exception("获得同步字段长度为空");
 		}
-		logger.info("开始生成新的索引文件");
-		jobRunningLogService.addRunningLog(job.getJobId(), "开始生成新的索引文件");
+		
 		//删除索引
 		File file=new File(newIndexPath);
 		if(file.exists()){
@@ -107,6 +106,8 @@ public class IndexTask extends ApplicationObjectSupport implements Job{
 				throw new Exception("删除文件"+file.getName()+"错误，请检查");
 			}
 		}
+		logger.info("开始在目录["+file.getAbsolutePath()+"]生成新的索引文件");
+		jobRunningLogService.addRunningLog(job.getJobId(), "开始生成新的索引文件");
 		//获得数据总数，并按照batchSize分批写入索引
 		rsMap=JdbcDao.executeQueryForMap(sql);
 		maxId=Long.parseLong(rsMap.get("maxid")+"");
@@ -171,9 +172,9 @@ public class IndexTask extends ApplicationObjectSupport implements Job{
 				Thread.sleep(60000);
 				timeWait+=60000;
 			}else{
-				logger.info("锁定原索引文件成功");
-				jobRunningLogService.addRunningLog(job.getJobId(), "锁定原索引文件成功");
 				File indexPath=new File(config.getIndexPath());
+				logger.info("锁定原索引文件["+indexPath.getAbsolutePath()+"]成功");
+				jobRunningLogService.addRunningLog(job.getJobId(), "锁定原索引文件成功");
 				indexPath.delete();
 				file.renameTo(indexPath);
 				break;
@@ -415,7 +416,7 @@ public class IndexTask extends ApplicationObjectSupport implements Job{
 	public static void main(String[] args) {
 		IndexTask task=new IndexTask();
 		try {
-			task.createIndexTest("岳阳市政府");
+			task.createIndexTest("数据推送");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

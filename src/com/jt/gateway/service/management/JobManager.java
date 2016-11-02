@@ -164,7 +164,7 @@ public class JobManager {
 		JobInf job=jobService.getJobById(jobId);
 		if(jobId!=0&&job!=null){
 			try {
-				jobService.startImmediateJob(job.getJobId());
+				jobService.startImmediateJob(job);
 			} catch (Exception e) {
 				e.printStackTrace();
 				msg.setSig(false);

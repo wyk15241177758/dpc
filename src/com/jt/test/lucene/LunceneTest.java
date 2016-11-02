@@ -22,7 +22,7 @@ import com.jt.lucene.IndexDao;
 import com.jt.lucene.LuceneUtilsGw;
 
 public class LunceneTest {
-    private static String indexPath = "/indexpath";    // 索引保存目录
+    private static String indexPath = "D:\\indexpath";    // 索引保存目录
     private static LuceneUtilsGw util=null;
     public static void createIndex(){    // 建立索引
        IndexWriter writer;
@@ -126,14 +126,19 @@ public class LunceneTest {
     public static void main(String[] args) {    //contests字段上查找含有"我们","今晚"这两个字段的Doument
        Query query;
        IndexSearcher searcher;
-       createIndex();
+//       createIndex();
        
        try {
 		IndexDao dao=new IndexDao(indexPath);
-		String[] queryStr={"我们","电影","电视"};
-		List<Document> list=dao.search(queryStr, Occur.SHOULD, "xq_title",null,null, false, 0, -1);
-		for(Document doc:list){
-			System.out.println(doc.get("xq_title"));
+		String[] queryStr={"临湘市","卫生"};
+//		List<Document> list=dao.search(queryStr, Occur.SHOULD, "xq_title",null,null, false, 0, -1);
+//		for(Document doc:list){
+//			System.out.println(doc.getValues("xq_title")[0]);
+//			
+//		}
+		List<Article> list=dao.searchArticle(queryStr, "xq_title", 0, 10);
+		for(Article a:list){
+			System.out.println(a.getTitle());
 		}
        } catch (IOException e1) {
 		e1.printStackTrace();

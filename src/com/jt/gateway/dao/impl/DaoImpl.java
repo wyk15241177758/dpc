@@ -114,11 +114,11 @@ public class DaoImpl extends HibernateDaoSupport implements IDao {
 	
 	
 	
-	@SuppressWarnings("unchecked")
-	public Object queryById(Class cla, Serializable id) {
-		
-		return this.getHibernateTemplate().load( cla, id);
-	}
+//	@SuppressWarnings("unchecked")
+//	public Object queryById(Class cla, Serializable id) {
+//		
+//		return this.getHibernateTemplate().load( cla, id);
+//	}
 
 	public Serializable save(Object obj) {
 		return super.getHibernateTemplate().save( obj );

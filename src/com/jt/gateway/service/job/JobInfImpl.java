@@ -18,8 +18,8 @@ import com.jt.gateway.service.quartz.QuartzManager;
 public class JobInfImpl extends BasicServicveImpl  implements  JobInfService{
 	private static Logger logger= Logger.getLogger(JobInfImpl.class) ;
 
-	public void startImmediateJob(long id) throws Exception{
-		QuartzManager.startImmediateJob(getJobById(id));
+	public void startImmediateJob(JobInf job) throws Exception{
+		QuartzManager.startImmediateJob(job);
 	}
 	
 	
@@ -68,7 +68,7 @@ public class JobInfImpl extends BasicServicveImpl  implements  JobInfService{
 	 */
 	public JobInf getJobById(long jobId){
 		JobInf inf=null;
-		inf=(JobInf)(this.dao.queryById(JobInf.class, jobId));
+		inf=(JobInf)queryById(JobInf.class, jobId);
 		return inf;
 	}
 	
@@ -201,7 +201,7 @@ public class JobInfImpl extends BasicServicveImpl  implements  JobInfService{
 	
 	//开始时将状态置为1，结束后将状态置为2。在IndexTask中控制
 	public void startSimJob(Long id) throws Exception {
-		JobInf inf=(JobInf) this.dao.queryById(JobInf.class, id);
+		JobInf inf=getJobById(id);
 		if(inf.getJobStatus()!=1){
 			logger.info("任务正在运行或已删除");
 			throw new Exception("任务正在运行或已删除");
@@ -218,7 +218,7 @@ public class JobInfImpl extends BasicServicveImpl  implements  JobInfService{
 	}
 	
 	public void setJobStatus(Long id,int status){
-		JobInf inf=(JobInf) this.dao.queryById(JobInf.class, id);
+		JobInf inf=getJobById(id);
 		String hql2 = "update com.jt.bean.gateway.JobInf set jobStatus = ? where jobId = ?";
 		List<Param>  paramList=new  ArrayList<Param>();
 		paramList.add(new Param(Types.INTEGER,status));

@@ -25,7 +25,7 @@ public interface IDao {
 	 * @param id  主键
 	 * @return
 	 */
-	public Object queryById( Class cla , Serializable id);
+//	public Object queryById( Class cla , Serializable id);
 	/**
 	 * 保存一条数据
 	 * @param obj 对象

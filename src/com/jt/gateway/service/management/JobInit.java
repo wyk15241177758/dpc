@@ -9,6 +9,7 @@ import javax.annotation.Resource;
 import org.apache.log4j.Logger;
 import org.jdom.JDOMException;
 import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 
 import com.jt.bean.gateway.GwConfig;
 import com.jt.bean.gateway.JobInf;
@@ -20,7 +21,7 @@ import com.jt.gateway.service.operation.GwConfigService;
  * @author zhengxiaobin
  *
  */
-@Controller
+@Service
 
 public class JobInit {
 	private static Logger logger =Logger.getLogger(JobInit.class);
@@ -44,7 +45,6 @@ public class JobInit {
 	public void setJobService(JobInfService jobService) {
 		this.jobService = jobService;
 	}
-	@PostConstruct
 public void init(){
 		
 		List<JobInf> list=jobService.getAllJobs();

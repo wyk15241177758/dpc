@@ -12,15 +12,18 @@ import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 
 import com.jt.lucene.Article;
 import com.jt.lucene.IndexDao;
-@Controller
+@Service
 public class QAService {
 	private static final Logger LOG = LoggerFactory.getLogger(QAService.class);
 
 	private NlpService nlpService;
+	@Autowired
 	private LuceneSearchService searchService;
 	//本地测试使用
 	public QAService(String a){
@@ -37,9 +40,9 @@ public class QAService {
 		nlpService=new NlpService();
 	}
 	//nlp第一次分析初始化很慢，不知道怎么初始化，直接触发一次检索
-	@PostConstruct
 	public void initNlp(){
 		QASearch("初始化",1);
+//		System.out.println("######"+(searchService==null));
 		LOG.info("正在初始化NLP");
 	}
 

@@ -148,12 +148,12 @@
 		</property>
 	</bean>
 
-	<bean id="indexDao" class=" com.jt.lucene.IndexDao" lazy-init="false">
+	<bean id="indexDao" class=" com.jt.lucene.IndexDao" init-method="initInSpring">
 		<property name="indexPath" value="${lucene.indexPath}" />
 	</bean>
 
 
-	<bean id="qaService" class="com.jt.nlp.service.QAService" lazy-init="false">
+	<bean id="qaService" class="com.jt.nlp.service.QAService" init-method="initNlp">
 		<property name="searchService">
 			<bean class="com.jt.nlp.service.LuceneSearchService" autowire="byName">
 				<property name="dao" ref="indexDao" />
@@ -173,6 +173,10 @@
 			</bean>
 		</property>
 	</bean>
-		
-
+		<bean id="jobInit" class="com.jt.gateway.service.management.JobInit" init-method="init">
+			<property name="jobService" ref="jobInfImpl"></property>
+		</bean>
+<!-- 	<bean id="springTest" class="com.jt.test.spring.SpringTest" init-method="test"> -->
+<!-- 		<property name="pro" value="testpro"></property> -->
+<!-- 	</bean>	 -->
 </beans>

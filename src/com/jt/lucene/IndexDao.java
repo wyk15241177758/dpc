@@ -31,6 +31,7 @@ import org.apache.lucene.search.highlight.Highlighter;
 import org.apache.lucene.search.highlight.QueryScorer;
 import org.apache.lucene.search.highlight.Scorer;
 import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
+import org.springframework.stereotype.Repository;
 
 import com.jt.gateway.util.FileUtil;
 
@@ -42,6 +43,7 @@ import com.jt.gateway.util.FileUtil;
  * @创建时间：2016年8月31日 上午10:12:05
  * @version 1.0.0
  */
+@Repository
 public class IndexDao {
 	private static Logger logger = Logger.getLogger(IndexDao.class);
 	private LuceneUtilsGw util;
@@ -63,7 +65,6 @@ public class IndexDao {
 	public IndexDao(){
 		
 	}
-	@PostConstruct
 	public void initInSpring(){
 		try {
 			util=new LuceneUtilsGw(indexPath);

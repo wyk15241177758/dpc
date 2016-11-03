@@ -8,10 +8,11 @@ import java.util.List;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.BooleanClause.Occur;
+import org.springframework.stereotype.Service;
 
 import com.jt.lucene.Article;
 import com.jt.lucene.IndexDao;
-
+@Service
 public class LuceneSearchService {
 	private IndexDao dao;
 

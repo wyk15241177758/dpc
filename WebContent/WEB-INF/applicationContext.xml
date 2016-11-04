@@ -148,12 +148,20 @@
 		</property>
 	</bean>
 
+	<bean id="gwFieldImpl" parent="baseTransactionProxyBean">
+		<property name="target">
+			<bean class="  com.jt.gateway.service.job.GwFieldImpl" autowire="byName">
+			</bean>
+		</property>
+	</bean>
+
 	<bean id="indexDao" class=" com.jt.lucene.IndexDao" init-method="initInSpring">
 		<property name="indexPath" value="${lucene.indexPath}" />
 	</bean>
 
 
-	<bean id="qaService" class="com.jt.nlp.service.QAService" init-method="initNlp">
+	<bean id="qaService" class="com.jt.nlp.service.QAService"
+		init-method="initNlp">
 		<property name="searchService">
 			<bean class="com.jt.nlp.service.LuceneSearchService" autowire="byName">
 				<property name="dao" ref="indexDao" />
@@ -165,18 +173,23 @@
 
 	<bean id="jobRunningLogImpl" class="com.jt.gateway.service.job.JobRunningLogImpl"></bean>
 
-		
-		
-		<bean id="keyWordService" parent="baseTransactionProxyBean">
+
+
+	<bean id="keyWordService" parent="baseTransactionProxyBean">
 		<property name="target">
-			<bean class="com.jt.keyword.service.impl.KeyWordServiceImpl" autowire="byName">
+			<bean class="com.jt.keyword.service.impl.KeyWordServiceImpl"
+				autowire="byName">
 			</bean>
 		</property>
 	</bean>
-		<bean id="jobInit" class="com.jt.gateway.service.management.JobInit" init-method="init">
-			<property name="jobService" ref="jobInfImpl"></property>
-		</bean>
-<!-- 	<bean id="springTest" class="com.jt.test.spring.SpringTest" init-method="test"> -->
-<!-- 		<property name="pro" value="testpro"></property> -->
-<!-- 	</bean>	 -->
+
+	<bean id="jobInit" class="com.jt.gateway.service.management.JobInit"
+		init-method="init">
+		<property name="jobService" ref="jobInfImpl"></property>
+	</bean>
+
+
+	<!-- <bean id="springTest" class="com.jt.test.spring.SpringTest" init-method="test"> -->
+	<!-- <property name="pro" value="testpro"></property> -->
+	<!-- </bean> -->
 </beans>

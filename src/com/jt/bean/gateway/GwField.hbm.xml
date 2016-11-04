@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="com.jt.bean.gateway.GwField" table="gwfield">
+		<id name="fieldId" type="java.lang.Integer">
+			<column name="FIELDID" length="11" not-null="true" />
+		</id>
+		<property name="jobId" type="java.lang.Boolean">
+			<column name="JOBID" not-null="true"/>
+		</property>
+		<property name="name" type="java.lang.String">
+			<column name="NAME" length="50" not-null="true" />
+		</property>
+		<property name="isKey" type="java.lang.String">
+			<column name="ISKEY" length="50" not-null="true" />
+		</property>
+		<property name="type" type="java.lang.String">
+			<column name="TYPE" length="10" not-null="true" />
+		</property>
+	</class>
+</hibernate-mapping>

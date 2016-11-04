@@ -11,7 +11,6 @@ import org.apache.log4j.Logger;
 
 import com.jt.base.page.Param;
 import com.jt.bean.gateway.JobInf;
-import com.jt.gateway.service.operation.BasicServicveImpl;
 import com.jt.gateway.service.quartz.QuartzManager;
 
 

@@ -21,11 +21,11 @@ import com.jt.bean.gateway.GwConfig;
 import com.jt.bean.gateway.JobInf;
 import com.jt.bean.gateway.JobLog;
 import com.jt.bean.gateway.PageMsg;
+import com.jt.gateway.service.job.GwFieldService;
 import com.jt.gateway.service.job.JobInfService;
 import com.jt.gateway.service.job.JobLogService;
 import com.jt.gateway.service.job.JobRunningLogService;
 import com.jt.gateway.service.management.util.JobParamUtil;
-import com.jt.gateway.service.operation.GwConfigService;
 import com.jt.gateway.service.operation.IndexTask;
 import com.jt.gateway.util.CMyString;
 
@@ -41,23 +41,14 @@ public class JobManager {
 	private JobInfService  jobService;
 	private PageMsg msg;
 	private JobParamUtil paramUtil;
-	private GwConfigService configService;
-	private GwConfig config;
 	private Gson gson;
 	private JobRunningLogService jobRunningLogService;
 	private JobLogService jobLogSerice;
+	private GwFieldService gwFieldService;
 	public JobManager(){
 		msg=new PageMsg();
 		paramUtil=new JobParamUtil();
 		gson= new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
-		try {
-			configService=new GwConfigService();
-		} catch (JDOMException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
 	}
 	public JobInfService getJobService() {
 		return jobService;
@@ -68,6 +59,15 @@ public class JobManager {
 		this.jobService = jobService;
 	}
 	
+	
+	public GwFieldService getGwFieldService() {
+		return gwFieldService;
+	}
+	
+	@Resource(name="gwFieldImpl")
+	public void setGwFieldService(GwFieldService gwFieldService) {
+		this.gwFieldService = gwFieldService;
+	}
 	public JobLogService getJobLogSerice() {
 		return jobLogSerice;
 	}
@@ -93,35 +93,36 @@ public class JobManager {
 			e1.printStackTrace();
 			return;
 		}
+		JobInf job=null;
 		PageMsg paramMsg=new PageMsg();
 		//参数是否合法
 		paramMsg=paramUtil.isAddParamLegal(request);
 		if(paramMsg.isSig()){
+			String jobName=paramUtil.getJobInf().getJobName();
 			try {
-				config=paramUtil.getGwConfig();
 				//该任务是否已经存在
-				if(configService.getConfig(config.getTaskName())!=null){
-					msg.setMsg("新增任务["+config.getTaskName()+"]失败，错误信息为:[该任务已存在，无法新增]");
+				job=jobService.getJobByName(jobName);
+				if(job!=null){
+					msg.setMsg("新增任务["+job.getJobName()+"]失败，错误信息为:[该任务已存在，无法新增]");
 					msg.setSig(false);
 					pw.print(gson.toJson(msg));
 					return;
 				}
-				configService.addConfig(config);
-				//将任务写入到数据库
+				//不存在则写入数据库
 				Date date=new Date();
-				JobInf job=new JobInf(null, config.getTaskName(), 1,
+				job=new JobInf(null, jobName, 1,
 						paramUtil.getJobInternal(), IndexTask.class.getName(), 
-						"","TRIGGER_NAME"+config.getTaskName(),date,
+						"","TRIGGER_NAME"+jobName,date,
 						date);
 				jobService.addTask(job);
 				jobService.startSimJob(job.getJobId());
-				msg.setMsg("新增任务["+config.getTaskName()+"]成功");
+				msg.setMsg("新增任务["+jobName+"]成功");
 				msg.setSig(true);
 				pw.print(gson.toJson(msg));
 				return;
 			} catch (Exception e) {
 				e.printStackTrace();
-				msg.setMsg("新增任务["+config.getTaskName()+"]失败，错误信息为:["+e.getMessage()+"]");
+				msg.setMsg("新增任务["+jobName+"]失败，错误信息为:["+e.getMessage()+"]");
 				msg.setSig(false);
 				pw.print(gson.toJson(msg));
 				return;
@@ -213,13 +214,6 @@ public class JobManager {
 		JobInf job=jobService.getJobById(jobId);
 		if(jobId!=0&&job!=null){
 			try {
-				configService.delConfig(job.getJobName());
-			}catch(Exception e){
-				msg.setMsg("删除任务["+job.getJobName()+"]失败，错误信息:["+e.getMessage()+"]");
-				pw.print(gson.toJson(msg));
-				return;
-			}
-			try {
 				jobService.deleteTask(job);
 			} catch (Exception e) {
 				msg.setMsg("删除任务["+job.getJobName()+"]失败，错误信息:["+e.getMessage()+"]");
@@ -250,26 +244,31 @@ public class JobManager {
 			e1.printStackTrace();
 			return;
 		}
+		
+		JobInf job=null;
 		PageMsg paramMsg=new PageMsg();
 		//参数是否合法
 		paramMsg=paramUtil.isAddParamLegal(request);
 		if(paramMsg.isSig()){
+			String jobName=paramUtil.getJobInf().getJobName();
 			try {
-				config=paramUtil.getGwConfig();
 				//该任务不存在则不能修改
-				if(configService.getConfig(config.getTaskName())==null){
-					msg.setMsg("修改任务["+config.getTaskName()+"]失败，错误信息为:[该任务不存在，无法修改]");
+				job=jobService.getJobByName(jobName);
+				if(job==null){
+					msg.setMsg("修改任务["+jobName+"]失败，错误信息为:[该任务不存在，无法修改]");
 					msg.setSig(false);
 					pw.print(gson.toJson(msg));
 					return;
 				}
-				configService.updateConfig(config);
-				//将任务写入到数据库
+				//任务存在，将任务写入到数据库
 				Date date=new Date();
-				JobInf job=new JobInf(null, config.getTaskName(), 
+				job.setJobStatus(1);
+				job.setCronExpression(paramUtil.getJobInternal());
+				
+				job=new JobInf(null, jobName, 
 						1, paramUtil.getJobInternal(), IndexTask.class.getName(),
-						"","TRIGGER_NAME"+config.getTaskName(), date, date);
-				JobInf oldJob=jobService.getJobByName(config.getTaskName());
+						"","TRIGGER_NAME"+jobName, date, date);
+				JobInf oldJob=jobService.getJobByName(jobName);
 				job.setJobId(oldJob.getJobId());
 				job.setCreateTime(oldJob.getCreateTime());
 				jobService.updateTask(job);

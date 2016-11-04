@@ -6,7 +6,6 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.jt.bean.gateway.JobLog;
-import com.jt.gateway.service.operation.BasicServicveImpl;
 
 public class JobLogImpl extends BasicServicveImpl implements JobLogService {
 	private static Logger logger= Logger.getLogger(JobLogImpl.class) ;

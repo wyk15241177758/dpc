@@ -3,10 +3,12 @@ package com.jt.bean.gateway;
 import org.apache.lucene.document.FieldType;
 import org.apache.lucene.document.TextField;
 
-public class DataField {
+public class GwField {
 	private String name;
 	private boolean isKey;
 	private String type;
+	private Integer fieldId;
+	private Long jobId;
 	public String getName() {
 		return name;
 	}
@@ -28,7 +30,7 @@ public class DataField {
 	public void setType(String type) {
 		this.type = type;
 	}
-	public DataField(String name, boolean isKey, String type) {
+	public GwField(String name, boolean isKey, String type) {
 		super();
 		this.name = name;
 		this.isKey = isKey;
@@ -40,7 +42,19 @@ public class DataField {
 	public void setKey(boolean isKey) {
 		this.isKey = isKey;
 	}
-	public DataField(){
+	public Integer getFieldId() {
+		return fieldId;
+	}
+	public void setFieldId(Integer fieldId) {
+		this.fieldId = fieldId;
+	}
+	public Long getJobId() {
+		return jobId;
+	}
+	public void setJobId(Long jobId) {
+		this.jobId = jobId;
+	}
+	public GwField(){
 		
 	}
 	@Override

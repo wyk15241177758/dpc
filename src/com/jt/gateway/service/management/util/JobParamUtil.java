@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
-import com.jt.bean.gateway.DataField;
 import com.jt.bean.gateway.GwConfig;
+import com.jt.bean.gateway.GwField;
 import com.jt.bean.gateway.JobInf;
 import com.jt.bean.gateway.PageMsg;
 import com.jt.gateway.dao.JdbcDao;
@@ -21,8 +21,9 @@ import com.jt.gateway.util.CMyString;
 
 public class JobParamUtil {
 	private JobInf jobInf;
+	private List<GwField> gwFields;
 	private String jobInternal;
-	private Long jobId;
+	private String fieldIdName;
 	public JobParamUtil(JobInf jobInf, String jobInternal) {
 		this.jobInf = jobInf;
 		this.jobInternal = jobInternal;
@@ -45,41 +46,36 @@ public class JobParamUtil {
 		jobInf.setSqlTable(CMyString.getStrNotNullor0(request.getParameter("sqltable"), null));
 		jobInf.setSqlUser(CMyString.getStrNotNullor0(request.getParameter("sqluser"), null));
 		jobInf.setJobName(CMyString.getStrNotNullor0(request.getParameter("taskname"), null));
-		Type type = new TypeToken<List<DataField>>(){}.getType();
+		Type type = new TypeToken<List<GwField>>(){}.getType();
 		Gson gson=new Gson();
-		List<DataField> fieldList=null;
 		try {
-			fieldList=gson.fromJson(request.getParameter("datafields"), type);
+			gwFields=gson.fromJson(request.getParameter("datafields"), type);
 			HashSet<String> set=new HashSet<String>();
 			//排重
 			boolean simFlag=false;
-			for(DataField df:fieldList){
-				if(set.contains(df.getName())){
+			for(GwField gf:gwFields){
+				if(set.contains(gf.getName())){
 					simFlag=true;
 					break;
 				}else{
-					set.add(df.getName());
+					set.add(gf.getName());
 				}
 			}
 			if(simFlag){
 				jobInf=null;
+				gwFields=null;
 				return;
 			}
 			
-			jobInf.setList(fieldList);
-			for(DataField df:fieldList){
-				if(df.isKey()){
-					gwConfig.setIdName(df.getName());
+			for(GwField gf:gwFields){
+				if(gf.isKey()){
+					fieldIdName=gf.getName();
 				}
 			}
 		} catch (JsonSyntaxException e) {
 			e.printStackTrace();
-			//出错则赋值为null，便于之后校验参数为空
-			gwConfig.setList(null);
 		}catch(Exception e){
 			e.printStackTrace();
-			//出错则赋值为null，便于之后校验参数为空
-			gwConfig.setList(null);
 		}
 		jobInternal=getCronExpression(request.getParameter("internalhour"),
 				request.getParameter("internalmin"));
@@ -93,38 +89,38 @@ public class JobParamUtil {
 		PageMsg msg=new PageMsg(true, "参数配置校验通过");
 		//初始化参数
 		initAddParam(request);
-		//判断gwconfig的任意字段和jobInternal是否null，为null则非法
-		if(gwConfig==null){
+		//判断jobinf的任意字段和jobInternal是否null，为null则非法
+		if(jobInf==null){
 			msg=new PageMsg(false,"字段重复");
 			return msg;
-		}else if(gwConfig.getIdName()==null){
+		}else if(fieldIdName==null){
 			msg=new PageMsg(false,"ID字段为空");
 			return msg;
-		}else if(gwConfig.getIndexPath()==null){
+		}else if(jobInf.getIndexPath()==null){
 			msg=new PageMsg(false,"索引目录为空");
 			return msg;
-		}else if(gwConfig.getList()==null){
+		}else if(gwFields==null){
 			msg=new PageMsg(false,"数据库字段为空");
 			return msg;
-		}else if(gwConfig.getSqlDB()==null){
+		}else if(jobInf.getSqlDb()==null){
 			msg=new PageMsg(false,"数据库为空");
 			return msg;
-		}else if(gwConfig.getSqlIP()==null){
+		}else if(jobInf.getSqlIp()==null){
 			msg=new PageMsg(false,"数据库IP为空");
 			return msg;
-		}else if(gwConfig.getSqlPort()==null){
+		}else if(jobInf.getSqlPort()==0){
 			msg=new PageMsg(false,"数据库端口为空");
 			return msg;
-		}else if(gwConfig.getSqlPw()==null){
+		}else if(jobInf.getSqlPw()==null){
 			msg=new PageMsg(false,"数据库密码为空");
 			return msg;
-		}else if(gwConfig.getSqlTable()==null){
+		}else if(jobInf.getSqlTable()==null){
 			msg=new PageMsg(false,"数据库表名为空");
 			return msg;
-		}else if(gwConfig.getSqlUser()==null){
+		}else if(jobInf.getSqlUser()==null){
 			msg=new PageMsg(false,"数据库用户为空");
 			return msg;
-		}else if(gwConfig.getTaskName()==null){
+		}else if(jobInf.getJobName()==null){
 			msg=new PageMsg(false,"任务名称为空");
 			return msg;
 		}else if(jobInternal==null){
@@ -134,8 +130,8 @@ public class JobParamUtil {
 			String sql="select 1 from dual";
 			//判断数据库配置是否正确
 			JdbcDao dao=null;
-			dao=new JdbcDaoImpl(gwConfig.getSqlDB(), gwConfig.getSqlIP(), 
-					gwConfig.getSqlPort(), gwConfig.getSqlUser(), gwConfig.getSqlPw());
+			dao=new JdbcDaoImpl(jobInf.getSqlDb(), jobInf.getSqlIp(), 
+					jobInf.getSqlPort()+"", jobInf.getSqlUser(), jobInf.getSqlPw());
 			try {
 				int num=dao.executeQueryForCount(sql);
 			} catch(Exception e){
@@ -144,9 +140,9 @@ public class JobParamUtil {
 			}
 			//包括是否连接正常、字段是否存在
 			sql="select count(1) from information_schema.`COLUMNS` where table_name='"+
-			gwConfig.getSqlTable()+"' and (";
-			for(int i=0;i<gwConfig.getList().size();i++){
-				DataField df=gwConfig.getList().get(i);
+					jobInf.getSqlTable()+"' and (";
+			for(int i=0;i<gwFields.size();i++){
+				GwField df=gwFields.get(i);
 				if(i==0){
 					sql+="column_name='"+df.getName()+"'";
 				}else{
@@ -156,7 +152,7 @@ public class JobParamUtil {
 			sql+=")";
 				try {
 					int num=dao.executeQueryForCount(sql);
-					if(num!=gwConfig.getList().size()){
+					if(num!=gwFields.size()){
 						msg=new PageMsg(false,"数据库表名错误或某个字段不存在");
 						return msg;
 					}
@@ -208,43 +204,30 @@ public class JobParamUtil {
 		}
 		return jobInternal;
 	}
-	public GwConfig getGwConfig() {
-		return gwConfig;
-	}
-	public void setGwConfig(GwConfig gwConfig) {
-		this.gwConfig = gwConfig;
-	}
 	public String getJobInternal() {
 		return jobInternal;
 	}
 	public void setJobInternal(String jobInternal) {
 		this.jobInternal = jobInternal;
 	}
-	public long getJobId() {
-		return jobId;
+	public String getFieldIdName() {
+		return fieldIdName;
 	}
-	public void setJobId(long jobId) {
-		this.jobId = jobId;
+	public void setFieldIdName(String fieldIdName) {
+		this.fieldIdName = fieldIdName;
 	}
-	public static void main(String[] args) {
-		DataField df1=new DataField("FL_ID", true, "STORE");
-		DataField df2=new DataField("FL_NAME", true, "STORE");
-		List <DataField> list=new ArrayList<DataField>();
-		list.add(df1);
-		list.add(df2);
-		GwConfig gwConfig=new GwConfig();
-		gwConfig.setIdName(CMyString.getStrNotNullor0("1", null));
-		gwConfig.setIndexPath(CMyString.getStrNotNullor0("1", null));
-		gwConfig.setSqlDB(CMyString.getStrNotNullor0("jtcrawler", null));
-		gwConfig.setSqlIP(CMyString.getStrNotNullor0("localhost", null));
-		gwConfig.setSqlPort(CMyString.getStrNotNullor0("3306", null));
-		gwConfig.setSqlPw(CMyString.getStrNotNullor0("root", null));
-		gwConfig.setSqlUser(CMyString.getStrNotNullor0("root", null));
-		gwConfig.setSqlTable(CMyString.getStrNotNullor0("crawler_fl", null));
-		gwConfig.setTaskName(CMyString.getStrNotNullor0("1", null));
-		gwConfig.setList(list);
-		String jobInternal=getCronExpression("1","");
-		JobParamUtil util=new JobParamUtil(gwConfig, jobInternal);
+	public JobInf getJobInf() {
+		return jobInf;
 	}
+	public void setJobInf(JobInf jobInf) {
+		this.jobInf = jobInf;
+	}
+	public List<GwField> getGwFields() {
+		return gwFields;
+	}
+	public void setGwFields(List<GwField> gwFields) {
+		this.gwFields = gwFields;
+	}
+	
 	
 }

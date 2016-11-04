@@ -1,6 +1,7 @@
 package com.jt.keyword.bean;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 public class KeyWord  implements  Serializable  {
@@ -15,6 +16,8 @@ public class KeyWord  implements  Serializable  {
 	public   Integer    floor;
 	public   List<KeyWord>  childrens;
 	public   Integer    idx;
+	private Date createTime;
+	private Date updateTime;
 	public Integer getId() {
 		return id;
 	}
@@ -56,6 +59,18 @@ public class KeyWord  implements  Serializable  {
 	}
 	public void setIdx(Integer idx) {
 		this.idx = idx;
+	}
+	public Date getCreateTime() {
+		return createTime;
+	}
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
+	public Date getUpdateTime() {
+		return updateTime;
+	}
+	public void setUpdateTime(Date updateTime) {
+		this.updateTime = updateTime;
 	}
 
 	

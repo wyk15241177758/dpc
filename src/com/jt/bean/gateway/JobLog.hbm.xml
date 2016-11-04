@@ -21,5 +21,28 @@
 		<property name="end" type="java.sql.Timestamp" >
 			<column name="END" length="19" not-null="false" />
 		</property>
+		
+		<property name="indexPath" type="java.lang.String" >
+			<column name="INDEXPATH" length="200" not-null="true" />
+		</property>
+		<property name="sqlIp" type="java.lang.String" >
+			<column name="SQLIP" length="50" not-null="true" />
+		</property>
+		<property name="sqlUser" type="java.lang.String" >
+			<column name="SQLUSER" length="50" not-null="true" />
+		</property>
+		<property name="sqlPw" type="java.lang.String" >
+			<column name="SQLPW" length="50" not-null="true" />
+		</property>
+		<property name="sqlDb" type="java.lang.String" >
+			<column name="SQLDB" length="50" not-null="true" />
+		</property>
+		<property name="sqlPort" type="java.lang.Integer" >
+			<column name="SQLPORT" length="11" not-null="true" />
+		</property>
+		<property name="sqlTable" type="java.lang.String" >
+			<column name="SQLTABLE" length="50" not-null="true" />
+		</property>
+		
 	</class>
 </hibernate-mapping>

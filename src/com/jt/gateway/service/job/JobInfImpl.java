@@ -108,7 +108,7 @@ public class JobInfImpl extends BasicServicveImpl  implements  JobInfService{
 		Timestamp time = new Timestamp(change.getTime());
 		jobInf.setUpdateTime(time);
 		String hql = "update com.jt.bean.gateway.JobInf set jobName = ? , jobGroup = ? , jobStatus = ? , cronExpression = ? , beanClass  = ?" +
-				" ,  description  = ?  , triggerName  = ?  , triggerGroupName  = ? , updateTime  = ? " +
+				" ,  description  = ?  , triggerName  = ?  , triggerGroupName  = ? , updateTime  = ? ,indexPath = ? ,sqlIp = ? ,sqlUser = ? ,sqlPw = ? ,sqlDb = ? ,sqlPort = ? ,sqlTable = ? " +
 				"where jobId = ?";
 		paramList.add(new Param(Types.VARCHAR,jobInf.getJobName()));
 		paramList.add(new Param(Types.VARCHAR,jobInf.getJobGroup()));
@@ -120,6 +120,15 @@ public class JobInfImpl extends BasicServicveImpl  implements  JobInfService{
 		paramList.add(new Param(Types.VARCHAR,jobInf.getTriggerGroupName()));
 		paramList.add(new Param(Types.TIMESTAMP,time));
 		paramList.add(new Param(Types.BIGINT,jobInf.getJobId()));
+		
+		paramList.add(new Param(Types.VARCHAR,jobInf.getIndexPath()));
+		paramList.add(new Param(Types.VARCHAR,jobInf.getSqlIp()));
+		paramList.add(new Param(Types.VARCHAR,jobInf.getSqlUser()));
+		paramList.add(new Param(Types.VARCHAR,jobInf.getSqlPw()));
+		paramList.add(new Param(Types.VARCHAR,jobInf.getSqlDb()));
+		paramList.add(new Param(Types.VARCHAR,jobInf.getSqlPort()));
+		paramList.add(new Param(Types.VARCHAR,jobInf.getSqlTable()));
+		
 		this.dao.update(hql, paramList);
 		try {
 			startSimJob(jobInf.getJobId());
@@ -225,5 +234,6 @@ public class JobInfImpl extends BasicServicveImpl  implements  JobInfService{
 		paramList.add(new Param(Types.BIGINT,id));
 		this.dao.update(hql2, paramList);
 	}
+	//获得指定job关联的
 	
 }

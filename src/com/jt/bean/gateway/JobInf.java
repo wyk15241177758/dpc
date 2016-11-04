@@ -35,6 +35,18 @@ public class JobInf implements java.io.Serializable {
 	
 	private Date createTime;
 	private Date updateTime;
+	
+	
+	
+	private String indexPath;
+	private String sqlIp;
+	private String sqlUser;
+	private String sqlPw;
+	private String sqlDb;
+	private int sqlPort;
+	private String sqlTable;
+	
+	
 	@Override
 	public String toString() {
 		return "JobInf [jobId=" + jobId + ", jobName=" + jobName + ", jobStatus=" + jobStatus + ", cronExpression="
@@ -190,6 +202,90 @@ public class JobInf implements java.io.Serializable {
 
 	public static void setTriggerGroupName(String triggerGroupName) {
 		JobInf.triggerGroupName = triggerGroupName;
+	}
+
+
+
+	public String getIndexPath() {
+		return indexPath;
+	}
+
+
+
+	public void setIndexPath(String indexPath) {
+		this.indexPath = indexPath;
+	}
+
+
+
+	public String getSqlIp() {
+		return sqlIp;
+	}
+
+
+
+	public void setSqlIp(String sqlIp) {
+		this.sqlIp = sqlIp;
+	}
+
+
+
+	public String getSqlUser() {
+		return sqlUser;
+	}
+
+
+
+	public void setSqlUser(String sqlUser) {
+		this.sqlUser = sqlUser;
+	}
+
+
+
+	public String getSqlPw() {
+		return sqlPw;
+	}
+
+
+
+	public void setSqlPw(String sqlPw) {
+		this.sqlPw = sqlPw;
+	}
+
+
+
+	public String getSqlDb() {
+		return sqlDb;
+	}
+
+
+
+	public void setSqlDb(String sqlDb) {
+		this.sqlDb = sqlDb;
+	}
+
+
+
+	public int getSqlPort() {
+		return sqlPort;
+	}
+
+
+
+	public void setSqlPort(int sqlPort) {
+		this.sqlPort = sqlPort;
+	}
+
+
+
+	public String getSqlTable() {
+		return sqlTable;
+	}
+
+
+
+	public void setSqlTable(String sqlTable) {
+		this.sqlTable = sqlTable;
 	}
 
 

@@ -12,6 +12,7 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.jt.bean.gateway.DataField;
 import com.jt.bean.gateway.GwConfig;
+import com.jt.bean.gateway.JobInf;
 import com.jt.bean.gateway.PageMsg;
 import com.jt.gateway.dao.JdbcDao;
 import com.jt.gateway.dao.impl.JdbcDaoImpl;
@@ -19,26 +20,31 @@ import com.jt.gateway.util.CMyString;
 
 
 public class JobParamUtil {
-	private GwConfig gwConfig;
+	private JobInf jobInf;
 	private String jobInternal;
 	private Long jobId;
-	public JobParamUtil(GwConfig gwConfig, String jobInternal) {
-		this.gwConfig = gwConfig;
+	public JobParamUtil(JobInf jobInf, String jobInternal) {
+		this.jobInf = jobInf;
 		this.jobInternal = jobInternal;
 	}
 	public JobParamUtil() {
 	}
 	
 	private void initAddParam(HttpServletRequest request){
-		gwConfig=new GwConfig();
-		gwConfig.setIndexPath(CMyString.getStrNotNullor0(request.getParameter("indexpath"), null));
-		gwConfig.setSqlDB(CMyString.getStrNotNullor0(request.getParameter("sqldb"), null));
-		gwConfig.setSqlIP(CMyString.getStrNotNullor0(request.getParameter("sqlip"), null));
-		gwConfig.setSqlPort(CMyString.getStrNotNullor0(request.getParameter("sqlport"), null));
-		gwConfig.setSqlPw(CMyString.getStrNotNullor0(request.getParameter("sqlpw"), null));
-		gwConfig.setSqlTable(CMyString.getStrNotNullor0(request.getParameter("sqltable"), null));
-		gwConfig.setSqlUser(CMyString.getStrNotNullor0(request.getParameter("sqluser"), null));
-		gwConfig.setTaskName(CMyString.getStrNotNullor0(request.getParameter("taskname"), null));
+		jobInf=new JobInf();
+		jobInf.setIndexPath(CMyString.getStrNotNullor0(request.getParameter("indexpath"), null));
+		jobInf.setSqlDb(CMyString.getStrNotNullor0(request.getParameter("sqldb"), null));
+		jobInf.setSqlIp(CMyString.getStrNotNullor0(request.getParameter("sqlip"), null));
+		try {
+			jobInf.setSqlPort(Integer.parseInt(CMyString.getStrNotNullor0(request.getParameter("sqlport"), "0")));
+		} catch (Exception e1) {
+			e1.printStackTrace();
+			jobInf.setSqlPort(0);
+		}
+		jobInf.setSqlPw(CMyString.getStrNotNullor0(request.getParameter("sqlpw"), null));
+		jobInf.setSqlTable(CMyString.getStrNotNullor0(request.getParameter("sqltable"), null));
+		jobInf.setSqlUser(CMyString.getStrNotNullor0(request.getParameter("sqluser"), null));
+		jobInf.setJobName(CMyString.getStrNotNullor0(request.getParameter("taskname"), null));
 		Type type = new TypeToken<List<DataField>>(){}.getType();
 		Gson gson=new Gson();
 		List<DataField> fieldList=null;
@@ -56,11 +62,11 @@ public class JobParamUtil {
 				}
 			}
 			if(simFlag){
-				gwConfig=null;
+				jobInf=null;
 				return;
 			}
 			
-			gwConfig.setList(fieldList);
+			jobInf.setList(fieldList);
 			for(DataField df:fieldList){
 				if(df.isKey()){
 					gwConfig.setIdName(df.getName());

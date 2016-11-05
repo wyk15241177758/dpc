@@ -11,13 +11,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.jdom.JDOMException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jt.bean.gateway.GwConfig;
+import com.jt.bean.gateway.GwField;
 import com.jt.bean.gateway.JobInf;
 import com.jt.bean.gateway.JobLog;
 import com.jt.bean.gateway.PageMsg;
@@ -246,11 +246,17 @@ public class JobManager {
 		}
 		
 		JobInf job=null;
+		List<GwField> gwFieldList=null;
+		JobInf paramJob=paramUtil.getJobInf();
+		List<GwField> paramGwFieldList=paramUtil.getGwFields();
 		PageMsg paramMsg=new PageMsg();
+		String jobName="未获得任务名称";
+		if(paramJob!=null){
+			jobName=paramJob.getJobName();
+		}
 		//参数是否合法
 		paramMsg=paramUtil.isAddParamLegal(request);
 		if(paramMsg.isSig()){
-			String jobName=paramUtil.getJobInf().getJobName();
 			try {
 				//该任务不存在则不能修改
 				job=jobService.getJobByName(jobName);
@@ -264,27 +270,49 @@ public class JobManager {
 				Date date=new Date();
 				job.setJobStatus(1);
 				job.setCronExpression(paramUtil.getJobInternal());
-				
-				job=new JobInf(null, jobName, 
-						1, paramUtil.getJobInternal(), IndexTask.class.getName(),
-						"","TRIGGER_NAME"+jobName, date, date);
-				JobInf oldJob=jobService.getJobByName(jobName);
-				job.setJobId(oldJob.getJobId());
-				job.setCreateTime(oldJob.getCreateTime());
+				job.setIndexPath(paramJob.getIndexPath());
+				job.setSqlDb(paramJob.getSqlDb());
+				job.setSqlIp(paramJob.getSqlIp());
+				job.setSqlPort(paramJob.getSqlPort());
+				job.setSqlPw(paramJob.getSqlPw());
+				job.setSqlTable(paramJob.getSqlTable());
+				job.setSqlUser(paramJob.getSqlUser());
+				job.setUpdateTime(new Date());
 				jobService.updateTask(job);
-				msg.setMsg("修改任务["+config.getTaskName()+"]成功");
+				//修改字段信息，只能根据字段名称+jobid查询，存在则修改，不存在则保存
+				gwFieldList=gwFieldService.getFieldListByJobId(job.getJobId());
+				HashMap<String,GwField> gwFieldMap=new HashMap<String,GwField>();
+				for(GwField field:gwFieldList){
+					gwFieldMap.put(field.getName(), field);
+				}
+				for(GwField paramField:paramGwFieldList){
+					//原先存在此字段且内容不一致则update
+					GwField gwField=gwFieldMap.get(paramField.getName());
+					if(gwField!=null&&!gwField.equals(paramField)){
+						gwField.setKey(paramField.isKey());
+						gwField.setName(paramField.getName());
+						gwField.setType(paramField.getType());
+						gwFieldService.update(gwField);
+					}
+					//原先不存在此字段则保存
+					if(gwField==null){
+						paramField.setJobId(job.getJobId());
+						gwFieldService.save(paramField);
+					}
+				}
+				msg.setMsg("修改任务["+jobName+"]成功");
 				msg.setSig(true);
 				pw.print(gson.toJson(msg));
 				return;
 			} catch (Exception e) {
 				e.printStackTrace();
-				msg.setMsg("修改["+config.getTaskName()+"]任务失败，错误信息为:["+e.getMessage()+"]");
+				msg.setMsg("修改["+jobName+"]任务失败，错误信息为:["+e.getMessage()+"]");
 				msg.setSig(false);
 				pw.print(gson.toJson(msg));
 				return;
 			} 
 		}else{
-			msg.setMsg("修改任务["+config.getTaskName()+"]失败，错误信息为:["+paramMsg.getMsg()+"]");
+			msg.setMsg("修改任务["+jobName+"]失败，错误信息为:["+paramMsg.getMsg()+"]");
 			msg.setSig(false);
 			pw.print(gson.toJson(msg));
 			return;
@@ -307,7 +335,7 @@ public class JobManager {
 		pw.print(gson.toJson(list));
 	}
 	//查询指定任务，及其任务的配置内容：表名、库名等
-	@RequestMapping(value="listJobConfig.do")
+	@RequestMapping(value="getJob.do")
 	public void listJobConfig(HttpServletRequest request, HttpServletResponse response){
 		msg=new PageMsg();
 		response.setCharacterEncoding("utf-8");

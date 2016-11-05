@@ -58,6 +58,16 @@ public class GwField {
 		
 	}
 	@Override
+	public boolean equals(Object obj) {
+		GwField paramField=(GwField)obj;
+		if(paramField.getName().equals(this.name)&&paramField.getType().equals(this.type)&&
+				(paramField.isKey==this.isKey)){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	@Override
 	public String toString() {
 		return "DataField [name=" + name + ", isKey=" + isKey + ", type=" + type + "]";
 	}

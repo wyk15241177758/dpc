@@ -1,16 +1,16 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : local
-Source Server Version : 50508
+Source Server         : 127
+Source Server Version : 50715
 Source Host           : localhost:3306
 Source Database       : qasys
 
 Target Server Type    : MYSQL
-Target Server Version : 50508
+Target Server Version : 50715
 File Encoding         : 65001
 
-Date: 2016-11-04 18:31:51
+Date: 2016-11-05 09:28:23
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -22,9 +22,9 @@ DROP TABLE IF EXISTS `gwfield`;
 CREATE TABLE `gwfield` (
   `fieldid` int(11) NOT NULL AUTO_INCREMENT,
   `jobid` int(11) NOT NULL,
-  `fieldname` varchar(50) NOT NULL,
-  `iskey` varchar(10) NOT NULL,
-  `fieldtype` varchar(10) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `iskey` tinyint(10) NOT NULL,
+  `type` varchar(10) NOT NULL,
   PRIMARY KEY (`fieldid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

@@ -65,6 +65,8 @@ public interface KeyWordService   {
 	 * @return
 	 */
 	public void delete( Class cla ,  Serializable[] ids );
+	
+	public void delete(Class cla,String  ids );
 
 
 }

@@ -2,10 +2,14 @@ package com.jt.keyword.service.impl;
 
 import java.io.Serializable;
 import java.sql.Types;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 
 import com.google.gson.Gson;
 import com.jt.base.page.Param;
@@ -16,6 +20,10 @@ import com.jt.keyword.bean.QueryResut;
 import com.jt.keyword.service.KeyWordService;
 
 public class KeyWordServiceImpl  implements  KeyWordService{
+	public static String dateFormat(Date date, String strFormat) {
+		DateFormat df = new SimpleDateFormat(strFormat);
+		return df.format(date);
+	}	
 	protected IDao dao;
 	@Override
 	public void addKeyword(String keyvalue, Integer pId) {
@@ -33,6 +41,9 @@ public class KeyWordServiceImpl  implements  KeyWordService{
 		keyWord.setParent(null);
 		else
 	    keyWord.setParent((KeyWord)dao.getById(KeyWord.class, pId));
+		Date  date=new Date();
+		keyWord.setCreateTime(date);
+		keyWord.setUpdateTime(date);
         dao.save(keyWord);
 		
 	}
@@ -59,6 +70,8 @@ public class KeyWordServiceImpl  implements  KeyWordService{
 		if(keyWord==null)
 			return;
 		keyWord.setWordvalue(keyvalue);
+		Date  date=new Date();
+		keyWord.setUpdateTime(date);
         dao.update(keyWord);		
 	}
 	
@@ -116,7 +129,7 @@ public class KeyWordServiceImpl  implements  KeyWordService{
 
    	}
    	if(StringUtils.isNotBlank(keyvalue)){
-   		hql=hql+"  AND wordvalue=?";
+   		hql=hql+"  AND wordvalue like ?";
 	 	  paramList.add(new Param(Types.VARCHAR, "%"+keyvalue+"%"));	
    	}
       	hql=hql+"  AND floor=?";
@@ -134,8 +147,15 @@ public class KeyWordServiceImpl  implements  KeyWordService{
 	    		 QueryResut  queryResut=new QueryResut();
 	    		 KeyWord  keyword= list.get(i);
 	    		 queryResut.setId(keyword.id);
-	    		 queryResut.setPid(keyword.parent==null?-1:keyword.parent.id);
+	    		 KeyWord pard = keyword.getParent();
+	    		 if(pard==null)
+	    		 queryResut.setPid(-1);
+	    		 else
+		        queryResut.setPid(pard.getId());
+
 	    		 queryResut.setWordvalue(keyword.wordvalue);
+	    		 queryResut.setAddtime(dateFormat(keyword.getCreateTime(), "yyyy-MM-dd"));
+
 	    		 queryResuts.add(queryResut);
 			}
 	     }
@@ -151,11 +171,11 @@ public class KeyWordServiceImpl  implements  KeyWordService{
 
     	String  hql=" FROM com.jt.keyword.bean.KeyWord WHERE  1=1";
       	if(StringUtils.isNotBlank(keyvalue)){
-       		hql=hql+"  AND wordvalue=?";
+       		hql=hql+"  AND wordvalue like ?";
     	 	  paramList.add(new Param(Types.VARCHAR, "%"+keyvalue+"%"));	
        	}
        	hql=hql+"  AND floor=?";
-    		paramList.add(new Param(Types.INTEGER, 1));
+    		paramList.add(new Param(Types.INTEGER, 0));
       	List<KeyWord> list = dao.query(hql, paramList);
        	List<QueryResut>  queryResuts=new ArrayList<QueryResut>();
 	     if(list!=null){
@@ -163,8 +183,14 @@ public class KeyWordServiceImpl  implements  KeyWordService{
 	    		 QueryResut  queryResut=new QueryResut();
 	    		 KeyWord  keyword= list.get(i);
 	    		 queryResut.setId(keyword.id);
-	    		 queryResut.setPid(keyword.parent==null?-1:keyword.parent.id);
+	    		 KeyWord pard = keyword.getParent();
+	    		 if(pard==null)
+	    		 queryResut.setPid(-1);
+	    		 else
+		        queryResut.setPid(pard.getId());
 	    		 queryResut.setWordvalue(keyword.wordvalue);
+	    		 queryResut.setAddtime(dateFormat(keyword.getCreateTime(), "yyyy-MM-dd"));
+
 	    		 queryResuts.add(queryResut);
 			}
 	     }
@@ -186,7 +212,7 @@ public class KeyWordServiceImpl  implements  KeyWordService{
     	String  hql=" FROM com.jt.keyword.bean.KeyWord WHERE  1=1";
     
    	if(StringUtils.isNotBlank(keyvalue)){
-   		hql=hql+"  AND wordvalue=?";
+   		hql=hql+"  AND wordvalue  like ?";
 	 	  paramList.add(new Param(Types.VARCHAR, "%"+keyvalue+"%"));	
    	}
    	
@@ -205,9 +231,15 @@ public class KeyWordServiceImpl  implements  KeyWordService{
 			    		 QueryResut  queryResut=new QueryResut();
 			    		 KeyWord  keyword= list.get(i);
 			    		 queryResut.setId(keyword.id);
-			    		 queryResut.setPid(keyword.parent==null?-1:keyword.parent.id);
+			    		 KeyWord pard = keyword.getParent();
+			    		 if(pard==null)
+			    		 queryResut.setPid(-1);
+			    		 else
+				         queryResut.setPid(pard.getId());
 			    		 queryResut.setWordvalue(keyword.wordvalue);
+			    		 queryResut.setAddtime(dateFormat(keyword.getCreateTime(), "yyyy-MM-dd"));
 			    		 queryResuts.add(queryResut);
+			    		 
 					}
 			     }
 			     pageResult.setList(queryResuts);
@@ -227,6 +259,19 @@ public class KeyWordServiceImpl  implements  KeyWordService{
 		List list=new ArrayList();
 		for (int i = 0; i < ids.length; i++) {
 			Object obj = this.queryById(cla, ids[i] );
+			list.add(obj);
+			//dao.delete(obj);
+		}
+		dao.delete(list);
+	}
+	
+	public void delete(Class cla, String ids) {
+		if(StringUtils.isBlank(ids))
+			return;
+		String[] lisids = ids.split(",");
+		List list=new ArrayList();
+		for (int i = 0; i < lisids.length; i++) {
+			Object obj = this.queryById(cla,Integer.parseInt(lisids[i] ));
 			list.add(obj);
 			//dao.delete(obj);
 		}

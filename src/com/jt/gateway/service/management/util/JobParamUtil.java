@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
-import com.jt.bean.gateway.GwConfig;
 import com.jt.bean.gateway.GwField;
 import com.jt.bean.gateway.JobInf;
 import com.jt.bean.gateway.PageMsg;

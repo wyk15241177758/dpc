@@ -6,14 +6,14 @@
 		<id name="fieldId" type="java.lang.Integer">
 			<column name="FIELDID" length="11" not-null="true" />
 		</id>
-		<property name="jobId" type="java.lang.Boolean">
+		<property name="jobId" type="java.lang.Integer">
 			<column name="JOBID" not-null="true"/>
 		</property>
 		<property name="name" type="java.lang.String">
 			<column name="NAME" length="50" not-null="true" />
 		</property>
-		<property name="isKey" type="java.lang.String">
-			<column name="ISKEY" length="50" not-null="true" />
+		<property name="key" type="java.lang.Boolean">
+			<column name="KEY" length="50" not-null="true" />
 		</property>
 		<property name="type" type="java.lang.String">
 			<column name="TYPE" length="10" not-null="true" />

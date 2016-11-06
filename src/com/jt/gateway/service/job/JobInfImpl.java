@@ -78,8 +78,9 @@ public class JobInfImpl extends BasicServicveImpl  implements  JobInfService{
 		try{
 		jobInf.setJobStatus(1);
 		this.dao.save(jobInf);
-		//long jobId=Long.parseLong(this.dao.save(jobInf).toString());
-		//startSimJob(jobId);;
+		//测试
+		System.out.println("###保存job之后尝试获得jobID=["+jobInf.getJobId()+"]");
+		startSimJob(jobInf.getJobId());
 		}catch(Exception e){
 			e.printStackTrace();
 		}

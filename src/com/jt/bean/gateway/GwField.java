@@ -5,7 +5,7 @@ import org.apache.lucene.document.TextField;
 
 public class GwField {
 	private String name;
-	private boolean isKey;
+	private boolean key;
 	private String type;
 	private Integer fieldId;
 	private Long jobId;
@@ -30,17 +30,11 @@ public class GwField {
 	public void setType(String type) {
 		this.type = type;
 	}
-	public GwField(String name, boolean isKey, String type) {
+	public GwField(String name, boolean key, String type) {
 		super();
 		this.name = name;
-		this.isKey = isKey;
+		this.key = key;
 		this.type = type;
-	}
-	public boolean isKey() {
-		return isKey;
-	}
-	public void setKey(boolean isKey) {
-		this.isKey = isKey;
 	}
 	public Integer getFieldId() {
 		return fieldId;
@@ -54,6 +48,12 @@ public class GwField {
 	public void setJobId(Long jobId) {
 		this.jobId = jobId;
 	}
+	public boolean isKey() {
+		return key;
+	}
+	public void setKey(boolean key) {
+		this.key = key;
+	}
 	public GwField(){
 		
 	}
@@ -61,7 +61,7 @@ public class GwField {
 	public boolean equals(Object obj) {
 		GwField paramField=(GwField)obj;
 		if(paramField.getName().equals(this.name)&&paramField.getType().equals(this.type)&&
-				(paramField.isKey==this.isKey)){
+				(paramField.key==this.key)){
 			return true;
 		}else{
 			return false;
@@ -69,7 +69,7 @@ public class GwField {
 	}
 	@Override
 	public String toString() {
-		return "DataField [name=" + name + ", isKey=" + isKey + ", type=" + type + "]";
+		return "DataField [name=" + name + ", key=" + key + ", type=" + type + "]";
 	}
 
 }

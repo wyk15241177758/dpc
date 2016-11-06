@@ -15,12 +15,12 @@ public static void main(String[] args) {
 	
 //	
 	Date date=new Date();
-	JobInf inf=new JobInf(1l,"测试任务",1,"0 0/1 * * * ?",QuartzJob.class.getName(),"",
-			"测试任务",date,date);
+//	JobInf inf=new JobInf(1l,"测试任务",1,"0 0/1 * * * ?",QuartzJob.class.getName(),"",
+//			"测试任务",date,date);
 
-	QuartzManager.removeJob(inf.getJobName());
-	QuartzManager.addJob(inf);
-	QuartzManager.startJobs();
+//	QuartzManager.removeJob(inf.getJobName());
+//	QuartzManager.addJob(inf);
+//	QuartzManager.startJobs();
 //	
 //	JobInf inf2=new JobInf(1l,"测试任务2",1,"0/7 * * * * ?",QuartzJob.class.getName(),"",
 //			"测试任务2",date,date);

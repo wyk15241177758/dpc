@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.jt.bean.gateway.GwConfig;
 import com.jt.bean.gateway.GwField;
 import com.jt.bean.gateway.JobInf;
 import com.jt.bean.gateway.JobLog;
@@ -99,6 +98,7 @@ public class JobManager {
 		paramMsg=paramUtil.isAddParamLegal(request);
 		if(paramMsg.isSig()){
 			String jobName=paramUtil.getJobInf().getJobName();
+			JobInf paramJob=paramUtil.getJobInf();
 			try {
 				//该任务是否已经存在
 				job=jobService.getJobByName(jobName);
@@ -110,12 +110,11 @@ public class JobManager {
 				}
 				//不存在则写入数据库
 				Date date=new Date();
-				job=new JobInf(null, jobName, 1,
-						paramUtil.getJobInternal(), IndexTask.class.getName(), 
-						"","TRIGGER_NAME"+jobName,date,
-						date);
+				job=new JobInf(null, jobName, 1, paramUtil.getJobInternal(), IndexTask.class.getName(),
+						null, "TRIGGER_NAME"+jobName, date, null, paramJob.getIndexPath(), 
+						paramJob.getSqlIp(), paramJob.getSqlUser(), paramJob.getSqlPw(),
+						paramJob.getSqlDb(), paramJob.getSqlPort(), paramJob.getSqlTable());
 				jobService.addTask(job);
-				jobService.startSimJob(job.getJobId());
 				msg.setMsg("新增任务["+jobName+"]成功");
 				msg.setSig(true);
 				pw.print(gson.toJson(msg));
@@ -212,9 +211,19 @@ public class JobManager {
 			return;
 		}
 		JobInf job=jobService.getJobById(jobId);
+		List<GwField> gwFieldList=null;
 		if(jobId!=0&&job!=null){
 			try {
+				//删除job关联的字段信息
+				gwFieldList=gwFieldService.getFieldListByJobId(job.getJobId());
+				Integer[] gwFieldListIds=new Integer[gwFieldList.size()];
+				for(int i=0;i<gwFieldList.size();i++){
+					gwFieldListIds[i]=gwFieldList.get(i).getFieldId();
+				}
+				gwFieldService.delete(GwField.class, gwFieldListIds);
+				//删除job信息
 				jobService.deleteTask(job);
+				
 			} catch (Exception e) {
 				msg.setMsg("删除任务["+job.getJobName()+"]失败，错误信息:["+e.getMessage()+"]");
 				pw.print(gson.toJson(msg));
@@ -319,7 +328,7 @@ public class JobManager {
 		}
 	}
 	
-	//查询所有
+	//查询所有job，不需要查询对应的字段表
 	@RequestMapping(value="listJobs.do")
 	public void listJobs(HttpServletRequest request, HttpServletResponse response){
 		msg=new PageMsg();
@@ -334,9 +343,9 @@ public class JobManager {
 		List<JobInf> list=jobService.getAllJobs("jobStatus>0");
 		pw.print(gson.toJson(list));
 	}
-	//查询指定任务，及其任务的配置内容：表名、库名等
-	@RequestMapping(value="getJob.do")
-	public void listJobConfig(HttpServletRequest request, HttpServletResponse response){
+	//查询指定任务，及其任务的配置内容：表名、库名等。以及对应的字段表
+	@RequestMapping(value="getJobAndFields.do")
+	public void getJob(HttpServletRequest request, HttpServletResponse response){
 		msg=new PageMsg();
 		response.setCharacterEncoding("utf-8");
 		PrintWriter pw=null;
@@ -351,29 +360,25 @@ public class JobManager {
 			jobId=Long.parseLong(CMyString.getStrNotNullor0(request.getParameter("jobid"), "0"));
 		} catch (Exception e) {
 			e.printStackTrace();
-			msg.setMsg("启动任务id=["+jobId+"]失败,错误信息为[转换jobID类型失败]");
+			msg.setMsg("获得id=["+jobId+"]任务失败,错误信息为[转换jobID类型失败]");
 			msg.setSig(false);
 			pw.print(gson.toJson(msg));
 			return;
 		}
 		JobInf job=jobService.getJobById(jobId);
-		JobInf proxyJob=new JobInf(jobId,job.getJobName(),job.getJobStatus(),job.getCronExpression(),job.getBeanClass(),job.getDescription(),job.getTriggerName(),job.getCreateTime(),job.getUpdateTime());
+		List<GwField> gwFieldList=null;
+//		JobInf proxyJob=new JobInf(jobId,job.getJobName(),job.getJobStatus(),job.getCronExpression(),job.getBeanClass(),job.getDescription(),job.getTriggerName(),job.getCreateTime(),job.getUpdateTime());
 		if(jobId!=0&&job!=null){
-			GwConfig config=configService.getConfig(job.getJobName());
-			if(config!=null){
-				HashMap<String,Object>map=new HashMap<String,Object>();
-				map.put("jobinf", proxyJob);
-				map.put("config", config);
-				msg.setMsg(map);
-				msg.setSig(true);
-				pw.print(gson.toJson(msg));
-			}else{
-				msg.setMsg("启动任务id=["+jobId+"]失败,错误信息为[未获得任务ID或不存在指定的任务]");
-				msg.setSig(false);
-				pw.print(gson.toJson(msg));
-			}
+			//获得job关联的任务
+			gwFieldList=gwFieldService.getFieldListByJobId(jobId);
+			HashMap<String,Object>map=new HashMap<String,Object>();
+			map.put("jobinf", job);
+			map.put("config", gwFieldList);
+			msg.setMsg(map);
+			msg.setSig(true);
+			pw.print(gson.toJson(msg));
 		}else{
-			msg.setMsg("启动任务id=["+jobId+"]失败,错误信息为[未获得任务ID或不存在指定的任务]");
+			msg.setMsg("获得id=["+jobId+"]任务失败,错误信息为[未获得任务ID或不存在指定的任务]");
 			msg.setSig(false);
 			pw.print(gson.toJson(msg));
 		}

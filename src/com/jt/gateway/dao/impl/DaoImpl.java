@@ -41,6 +41,8 @@ public class DaoImpl extends HibernateDaoSupport implements IDao {
 				for (int i = 0; i <paramList.size(); i++) {
 					Param p = (Param)paramList.get(i);					
 					switch( p.getType() ){
+					case Types.BOOLEAN:
+						query.setBoolean(i, (Boolean)p.getValue());
 					case Types.VARCHAR:
 						query.setString( i , (String)p.getValue() );
 						break;

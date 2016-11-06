@@ -50,18 +50,18 @@ function paramCheck(){
 }
 
 function parseFields(){
-	var datafield={isKey:false,type:1,name:1}
+	var datafield={key:false,type:1,name:1}
 	var array=new Array();
 
 	$("#data-syn").children(".form-inline").each(function(){
 		
 		var name=$(this).find("[type='text']").val();
 		var type=$(this).find("select").val();
-		var isKey=$(this).find("[type='checkbox']").prop("checked")?true:false;
+		var key=$(this).find("[type='checkbox']").prop("checked")?true:false;
 		if((name+"").length==0){
 			return;
 		}
-		var datafield={isKey:isKey,type:type,name:name}
+		var datafield={key:key,type:type,name:name}
 		array.push(datafield);
 	})
 	//console.log(array);
@@ -256,7 +256,7 @@ $(document).ready(function () {
     	var curTrJobId=$(this).parents("tr").attr("jobid");
     	var param={"jobid":curTrJobId};
     	if(curTrJobId!=undefined){
-    		  $.getJSON("/QASystem/admin/listJobConfig.do",param,function(data){
+    		  $.getJSON("/QASystem/admin/getJob.do",param,function(data){
     			  if(data==null||typeof(data.sig)=='undefined'
     				  ||typeof(data.msg)=='undefined'||typeof(data.msg.jobinf)=='undefined'
     					  ||typeof(data.msg.config)=='undefined'){

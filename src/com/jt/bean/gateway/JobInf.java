@@ -64,24 +64,10 @@ public class JobInf implements java.io.Serializable {
 	
 	
 
-//	public JobInf(Long jobId, String jobName, Integer jobStatus, String cronExpression, String beanClass,
-//			String description, Date createTime, Date updateTime) {
-//		super();
-//		this.jobId = jobId;
-//		this.jobName = jobName;
-//		this.jobStatus = jobStatus;
-//		this.cronExpression = cronExpression;
-//		this.beanClass = beanClass;
-//		this.description = description;
-//		this.createTime = createTime;
-//		this.updateTime = updateTime;
-//	}
-	
-
-
 
 	public JobInf(Long jobId, String jobName, Integer jobStatus, String cronExpression, String beanClass,
-			String description, String triggerName, Date createTime, Date updateTime) {
+			String description, String triggerName, Date createTime, Date updateTime, String indexPath, String sqlIp,
+			String sqlUser, String sqlPw, String sqlDb, int sqlPort, String sqlTable) {
 		super();
 		this.jobId = jobId;
 		this.jobName = jobName;
@@ -92,6 +78,13 @@ public class JobInf implements java.io.Serializable {
 		this.triggerName = triggerName;
 		this.createTime = createTime;
 		this.updateTime = updateTime;
+		this.indexPath = indexPath;
+		this.sqlIp = sqlIp;
+		this.sqlUser = sqlUser;
+		this.sqlPw = sqlPw;
+		this.sqlDb = sqlDb;
+		this.sqlPort = sqlPort;
+		this.sqlTable = sqlTable;
 	}
 
 

@@ -1,9 +1,12 @@
 package com.jt.keyword.bean;
 
+import java.util.Date;
+
 public class QueryResut {
 	public   Integer   id;
 	public   Integer  pid;
 	public   String    wordvalue;
+	public   String      addtime;
 	public Integer getId() {
 		return id;
 	}
@@ -23,6 +26,13 @@ public class QueryResut {
 	public void setWordvalue(String wordvalue) {
 		this.wordvalue = wordvalue;
 	}
+	public String getAddtime() {
+		return addtime;
+	}
+	public void setAddtime(String addtime) {
+		this.addtime = addtime;
+	}
+	
 	
 	
 }

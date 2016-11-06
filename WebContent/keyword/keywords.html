@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+		<title>关键词</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="">
+		<meta name="author" content="">
+
+		<!-- The styles -->
+		<link id="bs-css" href="css/bootstrap-cerulean.min.css" rel="stylesheet">
+		<link href="css/app.css" rel="stylesheet">
+        <link href='css/responsive-tables.css' rel='stylesheet'>
+		<!-- jQuery -->
+		<script src="js/jquery.min.js"></script>
+
+		<!-- The HTML5 shim, for IE6-8 support of HTML5 elements -->
+		<!--[if lt IE 9]>
+	    <script src="js/html5shiv.min.js"></script>
+	    <script src="js/respond.min.js"></script>
+	    <![endif]-->
+
+		<!-- The fav icon -->
+		<link rel="shortcut icon" href="img/favicon1.ico">
+	</head>
+
+	<body>
+		<!-- topbar starts -->
+		<div class="navbar navbar-default" role="navigation">
+
+			<div class="navbar-inner">
+				<a class="navbar-brand" href=""> <img alt="Charisma Logo" src="img/logo20.png" class="hidden-xs" />
+					<span>数据抽取系统</span></a>
+
+				<!-- user dropdown starts -->
+				<div class="btn-group pull-right">
+					<button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+	                    <i class="glyphicon glyphicon-user"></i><span class="hidden-sm hidden-xs"> admin</span>
+	                    <span class="caret"></span>
+                    </button>
+					<ul class="dropdown-menu">
+						<li>
+							<a href="#">用户</a>
+						</li>
+						<li class="divider"></li>
+						<li>
+							<a href="login.html">退出</a>
+						</li>
+					</ul>
+				</div>
+				<!-- user dropdown ends -->
+
+			</div>
+		</div>
+		<!-- topbar ends -->
+		<div class="ch-container">
+			<div class="row">
+
+				<!-- left menu starts -->
+				<div class="col-sm-2 col-lg-2">
+					<div class="sidebar-nav">
+						<div class="nav-canvas">
+							<div class="nav-sm nav nav-stacked">
+
+							</div>
+							<ul class="nav nav-pills nav-stacked main-menu">
+								<li class="nav-header">导航</li>
+								<li class="nav-header">
+									<div class="nav_search">
+										<input type="text" id="keyword" >
+								        <input type="hidden" id="leftwordvalue" >
+										<i class="glyphicon glyphicon-search" id="keywordsearch"></i>
+									</div>
+								</li>
+								
+								<li class="accordion">
+		                            <a href="#"><i class="glyphicon glyphicon-tags"></i><span>标签</span><i class="glyphicon glyphicon-chevron-down pull-right hidden-sm"></i></a>
+		                            <input type="hidden"  id="pid"  value="">
+		                            <ul class="nav nav-pills nav-stacked"  id="leftword"  style="overflow:auto;">
+		                                <li><a href="javascript:void(0)" class="ajax-link"><input name="leftword" type="radio"   value="1"/>大学</a></li>
+		                                <li><a href="javascript:void(0)" class="ajax-link"><input name="leftword" type="radio" value="2"/>政府</a></li>
+		                                <li><a href="javascript:void(0)" class="ajax-link"><input name="leftword" type="radio" value="3"/>名声</a></li>
+		                            </ul>
+		                        </li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<!--/span-->
+				<!-- left menu ends -->
+				<div id="content" class="col-lg-10 col-sm-10">
+					<!-- content starts -->
+					<div>
+					</div>
+
+					<div class="row" id="con_wrap">
+						<div class="box col-md-12" style="margin: 0;">
+							<div class="box-header well">
+							     <h2>标签操作</h2>
+							     <div style="padding-left: 30px; float: left;">
+							     	<a class="btn btn-success btn-sm" href="#" onclick="leftadd()">
+										<i class="glyphicon glyphicon-plus icon-white" ></i>添加
+									</a>
+									<a class="btn btn-info btn-sm btn-setting" href="#"  onclick="leftedit()">
+										<i class="glyphicon glyphicon-edit icon-white"></i>修改
+									</a>
+									<a class="btn btn-danger btn-sm btn-warn" onclick="leftdel()" href="#">
+										<i class="glyphicon glyphicon-trash icon-white" ></i>删除
+									</a>
+							     </div>
+							</div>
+							<div class="box-inner" style="margin-top: 15px;">
+								<div class="box-content" style="position: relative;">
+									<div class="btn_group">
+								     	<a class="btn btn-success btn-sm add-keywords" href="#"  onclick="rightadd()">
+											<i class="glyphicon glyphicon-plus icon-white "></i>添加
+										</a>
+										<a class="btn btn-info btn-sm btn-setting edit-keywords" href="#" onclick="rightedit()">
+											<i class="glyphicon glyphicon-edit icon-white "></i>修改
+										</a>
+										<a class="btn btn-danger btn-sm btn-warn btn-warn" href="#" onclick="rightdel()">
+											<i class="glyphicon glyphicon-trash icon-white "></i>删除
+										</a>
+								    </div>
+								<div class="row">
+									<div class="col-md-6">
+										<div class="" >
+											<label>搜索： <input type="text"  value=""  id="wordsearch">	
+											<input  type="hidden"  value="1"  id="pageNum">									
+											<i class="glyphicon glyphicon-search" id="rightkeywordsearch"  style="cursor: pointer;"></i>
+											</label>
+										</div>
+									</div>
+								</div>
+								<table class="table table-striped table-bordered bootstrap-datatable">
+										<thead>
+											<!--  表头信息开始  -->
+											<tr>
+												<th style="width: 35px;"><input type="checkbox" /></th>
+												<th>序号</th>
+												<th>关键词</th>
+												<th>创建时间</th>
+											</tr>
+											<!--  表头信息结束 -->
+										</thead>
+										<tbody  id="tbody">
+											
+										</tbody>
+									</table>
+									<div class="row"  id="pagediv">
+									<div class="col-md-12">
+										<div></div>
+									</div>
+									<div class="col-md-12 center-block">
+										<div class="dataTables_paginate paging_bootstrap pagination">
+											<ul class="pagination">
+												<li class="prev disabled"><a href="#">前一页</a></li>
+												<li class="active"><a href="#">1</a></li>
+												<li class="next disabled"><a href="#">后一页</a></li>
+											</ul>
+										</div>
+									</div>
+								</div>
+									
+								</div>
+							</div>
+						</div>
+						<!--/span-->
+
+					</div>
+					<!--/row-->
+
+					<!-- content ends -->
+				</div>
+				<!--/#content.col-md-0-->
+			</div>
+			<!--/fluid-row-->
+
+			<hr>
+			
+			<!-- 添加浮层开始-->
+		    <div class="modal fade" id="leftaddModal" tabindex="-1" role="dialog" aria-labelledby="leftaddModalLabel"
+		         aria-hidden="true">
+		        <div class="modal-dialog">
+		            <div class="modal-content">
+		                <div class="modal-header">
+		                    <button type="button" class="close" data-dismiss="modal">×</button>
+		                    <h3>标签添加</h3>
+		                </div>
+		                <div class="modal-body">
+			                <div class="form-inline">
+			                    <div class="form-group">
+			                        <label class="control-label">标签</label>
+			                        <input type="text" class="form-control"  id="leftaddword">
+			                    </div>
+			                </div>
+		                </div>
+		                <div class="modal-footer">
+		                    <a href="#" class="btn btn-default" data-dismiss="modal">关闭</a>
+		                    <a href="#" class="btn btn-primary "  onclick="leftsave()">保存</a>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+		    <!-- 添加浮层结束-->
+		    
+<!-- 修改浮层开始-->
+		    <div class="modal fade" id="lefteditModal" tabindex="-1" role="dialog" aria-labelledby="lefteditModalLabel"
+		         aria-hidden="true">
+		        <div class="modal-dialog">
+		            <div class="modal-content">
+		                <div class="modal-header">
+		                    <button type="button" class="close" data-dismiss="modal">×</button>
+		                    <h3>标签修改</h3>
+		                </div>
+		                <div class="modal-body">
+			                <div class="form-inline">
+			                    <div class="form-group">
+			                        <label class="control-label">标签</label>
+			                        <input type="hidden"  id="lefteditid">
+			                        <input type="text" class="form-control"  id="lefteditword">
+			                    </div>
+			                </div>
+		                </div>
+		                <div class="modal-footer">
+		                    <a href="#" class="btn btn-default" data-dismiss="modal">关闭</a>
+		                    <a href="#" class="btn btn-primary "  onclick="leftupdate()">修改</a>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+		    <!-- 修改浮层结束-->		    
+		    <!-- 删除提示浮层开始-->
+		    <div class="modal fade" id="leftdelModal" tabindex="-1" role="dialog" aria-labelledby="leftdelModalLabel"
+		         aria-hidden="true">
+		        <div class="modal-dialog">
+		            <div class="modal-content">
+		                <div class="modal-header">
+		                    <button type="button" class="close" data-dismiss="modal">×</button>
+		                    <h3>删除标签</h3>
+		                </div>
+		                <div class="modal-body">
+			                <div class="form-inline">
+			                    <div class="form-group">
+			                                                     确认删除？删除操作将会关联删除与之相关的关键词！
+			                    </div>
+			                </div>
+		                </div>
+		                <div class="modal-footer">
+		                    <a href="#" class="btn btn-default" data-dismiss="modal">取消</a>
+		                    <a href="#" class="btn btn-primary "  onclick="leftdelete()">确认</a>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+		    <!-- 删除提示浮层结束-->	
+
+
+
+			<!-- 右侧添加浮层开始-->
+		    <div class="modal fade" id="rightaddModal" tabindex="-1" role="dialog" aria-labelledby="rightaddModalLabel"
+		         aria-hidden="true">
+		        <div class="modal-dialog">
+		            <div class="modal-content">
+		                <div class="modal-header">
+		                    <button type="button" class="close" data-dismiss="modal">×</button>
+		                    <h3>关键词添加</h3>
+		                </div>
+		                <div class="modal-body">
+			                <div class="form-inline">
+			                     <div class="form-group"  id="rightaddlabel">
+			                        <label class="control-label">标签：</label>
+			                        <select  id="rightpid">
+			                        <option  value="" >1</option>
+			                        </select>
+			                    </div>
+			                    <br>
+			                    <div class="form-group">
+			                        <label class="control-label">关键词：</label>
+			                        <input type="text" class="form-control"  id="rightaddword">
+			                    </div>
+			                </div>
+		                </div>
+		                <div class="modal-footer">
+		                    <a href="#" class="btn btn-default" data-dismiss="modal">关闭</a>
+		                    <a href="#" class="btn btn-primary "  onclick="rightsave()">保存</a>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+		    <!-- 右侧添加浮层结束-->
+		    
+<!-- 右侧修改浮层开始-->
+		    <div class="modal fade" id="righteditModal" tabindex="-1" role="dialog" aria-labelledby="righteditModalLabel"
+		         aria-hidden="true">
+		        <div class="modal-dialog">
+		            <div class="modal-content">
+		                <div class="modal-header">
+		                    <button type="button" class="close" data-dismiss="modal">×</button>
+		                    <h3>关键词修改</h3>
+		                </div>
+		                <div class="modal-body">
+			                <div class="form-inline">
+			                  <div class="form-group"  id="righteditlabel">
+			                        <label class="control-label">标签：</label>
+			                        <select  id="rightpid"  disabled="disabled">
+			                        <option  value="" >1</option>
+			                        </select>
+			                    </div>
+			                    <br>
+			                    <div class="form-group">
+			                        <label class="control-label">标签</label>
+			                        <input type="hidden"  id="righteditid">
+			                        <input type="text" class="form-control"  id="righteditword">
+			                    </div>
+			                </div>
+		                </div>
+		                <div class="modal-footer">
+		                    <a href="#" class="btn btn-default" data-dismiss="modal">关闭</a>
+		                    <a href="#" class="btn btn-primary "  onclick="rightupdate()">修改</a>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+		    <!-- 右侧修改浮层结束-->		    
+		    <!-- 右侧删除提示浮层开始-->
+		    <div class="modal fade" id="rightdelModal" tabindex="-1" role="dialog" aria-labelledby="rightdelModalLabel"
+		         aria-hidden="true">
+		        <div class="modal-dialog">
+		            <div class="modal-content">
+		                <div class="modal-header">
+		                    <button type="button" class="close" data-dismiss="modal">×</button>
+		                    <h3>删除关键词</h3>
+		                </div>
+		                <div class="modal-body">
+			                <div class="form-inline">
+			                    <div class="form-group">
+			                                                     确认删除？删除后将无法恢复！
+			                    </div>
+			                </div>
+		                </div>
+		                <div class="modal-footer">
+		                    <a href="#" class="btn btn-default" data-dismiss="modal">取消</a>
+		                    <a href="#" class="btn btn-primary "  onclick="rightdelete()">确认</a>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+		    <!-- 删除提示浮层结束-->	
+
+
+
+			
+		    <!-- 保存浮层结束-->
+
+			<footer class="row">
+				<p class="col-md-9 col-sm-9 col-xs-12 copyright">&copy;
+					<a href="#" target="_blank">xxxxxx
+					</a> 2012 - 2015</p>
+
+				<p class="col-md-3 col-sm-3 col-xs-12 powered-by">Powered by:
+					<a href="#">xxxxx</a>
+				</p>
+			</footer>
+
+		</div>
+		<!--/.fluid-container-->
+
+		<!-- external javascript -->
+		<script src="js/bootstrap.min.js"></script>
+		<!-- library for making tables responsive -->
+		<script src="js/responsive-tables.js"></script>
+        <!-- data table plugin -->
+        <script src='js/jquery.dataTables.min.js'></script>
+		<script src="js/common.js"></script>
+        <script type="text/javascript">
+        var  rootPath="/QASystem"
+        function   initLeft(){
+       	 $.ajax({
+ 			url:rootPath+'/admin/keyWord/leftWord.do?random='+Math.random(),
+ 			type:"GET",
+ 			cache:false,
+ 			dataType:"json",
+ 			success:function(data){
+ 				parseLeftJson(data);
+ 			},
+ 			error:function(){
+ 				$("#leftword").html("没有相关数据！");
+ 			}
+ 		});
+	
+        }
+        function  parseLeftJson(data){
+        	/*
+        [{"id":1,"pid":-1,"wordvalue":"北京科技"},
+         {"id":2,"pid":-1,"wordvalue":"河南科技"},
+         {"id":3,"pid":-1,"wordvalue":"山东科技"}]
+       <li><a href="javascript:void(0)" class="ajax-link"><input name="leftword" type="radio" />大学</a></li>
+		                                
+        	*/
+            var leftlis="";
+         
+        	$.each(data,function(i,obj) {
+        		leftlis=leftlis+"<li><a href=\"javascript:void(0)\" class=\"ajax-link\"><i name=\"leftword\"   id=\""+obj.id+"\" value=\""+obj.wordvalue+"\"/>"+obj.wordvalue+"</i></li>";
+            });
+        	if(leftlis=="")
+ 		    $("#leftword").html("没有相关数据！");
+        	else
+     	     $("#leftword").html(leftlis);
+        	leftClick();
+
+        }
+        function  leftClick(){
+        	
+        	$("#leftword > li").click( function () { 
+        		//$("input[name=leftword]:checked").attr("disabled",true);
+        		var id=$(this).children("a").children("i").attr("id");
+        		var leftwordvalue=$(this).children("a").children("i").attr("value");
+        		$("#pid").val(id);
+
+        		$("#leftwordvalue").val(leftwordvalue);
+        		$("i[name=leftword]").removeClass();
+        		$(this).children("a").children("i").addClass("glyphicon glyphicon-ok");
+        		rightFirst(); 
+        		   
+        		
+
+        	});
+        }
+       
+        function  rightFirst(){
+        	var  pid= $("#pid").val() ;
+        	 $.ajax({
+      			url:rootPath+'/admin/keyWord/leftClikWord.do?random='+Math.random(),
+      			type:"POST",
+      			cache:false,
+      			dataType:"json",
+    			data:{'pid':pid},
+      			success:function(data){
+      			  parseRightJson(data);
+      			},
+      			error:function(){
+      				$("#leftword").html("没有相关数据！");
+      			}
+      			});
+        		
+        	
+        }
+        
+        function   initRight(){
+        	 $.ajax({
+       			url:rootPath+'/admin/keyWord/rightPageFirst.do?random='+Math.random(),
+       			type:"GET",
+       			cache:false,
+       			dataType:"json",
+       			success:function(data){
+       			 parseRightJson(data);
+       		
+       			},
+       			error:function(){	
+       				$("#pagediv").hide();
+       				$("#tbody").html("<tr><td colspan=\"4\">没有相关数据！</td></tr>");
+       			}
+       			});
+        }
+        
+        function   parseRightJson(data){
+        	/*{"pageNum":1,"pageSize":10,"totalNum":2,
+        		"totalPage":1,
+        		"list":[{"id":4,"pid":1,"wordvalue":"北极科技","addtime":"Nov 5, 2016 9:03:52 PM"},{"id":5,"pid":1,"wordvalue":"南极科技","addtime":"Nov 5, 2016 9:04:32 PM"}]}*/
+                var  pageNum=data.pageNum;
+                var  pageSize=data.pageSize;
+                var  totalNum=data.totalNum;
+                var  totalPage=data.totalPage;
+                if(totalNum==0){
+                	$("#pagediv").hide();
+       				$("#tbody").html("<tr><td colspan=\"4\">没有相关数据！</td></tr>");
+       				return;
+                }
+               /* <tr>
+				<td colspan="4"><input type="checkbox" /></td>
+				<td>1</td>
+				<td class="center">北京大学</td>
+				<td class="center font-right">2015-02-16</td>
+			</tr>  */
+			var  objLis=data.list;
+            var rightlis="";
+            $.each(objLis,function(i,obj) {
+            	rightlis=rightlis+"<tr>";
+            	rightlis=rightlis+"<td ><input  name=\"ids\" type=\"checkbox\" value=\""+obj.id+"\"  pid=\""+obj.pid+"\"  word=\""+obj.wordvalue+"\"/></td>";
+            	rightlis=rightlis+"<td>"+(i+1)+"</td>";
+            	rightlis=rightlis+"<td class=\"center\">"+obj.wordvalue+"</td>";
+            	rightlis=rightlis+"<td class=\"center font-right\">"+obj.addtime+"</td>";
+            	rightlis=rightlis+"</tr>";
+            	
+            });
+            
+				$("#tbody").html(rightlis);
+				/*<div class="col-md-12">
+				<div dataTables_info></div>
+			</div>
+			<div class="col-md-12 center-block">
+				<div class="dataTables_paginate paging_bootstrap pagination">
+					<ul class="pagination">
+						<li class="prev disabled"><a href="#">前一页</a></li>
+						<li class="active"><a href="#">1</a></li>
+						<li class="next disabled"><a href="#">后一页</a></li>
+					</ul>
+				</div>
+			</div>*/
+				
+				
+				var  pagediv="";
+				pagediv=pagediv+"<div class=\"col-md-12\">";
+				pagediv=pagediv+"<div  class=\"dataTables_info\" >共"+totalNum+"条 "+pageNum+"/"+totalPage+"页 </div>";
+
+				pagediv=pagediv+"</div>";
+				pagediv=pagediv+"<div class=\"col-md-12 center-block\">";
+                pagediv=pagediv+"<div class=\"dataTables_paginate paging_bootstrap pagination\">";
+            	pagediv=pagediv+"<ul class=\"pagination\">";
+                var  beigin=1;
+                var  end=totalPage;
+            	    if((pageNum-2)>1)
+            	    	beigin=pageNum-2;
+            	    if((pageNum+2)<totalPage)
+            	    	end=pageNum+2;
+            	    if(pageNum==1){
+            	    	pagediv=pagediv+"<li class=\"prev disabled\"><a href=\"#\">上一页</a></li>";
+            	    }else{
+                	    pagediv=pagediv+"<li class=\"prev\"><a href=\"#\" onclick=\"go("+(pageNum-1)+")\">上一页</a></li>";
+            	    }
+            	    for (var i =beigin; i <=end; i++) {
+            	    	if(i==pageNum){
+                	    	pagediv=pagediv+"<li class=\"active\"><a href=\"#\">"+i+"</a></li>";
+
+            	    	}else{
+                	    	pagediv=pagediv+"<li><a href=\"#\" onclick=\"go("+i+")\">"+i+"</a></li>";
+
+            	    	}
+						
+					}
+            	    
+            	    
+            	    if(pageNum==totalPage){
+            	    	pagediv=pagediv+"<li class=\"next disabled\"><a href=\"#\">下一页</a></li>";
+            	    }else{
+                	    pagediv=pagediv+"<li class=\"next\"><a href=\"#\" onclick=\"go("+(pageNum+1)+")\">下一页</a></li>";
+            	    }
+            	    
+
+				
+            	pagediv=pagediv+"</ul>";
+				pagediv=pagediv+"</div>";
+				pagediv=pagediv+"</div>";
+
+				$("#pagediv").html(pagediv);
+				$("#pagediv").show();
+
+        }
+        function   leftSearch(){
+        	var  word=$("#keyword").val();
+        	 $.ajax({
+      			url:rootPath+'/admin/keyWord/leftWord.do?random='+Math.random(),
+      			type:"POST",
+      			cache:false,
+    			data:{'word':word},
+      			dataType:"json",
+      			success:function(data){
+      				parseLeftJson(data);
+      			},
+      			error:function(){
+      				$("#leftword").html("没有相关数据！");
+      			}
+      		});
+     	
+        }
+        
+        function   leftSubmit(){
+        	$("#keywordsearch").click(function(){
+        		 leftSearch();
+        	});
+        }
+        function   rightInitSubmit(){
+        	$("#rightkeywordsearch").click(function(){
+        		$("#pageNum").val(1);
+        		rightsubmit();
+        	});
+        }
+        function  rightsubmit(){
+        	var  pid=$("#pid").val();
+        	var  pageNum=$("#pageNum").val();
+        	var  word=$("#wordsearch").val();
+        	if(pid!=""){
+        		 $.ajax({
+            			url:rootPath+'/admin/keyWord/rightWord.do?random='+Math.random(),
+            			type:"POST",
+            			cache:false,
+            			dataType:"json",
+            			data:{'pageNum':pageNum,'word':word,'pid':pid},
+            			success:function(data){
+            			 parseRightJson(data);
+            		
+            			},
+            			error:function(){	
+            				$("#pagediv").hide();
+            				$("#tbody").html("<tr><td colspan=\"4\">没有相关数据！</td></tr>");
+            			}
+            			});
+        		
+        		
+        	}else{
+        		 $.ajax({
+         			url:rootPath+'/admin/keyWord/rightPage.do?random='+Math.random(),
+         			type:"POST",
+         			cache:false,
+         			dataType:"json",
+         			data:{'pageNum':pageNum,'word':word},
+         			success:function(data){
+         			 parseRightJson(data);
+         		
+         			},
+         			error:function(){	
+         				$("#pagediv").hide();
+         				$("#tbody").html("<tr><td colspan=\"4\">没有相关数据！</td></tr>");
+         			}
+         			});
+        		
+        		
+        	}
+        	
+        	
+        }
+        function go(pageNum){
+    		$("#pageNum").val(pageNum);
+    		rightsubmit();
+    	}
+        function   leftadd(){
+        	$("#leftaddModal").modal('show');
+        }
+		function   leftedit(){
+		    var  id=$("#pid").val();
+		    if(id==""){
+		    	alert("请选择要修改的标签！");
+		    	return;
+		    }
+		    var  word=$("#leftwordvalue").val();
+		    $("#lefteditid").val(id);
+		    $("#lefteditword").val(word);
+		    $("#lefteditModal").modal('show');
+			
+		        }
+	      function   leftdel(){
+			    $("#leftdelModal").modal('show');
+
+	    	  
+		 }
+		  function   leftsave(){
+			  var  word=$("#leftaddword").val();
+			  if(word==""){
+				  alert("不能为空！");
+				  return;
+			  }
+			  if(isExist(word)){
+				  alert("已存在该标签值或关键词！");
+			  }else{
+				  $.ajax({
+	         			url:rootPath+'/admin/keyWord/add.do?random='+Math.random(),
+	         			type:"POST",
+	         			cache:false,
+	         			dataType:"json",
+	         			data:{'keyvalue':word,'pId':-1},
+	         			success:function(data){
+	         				if(data.success)
+	         					{
+	         		        	$("#leftaddModal").modal('hide');
+	         		        	load();
+	         					}else{
+	         						alert("保存失败！");	
+	         					}
+	         			},
+	         			error:function(){	
+	         			}
+	         			}); 
+			  }
+	        	
+	        }
+	      function   leftupdate(){
+	    	  var  word=$("#lefteditword").val();
+	    	  var  id=$("#lefteditid").val();
+			  if(word==""){
+				  alert("不能为空！");
+				  return;
+			  }
+			  if(isExist(word)){
+				  alert("已存在该标签值或关键词！");
+			  }else{
+				  $.ajax({
+	         			url:rootPath+'/admin/keyWord/update.do?random='+Math.random(),
+	         			type:"POST",
+	         			cache:false,
+	         			dataType:"json",
+	         			data:{'wordvalue':word,'id':id},
+	         			success:function(data){
+	         				if(data.success)
+	         					{
+	         		        	$("#lefteditModal").modal('hide');
+	         		        	load();
+	         					}else{
+	         						alert("修改失败！");	
+	         					}
+	         			},
+	         			error:function(){	
+	         			}
+	         			}); 
+			  }    	
+			 }
+			 function   leftdelete(){
+		    	  var  id=$("#pid").val();
+				 if(id==""){
+					 alert("请选择要删除的标签！");
+					 return;
+				 }
+					  $.ajax({
+		         			url:rootPath+'/admin/keyWord/delWord.do?random='+Math.random(),
+		         			type:"POST",
+		         			cache:false,
+		         			dataType:"json",
+		         			data:{'ids':id},
+		         			success:function(data){
+		         				if(data.success)
+		         					{
+		         		        	$("#leftdelModal").modal('hide');
+		         		        	load();
+		         					}else{
+		         						alert("删除失败！");	
+		         					}
+		         			},
+		         			error:function(){	
+		         			}
+		         			}); 
+			 }
+			 
+			 function  isExist(word){
+				 var  fg=false;
+				 $.ajax({
+	         			url:rootPath+'/admin/keyWord/isExist.do?random='+Math.random(),
+	         			type:"POST",
+	         			 async: false, 
+	         			cache:false,
+	         			dataType:"json",
+	         			data:{'wordvalue':word},
+	         			success:function(data){
+	         				var exist=  data.isExist;
+	         				if(exist==1){
+	         					fg=true;
+	         				}
+	         			},
+	         			error:function(){	
+	         			}
+	         			});
+				 return  fg;
+			 }
+			 
+			 
+			 function   rightadd(){
+				 $.ajax({
+					 url:rootPath+'/admin/keyWord/leftWord.do?random='+Math.random(),
+			 			type:"GET",
+			 			cache:false,
+			 			dataType:"json",
+			 			success:function(data){
+			 				var  rightaddlabel="";
+			                 var  pid=$("#pid").val();
+			                 if(pid==""){
+			                	 pid=-1;
+			                 }
+			                 rightaddlabel=rightaddlabel+"<label class=\"control-label\">标签：</label>";
+			                 rightaddlabel=rightaddlabel+"<select  id=\"rightpid\" class=\"form-control\">";
+                             
+			                 for (var i = 0; i < data.length; i++) {
+									var obj=data[i];
+									 if(obj.id==pid){
+					                	 rightaddlabel=rightaddlabel+" <option  value=\""+obj.id+"\"  selected=\"selected\">"+obj.wordvalue+"</option>";
+									 } else{
+						                rightaddlabel=rightaddlabel+" <option  value=\""+obj.id+"\">"+obj.wordvalue+"</option>";}
+					      
+			                 }
+			                 
+			                 rightaddlabel=rightaddlabel+"</select>";
+			 				$("#rightaddlabel").html(rightaddlabel);
+				        	$("#rightaddModal").modal('show');
+
+			 			},
+			 			error:function(){
+			 			}
+			 		});
+				 
+				 
+		        }
+				function    rightedit(){
+				   
+				    var  cheids=$("input[name=ids]:checked");
+				    
+				    if(cheids.length==0){
+				    	alert("请选择要修改的关键词！");
+				    	return;
+				    }
+				    var  id=$(cheids[0]).val();
+				    var  pid=$(cheids[0]).attr("pid");
+				    var  word=$(cheids[0]).attr("word");
+				    $("#righteditid").val(id);
+				    $("#righteditword").val(word);
+				    $.ajax({
+						 url:rootPath+'/admin/keyWord/leftWord.do?random='+Math.random(),
+				 			type:"GET",
+				 			cache:false,
+				 			dataType:"json",
+				 			success:function(data){
+				 				var  righteditlabel="";
+				                
+				                 righteditlabel=righteditlabel+"<label class=\"control-label\">标签：</label>";
+				                 righteditlabel=righteditlabel+"<select  id=\"rightpid\" class=\"form-control\">";
+	                             
+				                 for (var i = 0; i < data.length; i++) {
+										var obj=data[i];
+										 if(obj.id==pid){
+											 righteditlabel=righteditlabel+" <option  value=\""+obj.id+"\"  selected=\"selected\">"+obj.wordvalue+"</option>";
+										 } else{
+											 righteditlabel=righteditlabel+" <option  value=\""+obj.id+"\">"+obj.wordvalue+"</option>";}
+						      
+				                 }
+				                 
+				                 righteditlabel=righteditlabel+"</select>";
+				 				$("#righteditlabel").html(righteditlabel);
+				 				 $("#righteditModal").modal('show');
+				 			},
+				 			error:function(){
+				 			}
+				 		});
+					 
+				    
+				  
+					
+				        }
+			      function    rightdel(){
+			    	  var  cheids=$("input[name=ids]:checked");
+					    
+					    if(cheids.length==0){
+					    	alert("请选择要删除的关键词！");
+					    	return;
+					    }
+					    $("#rightdelModal").modal('show');
+
+			    	  
+				 }
+				  function   rightsave(){
+					  var  word=$("#rightaddword").val();
+					  var  pid=$("#rightpid").val();
+					  if(word==""){
+						  alert("不能为空！");
+						  return;
+					  }
+					  if(isExist(word)){
+						  alert("已存在该标签值或关键词！");
+					  }else{
+						  $.ajax({
+			         			url:rootPath+'/admin/keyWord/add.do?random='+Math.random(),
+			         			type:"POST",
+			         			cache:false,
+			         			dataType:"json",
+			         			data:{'keyvalue':word,'pId':pid},
+			         			success:function(data){
+			         				if(data.success)
+			         					{
+			         		        	$("#rightaddModal").modal('hide');
+			         		        	rightsubmit();
+			         					}else{
+			         						alert("保存失败！");	
+			         					}
+			         			},
+			         			error:function(){	
+			         			}
+			         			}); 
+					  }
+			        	
+			        }
+			      function    rightupdate(){
+			    	  var  word=$("#righteditword").val();
+			    	  var  id=$("#righteditid").val();
+					  if(word==""){
+						  alert("不能为空！");
+						  return;
+					  }
+					 
+					  if(isExist(word)){
+						  alert("已存在该标签值或关键词！");
+					  }else{
+						  $.ajax({
+			         			url:rootPath+'/admin/keyWord/update.do?random='+Math.random(),
+			         			type:"POST",
+			         			cache:false,
+			         			dataType:"json",
+			         			data:{'wordvalue':word,'id':id},
+			         			success:function(data){
+			         				if(data.success)
+			         					{
+			         		        	$("#righteditModal").modal('hide');
+			         		        	rightsubmit();
+			         					}else{
+			         						alert("修改失败！");	
+			         					}
+			         			},
+			         			error:function(){	
+			         			}
+			         			}); 
+					  }    	
+					 }
+					 function    rightdelete(){
+				    	  var  cheids=$("input[name=ids]:checked");
+                           var ids="";
+						    for (var i = 0; i < cheids.length; i++) {
+								var id = cheids[i];
+								if(i>0)
+									ids=ids+",";
+								ids=ids+$(id).val();
+								
+							}
+							  $.ajax({
+				         			url:rootPath+'/admin/keyWord/delWord.do?random='+Math.random(),
+				         			type:"POST",
+				         			cache:false,
+				         			dataType:"json",
+				         			data:{'ids':ids},
+				         			success:function(data){
+				         				if(data.success)
+				         					{
+				         		        	$("#rightdelModal").modal('hide');
+				         		        	rightsubmit();
+				         		        	}else{
+				         						alert("删除失败！");	
+				         					}
+				         			},
+				         			error:function(){	
+				         			}
+				         			}); 
+					 }
+					 
+					
+			 
+			 
+			 
+         function  load(){
+        		window.location.reload();
+           	 leftClick();
+
+         }
+        $(document).ready(function(){
+        	 initLeft();
+        	 leftClick();
+        	 initRight();
+        	 $("#leftword").show();
+        	 leftSubmit();
+        	 rightSubmit();
+        	 
+        });
+        
+        
+        </script>
+	</body>
+     
+</html>

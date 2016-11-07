@@ -5,9 +5,9 @@ import org.apache.lucene.document.TextField;
 
 public class GwField {
 	private String name;
-	private boolean key;
+	private boolean tableKey;
 	private String type;
-	private Integer fieldId;
+	private Long fieldId;
 	private Long jobId;
 	public String getName() {
 		return name;
@@ -30,16 +30,17 @@ public class GwField {
 	public void setType(String type) {
 		this.type = type;
 	}
-	public GwField(String name, boolean key, String type) {
+	public GwField(String name, boolean tableKey, String type) {
 		super();
 		this.name = name;
-		this.key = key;
+		this.tableKey = tableKey;
 		this.type = type;
 	}
-	public Integer getFieldId() {
+
+	public Long getFieldId() {
 		return fieldId;
 	}
-	public void setFieldId(Integer fieldId) {
+	public void setFieldId(Long fieldId) {
 		this.fieldId = fieldId;
 	}
 	public Long getJobId() {
@@ -48,11 +49,13 @@ public class GwField {
 	public void setJobId(Long jobId) {
 		this.jobId = jobId;
 	}
-	public boolean isKey() {
-		return key;
+
+	
+	public boolean isTableKey() {
+		return tableKey;
 	}
-	public void setKey(boolean key) {
-		this.key = key;
+	public void setTableKey(boolean tableKey) {
+		this.tableKey = tableKey;
 	}
 	public GwField(){
 		
@@ -61,7 +64,7 @@ public class GwField {
 	public boolean equals(Object obj) {
 		GwField paramField=(GwField)obj;
 		if(paramField.getName().equals(this.name)&&paramField.getType().equals(this.type)&&
-				(paramField.key==this.key)){
+				(paramField.tableKey==this.tableKey)){
 			return true;
 		}else{
 			return false;
@@ -69,7 +72,9 @@ public class GwField {
 	}
 	@Override
 	public String toString() {
-		return "DataField [name=" + name + ", key=" + key + ", type=" + type + "]";
+		return "GwField [name=" + name + ", tableKey=" + tableKey + ", type=" + type + ", fieldId=" + fieldId
+				+ ", jobId=" + jobId + "]";
 	}
+
 
 }

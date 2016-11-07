@@ -3,7 +3,7 @@ var curJobId=0;
 //list的template
 var list_template="<tr jobid='{jobid}' jobname='{jobname}' jobstatus='{jobstatus}' ><td>{jobname}</td>" +
 "<td class='center'><span class='label {status_class}'>{jobstatus}</span></td>" +
-"<td  class='center'>--</td><td  class='center'>--</td><td  class='center'>--条</td>" +
+"<td  class='center'>--</td><td  class='center'>--</td><td  class='center'>--条</td><td  class='center'>--秒</td>" +
 "<td class='center font-right'>" +
 "<a class='btn btn-success btn-sm' href='javascript:void(0)' action='startImmediate'>" +
 "<i class='glyphicon glyphicon-zoom-in icon-white'></i>立即启动</a>  " +
@@ -38,7 +38,7 @@ function paramCheck(){
 			}
 			if($(this).attr("min")!=undefined){
 				if($(this).val()<$(this).attr("min")){
-					alert($(this).attr("desc")+"不能小于"+$(this).attr("mix"));
+					alert($(this).attr("desc")+"不能小于"+$(this).attr("min"));
 					$(this).focus();
 					flag=false;
 					return false;
@@ -50,18 +50,18 @@ function paramCheck(){
 }
 
 function parseFields(){
-	var datafield={key:false,type:1,name:1}
+	var datafield={tableKey:false,type:1,name:1}
 	var array=new Array();
 
 	$("#data-syn").children(".form-inline").each(function(){
 		
 		var name=$(this).find("[type='text']").val();
 		var type=$(this).find("select").val();
-		var key=$(this).find("[type='checkbox']").prop("checked")?true:false;
+		var tableKey=$(this).find("[type='checkbox']").prop("checked")?true:false;
 		if((name+"").length==0){
 			return;
 		}
-		var datafield={key:key,type:type,name:name}
+		var datafield={tableKey:tableKey,type:type,name:name}
 		array.push(datafield);
 	})
 	//console.log(array);
@@ -136,6 +136,9 @@ function refreshJobLog(){
 					$("#tbody_joblist").children("tr[jobid='"+param.jobid+"']").children("td:nth-child(4)").text(data.msg.start)
 					//上次推送数据量
 					$("#tbody_joblist").children("tr[jobid='"+param.jobid+"']").children("td:nth-child(5)").text(data.msg.indexSize+"条")
+					//上次耗时
+					var exeTime=parseInt(data.msg.exeTime);
+					$("#tbody_joblist").children("tr[jobid='"+param.jobid+"']").children("td:nth-child(6)").text(parseInt(exeTime/1000)+"秒")
 				}
 			}
 			//所有刷新都结束，更换图片
@@ -256,7 +259,7 @@ $(document).ready(function () {
     	var curTrJobId=$(this).parents("tr").attr("jobid");
     	var param={"jobid":curTrJobId};
     	if(curTrJobId!=undefined){
-    		  $.getJSON("/QASystem/admin/getJob.do",param,function(data){
+    		  $.getJSON("/QASystem/admin/getJobAndFields.do",param,function(data){
     			  if(data==null||typeof(data.sig)=='undefined'
     				  ||typeof(data.msg)=='undefined'||typeof(data.msg.jobinf)=='undefined'
     					  ||typeof(data.msg.config)=='undefined'){
@@ -272,7 +275,7 @@ $(document).ready(function () {
 					  //任务名称不允许修改
 					  $("input[name='taskname']").attr("disabled","");
 					  $("input[name='taskname']").val(jobinf.jobName);
-	       			  $("input[name='indexpath']").val(config.indexPath);
+	       			  $("input[name='indexpath']").val(jobinf.indexPath);
 	       			  //分钟
 	       			  $("input[name='internalmin']").val(jobinf.cronExpression.split(" ")[1].split("/")[1]);
 	       			  //小时
@@ -282,24 +285,24 @@ $(document).ready(function () {
 	       				  $("input[name='internalhour']").val(jobinf.cronExpression.split(" ")[2].split("/")[1]);
 	       			  }
 	       			  
-	       			  $("input[name='sqlip']").val(config.sqlIP);
-	       			  $("input[name='sqlport']").val(config.sqlPort);
-	       			  $("input[name='sqluser']").val(config.sqlUser);
-	       			  $("input[name='sqlpw']").val(config.sqlPw);
-	       			  $("input[name='sqldb']").val(config.sqlDB);
-	       			  $("input[name='sqltable']").val(config.sqlTable);
+	       			  $("input[name='sqlip']").val(jobinf.sqlIp);
+	       			  $("input[name='sqlport']").val(jobinf.sqlPort);
+	       			  $("input[name='sqluser']").val(jobinf.sqlUser);
+	       			  $("input[name='sqlpw']").val(jobinf.sqlPw);
+	       			  $("input[name='sqldb']").val(jobinf.sqlDb);
+	       			  $("input[name='sqltable']").val(jobinf.sqlTable);
 	       			  //sql字段
 	       			  $("#data-syn").html("");
-	       			  for(i in config.list){
+	       			  for(i in config){
 	       				 var dataset = '<div class="form-inline">'+
 		                    '<div class="checkbox-inline" style="margin-right:4px">'+
-								'<label><input type="checkbox" '+(config.list[i].isKey?'checked':'')+'/>主键</label>'+
+								'<label><input type="checkbox" '+(config[i].tableKey?'checked':'')+'/>主键</label>'+
 							'</div>'+
 	                        '<div class="form-group data-syn">'+
-			                    '<input type="text" class="form-control" value="'+config.list[i].name+'"/>'+
+			                    '<input type="text" class="form-control" value="'+config[i].name+'"/>'+
 			                    '<select class="form-control">'+
-								  '<option '+(config.list[i].type=='存储'?'selected':'')+'>存储</option>'+
-								  '<option '+(config.list[i].type=='检索'?'selected':'')+'>检索</option>'+
+								  '<option '+(config[i].type=='存储'?'selected':'')+'>存储</option>'+
+								  '<option '+(config[i].type=='检索'?'selected':'')+'>检索</option>'+
 								'</select>'+
 			                '</div>'+
 			            '</div>	';

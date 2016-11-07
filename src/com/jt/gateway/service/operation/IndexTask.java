@@ -75,9 +75,9 @@ public class IndexTask extends ApplicationObjectSupport implements Job {
 		JobLog log = new JobLog();
 		IndexStatus status = IndexStatus.getStatus();
 		Long timeWait = 0l;
-//		System.out.println("jobid=["+job.getJobId()+"]");
-//		System.out.println("IdField=["+gwFieldService.getIdField(job.getJobId())+"]");
-//		System.out.println("name=["+gwFieldService.getIdField(job.getJobId()).getName()+"]");
+		System.out.println("jobid=["+job.getJobId()+"]");
+		System.out.println("IdField=["+gwFieldService.getIdField(job.getJobId())+"]");
+		System.out.println("name=["+gwFieldService.getIdField(job.getJobId()).getName()+"]");
 		String sql = "select max(" + gwFieldService.getIdField(job.getJobId()).getName() + ") as maxid from "
 				+ job.getSqlTable();
 		Map<String, Object> rsMap = null;

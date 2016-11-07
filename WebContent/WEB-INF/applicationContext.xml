@@ -160,8 +160,8 @@
 	</bean>
 
 
-	<bean id="qaService" class="com.jt.nlp.service.QAService"
-		init-method="initNlp">
+	<bean id="qaService" class="com.jt.nlp.service.QAService" init-method="initNlp"
+		>
 		<property name="searchService">
 			<bean class="com.jt.nlp.service.LuceneSearchService" autowire="byName">
 				<property name="dao" ref="indexDao" />

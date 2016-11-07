@@ -76,11 +76,9 @@ public class JobInfImpl extends BasicServicveImpl  implements  JobInfService{
 	 */
 	public void addTask(JobInf jobInf) {
 		try{
-		jobInf.setJobStatus(1);
-		this.dao.save(jobInf);
-		//测试
-		System.out.println("###保存job之后尝试获得jobID=["+jobInf.getJobId()+"]");
-		startSimJob(jobInf.getJobId());
+			jobInf.setJobStatus(1);
+			this.dao.save(jobInf);
+			startSimJob(jobInf.getJobId());
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -103,33 +101,33 @@ public class JobInfImpl extends BasicServicveImpl  implements  JobInfService{
 			e1.printStackTrace();
 			return;
 		}
-		List<Param>  paramList=new  ArrayList<Param>();
-		Date change = new Date();
-		Timestamp time = new Timestamp(change.getTime());
-		jobInf.setUpdateTime(time);
-		String hql = "update com.jt.bean.gateway.JobInf set jobName = ? , jobGroup = ? , jobStatus = ? , cronExpression = ? , beanClass  = ?" +
-				" ,  description  = ?  , triggerName  = ?  , triggerGroupName  = ? , updateTime  = ? ,indexPath = ? ,sqlIp = ? ,sqlUser = ? ,sqlPw = ? ,sqlDb = ? ,sqlPort = ? ,sqlTable = ? " +
-				"where jobId = ?";
-		paramList.add(new Param(Types.VARCHAR,jobInf.getJobName()));
-		paramList.add(new Param(Types.VARCHAR,jobInf.getJobGroup()));
-		paramList.add(new Param(Types.INTEGER,jobInf.getJobStatus()));
-		paramList.add(new Param(Types.VARCHAR,jobInf.getCronExpression()));
-		paramList.add(new Param(Types.VARCHAR,jobInf.getBeanClass()));
-		paramList.add(new Param(Types.VARCHAR,jobInf.getDescription()));
-		paramList.add(new Param(Types.VARCHAR,jobInf.getTriggerName()));
-		paramList.add(new Param(Types.VARCHAR,jobInf.getTriggerGroupName()));
-		paramList.add(new Param(Types.TIMESTAMP,time));
-		paramList.add(new Param(Types.BIGINT,jobInf.getJobId()));
+//		List<Param>  paramList=new  ArrayList<Param>();
+//		Date change = new Date();
+//		Timestamp time = new Timestamp(change.getTime());
+//		jobInf.setUpdateTime(time);
+//		String hql = "update com.jt.bean.gateway.JobInf set jobName = ? , jobGroup = ? , jobStatus = ? , cronExpression = ? , beanClass  = ?" +
+//				" ,  description  = ?  , triggerName  = ?  , triggerGroupName  = ? , updateTime  = ? ,indexPath = ? ,sqlIp = ? ,sqlUser = ? ,sqlPw = ? ,sqlDb = ? ,sqlPort = ? ,sqlTable = ? " +
+//				"where jobId = ?";
+//		paramList.add(new Param(Types.VARCHAR,jobInf.getJobName()));
+//		paramList.add(new Param(Types.VARCHAR,jobInf.getJobGroup()));
+//		paramList.add(new Param(Types.INTEGER,jobInf.getJobStatus()));
+//		paramList.add(new Param(Types.VARCHAR,jobInf.getCronExpression()));
+//		paramList.add(new Param(Types.VARCHAR,jobInf.getBeanClass()));
+//		paramList.add(new Param(Types.VARCHAR,jobInf.getDescription()));
+//		paramList.add(new Param(Types.VARCHAR,jobInf.getTriggerName()));
+//		paramList.add(new Param(Types.VARCHAR,jobInf.getTriggerGroupName()));
+//		paramList.add(new Param(Types.TIMESTAMP,time));
+//		paramList.add(new Param(Types.BIGINT,jobInf.getJobId()));
+//		
+//		paramList.add(new Param(Types.VARCHAR,jobInf.getIndexPath()));
+//		paramList.add(new Param(Types.VARCHAR,jobInf.getSqlIp()));
+//		paramList.add(new Param(Types.VARCHAR,jobInf.getSqlUser()));
+//		paramList.add(new Param(Types.VARCHAR,jobInf.getSqlPw()));
+//		paramList.add(new Param(Types.VARCHAR,jobInf.getSqlDb()));
+//		paramList.add(new Param(Types.INTEGER,jobInf.getSqlPort()));
+//		paramList.add(new Param(Types.VARCHAR,jobInf.getSqlTable()));
 		
-		paramList.add(new Param(Types.VARCHAR,jobInf.getIndexPath()));
-		paramList.add(new Param(Types.VARCHAR,jobInf.getSqlIp()));
-		paramList.add(new Param(Types.VARCHAR,jobInf.getSqlUser()));
-		paramList.add(new Param(Types.VARCHAR,jobInf.getSqlPw()));
-		paramList.add(new Param(Types.VARCHAR,jobInf.getSqlDb()));
-		paramList.add(new Param(Types.VARCHAR,jobInf.getSqlPort()));
-		paramList.add(new Param(Types.VARCHAR,jobInf.getSqlTable()));
-		
-		this.dao.update(hql, paramList);
+		this.dao.update(jobInf);;
 		try {
 			startSimJob(jobInf.getJobId());
 		} catch (Exception e) {

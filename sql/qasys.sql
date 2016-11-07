@@ -10,9 +10,9 @@ Target Server Type    : MYSQL
 Target Server Version : 50715
 File Encoding         : 65001
 
-Date: 2016-11-05 09:28:23
+Date: 2016-11-08 01:08:56
 */
- 
+
 SET FOREIGN_KEY_CHECKS=0;
 
 -- ----------------------------
@@ -23,14 +23,21 @@ CREATE TABLE `gwfield` (
   `fieldid` int(11) NOT NULL AUTO_INCREMENT,
   `jobid` int(11) NOT NULL,
   `name` varchar(50) NOT NULL,
-  `iskey` tinyint(10) NOT NULL,
+  `tablekey` tinyint(10) NOT NULL,
   `type` varchar(10) NOT NULL,
   PRIMARY KEY (`fieldid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of gwfield
 -- ----------------------------
+INSERT INTO `gwfield` VALUES ('5', '10', 'xq_id', '1', '存储');
+INSERT INTO `gwfield` VALUES ('6', '10', 'xq_title', '0', '存储');
+INSERT INTO `gwfield` VALUES ('7', '10', 'xq_url', '0', '存储');
+INSERT INTO `gwfield` VALUES ('8', '10', 'lm_name', '0', '存储');
+INSERT INTO `gwfield` VALUES ('9', '10', 'zd_name', '0', '存储');
+INSERT INTO `gwfield` VALUES ('10', '10', 'sjfl', '0', '存储');
+INSERT INTO `gwfield` VALUES ('11', '10', 'load_time', '0', '存储');
 
 -- ----------------------------
 -- Table structure for `jobinf`
@@ -56,12 +63,12 @@ CREATE TABLE `jobinf` (
   `sqlport` int(11) NOT NULL,
   `sqltable` varchar(50) NOT NULL,
   PRIMARY KEY (`JOBID`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of jobinf
 -- ----------------------------
-INSERT INTO `jobinf` VALUES ('1', '数据推送', 'JOBGROUP_NAME', '1', '0 0/30 * * * ?', 'com.jt.gateway.service.operation.IndexTask', '', 'TRIGGER_NAME数据推送', 'TRIGGERGROUP_NAME', '2016-11-02 14:28:13', '2016-11-02 14:28:13', '', '', '', '', '', '0', '');
+INSERT INTO `jobinf` VALUES ('10', '数据推送', 'JOBGROUP_NAME', '1', '0 0/30 * * * ?', 'com.jt.gateway.service.operation.IndexTask', null, 'TRIGGER_NAME测试2', 'TRIGGERGROUP_NAME', '2016-11-07 22:34:29', '2016-11-08 00:02:10', 'D:/indexpath', '127.0.0.1', 'root', 'root', 'jtcrawler', '3306', 'crawler_xq');
 
 -- ----------------------------
 -- Table structure for `joblog`
@@ -77,7 +84,25 @@ CREATE TABLE `joblog` (
   PRIMARY KEY (`JOBID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+
 -- ----------------------------
--- Records of joblog
+-- Table structure for `keyword`
 -- ----------------------------
-INSERT INTO `joblog` VALUES ('1', '0', '0', '0', '2016-11-02 17:30:00', null);
+DROP TABLE IF EXISTS `keyword`;
+CREATE TABLE `keyword` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `PID` int(11) DEFAULT NULL,
+  `WORDVALUE` varchar(255) DEFAULT NULL,
+  `EXTEND` varchar(255) DEFAULT NULL,
+  `FLOOR` int(11) DEFAULT NULL,
+  `IDX` int(11) DEFAULT NULL,
+  `CREATE_TIME` datetime DEFAULT NULL COMMENT '创建时间',
+  `UPDATE_TIME` datetime DEFAULT NULL COMMENT '修改时间',
+  PRIMARY KEY (`ID`),
+  KEY `FKFA40A9C990831BD2` (`PID`),
+  CONSTRAINT `FKFA40A9C990831BD2` FOREIGN KEY (`PID`) REFERENCES `keyword` (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of keyword
+-- ----------------------------

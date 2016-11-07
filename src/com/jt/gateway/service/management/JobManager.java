@@ -99,6 +99,7 @@ public class JobManager {
 		if(paramMsg.isSig()){
 			String jobName=paramUtil.getJobInf().getJobName();
 			JobInf paramJob=paramUtil.getJobInf();
+			List<GwField> paramGwFieldList=paramUtil.getGwFields();
 			try {
 				//该任务是否已经存在
 				job=jobService.getJobByName(jobName);
@@ -115,6 +116,13 @@ public class JobManager {
 						paramJob.getSqlIp(), paramJob.getSqlUser(), paramJob.getSqlPw(),
 						paramJob.getSqlDb(), paramJob.getSqlPort(), paramJob.getSqlTable());
 				jobService.addTask(job);
+				//增加关联的字段
+				for(GwField paramField:paramGwFieldList){
+					paramField.setFieldId(null);
+					paramField.setJobId(job.getJobId());
+					gwFieldService.save(paramField);
+				}
+				
 				msg.setMsg("新增任务["+jobName+"]成功");
 				msg.setSig(true);
 				pw.print(gson.toJson(msg));
@@ -216,7 +224,7 @@ public class JobManager {
 			try {
 				//删除job关联的字段信息
 				gwFieldList=gwFieldService.getFieldListByJobId(job.getJobId());
-				Integer[] gwFieldListIds=new Integer[gwFieldList.size()];
+				Long[] gwFieldListIds=new Long[gwFieldList.size()];
 				for(int i=0;i<gwFieldList.size();i++){
 					gwFieldListIds[i]=gwFieldList.get(i).getFieldId();
 				}
@@ -255,16 +263,17 @@ public class JobManager {
 		}
 		
 		JobInf job=null;
+		PageMsg paramMsg=new PageMsg();
 		List<GwField> gwFieldList=null;
+		//参数是否合法
+		paramMsg=paramUtil.isAddParamLegal(request);
+		
 		JobInf paramJob=paramUtil.getJobInf();
 		List<GwField> paramGwFieldList=paramUtil.getGwFields();
-		PageMsg paramMsg=new PageMsg();
 		String jobName="未获得任务名称";
 		if(paramJob!=null){
 			jobName=paramJob.getJobName();
 		}
-		//参数是否合法
-		paramMsg=paramUtil.isAddParamLegal(request);
 		if(paramMsg.isSig()){
 			try {
 				//该任务不存在则不能修改
@@ -298,7 +307,7 @@ public class JobManager {
 					//原先存在此字段且内容不一致则update
 					GwField gwField=gwFieldMap.get(paramField.getName());
 					if(gwField!=null&&!gwField.equals(paramField)){
-						gwField.setKey(paramField.isKey());
+						gwField.setTableKey(paramField.isTableKey());
 						gwField.setName(paramField.getName());
 						gwField.setType(paramField.getType());
 						gwFieldService.update(gwField);

@@ -20,7 +20,7 @@ public class GwFieldImpl extends BasicServicveImpl  implements GwFieldService{
 		return list;
 	}
 	public GwField getIdField(Long jobId){
-		String hql = "from com.jt.bean.gateway.GwField where  jobid = ? and key =? ";
+		String hql = "from com.jt.bean.gateway.GwField where  jobid = ? and tableKey =? ";
 		List<Param>  paramList=new  ArrayList<Param>();
 		paramList.add(new Param(Types.BIGINT,jobId));
 		paramList.add(new Param(Types.BOOLEAN,new Boolean(true)));

@@ -67,7 +67,7 @@ public class JobParamUtil {
 			}
 			
 			for(GwField gf:gwFields){
-				if(gf.isKey()){
+				if(gf.isTableKey()){
 					fieldIdName=gf.getName();
 				}
 			}

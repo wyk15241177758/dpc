@@ -67,7 +67,7 @@ img{ border: 0;}
 	height: 500px;
 }
 .hide {
-	display: none
+	display: none;
 }
 .slected {
 	background: url(../images/tab_hov.png) no-repeat !important;
@@ -360,7 +360,8 @@ img{ border: 0;}
 	border: 0;
 	color: #464646;
 	font-size: 14px;
-	display:block
+	display:block;
+	outline:none;
 }
 .input button{
 	width: 85px;

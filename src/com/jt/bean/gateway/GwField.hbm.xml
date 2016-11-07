@@ -3,17 +3,18 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
 	<class name="com.jt.bean.gateway.GwField" table="gwfield">
-		<id name="fieldId" type="java.lang.Integer">
+		<id name="fieldId" type="java.lang.Long">
 			<column name="FIELDID" length="11" not-null="true" />
+			<generator class="native" />
 		</id>
-		<property name="jobId" type="java.lang.Integer">
+		<property name="jobId" type="java.lang.Long">
 			<column name="JOBID" not-null="true"/>
 		</property>
 		<property name="name" type="java.lang.String">
 			<column name="NAME" length="50" not-null="true" />
 		</property>
-		<property name="key" type="java.lang.Boolean">
-			<column name="KEY" length="50" not-null="true" />
+		<property name="tableKey" type="java.lang.Boolean">
+			<column name="TABLEKEY" length="50" not-null="true" />
 		</property>
 		<property name="type" type="java.lang.String">
 			<column name="TYPE" length="10" not-null="true" />

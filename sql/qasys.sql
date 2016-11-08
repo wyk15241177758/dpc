@@ -1,16 +1,16 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : 127
-Source Server Version : 50715
+Source Server         : local
+Source Server Version : 50508
 Source Host           : localhost:3306
 Source Database       : qasys
 
 Target Server Type    : MYSQL
-Target Server Version : 50715
+Target Server Version : 50508
 File Encoding         : 65001
 
-Date: 2016-11-08 01:08:56
+Date: 2016-11-08 10:07:37
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -20,8 +20,8 @@ SET FOREIGN_KEY_CHECKS=0;
 -- ----------------------------
 DROP TABLE IF EXISTS `gwfield`;
 CREATE TABLE `gwfield` (
-  `fieldid` int(11) NOT NULL AUTO_INCREMENT,
-  `jobid` int(11) NOT NULL,
+  `fieldid` bigint(20) NOT NULL AUTO_INCREMENT,
+  `jobid` bigint(20) NOT NULL,
   `name` varchar(50) NOT NULL,
   `tablekey` tinyint(10) NOT NULL,
   `type` varchar(10) NOT NULL,
@@ -84,6 +84,9 @@ CREATE TABLE `joblog` (
   PRIMARY KEY (`JOBID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- ----------------------------
+-- Records of joblog
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for `keyword`

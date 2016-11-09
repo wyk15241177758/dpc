@@ -86,7 +86,7 @@ function qaSearch(question){
 			"end":5};
 	$.getJSON("/QASystem/admin/qaSearch.do",param,function(data){
 		addQuestion(question);
-		addAnswer(data);
+		addAnswer(question,data);
 		scrollToBottom();
 	})
 	
@@ -105,14 +105,16 @@ function scrollToBottom(){
 
 //追加问题
 function addQuestion(question){
-	var template="  <ul class='dialog'> <li class='right'></li> <li class='center'>{question}</li> <li class='left'></li> <li class='bottom'></li> </ul>";
+	var template="  <ul class='dialog'> <img src='images/left_arrow.gif' class='left_arrow'/> <li class='center'>{question}</li>  </ul>";
 	template=template.replace(/\{question\}/g,question);
 	$("#message").append(template);
 	//移动滚动条
 	scrollToBottom();
 }
-function addAnswer(qalist){
-	var template="<div class='dialog_tab'><div><div class='tab2_title'><ul>{categoryLi}</ul></div><div class='tab2_content'>{qaDiv}</div></div></div>";
+function addAnswer(question,qalist){
+	var template="<div class='dialog_tab'><div><img src='images/answer_man.jpg' class='answer_man'/><img src='images/right_arrow.gif' class='right_arrow'/><div class='right_arrow'></div><p>您的问题是：<span>{question}</span>,我为您找到了以下答案:</p><div class='tab2_title'><ul>{categoryLi}</ul></div><div class='tab2_content'>{qaDiv}</div></div></div>";
+	
+	template=template.replace(/\{question\}/g,question);
 	
 	var answerArray=new Array();
 	//遍历分类，将答案放入对应分类的answerArray中

@@ -1,5 +1,5 @@
 /* CSS Document */
-html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, a, img, dl, dt, dd, ol, ul, li, form, table { margin:0; padding:0; list-style:none; font-family:"寰蒋闆呴粦";font-size: 14px; color: #464646;}
+html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, a, img, dl, dt, dd, ol, ul, li, form, table { margin:0; padding:0; list-style:none; font-family:"微软雅黑";font-size: 14px; color: #464646;}
 input{ vertical-align:middle; margin:0; padding:0;}
 a { text-decoration:none; color: #464646;}
 a:hover { text-decoration:underline;}
@@ -218,16 +218,12 @@ img{ border: 0;}
 	height: 283px;
 	padding-top: 8px;
 }
-/*20161108修改开始*/
 .dialog{
-	overflow: hidden;
+	height: 40px;
 	padding-right: 33px;
-	padding-left: 43px;
 	background: url(../images/man.gif) no-repeat right;
 	position: relative;
-	margin-bottom:10px ;
 }
-/*20161108修改结束*/
 .dialog li{
 	float: right;
 }
@@ -246,11 +242,6 @@ img{ border: 0;}
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	background: url(../images/dialog_bg.gif) repeat-x;
-	float: right;
-	background: #FFFFFF;
-	border: 1px solid #dddddd;
-	padding: 6px;
-	margin-top: 6px;
 }
 .bottom{
 	width: 24px;
@@ -266,34 +257,10 @@ img{ border: 0;}
 	border: 1px solid #dddddd;
 	padding: 0px 12px;
 	color: #a4a2a2;
-	margin-bottom: 20px;/*20161108*/
-	margin-left: 43px; /*20161108*/
-	position: relative;/*20161108*/
-	margin-right: 33px;/*20161108*/
+	margin-bottom: 10px;
 }
-/*20161108新增开始*/
-.answer_man{
-	position: absolute;
-	left: -43px;
-	top: 0;
-}
-.right_arrow{
-	position: absolute;
-	left: -8px;
-	top: 12px;
-}
-.left_arrow{
-	position: absolute;
-	right: 26px;
-	top: 13px;
-}
-.dialog_tab p span{
-	color: #fe5325;
-}
-/*20161108新增结束*/
-
 .dialog_tab > p{
-	padding: 6px 0;/*20161108*/
+	padding-top: 6px;
 	line-height: 21px;
 }
 .tab2_title {
@@ -485,7 +452,7 @@ img{ border: 0;}
 }
 
 
-/*鍒楄〃椤�*/
+/*列表页*/
 .con_classify{
 	float: left;
 	width: 213px;

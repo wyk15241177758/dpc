@@ -1,5 +1,5 @@
 /* CSS Document */
-html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, a, img, dl, dt, dd, ol, ul, li, form, table { margin:0; padding:0; list-style:none; font-family:"寰蒋闆呴粦";font-size: 14px; color: #464646;}
+html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, a, img, dl, dt, dd, ol, ul, li, form, table { margin:0; padding:0; list-style:none; font-family:"微软雅黑";font-size: 14px; color: #464646;}
 input{ vertical-align:middle; margin:0; padding:0;}
 a { text-decoration:none; color: #464646;}
 a:hover { text-decoration:underline;}
@@ -67,7 +67,7 @@ img{ border: 0;}
 	height: 500px;
 }
 .hide {
-	display: none;
+	display: none
 }
 .slected {
 	background: url(../images/tab_hov.png) no-repeat !important;
@@ -79,12 +79,12 @@ img{ border: 0;}
 	margin: 0px auto;
 }
 .container_left {
-	width: 541px;
+	width: 521px;
 	height: 476px;
 	float: left;
 }
 .border_wrap{
-	width: 524px;
+	width: 504px;
 	padding: 13px 0px 10px 15px;
 	border: 1px solid #dddddd;
 	overflow: hidden;
@@ -133,7 +133,7 @@ img{ border: 0;}
 	color: #9e0001;
 	cursor: pointer;
 	font-weight: bold;
-	margin-right: 11px;
+	margin-right: 8px;
 }
 .menu0 li.hover {
 	background: url(../images/con_tab_hov.png)  no-repeat top;
@@ -159,7 +159,7 @@ img{ border: 0;}
 	display: block;
 }
 .title_border{
-	width: 507px;
+	width: 487px;
 	height: 28px;
 	border-bottom: 2px solid #dddddd;
 }
@@ -175,7 +175,7 @@ img{ border: 0;}
 .func_nav a{
 	display: block;
 	float: left;
-	width: 101px;
+	width: 100px;
 	height: 70px;
 	text-align: center;
 	color: #464646;
@@ -191,18 +191,18 @@ img{ border: 0;}
 	line-height: 40px;
 }
 .container_right {
-	width: 419px;
+	width: 442px;
 	height: 466px;
 	padding: 13px 14px 0px 14px;
 	float: left;
-	margin-left: 20px;
+	margin-left: 17px;
 	border: 1px solid #9e0001;
 }
 .container_right{
 	line-height: 24px;
 }
 #showMessage{
-	width: 390px;
+	width: 413px;
 	height: 370px;
 	background: #fef6f6;
 	border: 1px solid #e4e4e4;
@@ -239,19 +239,15 @@ img{ border: 0;}
 .right{
 	background: url(../images/dialog_r.gif) no-repeat left top;
 }
+/*20161108修改开始*/
 .center{
-	width: 330px;
-	height: 26px;
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-	background: url(../images/dialog_bg.gif) repeat-x;
 	float: right;
 	background: #FFFFFF;
 	border: 1px solid #dddddd;
 	padding: 6px;
 	margin-top: 6px;
 }
+/*20161108修改结束*/
 .bottom{
 	width: 24px;
 	height: 11px;
@@ -375,7 +371,7 @@ img{ border: 0;}
 	background: url(../images/useful.gif) no-repeat;
 }
 .input{
-	width: 390px;
+	width: 413px;
 	height: 64px;
 	background: #fef6f6;
 	border: 1px solid #e4e4e4;
@@ -384,8 +380,8 @@ img{ border: 0;}
 	padding: 0px 13px;
 }
 .input textarea{
-	width: 290px;
-	height: 30px;
+	width: 320px;
+	height: 40px;
 	line-height: 24px;
 	line-height: 30px;
 	overflow: auto;
@@ -394,7 +390,6 @@ img{ border: 0;}
 	color: #464646;
 	font-size: 14px;
 	display:block;
-	outline:none;
 }
 .input button{
 	width: 85px;
@@ -428,6 +423,7 @@ img{ border: 0;}
 	overflow: hidden;
 	position: relative;
 	padding: 0 !important;
+	padding-left: 11px !important;
 }
 .slideBox .bd {
 	position: relative;
@@ -485,7 +481,7 @@ img{ border: 0;}
 }
 
 
-/*鍒楄〃椤�*/
+/*列表页*/
 .con_classify{
 	float: left;
 	width: 213px;

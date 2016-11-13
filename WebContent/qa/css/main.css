@@ -5,7 +5,7 @@ padding:0;
 }
 body{
     -moz-text-size-adjust: none;
-    background: rgba(0, 0, 0, 0) url("../img/yueyang.jpg") no-repeat scroll center top;
+    background: rgba(0, 0, 0, 0) url("../img/yueyang_bak.jpg") no-repeat scroll center top;
     color: #333;
     font-family:Microsoft YaHei,Simsun,SimHei,Arial;
     font-size: 12px;
@@ -43,7 +43,7 @@ height:40px;
 line-height:40px;
 }
 .head{
-height:170px;
+height:238px;
 overflow:hidden;
 position:relative;
 }
@@ -74,11 +74,64 @@ padding:0 5px;
     opacity: 0.7;
     text-decoration:none;
 }
-.logo_new{margin-top:25px; float:left;}
+.logo_new{margin-top:50px; float:left;}
 .robot{
 	float:right;
 	margin-right:70px;
 	margin-top:50px;
+}
+.nav{
+	background:#e74800 none repeat scroll 0 0;
+	height:45px;
+	line-height:45px;
+}
+.nav ul{
+	height:45px;
+	overflow:hidden;
+	padding-left:30px;
+	width:710px;
+}
+.nav li {
+    background: rgba(0, 0, 0, 0) url("../img/nav_line.png") no-repeat scroll right center;
+    float: left;
+    list-style: outside none none;
+    padding: 0 8px;
+    width: 62px;
+}
+.nav li.nobg {
+    background: rgba(0, 0, 0, 0) none repeat scroll 0 0;
+}
+.nav li a {
+    color: #fff;
+    display: block;
+    font-size: 18px;
+    text-align: center;
+}
+.nav li a.on, .nav li a:hover {
+    border-bottom: 3px solid #ffac50;
+    height: 42px;
+    text-decoration: none;
+}
+.nav .weather {
+    color: #fff;
+    height: 45px;
+    overflow: hidden;
+    padding: 0 10px;
+    width: 240px;
+}
+.clearfix{
+	display:block;
+}
+.clearfix::after{
+	clear£ºboth;
+	content:" ";
+	display:block;
+	font-size:0;
+	height:0;
+	visibility:hidden;
+}
+.mt {
+    margin-top: 20px;
 }
 /*#footbox {
     background: rgba(0, 0, 0, 0) url("img/footbg2.jpg") repeat-x scroll center top;

@@ -1,10 +1,406 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<script>
-window.location="/QASystem/qa"
-</script>
-</head>
-<body>
-</body>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+"http://www.w3.org/TR/html4/strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="css/global.css" />
+		<link rel="stylesheet" type="text/css" href="css/main.css" />
+		<script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
+	</head>
+
+	<body>
+		<!--  <div class="header">
+			  <div class="header_wrap">
+                <div class="logo"><img src="images/logo.jpg" width="254" height="86"/></div>
+                <div class="logo_title"><img src="images/logo_title.jpg" /></div>
+            </div>
+		</div>-->
+
+<div class="above">
+  <div class="g-w">
+     <div class="fl">
+      <a href="http://www.gov.cn/" target="_blank" title="中国政府网">
+      <voice>中国政府网</voice>
+      </a>	
+      <voice>|</voice>
+      <a href="http://www.hunan.gov.cn/" target="_blank" title="湖南政府网 ">
+      <voice class="">湖南政府网</voice>
+      </a>
+      <voice>|</voice>
+      <a href="http://www.yyrd.com.cn/" target="_blank" title="岳阳市人大">
+      <voice class="">岳阳市人大</voice>
+      </a>
+      <voice>|</voice>
+      <a href="http://www.yyszx.gov.cn/" target="_blank" title="岳阳市政协">
+      <voice class="">岳阳市政协</voice>
+      </a>
+     </div>
+     <div class="fr web-icon">
+      <a href="http://weibo.com/yygov" target="_blank" title="微博">
+      <img src="img/weibo.png">
+      </a>
+      <a href="http://www.yueyang.gov.cn/qt1/10995/default.htm" target="_blank" title="微信">
+      <img src="img/weixin.png">
+      </a>
+      <a href="http://www.yueyang.gov.cn/qt1/10987/default.htm" target="_blank" title="手机">
+      <img src="img/shouji.png">
+      </a>
+      <a href="http://www.yueyang.gov.cn/index.html#" target="_blank" title="无障碍浏览">
+      <img src="img/wza.png">
+      </a>
+      <a href="javascript:StranBody()" target="_blank" title="點擊以繁體中文方式浏覽">
+      <voice>繁</voice>
+      </a>
+      <voice> | </voice>
+      <a href="http://en.yueyang.gov.cn/" target="_blank" title="English">
+      <voice>English</voice>
+      </a>
+     </div>
+  </div>
+</div>
+
+<div class="head">
+<div class="log g-w">
+ <div class="logo_new"><a href="http://www.yueyang.gov.cn/qt1/11292/default.htm" target="_blank"><img src="img/logo.png" border="0"></a></div>
+<!--<div class="robot"><img src="img/jiqi.png" border="0"></div>-->
+</div>
+</div>
+
+	<div id="nav" class="nav g-w">
+<ul class="clearfix fl">
+ <li id="daoh1" onmouseover="showTab1(1)">
+  <a class="" href="http://www.yueyang.gov.cn/" target="_top"><voice class="Hj-EasyRead-Pointer-Label">首 页</voice></a>
+ </li>
+ <li id="daoh2" onmouseover="showTab1(2)">
+  <a class="" href="http://www.yueyang.gov.cn/mlyy/default.htm" target="_top"><voice class="Hj-EasyRead-Pointer-Label">市 情</voice></a>
+ </li>
+ <li id="daoh3" onmouseover="showTab1(3)">
+  <a class="" href="http://www.yueyang.gov.cn/zwgk/default.htm" target="_top"><voice class="Hj-EasyRead-Pointer-Label">财 务</voice></a>
+ </li>
+ <li id="daoh4" onmouseover="showTab1(4)">
+  <a class="" href="http://wsbs.hunan.gov.cn/virtualhall/index.jsp?areaCode=430601000000" target="_top"><voice class="Hj-EasyRead-Pointer-Label">服 务</voice></a>
+ </li>
+ <li id="daoh5" onmouseover="showTab1(5)">
+  <a class="" href="http://www.yueyang.gov.cn/hdjl/default.htm" target="_top"><voice class="Hj-EasyRead-Pointer-Label">问 政</voice></a>
+ </li>
+ <li id="daoh6" onmouseover="showTab1(6)">
+  <a class="" href="http://www.yueyang.gov.cn/yyly/default.htm" target="_top"><voice class="Hj-EasyRead-Pointer-Label">旅 游</voice></a>
+ </li>
+ <li id="daoh8" onmouseover="showTab1(8)">
+  <a class="" href="http://www.yueyang.gov.cn/zwgk/12396/default.htm" target="_top"><voice class="Hj-EasyRead-Pointer-Label">诚 信</voice></a>
+ </li>
+ <li id="daoh9" class="nobg" onmouseover="showTab1(9)">
+  <a class="" href="http://www.yueyang.gov.cn/ztxx/zwzt/default.htm" target="_top"><voice class="Hj-EasyRead-Pointer-Label">专 题</voice></a>
+ </li>
+</ul>
+<div class="weather fr">
+ <script language="JavaScript" src="yyhtml/js/nl.js"></script>
+ <table>
+  <tbody>
+   <!--  <tr>
+    <td class="f2" align="center">
+     <font style=" color:#FFFFFF; font-size:12px;"><voice class="Hj-EasyRead-Pointer-Label">2016年11月10日</voice></font>
+    </td>
+    <td align="center"></td>
+    <td align="center">
+     <font style=" color:#ffffff; font-size:12px;"><voice class="Hj-EasyRead-Pointer-Label">星期四</voice></font>
+    </td>
+    <td><font style="font-size:9pt;" color="#ffffff"><voice class="Hj-EasyRead-Pointer-Label">丙申年十月十一</voice></font></td>
+   </tr>-->
+  </tbody>
+ </table>
+</div>
+
+</div>
+
+<div class="mt"></div>	
+		
+		
+		
+		
+		
+		<div class="content">
+			<div class="tab_title">
+				<ul>
+					<li class="slected">智能咨询</li>
+					<li>使用帮助</li>
+				</ul>
+			</div>
+			<div class="tab_content">
+				<!--智能咨询开始-->
+				<div class="container">
+					<div class="container_left" style="width: 444px;">
+						<div class="border_wrap" style="width: 424px;">
+							<div class="title">智能标签</div>
+	                        <div id="tabs0">
+								<ul class="menu0" id="menu0">
+								    <li onmouseover="setTab(0,0)" class="hover">政务动态</li>
+								    <li onmouseover="setTab(0,1)">办事服务</li>
+								    <li onmouseover="setTab(0,2)">经济社会</li>
+								   <!-- <li onmouseover="setTab(0,3)">企业经营</li>-->
+								</ul>
+								<div class="main" id="main0">
+								    <ul class="block">                                                                                                                                                                                                         								    	
+								     	<li><a href="javascript:void(0)">访谈</a></li>
+								     	<li><a href="javascript:void(0)">征集</a></li>
+								     	<li><a href="javascript:void(0)">调查</a></li>
+								     	<li><a href="javascript:void(0)">金融</a></li>
+								     	<li><a href="javascript:void(0)">招商</a></li>
+								     	<li><a href="javascript:void(0)">工程</a></li>
+								     	<li><a href="javascript:void(0)">城镇化</a></li>
+								     	<li><a href="javascript:void(0)">三农</a></li>
+								     	<li><a href="javascript:void(0)">科技</a></li>
+								     	<li><a href="javascript:void(0)">投资</a></li>
+								     	<li><a href="javascript:void(0)">税收</a></li>
+								     	<li><a href="javascript:void(0)">贸易</a></li>
+								     	<li><a href="javascript:void(0)">制造业</a></li>
+								     	<li><a href="javascript:void(0)">服务业</a></li>
+								     	<li><a href="javascript:void(0)">工业</a></li>
+								     	
+								     
+								    </ul>
+								    <ul>
+								    	<li><a href="javascript:void(0)">交通</a></li>
+										<li><a href="javascript:void(0)">社保</a></li>
+										<li><a href="javascript:void(0)">医疗</a></li>
+										<li><a href="javascript:void(0)">婚育</a></li>
+										<li><a href="javascript:void(0)">住房</a></li>
+										<li><a href="javascript:void(0)">民族</a></li>
+										<li><a href="javascript:void(0)">宗教</a></li>
+										<li><a href="javascript:void(0)">就业</a></li>
+										<li><a href="javascript:void(0)">养老</a></li>
+										<li><a href="javascript:void(0)">气象</a></li>
+										<li><a href="javascript:void(0)">环保</a></li>
+										<li><a href="javascript:void(0)">惠民</a></li>
+										<li><a href="javascript:void(0)">供水</a></li>
+										<li><a href="javascript:void(0)">教育</a></li>
+										<li><a href="javascript:void(0)">供电</a></li>
+										<li><a href="javascript:void(0)">考试</a></li>
+								    </ul>
+								    <ul>
+								    	<li><a href="javascript:void(0)">经济</a></li>
+										<li><a href="javascript:void(0)">能源</a></li>
+										<li><a href="javascript:void(0)">财政</a></li>
+										<li><a href="javascript:void(0)">金融</a></li>
+										<li><a href="javascript:void(0)">招商</a></li>
+										<li><a href="javascript:void(0)">工程</a></li>
+										<li><a href="javascript:void(0)">城镇化</a></li>
+										<li><a href="javascript:void(0)">三农</a></li>
+										<li><a href="javascript:void(0)">科技</a></li>
+										<li><a href="javascript:void(0)">投资</a></li>
+										<li><a href="javascript:void(0)">税收</a></li>
+										<li><a href="javascript:void(0)">贸易</a></li>
+										<li><a href="javascript:void(0)">制造业</a></li>
+										<li><a href="javascript:void(0)">服务业</a></li>
+										<li><a href="javascript:void(0)">工业</a></li>
+										<li><a href="javascript:void(0)">房地产</a></li>
+								    </ul>
+								   
+								</div>
+							</div>								
+						</div>
+						<div class="border_wrap func_margin" style="width: 424px;">
+							<div class="title_border">
+								<div class="title">功能导航</div>
+							</div>
+							<div class="func_nav">
+								<a href="http://www.yueyang.gov.cn/cxzh/ggjy/default.htm" target="_blank"><span><img src="images/nav_ico1.gif" width="33" height="33"/></span><p>公众教育</p></a>
+								<a href="http://www.yueyang.gov.cn/cxzh/20473/default.htm" target="_blank"><span><img src="images/nav_ico2.gif" width="33" height="33"/></span><p>公用事业</p></a>
+								<a href="http://www.yueyang.gov.cn/cxzh/gjj/default.htm" target="_blank"><span><img src="images/nav_ico3.gif" width="33" height="33"/></span><p>公积金房产</p></a>
+								<a href="http://www.yueyang.gov.cn/cxzh/ylws/default.htm" target="_blank"><span><img src="images/nav_ico4.gif" width="33" height="33"/></span><p>医疗卫生</p></a>
+								<a href="http://www.yueyang.gov.cn/jlmsfw/bmxxcx/jtxxcx/default.htm" target="_blank"><span><img src="images/nav_ico5.gif" width="33" height="33"/></span><p>交通出行</p></a>
+								<a href="http://www.yueyang.gov.cn/cxzh/gasf/default.htm" target="_blank"><span><img src="images/nav_ico6.gif" width="33" height="33"/></span><p>公安司法</p></a>
+								<a href="http://www.yueyang.gov.cn/cxzh/shbx/default.htm" target="_blank"><span><img src="images/nav_ico7.gif" width="33" height="33"/></span><p>社会保险</p></a>
+								<a href="http://www.yueyang.gov.cn/cxzh/csjr/default.htm" target="_blank"><span><img src="images/nav_ico8.gif" width="33" height="33"/></span><p>财税金融</p></a>
+								<!-- <a href="#"><span><img src="images/nav_ico9.gif" width="33" height="33"/></span><p>公众教育</p></a> -->
+								<a href="http://www.yueyang.gov.cn/jlmsfw/gysscx/default.htm" target="_blank"><span><img src="images/nav_ico10.gif" width="33" height="33"/></span><p>公用设施</p></a>
+								<a href="http://www.yueyang.gov.cn/jlmsfw/bmxxcx/bmwd/default.htm" target="_blank"><span><img src="images/nav_ico11.gif" width="33" height="33"/></span><p>便民问答</p></a>
+								<a href="http://www.yueyang.gov.cn/jlmsfw/syxxcx/zsxx/default.htm" target="_blank"><span><img src="images/nav_ico12.gif" width="33" height="33"/></span><p>证书信息</p></a>
+								<a href="http://www.yueyang.gov.cn/jlmsfw/syxxcx/jyxx/default.htm" target="_blank"><span><img src="images/nav_ico13.gif" width="33" height="33"/></span><p>就业信息</p></a>
+								<!--  <a href="#"><span><img src="images/nav_ico14.gif" width="33" height="33"/></span><p>公众教育</p></a>-->
+								<!-- <a href="#"><span><img src="images/nav_ico15.gif" width="33" height="33"/></span><p>公众教育</p></a>-->
+							</div>
+						</div>						
+					</div>
+					<div class="container_right" style="width: 518px">
+						<div id="showMessage" style="width: 493px;;">
+							<p class="attention">您好，欢迎使用中国 · 岳阳政府网站群智能服务平台提供的智能咨询服务，如有需要请查看使用帮助。<img src="images/question.gif" /></p>
+							<div id="message" style="overflow-y: scroll	;height:283px">
+								<!--对话开始-->
+<!-- 								<ul class="dialog"> -->
+<!-- 									<li class="right" ></li> -->
+<!-- 									<li class="center">智能咨询服务智智能咨询服务智智能咨询服务智智能咨询服务智智能咨询服务智</li> -->
+<!-- 									<li class="left"></li> -->
+<!-- 									<li class="bottom"></li> -->
+<!-- 								</ul> -->
+<!-- 								<div class="dialog_tab"> -->
+<!--                                     <p><strong>栏目导航</strong></p> -->
+<!--                                     <ul class="news"> -->
+<!--                                     	<li><a href="#">2016年国际英才创业峰会国际英才创业峰会峰会国际英才创业峰会</a></li> -->
+<!--                                     </ul> -->
+<!-- 						            <div> -->
+<!-- 						            <div class="tab2_title"> -->
+<!-- 										<ul> -->
+<!-- 											<li class="slected2">通知公告</li> -->
+<!-- 											<li>服务</li> -->
+<!-- 											<li>公开</li> -->
+<!-- 											<li>市政府</li> -->
+<!-- 										</ul> -->
+<!-- 									</div> -->
+<!-- 									<div class="tab2_content"> -->
+<!-- 									    <div class="container"> -->
+<!-- 									    	<ul class="news"> -->
+<!-- 		                                    	<li><a href="#">通知公告2016年国际英才创业峰会国际英才创业峰会峰会国际英才创业峰会</a></li> -->
+<!-- 		                                    </ul> -->
+<!-- 									    </div> -->
+<!-- 									    <div class="container hide"> -->
+<!-- 									    	<ul class="news"> -->
+<!-- 		                                    	<li><a href="#">服务2016年国际英才创业峰会国际英才创业峰会</a></li> -->
+<!-- 		                                    	<li><a href="#">服务2016年国际英才创业峰会国际英才创业峰会</a></li> -->
+<!-- 		                                    </ul> -->
+<!-- 									    </div> -->
+<!-- 									    <div class="container hide"> -->
+<!-- 									    	<ul class="news"> -->
+<!-- 		                                    	<li><a href="#">公开2016年国际英才创业峰会国际英才创业峰会</a></li> -->
+<!-- 		                                    </ul> -->
+<!-- 									    </div> -->
+<!-- 									    <div class="container hide"> -->
+<!-- 									    	<ul class="news"> -->
+<!-- 		                                    	<li><a href="#">市政府2016年国际英才创业峰会国际英才创业峰会</a></li> -->
+<!-- 		                                    	<li><a href="#">市政府2016年国际英才创业峰会国际英才创业峰会</a></li> -->
+<!-- 		                                    </ul> -->
+<!-- 									    </div>   	 -->
+<!-- 									</div> -->
+<!-- 									</div> -->
+<!-- 									<div class="sign"> -->
+<!-- 										<div class="unuseful">无帮助</div> -->
+<!-- 										<div class="useful">有帮助</div> -->
+<!-- 									</div> -->
+<!-- 								</div> -->
+								<!--对话结束-->
+								
+								
+							
+							</div>
+						</div>
+						<div class="input" style="width: 493px;">
+							<textarea type="text" id="messCon"></textarea>
+							<p id="fontNum"><i>还可以输入<span id="number"><strong>100</strong></span>字</i></p>
+							<button id="sendMess">发送 Enter</button>
+						</div>
+					</div>
+				</div>
+				<!--智能咨询结束-->
+				<!--使用帮助开始-->
+				<div class="container hide">
+					<div class="container_left" style="width: 450px">
+						<div class="border_wrap" style="padding-bottom: 7px;width:430px">
+							<div class="help_words">
+								<p><strong>一、了解岳阳的人文、地理、概况。如：</strong></p>
+								<p>市长是谁？</p>
+								<p>介绍岳阳</p>
+							</div>
+							<div class="help_words">
+								<p><strong>二、咨询食、住、行、游、购、娱、医、学。如：</strong></p>
+								<p>岳阳有什么好玩的地方？</p>
+								<p>岳阳有哪些宾馆酒店？</p>
+							</div>
+							<div class="help_words">
+								<p><strong>三、咨询各部门的办事事项。如：</strong></p>
+								<p>孩子转学需要什么手续？</p>
+								<p>如何提取公积金？</p>
+							</div>
+							<div class="help_words">
+								<p><strong>四、查询向公众公开的信息。如：</strong></p>
+								<p>我想自主创业，政府有什么政策？</p>
+								<p>再生育政策？</p>
+							</div>
+							<div class="help_words" style="border-bottom: 0;">
+								<p><strong>五、给领导写信反映问题。如：</strong></p>
+								<p>我要给市长写信？</p>
+								<p>商家乱扔垃圾怎么办？</p>
+							</div>
+							
+						</div>
+					</div>
+					<div class="container_right" style="width:512px">
+						<div id="slideBox" class="slideBox" style="width:500px">
+							<div class="bd">
+								<ul>
+									<li><p>开始咨询问题：使用简短，关键性词句</p><img src="images/help1.jpg" /></li>
+									<li><p>分库展示咨询结果</p><img src="images/help2.jpg" /></li>	
+								</ul>
+							</div>
+						</div>
+						
+					</div>
+				</div>
+			    <!--使用帮助结束-->
+			</div>
+		</div>
+
+		<!-- <div class="footer">
+            <div class="footer_wrap">
+            	<div class="footer_l">
+            		<img src="images/sm_logo.jpg" width="161" height="59"/>
+            		<div>
+            			<p>xxxxx版权所有</p>
+                        <p>copy©2011-2016 xxxxx Rights Reserved</p>
+            		</div>
+            	</div>
+            	<div class="footer_r"><img src="images/code.jpg" width="69" height="66" /></div>
+            </div>
+		</div> -->
+
+ <div style="backgroud-image:none;" id="footbox" class="footer">
+ <table height="119" width="100%" cellpadding="0" cellspacing="0" align="center">
+  <tr>
+      <td >
+           <table width="100%" align="center">
+                <tbody>
+                    <tr>
+                          <td width="200" align="right">                              
+                               <span>
+                                  <a href="" target="_blank">
+                                     <img src="img/red.png" border="0" hspace="0" vspace="0"/>     
+                                  </a>
+                               </span>                                                     
+                           </td>
+                           <td class="fs" style="line-height:26px;padding-left:80px;" width="400">
+<a href="http://www.yueyang.gov.cn/wzbz/content_201517.html" target="_blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;关于我们</a>|
+<a href="http://www.yueyang.gov.cn/wzdt/default.htm" target="_blank">网站地图</a>|
+<a href="http://www.yueyang.gov.cn/wzsm/content_11700.html" target="_blank">网站声明</a>|
+<a href="http://www.yueyang.gov.cn/ysbh/content_71029.html" target="_blank">隐私保护</a>|
+<a href="http://www.yueyang.gov.cn/zwgk/lxzf/default.htm" target="_blank">联系政府</a>|
+<a href="http://mail.yueyang.gov.cn/" target="_blank">政府邮局</a><br>
+主 办：岳阳市人民政府 承 办：岳阳市电子政务管理办公室 备 案：湘ICP备09024640号 
+                           </td>
+                            <!--  <td>
+                              <span>
+                                 <img src="img/jiucuo.png" style="margin:0;border:0;cursor:pointer">
+                               </span>
+                            </td>-->
+
+                     </tr>   
+                </tbody>
+      </td>
+  </tr>
+
+
+</table>
+</div>
+ 
+
+
+
+
+
+	</body>
+	<script type="text/javascript" src="js/jquery.nicescroll.min.js" ></script>
+	<script type="text/javascript" src="js/jquery.SuperSlide.js" ></script>
+	<script type="text/javascript" src="js/common.js"></script>
+	<script type="text/javascript" src="js/config.js"></script>
 </html>

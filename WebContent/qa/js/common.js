@@ -1,4 +1,8 @@
 $(function(){
+	//左侧标签点击效果
+	$("#main0 a").click(function(){
+		qaSearch($(this).text());
+	})
 	//竖向tab选项卡
      var $tab_li = $(".tab_title ul li");
 //     $(document).on("click")

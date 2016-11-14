@@ -85,7 +85,7 @@ $(function(){
 
 function qaSearch(question){
 	var param={
-			"question":question,
+			"question":encodeURIComponent(question),
 			"begin":0,
 			"end":5};
 	$.getJSON("/QASystem/admin/qaSearch.do",param,function(data){

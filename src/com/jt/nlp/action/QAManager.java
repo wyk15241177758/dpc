@@ -2,6 +2,8 @@ package com.jt.nlp.action;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -55,6 +57,14 @@ public class QAManager {
 		String sBegin=request.getParameter("begin");
 		String sEnd=request.getParameter("end");
 		
+		//增加解码
+		try {
+			question=URLDecoder.decode(question, "utf-8");
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+			question="";
+		}
+		
 		int iBegin=0;
 		int iEnd=0;
 		try {
@@ -100,6 +110,13 @@ public class QAManager {
 		String question=request.getParameter("question");
 		String sBegin=request.getParameter("begin");
 		String sEnd=request.getParameter("end");
+		//增加解码
+		try {
+			question=URLDecoder.decode(question, "utf-8");
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+			question="";
+		}
 		
 		int iBegin=0;
 		int iEnd=0;

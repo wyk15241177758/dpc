@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apdplat.qa.questiontypeanalysis.patternbased.MainPartExtracter;
 import org.apdplat.qa.questiontypeanalysis.patternbased.QuestionStructure;
@@ -57,7 +58,7 @@ public class NlpService {
 	 * @return
 	 */
 	public Set<String> getSearchWords(String question) {
-		Set<String> set = new HashSet<String>();
+		Set<String> set = new TreeSet<String>();
 		// 将问题根据标点符合切分为几个问题
 		List<String> splitedQ = NlpUtil.splitQuestion(question);
 		for (String str : splitedQ) {

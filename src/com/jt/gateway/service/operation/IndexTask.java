@@ -1,6 +1,7 @@
 package com.jt.gateway.service.operation;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +40,7 @@ public class IndexTask extends ApplicationObjectSupport implements Job {
 
 	private JdbcDaoImpl JdbcDao;
 	private IndexDao indexDao;
-	private int batchSize = 5000;
+	private int batchSize = 1000;
 	private String newIndexPath;
 	private JobInfService jobService;
 	private JobLogService jobLogService;
@@ -75,15 +76,17 @@ public class IndexTask extends ApplicationObjectSupport implements Job {
 		JobLog log = new JobLog();
 		IndexStatus status = IndexStatus.getStatus();
 		Long timeWait = 0l;
-		System.out.println("jobid=["+job.getJobId()+"]");
-		System.out.println("IdField=["+gwFieldService.getIdField(job.getJobId())+"]");
-		System.out.println("name=["+gwFieldService.getIdField(job.getJobId()).getName()+"]");
 		String sql = "select max(" + gwFieldService.getIdField(job.getJobId()).getName() + ") as maxid from "
 				+ job.getSqlTable();
 		Map<String, Object> rsMap = null;
+		//推送的源表最大的ID
 		long maxId;
+		//推送的源表最小的ID
 		long minId;
-		long temp = 0l;
+		//按照batchSize分批次推送，本批次推送的最小ID
+		long curMinId;
+		//按照batchSize分批次推送，本批次推送的最大ID
+		long curMaxId;
 
 		// 初始化日志
 		log.setJobId(job.getJobId());
@@ -122,7 +125,8 @@ public class IndexTask extends ApplicationObjectSupport implements Job {
 		jobRunningLogService.addRunningLog(job.getJobId(), "ID区间为[" + minId + "-" + maxId + "]");
 
 		// 第一次推送的结尾ID
-		temp = minId + batchSize;
+		curMaxId = minId + batchSize;
+		curMinId = minId;
 		// 拼接sql
 		sql = "select ";
 		for (int i = 0; i < list.size(); i++) {
@@ -134,12 +138,17 @@ public class IndexTask extends ApplicationObjectSupport implements Job {
 			}
 		}
 		do {
-			logger.info("开始推送ID小于" + temp + "的数据");
-			jobRunningLogService.addRunningLog(job.getJobId(), "开始推送ID小于" + temp + "的数据");
+			logger.info("开始推送ID区间于[" + curMinId + "-"+curMaxId+"]的数据");
+			jobRunningLogService.addRunningLog(job.getJobId(), "开始推送ID区间于[" + curMinId + "-"+curMaxId+"]的数据");
+			List<Document> batchDocumentList=new ArrayList<Document>();
+			
 			String curSql = sql + " from " + job.getSqlTable() + " where "
-					+ gwFieldService.getIdField(job.getJobId()).getName() + "<" + temp;
+					+ gwFieldService.getIdField(job.getJobId()).getName() + ">=" + curMinId
+					+ " and "
+					+ gwFieldService.getIdField(job.getJobId()).getName() + "<" + curMaxId;
 			logger.debug("curSql=[" + curSql + "]");
 			List<Map<String, Object>> rsList = JdbcDao.executeQueryForList(curSql);
+			
 			for (Map<String, Object> map : rsList) {
 				Document doc = new Document();
 				for (GwField df : list) {
@@ -152,16 +161,18 @@ public class IndexTask extends ApplicationObjectSupport implements Job {
 					doc.add(new Field(df.getName().toLowerCase(), map.get(df.getName().toUpperCase()).toString(),
 							df.getFieldType()));
 				}
+				//压入list，后续统一写入索引文件
+				batchDocumentList.add(doc);
 				logger.debug("保存文档[" + doc.toString() + "]");
-				indexDao.save(doc);
-				// 记录推送的总数
-				jobSize++;
 			}
-			logger.info("结束推送ID小于" + temp + "的数据");
-			jobRunningLogService.addRunningLog(job.getJobId(), "结束推送ID小于" + temp + "的数据");
-
-			temp += batchSize;
-		} while (temp < (maxId + batchSize));
+			jobSize+=indexDao.batchSave(batchDocumentList);
+			logger.info("结束推送ID区间于[" + curMinId + "-"+curMaxId+"]的数据");
+			jobRunningLogService.addRunningLog(job.getJobId(), "结束推送ID区间于[" + curMinId + "-"+curMaxId+"]的数据");
+			
+			curMinId = curMaxId;
+			curMaxId += batchSize;
+			
+		} while (curMaxId < (maxId + batchSize));
 
 		logger.info("生成新索引文件结束，尝试锁定替换原索引文件");
 		jobRunningLogService.addRunningLog(job.getJobId(), "生成新索引文件结束，尝试锁定替换原索引文件");

@@ -7,9 +7,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.lucene.search.BooleanClause.Occur;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,6 +72,34 @@ public class QAService {
 			 String[] searchWord=new String[questionSet.size()];
 			 questionSet.toArray(searchWord);
 			 return searchService.searchArticle(searchWord, Article.getMapedFieldName("title"), begin, end);
+		 }
+		 return list;
+	 }
+	 
+	 //根据分类检索
+	 public List<Article> QASearchByCategory(String question,String category,int begin,int end){
+		 List<Article> list=new ArrayList<Article>();
+		 list=presentScene();
+		 //未进入预设场景
+		 if(list==null){
+			 Set<String> questionSet=nlpService.getSearchWords(question);
+			 //分类作为必须包含的字段进行检索
+			 questionSet.add(category);
+			 String[] searchWord=new String[questionSet.size()];
+			 Occur[] occurs=new Occur[questionSet.size()];
+			 String[] fields=new String[questionSet.size()];
+			 for(int i=0;i<occurs.length;i++){
+				 //最后一个为分类，必须包含
+				 if(i==(occurs.length-1)){
+					 occurs[i]=Occur.MUST; 
+					 fields[i]=Article.getMapedFieldName("category");
+				 }else{
+					 occurs[i]=Occur.SHOULD;
+					 fields[i]=Article.getMapedFieldName("title");
+				 }
+			 }
+			 questionSet.toArray(searchWord);
+			 return searchService.searchArticle(searchWord, occurs, fields, null, null, false, begin, end);
 		 }
 		 return list;
 	 }

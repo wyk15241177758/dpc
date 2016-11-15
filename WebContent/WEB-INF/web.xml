@@ -18,7 +18,17 @@
 <!-- 		<listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class> -->
 <!-- 	</listener> -->
 	
-	
+	<filter>
+    <filter-name>userYorNfilter</filter-name>
+    <filter-class>com.jt.common.interceptor.UserYorNfilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>userYorNfilter</filter-name>
+    <url-pattern>/gateway/task.html</url-pattern>
+    <url-pattern>/keyword/keywords.html</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+    <dispatcher>FORWARD</dispatcher>
+  </filter-mapping>
 	
   <filter>
     <filter-name>encodingFilter</filter-name>

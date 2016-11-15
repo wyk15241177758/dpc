@@ -141,6 +141,34 @@ public class LuceneSearchService {
 		return dao.searchArticle(queryString, field, firstResult, maxResult);
 	}
 	
+	/**
+	 * 支持定义每个检索词的与、或关系，支持检索指定字段
+	 * @param queryString
+	 * 支持传入多个检索词
+	 * @param occurs
+	 * 多个检索词之间的关系，Occur.MUST(结果“与”)， Occur.MUST_NOT(结果“不包含”)，Occur.SHOULD(结果“或”)
+	 * @param field
+	 * 当前应用使用title
+	 * @param sortField
+	 * 排序字段，传入null则按照相关度排序
+	 * @param sortFieldType
+	 * 排序字段的类型，如long、int等
+	 * @param reverse
+	 * 排序方式，顺序(false)还是倒序(true)
+	 * @param firstResult
+	 * 结果从第几个开始
+	 * @param maxResult
+	 * 结果到第几个结束，可以传入-1，则限制为1000条
+	 * @return
+	 */
+	public List<Article> searchArticle(String[] queryString,Occur[] occurs,String[] fields,String sortField,SortField.Type sortFieldType,boolean reverse ,int firstResult, int maxResult) { 
+		System.out.println("检索词为");
+		for(String str:queryString){
+			System.out.println(str);
+		}
+		return dao.searchArticle(queryString,occurs,fields,sortField,sortFieldType, reverse , firstResult,  maxResult) ;
+	}
+	
 	public IndexDao getDao() {
 		return dao;
 	}

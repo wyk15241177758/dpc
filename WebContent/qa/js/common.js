@@ -86,6 +86,7 @@ $(function(){
 function qaSearch(question){
 	var param={
 			"question":encodeURIComponent(question),
+			"category":"政务知识",
 			"begin":0,
 			"end":5};
 	$.getJSON("/QASystem/admin/qaSearch.do",param,function(data){

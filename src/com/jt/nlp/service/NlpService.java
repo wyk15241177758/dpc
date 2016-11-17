@@ -58,7 +58,7 @@ public class NlpService {
 	 * @return
 	 */
 	public Set<String> getSearchWords(String question) {
-		Set<String> set = new TreeSet<String>();
+		Set<String> set = new HashSet<String>();
 		// 将问题根据标点符合切分为几个问题
 		List<String> splitedQ = NlpUtil.splitQuestion(question);
 		for (String str : splitedQ) {

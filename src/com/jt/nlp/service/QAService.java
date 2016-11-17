@@ -5,6 +5,8 @@ package com.jt.nlp.service;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -83,22 +85,16 @@ public class QAService {
 		 //未进入预设场景
 		 if(list==null){
 			 Set<String> questionSet=nlpService.getSearchWords(question);
-			 //分类作为必须包含的字段进行检索
-			 questionSet.add(category);
-			 String[] searchWord=new String[questionSet.size()];
-			 Occur[] occurs=new Occur[questionSet.size()];
-			 String[] fields=new String[questionSet.size()];
-			 for(int i=0;i<occurs.length;i++){
-				 //最后一个为分类，必须包含
-				 if(i==(occurs.length-1)){
-					 occurs[i]=Occur.MUST; 
-					 fields[i]=Article.getMapedFieldName("category");
-				 }else{
-					 occurs[i]=Occur.SHOULD;
-					 fields[i]=Article.getMapedFieldName("title");
-				 }
+			 String questionStr="";
+			 //用空格分隔，lucene自动分词，实现or效果
+			 for(String str:questionSet){
+				 questionStr+=str+" ";
 			 }
-			 questionSet.toArray(searchWord);
+			 //分类作为必须包含的字段进行检索
+			 
+			 String[] searchWord={questionStr,category};
+			 Occur[] occurs={Occur.MUST,Occur.MUST};
+			 String[] fields={Article.getMapedFieldName("title"),Article.getMapedFieldName("category")};
 			 return searchService.searchArticle(searchWord, occurs, fields, null, null, false, begin, end);
 		 }
 		 return list;

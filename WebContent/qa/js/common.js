@@ -1,29 +1,22 @@
 $(function(){
+	
+
 	//左侧标签点击效果
 	$("#main0 a").click(function(){
 		qaSearch($(this).text());
 	})
 	//竖向tab选项卡
      var $tab_li = $(".tab_title ul li");
-//     $(document).on("click")
      $tab_li.click(function(){
 	    $(this).addClass("slected").siblings().removeClass("slected");
 	    var index = $tab_li.index(this);
 		 $(".tab_content > div").eq(index).show().siblings().hide();
 	})   
-        
-    //智能查询tab选项卡
-//     var $tab2_li = $(".tab2_title ul li");
-//     $tab2_li.mouseover(function(){
-//	    $(this).addClass("slected2").siblings().removeClass("slected2");
-//	    var index = $tab2_li.index(this);
-//		 $(".tab2_content > div").eq(index).show().siblings().hide();
-//	})
 	
 	//智能查询tab选项卡
      $(document).on("mouseover",".tab2_title ul li",function(){
  	    $(this).addClass("slected2").siblings().removeClass("slected2");
- 	    var index = $(this).parent().children().index(this);
+ 	    var index = $(this).parent().children().index(this)+1;
  	    $(this).parents(".tab2_title").siblings().children().eq(index).show().siblings().hide(); 
      })
 
@@ -84,28 +77,34 @@ $(function(){
 })
 
 function qaSearch(question){
-	var param={
-			"question":encodeURIComponent(question),
-			"category":"政务知识",
-			"begin":0,
-			"end":5};
-	$.getJSON("/QASystem/admin/qaSearch.do",param,function(data){
-		addQuestion(question);
-		addAnswer(question,data);
-		scrollToBottom();
-	})
+	//显示问题并移动到底部
+	addQuestion(question);
+	scrollToBottom();
+	
+	//发起N次请求，N为config.js中分类的个数
+	var qaData={"msg":new Array()};
+	//记录当前Ajax执行的个数
+	var ajaxPos=0;
+	for(i=0;i<categoryArray.length;i++){
+		var param={
+				"question":encodeURIComponent(question),
+				"category":categoryArray[i],
+				"begin":0,
+				"end":5};
+		$.getJSON("/QASystem/admin/qaSearch.do",param,function(data){
+			ajaxPos++;
+			qaData.msg=qaData.msg.concat(data.msg);
+			if(ajaxPos==categoryArray.length){
+				//最后一个ajax请求返回，显示答案，并移动到底部
+				addAnswer(question,qaData);
+				scrollToBottom();
+			}
+		})
+	}
 	
 }
 function scrollToBottom(){
-//	$("#message").scrollTop(500)
-	console.log(parseInt($("#message")[0].scrollHeight)-parseInt($("#message").css("height")))
 	$("#message").scrollTop(parseInt($("#message")[0].scrollHeight)-parseInt($("#message").css("height")));
-//	console.log("before scrollHeight=["+$("#message")[0].scrollHeight+"] " +
-//			"height=["+$("#message").css("height")+"] scrollTop=["+$("#message")[0].scrollTop+"]");
-//	 $("#showMessage").scrollTop=$("#message").scrollTop($("#message")[0].scrollHeight-$("#message").css("height"));
-//	 $("#showMessage")[0].scrollTop="200px"
-//	 console.log("after scrollHeight=["+$("#message")[0].scrollHeight+"] " +
-//				"height=["+$("#message").css("height")+"] scrollTop=["+$("#message")[0].scrollTop+"]");
 }
 
 //追加问题
@@ -142,7 +141,11 @@ function addAnswer(question,qalist){
 		var curQa=""
 		//遍历这个分类下的答案
 		for(j=0;j<answerArray[i].qa.length;j++){
-			curQa+="<li><a href='"+answerArray[i].qa[j].url+"' target='_blank'>"+answerArray[i].qa[j].title+"</a></li>"
+			if(answerArray[i].qa[j].url.indexOf("http")==-1){
+				curQa+="<li><a href='http://"+answerArray[i].qa[j].url+"' target='_blank'>"+answerArray[i].qa[j].title+"</a></li>"
+			}else{
+				curQa+="<li><a href='"+answerArray[i].qa[j].url+"' target='_blank'>"+answerArray[i].qa[j].title+"</a></li>"
+			}
 		}
 		
 		//遍历分类
@@ -169,4 +172,11 @@ function setTab(m,n){
 	   tli[i].className=i==n?"hover":"";
 	   mli[i].style.display=i==n?"block":"none";
 	}
+	
+    //获取url中的参数
+    function getUrlParam(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+        var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+        if (r != null) return unescape(r[2]); return null; //返回参数值
+    }
 }  

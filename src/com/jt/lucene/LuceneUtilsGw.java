@@ -4,6 +4,7 @@ import java.nio.file.Paths;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.store.Directory;
@@ -24,8 +25,8 @@ public class LuceneUtilsGw {
 	
 	public LuceneUtilsGw(String path) throws IOException{
 		directory = FSDirectory.open(Paths.get(path));
-		 analyzer = new StandardAnalyzer();
-//		analyzer = new SmartChineseAnalyzer();
+//		 analyzer = new StandardAnalyzer();
+		analyzer = new SmartChineseAnalyzer();
 	}
 	public  Directory getDirectory() {
 		return directory;

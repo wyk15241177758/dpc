@@ -3,6 +3,7 @@ package com.jt.bean.gateway;
 public class PageMsg {
 	private boolean sig;
 	private Object msg;
+
 	public PageMsg(){
 		
 	}

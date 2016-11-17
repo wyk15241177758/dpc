@@ -135,7 +135,7 @@ public class QAManager {
 			question="";
 		}
 		List<Article> list=null;
-		if(category==null){
+		if(category==null||category.length()==0){
 			list=qaService.QASearch(question, iBegin,iEnd);
 		}else{
 			list=qaService.QASearchByCategory(question, category, iBegin, iEnd);

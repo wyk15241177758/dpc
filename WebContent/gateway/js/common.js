@@ -192,6 +192,15 @@ function deleteJob(curTrJobId){
 }
 
 $(document).ready(function () {
+	
+	//提示登录信息
+	var msg=getUrlParam("msg");
+	if(msg!=null&&msg.length>0){
+		$(".alert").html(msg);
+		$(".alert").show();
+		$(".alert").css("display","block");
+	}
+	
 	//获得任务列表
 	getJobList();
 	
@@ -412,3 +421,10 @@ $(document).ready(function () {
     })
     
 });
+
+//获取url中的参数
+function getUrlParam(name) {
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+    var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+    if (r != null) return unescape(r[2]); return null; //返回参数值
+}

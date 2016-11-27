@@ -3,7 +3,7 @@
 
 	<head>
 		<meta charset="utf-8">
-		<title>关键词</title>
+		<title>数据抽取系统-关键词管理</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta name="description" content="">
 		<meta name="author" content="">
@@ -33,22 +33,41 @@
 				<a class="navbar-brand" href=""> <img alt="Charisma Logo" src="img/logo20.png" class="hidden-xs" />
 					<span>数据抽取系统</span></a>
 
+
+<ul class="collapse navbar-collapse nav navbar-nav top-menu">
+				<li><a href="/QASystem/gateway/task.html"><i class="glyphicon glyphicon-globe"></i>
+						任务管理</a></li>
+				<li class="active"><a href="/QASystem/keyword/keywords.html"><i class="glyphicon glyphicon-globe"></i>
+						关键词管理</a></li>
+<!-- 				<li class="dropdown"><a href="/QASystem/keyword/keywords.html" data-toggle="dropdown"><i -->
+<!-- 						class="glyphicon glyphicon-star"></i> 关键词管理 <span class="caret"></span></a> -->
+<!-- 					<ul class="dropdown-menu" role="menu"> -->
+<!-- 						<li><a href="#">Action</a></li> -->
+<!-- 						<li><a href="#">Another action</a></li> -->
+<!-- 						<li><a href="#">Something else here</a></li> -->
+<!-- 						<li class="divider"></li> -->
+<!-- 						<li><a href="#">Separated link</a></li> -->
+<!-- 						<li class="divider"></li> -->
+<!-- 						<li><a href="#">One more separated link</a></li> -->
+<!-- 					</ul></li> -->
+				
+			</ul>
+
+
 				<!-- user dropdown starts -->
 				<div class="btn-group pull-right">
-					<button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-	                    <i class="glyphicon glyphicon-user"></i><span class="hidden-sm hidden-xs"> admin</span>
-	                    <span class="caret"></span>
-                    </button>
-					<ul class="dropdown-menu">
-						<li>
-							<a href="#">用户</a>
-						</li>
-						<li class="divider"></li>
-						<li>
-							<a href="login.html">退出</a>
-						</li>
-					</ul>
-				</div>
+				<button class="btn btn-default dropdown-toggle"
+					data-toggle="dropdown">
+					<i class="glyphicon glyphicon-user"></i><span
+						class="hidden-sm hidden-xs"> admin</span> <span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu">
+					<!-- 						<li> -->
+					<!-- 							<a href="#">用户</a> -->
+					<!-- 						</li> -->
+					<li><a href="/QASystem/admin/logout.act">退出</a></li>
+				</ul>
+			</div>
 				<!-- user dropdown ends -->
 
 			</div>

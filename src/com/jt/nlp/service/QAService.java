@@ -5,21 +5,16 @@ package com.jt.nlp.service;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
-
-import javax.annotation.PostConstruct;
 
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 
+import com.jt.keyword.bean.KeyWord;
 import com.jt.lucene.Article;
 import com.jt.lucene.IndexDao;
 @Service
@@ -56,9 +51,17 @@ public class QAService {
 	  * @return
 	  * 查询问题是否包含预设场景的词汇，此方法应该在lucene检索和NLP分析之前
 	  */
-	 private List<Article> presentScene(){
+	 private List<KeyWord> presentScene(String question){
 		 boolean presented=false;
-		 return null;
+		 //getKeyWords("预设场景")
+		 List<KeyWord> keyWordList= null;
+		 List<KeyWord> tagList=new ArrayList<KeyWord>();
+		 for(KeyWord tag:tagList){
+			 //遍历标签，
+			 //根据标签获得其对应的关键词
+			 keyWordList=null;
+		 }
+		 return keyWordList;
 	 }
 	 
 	 public List<Article> QASearch(String question,int size){
@@ -66,14 +69,19 @@ public class QAService {
 	 }
 	 
 	 public List<Article> QASearch(String question,int begin,int end){
+		 //检索结果
 		 List<Article> list=new ArrayList<Article>();
-		 list=presentScene();
+		 //预设场景
+		 List<KeyWord> keyWordList=null;
+		 keyWordList=presentScene(question);
 		 //未进入预设场景
-		 if(list==null){
+		 if(keyWordList==null||keyWordList.size()==0){
 			 Set<String> questionSet=nlpService.getSearchWords(question);
 			 String[] searchWord=new String[questionSet.size()];
 			 questionSet.toArray(searchWord);
 			 return searchService.searchArticle(searchWord, Article.getMapedFieldName("title"), begin, end);
+		 }else{
+			 
 		 }
 		 return list;
 	 }
@@ -81,7 +89,7 @@ public class QAService {
 	 //根据分类检索
 	 public List<Article> QASearchByCategory(String question,String category,int begin,int end){
 		 List<Article> list=new ArrayList<Article>();
-		 list=presentScene();
+		 list=null;
 		 //未进入预设场景
 		 if(list==null){
 			 Set<String> questionSet=nlpService.getSearchWords(question);

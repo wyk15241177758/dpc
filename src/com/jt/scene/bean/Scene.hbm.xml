@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="com.jt.scene.bean.Scene" table="scene">
+		<id name="sceneId" type="java.lang.Integer">
+			<column name="SCENEID" />
+			<generator class="native" />
+		</id>
+		<property name="sceneName" type="java.lang.String">
+			<column name="SCENENAME" length="64" not-null="true" />
+		</property>
+		<property name="enterWords" type="java.lang.String">
+			<column name="ENTERWORDS" length="500" not-null="true" />
+		</property>
+		<property name="outWords" type="java.lang.String">
+			<column name="OUTWORDS" not-null="true" />
+		</property>
+		<property name="createTime" type="java.sql.Timestamp" >
+			<column name="createtime" length="19" not-null="false" />
+		</property>
+		<property name="updateTime" type="java.sql.Timestamp">
+			<column name="updateTime" length="19" not-null="false" />
+		</property>
+	</class>
+</hibernate-mapping>

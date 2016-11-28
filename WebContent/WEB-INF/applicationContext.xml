@@ -62,7 +62,7 @@
 			<list>
 				<value>classpath*:com/jt/bean/gateway/*.hbm.xml</value>
 				<value>classpath*:com/jt/keyword/bean/*.hbm.xml</value>
-
+				<value>classpath*:com/jt/scene/bean/*.hbm.xml</value>
 			</list>
 		</property>
 
@@ -155,13 +155,20 @@
 		</property>
 	</bean>
 
+	<bean id="sceneServiceImpl" parent="baseTransactionProxyBean">
+		<property name="target">
+			<bean class=" com.jt.scene.service.impl.SceneServiceImpl" autowire="byName">
+			</bean>
+		</property>
+	</bean>
+
+
 	<bean id="indexDao" class=" com.jt.lucene.IndexDao" init-method="initInSpring">
 		<property name="indexPath" value="${lucene.indexPath}" />
 	</bean>
 
 
-	<bean id="qaService" class="com.jt.nlp.service.QAService" init-method="initNlp"
-		>
+	<bean id="qaService" class="com.jt.nlp.service.QAService" init-method="initNlp">
 		<property name="searchService">
 			<bean class="com.jt.nlp.service.LuceneSearchService" autowire="byName">
 				<property name="dao" ref="indexDao" />

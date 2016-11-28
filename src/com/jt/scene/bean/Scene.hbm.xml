@@ -14,10 +14,10 @@
 			<column name="ENTERWORDS" length="500" not-null="true" />
 		</property>
 		<property name="outWords" type="java.lang.String">
-			<column name="OUTWORDS" not-null="true" />
+			<column name="OUTWORDS" length="500" not-null="true" />
 		</property>
 		<property name="createTime" type="java.sql.Timestamp" >
-			<column name="createtime" length="19" not-null="false" />
+			<column name="CREATETIME" length="19" not-null="false" />
 		</property>
 		<property name="updateTime" type="java.sql.Timestamp">
 			<column name="updateTime" length="19" not-null="false" />

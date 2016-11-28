@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -24,6 +25,14 @@ public class SceneAction {
 	private SceneService sceneService;
 	private PageMsg msg;
 	private Gson gson;
+
+	public SceneService getSceneService() {
+		return sceneService;
+	}
+	@Resource(name="sceneServiceImpl") 
+	public void setSceneService(SceneService sceneService) {
+		this.sceneService = sceneService;
+	}
 
 	public SceneAction() {
 		msg = new PageMsg();
@@ -176,6 +185,7 @@ public class SceneAction {
 					scene.setEnterWords(enterWords);
 					scene.setOutWords(outWords);
 					scene.setUpdateTime(date);
+					sceneService.updateScene(scene);
 					msg.setMsg("修改场景[" + sceneName + "]成功");
 					msg.setSig(true);
 					pw.print(gson.toJson(msg));

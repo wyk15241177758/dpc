@@ -1,6 +1,7 @@
 package com.jt.gateway.service.operation;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -10,6 +11,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.FieldType;
+import org.apache.lucene.document.TextField;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -26,6 +29,7 @@ import com.jt.gateway.service.job.JobInfService;
 import com.jt.gateway.service.job.JobLogService;
 import com.jt.gateway.service.job.JobRunningLogService;
 import com.jt.gateway.util.FileUtil;
+import com.jt.lucene.Article;
 import com.jt.lucene.IndexDao;
 
 /**
@@ -158,8 +162,27 @@ public class IndexTask extends ApplicationObjectSupport implements Job {
 					}
 					logger.debug("value=[" + map.get(df.getName().toUpperCase()).toString() + "]" + " type= ["
 							+ df.getType() + "]");
-					doc.add(new Field(df.getName().toLowerCase(), map.get(df.getName().toUpperCase()).toString(),
-							df.getFieldType()));
+					//判断字段类型，如果是long类型则调用特殊的field，便于后续检索和排序
+					if("long".equals(Article.getFieldType(df.getName().toLowerCase()))){
+						try {
+							indexDao.addLongPoint(doc, df.getName().toLowerCase(),Long.parseLong( map.get(df.getName().toUpperCase()).toString()));
+						} catch (Exception e) {
+							e.printStackTrace();
+							logger.error("转换long类型错误 id=["+map.get("xq_id")+"]");
+						}
+					}else if("date".equals(Article.getFieldType(df.getName().toLowerCase()))){
+						try {
+							SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:SS");
+							indexDao.addLongPoint(doc, df.getName().toLowerCase(),sdf.parse(map.get(df.getName().toUpperCase()).toString()).getTime());
+						} catch (Exception e) {
+							e.printStackTrace();
+							e.printStackTrace();
+							logger.error("转换long/date类型错误 id=["+map.get("xq_id")+"]");
+						}
+					}else{
+						doc.add(new Field(df.getName().toLowerCase(), map.get(df.getName().toUpperCase()).toString(),
+								df.getFieldType()));
+					}
 				}
 				//压入list，后续统一写入索引文件
 				batchDocumentList.add(doc);
@@ -299,7 +322,7 @@ public class IndexTask extends ApplicationObjectSupport implements Job {
 					doc.add(new Field(df.getName().toLowerCase(), map.get(df.getName().toUpperCase()).toString(),
 							df.getFieldType()));
 				}
-
+				
 				logger.info("保存文档[" + doc.toString() + "]");
 				indexDao.save(doc);
 				// 记录推送的总数

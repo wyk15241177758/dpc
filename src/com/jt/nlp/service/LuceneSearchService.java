@@ -168,6 +168,21 @@ public class LuceneSearchService {
 		}
 		return dao.searchArticle(queryString,occurs,fields,sortField,sortFieldType, reverse , firstResult,  maxResult) ;
 	}
+	/**
+	 * 获得所有数据，必须传入maxResult个数限制
+	 * 最大数量
+	 * @param maxResult
+	 * 排序字段，如date,id，具体字段请见Article类的属性。注意不是xq_id等数据库字段，而是映射之后的id,date等字段
+	 * @param orderBy
+	 * 是否倒序，false为顺序，true为倒序
+	 * @param reverse
+	 * @return
+	 */
+	public List<Article> searchAll(int maxResult,String orderBy,boolean reverse) { 
+		String[] queryString={"1"};
+		return dao.searchArticle(queryString, Occur.MUST, "searchall", Article.getMapedFieldName(orderBy), SortField.Type.LONG, reverse, 0, maxResult);
+	}
+	
 	
 	public IndexDao getDao() {
 		return dao;

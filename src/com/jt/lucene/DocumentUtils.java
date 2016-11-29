@@ -1,6 +1,7 @@
 package com.jt.lucene;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.document.Document;
@@ -29,9 +30,9 @@ public class DocumentUtils {
 	public static Article document2Ariticle(Document doc) {
 		Article article = new Article();
 		try {
-			article.setId(Integer.parseInt(getColumnIgnoreCase(doc,article.getMapedFieldName("id"))));
+			article.setId(Long.parseLong(getColumnIgnoreCase(doc,article.getMapedFieldName("id"))));
 		} catch (NumberFormatException e) {
-			article.setId(0);
+			article.setId(0l);
 		}
 		article.setTitle(getColumnIgnoreCase(doc,article.getMapedFieldName("title")));
 		article.setUrl(getColumnIgnoreCase(doc,article.getMapedFieldName("url")));
@@ -39,13 +40,7 @@ public class DocumentUtils {
 		if(time==null){
 			article.setDate(null);
 		}else{
-			SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			try {
-				time=time.substring(0, time.indexOf("."));
-				article.setDate(sdf.parse(time));
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
+			article.setDate(new Date(Long.parseLong(time)));
 		}
 		article.setCategory(getColumnIgnoreCase(doc, article.getMapedFieldName("category")));
 		article.setChannel(getColumnIgnoreCase(doc, article.getMapedFieldName("channel")));

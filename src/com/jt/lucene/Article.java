@@ -16,7 +16,7 @@ public class Article {
 		return "Article [id=" + id + ", title=" + title + ", url=" + url + ", channel=" + channel + ", site=" + site
 				+ ", category=" + category + ", date=" + date + "]";
 	}
-	private Integer id;
+	private Long id;
 	private String title;
 	private String url;
 	private String channel;
@@ -48,7 +48,31 @@ public class Article {
 		}
 		return null;
 	}
-
+	
+	public static String getFieldType(String articleField){
+		if(articleField.equalsIgnoreCase("id")||articleField.equalsIgnoreCase("xq_id")){
+			return "long";
+		}
+		if(articleField.equalsIgnoreCase("title")||articleField.equalsIgnoreCase("xq_title")){
+			return "string";
+		}
+		if(articleField.equalsIgnoreCase("url")||articleField.equalsIgnoreCase("xq_url")){
+			return "string";
+		}
+		if(articleField.equalsIgnoreCase("channel")||articleField.equalsIgnoreCase("lm_name")){
+			return "string";
+		}
+		if(articleField.equalsIgnoreCase("site")||articleField.equalsIgnoreCase("zd_name")){
+			return "string";
+		}
+		if(articleField.equalsIgnoreCase("category")||articleField.equalsIgnoreCase("sjfl")){
+			return "string";
+		}
+		if(articleField.equalsIgnoreCase("date")||articleField.equalsIgnoreCase("load_time")){
+			return "date";
+		}
+		return null;
+	}
 	public String getChannel() {
 		return channel;
 	}
@@ -67,10 +91,10 @@ public class Article {
 	public void setCategory(String category) {
 		this.category = category;
 	}
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 	public String getTitle() {

@@ -31,7 +31,7 @@ public class LunceneTest {
     	   IndexWriterConfig config = new IndexWriterConfig(util.getAnalyzer());
             writer = new IndexWriter(util.getDirectory(),config);
             Article article=new Article();
-            article.setId(1);
+            article.setId(1l);
             article.setTitle("我们为电影《晚上》是一部不错的影片");
             article.setCategory("政务知识");
             article.setChannel("新闻");
@@ -40,7 +40,7 @@ public class LunceneTest {
             article.setUrl("http://yueyang.gov.cn/gggs/shts/9546/content_601504.html");
             writer.addDocument(DocumentUtils.article2Document(article));
             article=new Article();
-            article.setId(2);
+            article.setId(2l);
             article.setTitle("我们今天晚上没有事");
             article.setCategory("政务消息");
             article.setChannel("互动交流");
@@ -49,7 +49,7 @@ public class LunceneTest {
             article.setUrl("http://www.yueyang.gov.cn/webapp/yueyang/email/viewPublic.jsp?id=76276");
             writer.addDocument(DocumentUtils.article2Document(article));
             article=new Article();
-            article.setId(3);
+            article.setId(3l);
             article.setTitle("今天晚上看电影");
             article.setCategory("政务知识");
             article.setChannel("新闻");
@@ -58,7 +58,7 @@ public class LunceneTest {
             article.setUrl("http://yueyang.gov.cn/gggs/shts/9546/content_601504.html");
             writer.addDocument(DocumentUtils.article2Document(article));
             article=new Article();
-            article.setId(4);
+            article.setId(4l);
             article.setTitle("我们认为电影不错电视也不错");
             article.setCategory("社会常识");
             article.setChannel("新闻");
@@ -67,7 +67,7 @@ public class LunceneTest {
             article.setUrl("http://yueyang.gov.cn/gggs/shts/9546/content_601504.html");
             writer.addDocument(DocumentUtils.article2Document(article));
             article=new Article();
-            article.setId(5);
+            article.setId(5l);
             article.setTitle("政府政策亚克西");
             article.setCategory("市场要闻");
             article.setChannel("新闻");

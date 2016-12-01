@@ -150,7 +150,24 @@
 
 									</tbody>
 								</table>
+<!-- 任务日志 开始-->
+								<div role="tabpanel">
+									<!-- Nav tabs -->
+									<ul class="nav nav-tabs" role="tablist">
+										<li role="presentation" class="active"><a href="#log"
+											aria-controls="log" role="tab" data-toggle="tab"><strong>预览结果</strong></a></li>
+										</ul>
 
+									<!-- Tab panes -->
+									<div class="tab-content">
+										<div role="tabpanel" class="tab-pane active" id="log">
+
+											<!--  1.xxxxxxxxxxxxxxxxxxxxxxxxxxxxx<br/>
+									    	2.xxxxxxxxxxxxxxxxxxxxxxxxxxxxx<br/>-->
+										</div>
+									</div>
+								</div>
+								<!-- 任务日志 结束-->
 							</div>
 						</div>
 					</div>
@@ -202,6 +219,16 @@
 									name='outWords' placeholder="英文分号分割多个出口词">
 							</div>
 						</div>
+						
+						<div class="form-inline">
+							<div class="form-group">
+								<label class="control-label">测试词</label> 
+								<div class="token" style="box-sizing:border-box;display:inline-block;border-radius:3px;margin:-1px 5px 5px 0;vertical-align:top;cursor:default;padding: 0 7px;height:24px;line-height:24px;border:1px solid #f2f2f2;background-color:#f2f2f2;font-size:13px">
+									<span class="token-label" style="max-width: 307px;display:inline-block;over-flow:hidden;font-size:13px;color:gray;white-space:nowrap">123456789012</span>
+									<a href="#" class="close" tabindex="-1">×</a>
+								</div>
+							</div>
+						</div>
 					</div>
 					<div class="modal-footer">
 						<a href="#" class="btn btn-default" data-dismiss="modal">关闭</a> <a
@@ -234,6 +261,28 @@
 		<!-- 提示浮层结束-->
 
 	
+		<!-- 删除提示浮层开始-->
+		<div class="modal fade" id="warnModal-del" tabindex="-1" role="dialog"
+			aria-labelledby="myModalLabel" aria-hidden="true">
+
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">×</button>
+						<h3>提示信息</h3>
+					</div>
+					<div class="modal-body">
+						<p id="warnmsg-del"></p>
+					</div>
+					<div class="modal-footer" id="del-footer">
+						<a href="#" class="btn btn-default" data-dismiss="modal">关闭</a> <a
+							href="#" class="btn btn-default" data-dismiss="modal"
+							id="delconfirm">确定</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- 删除提示浮层结束-->
 
 		<!-- 保存浮层开始-->
 		<div class="modal fade" id="saveModal" tabindex="-1" role="dialog"

@@ -103,35 +103,31 @@ function refreshJobLog(){
 
 //获得场景列表
 function getSceneList(){
-    $.getJSON("/QASystem/admin/listScenes.do",null,function(data){
+    $.getJSON("/QASystem/admin/scene/listScenes.do",null,function(data){
     	$("#tbody_joblist").html("");
     	if(data.length==0){
-    		$("#tbody_joblist").append("<tr><td colspan='6'>暂无任务</td></tr>");
+    		$("#tbody_joblist").append("<tr><td colspan='5'>暂无场景</td></tr>");
     	}
     	
-    	for(job in data){
+    	for(scene in data){
     		var cur_td="";
-    		cur_td=list_template.replace(/\{jobname\}/g,data[job].jobName);
-    		cur_td=cur_td.replace(/\{jobid\}/g,data[job].jobId);
-    		if(data[job].jobStatus==1){
-    			cur_td=cur_td.replace(/\{jobstatus\}/g,"未执行");
-    			cur_td=cur_td.replace(/\{status_class\}/g,"label-warning");
-    		}else{
-    			cur_td=cur_td.replace(/\{jobstatus\}/g,"正在执行");
-    			cur_td=cur_td.replace(/\{status_class\}/g,"label-success");
-    		}
+    		cur_td=list_template.replace(/\{sceneName\}/g,data[scene].sceneName);
+    		cur_td=cur_td.replace(/\{sceneId\}/g,data[scene].sceneId);
+    		cur_td=cur_td.replace(/\{enterWords\}/g,data[scene].enterWords);
+    		cur_td=cur_td.replace(/\{outWords\}/g,data[scene].outWords);
+    		cur_td=cur_td.replace(/\{createTime\}/g,data[scene].createTime);
     		$("#tbody_joblist").append(cur_td);
     	}
     })
 }
-//删除任务
-function deleteJob(curTrJobId){
-	var param={"jobid":curTrJobId};
-	if(curTrJobId!=undefined){
-		  $.getJSON("/QASystem/admin/delJob.do",param,function(data){
+//删除场景
+function deleteScene(curTrSceneId){
+	var param={"sceneId":curTrSceneId};
+	if(curTrSceneId!=undefined){
+		  $.getJSON("/QASystem/admin/scene/delScene.do",param,function(data){
 			  if(data==null||typeof(data.sig)=='undefined'
 				  ||typeof(data.msg)=='undefined'){
-					$('#warnmsg').html("删除jobid=["+param.jobid+"]的任务信息失败");
+				$('#warnmsg').html("删除sceneId=["+param.sceneId+"]的场景信息失败");
           		$('#warnModal').modal('show');
 			  }else{
 				$('#warnmsg').html(data.msg);
@@ -152,27 +148,16 @@ $(document).ready(function () {
 		$(".alert").css("display","block");
 	}
 	
-	//获得任务列表
-	getJobList();
+	//获得场景列表
+	getSceneList();
 	
-    //点击刷新任务日志
-    $("#refresh_a").click(function(){
-    	refreshJobLog();
-    })
-    //每隔5s自动刷新
-    window.setInterval("refreshJobLog()", 5000);
-	
-    //新建任务
+    //新建场景
     $('.btn-setting').click(function (e) {
         e.preventDefault();
         //先清空现有的输入框内容
     	$("#setModal").find("input").each(function(){
     		$(this).val("");
     	})
-    	//任务名称改成可以编辑
-    	$("input[name='taskname']").removeAttr("disabled");
-    	//改为新增模式
-    	$("input[name='saveOrUpdate']").val("save");
         $('#setModal').modal('show');
     });
     //提示浮层弹出
@@ -182,31 +167,6 @@ $(document).ready(function () {
         
     });
     
-    //点击立即启动按钮，修改全局变量curJobId为点击的jobid，且立即启动
-    $(document).on("click","a[action='startImmediate']",function(){
-    	var curTrJobId=$(this).parents("tr").attr("jobid");
-    	var param={"jobid":curTrJobId};
-    	$.getJSON("/QASystem/admin/startImmediate.do",param,function(data){
-    		//nothing to do
-    	});
-    	if(curTrJobId!=undefined){
-    		curJobId=curTrJobId;
-    		console.log("修改curJobId为"+curJobId)
-    		refreshJobLog();
-    	}
-    })
-    
-    
-    
-    //点击查看日志按钮，修改全局变量curJobId为点击的jobid
-    $(document).on("click","a[action='joblog_a']",function(){
-    	var curTrJobId=$(this).parents("tr").attr("jobid");
-    	if(curTrJobId!=undefined){
-    		curJobId=curTrJobId;
-    		console.log("修改curJobId为"+curJobId)
-    		refreshJobLog();
-    	}
-    })
     
     //点击编辑
     $(document).on("click","a[action='edit_a']",function(){
@@ -214,60 +174,24 @@ $(document).ready(function () {
     	$("#setModal").find("input").each(function(){
     		$(this).val("");
     	})
-    	//改为编辑模式
-    	$("input[name='saveOrUpdate']").val("update");
-    	var curTrJobId=$(this).parents("tr").attr("jobid");
-    	var param={"jobid":curTrJobId};
-    	if(curTrJobId!=undefined){
-    		  $.getJSON("/QASystem/admin/getJobAndFields.do",param,function(data){
+    	var curTrSceneId=$(this).parents("tr").attr("sceneId");
+    	var param={"sceneId":curTrSceneId};
+    	if(curTrSceneId!=undefined){
+    		  $.getJSON("/QASystem/admin/scene/getScene.do",param,function(data){
     			  if(data==null||typeof(data.sig)=='undefined'
-    				  ||typeof(data.msg)=='undefined'||typeof(data.msg.jobinf)=='undefined'
-    					  ||typeof(data.msg.config)=='undefined'){
-    					$('#warnmsg').html("获得jobid=["+param.jobid+"]的任务信息失败");
+    				  ||typeof(data.msg)=='undefined'){
+    					$('#warnmsg').html("获得id=["+param.sceneId+"]的场景信息失败");
                 		$('#warnModal').modal('show');
     			  }else if(data.sig==false){
+    				  console.log(11);
     				$('#warnmsg').html(data.msg);
               		$('#warnModal').modal('show');
     			  }else{
     				  //给弹出层赋值
-					  var jobinf=data.msg.jobinf;
-					  var config=data.msg.config;
-					  //任务名称不允许修改
-					  $("input[name='taskname']").attr("disabled","");
-					  $("input[name='taskname']").val(jobinf.jobName);
-	       			  $("input[name='indexpath']").val(jobinf.indexPath);
-	       			  //分钟
-	       			  $("input[name='internalmin']").val(jobinf.cronExpression.split(" ")[1].split("/")[1]);
-	       			  //小时
-	       			  if(jobinf.cronExpression.split(" ")[2]=='*'){
-	       				  $("input[name='internalhour']").val(0);
-	       			  }else{
-	       				  $("input[name='internalhour']").val(jobinf.cronExpression.split(" ")[2].split("/")[1]);
-	       			  }
-	       			  
-	       			  $("input[name='sqlip']").val(jobinf.sqlIp);
-	       			  $("input[name='sqlport']").val(jobinf.sqlPort);
-	       			  $("input[name='sqluser']").val(jobinf.sqlUser);
-	       			  $("input[name='sqlpw']").val(jobinf.sqlPw);
-	       			  $("input[name='sqldb']").val(jobinf.sqlDb);
-	       			  $("input[name='sqltable']").val(jobinf.sqlTable);
-	       			  //sql字段
-	       			  $("#data-syn").html("");
-	       			  for(i in config){
-	       				 var dataset = '<div class="form-inline">'+
-		                    '<div class="checkbox-inline" style="margin-right:4px">'+
-								'<label><input type="checkbox" '+(config[i].tableKey?'checked':'')+'/>主键</label>'+
-							'</div>'+
-	                        '<div class="form-group data-syn">'+
-			                    '<input type="text" class="form-control" value="'+config[i].name+'"/>'+
-			                    '<select class="form-control">'+
-								  '<option '+(config[i].type=='存储'?'selected':'')+'>存储</option>'+
-								  '<option '+(config[i].type=='检索'?'selected':'')+'>检索</option>'+
-								'</select>'+
-			                '</div>'+
-			            '</div>	';
-	       				 $("#data-syn").append(dataset)
-	       			  }
+	       			  $("input[name='sceneId']").val(data.msg.sceneId);
+	       			  $("input[name='sceneName']").val(data.msg.sceneName);
+	       			  $("input[name='enterWords']").val(data.msg.enterWords);
+	       			  $("input[name='outWords']").val(data.msg.outWords);
 	       			  //显示设置浮层
 	       			 $('#setModal').modal('show');
     			  }
@@ -278,10 +202,10 @@ $(document).ready(function () {
     
     //删除任务
     $(document).on("click","a[action='delete_a']",function(){
-    	var curTrJobId=$(this).parents("tr").attr("jobid");
-    	var curTrJobName=$(this).parents("tr").attr("jobname");
-    	$('#warnmsg-del').html("确定要删除任务["+curTrJobName+"]吗？删除后无法恢复");
-    	$('#warnmsg-del').attr("deljobid",curTrJobId)
+    	var curTrSceneId=$(this).parents("tr").attr("sceneId");
+    	var curTrSceneName=$(this).parents("tr").attr("sceneName");
+    	$('#warnmsg-del').html("确定要删除场景["+curTrSceneName+"]吗？删除后无法恢复");
+    	$('#warnmsg-del').attr("delSceneId",curTrSceneId)
     	$("#warnModal-del").modal('show');
 //    	
 //    	if(curTrJobId!=undefined){
@@ -301,20 +225,13 @@ $(document).ready(function () {
     //点击删除确认按钮
     $("#delconfirm").click(function(){
     	$("#warnModal-del").show("hidden");
-    	deleteJob($('#warnmsg-del').attr("deljobid"));
+    	deleteScene($('#warnmsg-del').attr("delSceneId"));
     })
     
     //保存浮层弹出
     $('.btn-save').click(function (e) {
     	e.preventDefault();
-    	//新增或修改模式为不同的url
-    	var operationUrl="";
-    	if($("input[name='saveOrUpdate']").val()=="update"){
-    		operationUrl="/QASystem/admin/updateJob.do";
-    	}else{
-    		operationUrl="/QASystem/admin/addJob.do";
-    	}
-    	parseFields();
+    	var operationUrl="/QASystem/admin/scene/saveOrUpdateScene.do";
     	if(!paramCheck()){
     		 //paramCheck中处理
     	}else{
@@ -327,8 +244,6 @@ $(document).ready(function () {
             })
             $.getJSON(operationUrl,param,function(data){
             	$('#saveModal').modal('hide');
-            	//console.log(data)
-            	//console.log(data.sig==false)
             	if(data.sig==false){
             		$('#warnmsg').html(data.msg);
             		$('#warnModal').modal('show');
@@ -340,7 +255,7 @@ $(document).ready(function () {
             			$('#warnModal').modal('hide');
             			$('#setModal').modal('hide');
             			//刷新任务列表
-                		getJobList();
+                		getSceneList();
             		}, 2000)
             		
             	}
@@ -353,23 +268,6 @@ $(document).ready(function () {
     $('#saveModal').on('hide.bs.modal', function () {
 	   $('#setModal').css("z-index","1050");
 	})
-    //新建同步字段
-    $(".data-add").click(function(){  	
-	    var dataset = '<div class="form-inline">'+
-		                    '<div class="checkbox-inline" style="margin-right:4px">'+
-								'<label><input type="checkbox" />主键</label>'+
-							'</div>'+
-	                        '<div class="form-group data-syn">'+
-			                    '<input type="text" class="form-control"/>'+
-			                    '<select class="form-control">'+
-								  '<option>存储</option>'+
-								  '<option>检索</option>'+
-								'</select>'+
-			                '</div>'+
-			            '</div>	';
-	   $("#data-syn").append(dataset)
-    	//$("#data-syn").append("<div class='form-inline'><div><input type='text'/></div></div>")
-    })
     
 });
 

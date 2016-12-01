@@ -11,14 +11,7 @@ import java.util.Date;
  */
 public class Scene {
 	private Integer sceneId;
-	public Integer getSceneId() {
-		return sceneId;
-	}
-
-	public void setSceneId(Integer sceneId) {
-		this.sceneId = sceneId;
-	}
-	private String SceneName;
+	private String sceneName;
 	private String enterWords;
 	private String outWords;
 	private Date createTime;
@@ -32,7 +25,7 @@ public class Scene {
 	public Scene(Integer sceneId, String sceneName, String enterWords, String outWords, Date createTime,
 			Date updateTime) {
 		this.sceneId = sceneId;
-		SceneName = sceneName;
+		this.sceneName = sceneName;
 		this.enterWords = enterWords;
 		this.outWords = outWords;
 		this.createTime = createTime;
@@ -51,12 +44,15 @@ public class Scene {
 	public void setUpdateTime(Date updateTime) {
 		this.updateTime = updateTime;
 	}
+
 	public String getSceneName() {
-		return SceneName;
+		return sceneName;
 	}
+
 	public void setSceneName(String sceneName) {
-		SceneName = sceneName;
+		this.sceneName = sceneName;
 	}
+
 	public String getEnterWords() {
 		return enterWords;
 	}
@@ -69,6 +65,12 @@ public class Scene {
 	public void setOutWords(String outWords) {
 		this.outWords = outWords;
 	}
-	
+	public Integer getSceneId() {
+		return sceneId;
+	}
+
+	public void setSceneId(Integer sceneId) {
+		this.sceneId = sceneId;
+	}
 	
 }

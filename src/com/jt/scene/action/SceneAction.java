@@ -40,7 +40,7 @@ public class SceneAction {
 	}
 
 	@RequestMapping(value = "/addScene.do")
-	public void addJob(HttpServletRequest request, HttpServletResponse response) {
+	public void addScene(HttpServletRequest request, HttpServletResponse response) {
 		response.setCharacterEncoding("utf-8");
 		msg = new PageMsg();
 		PrintWriter pw = null;
@@ -211,6 +211,17 @@ public class SceneAction {
 		}
 	}
 
+	@RequestMapping("/saveOrUpdateScene.do")
+	public void saveOrUpdateScene(HttpServletRequest request, HttpServletResponse response) {
+		String sceneId=request.getParameter("sceneId");
+		//新增模式
+		if(sceneId==null||sceneId.length()==0){
+			addScene(request, response);
+		}else{
+			//修改模式
+			updateScene(request, response);
+		}
+	}
 	@RequestMapping("/listScenes.do")
 	public void listScenes(HttpServletRequest request, HttpServletResponse response) {
 		response.setCharacterEncoding("utf-8");
@@ -225,5 +236,56 @@ public class SceneAction {
 		List<Scene> list = sceneService.getAllScenes();
 		pw.print(gson.toJson(list));
 	}
-
+	
+	@RequestMapping("/getScene.do")
+	public void getScene(HttpServletRequest request, HttpServletResponse response) {
+		response.setCharacterEncoding("utf-8");
+		msg = new PageMsg();
+		PrintWriter pw = null;
+		try {
+			pw = response.getWriter();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+			return;
+		}
+		Scene scene = null;
+		Integer sceneId = 0;
+		try {
+			sceneId = Integer.parseInt(CMyString.getStrNotNullor0(request.getParameter("sceneId"), "0"));
+		} catch (Exception e) {
+			e.printStackTrace();
+			msg.setMsg("获得场景id=[" + sceneId + "]失败,错误信息为[转换sceneId类型失败]");
+			msg.setSig(false);
+			pw.print(gson.toJson(msg));
+			return;
+		}
+		scene = sceneService.getSceneById(sceneId);
+		if (sceneId != 0 && scene != null) {
+			try {
+				// 该场景不存在则不能修改
+				scene = sceneService.getSceneById(sceneId);
+				if (scene == null) {
+					msg.setMsg("获得场景[" + sceneId + "]失败，错误信息为:[该场景不存在]");
+					msg.setSig(false);
+					pw.print(gson.toJson(msg));
+					return;
+				}
+				msg.setMsg(scene);
+				msg.setSig(true);
+				pw.print(gson.toJson(msg));
+				return;
+			} catch (Exception e) {
+				e.printStackTrace();
+				msg.setMsg("获得场景[" + sceneId + "]失败，错误信息为:[" + e.getMessage() + "]");
+				msg.setSig(false);
+				pw.print(gson.toJson(msg));
+				return;
+			}
+		} else {
+			msg.setMsg("获得场景[" + sceneId + "]失败,错误信息为[未获得场景ID或不存在指定的场景]");
+			msg.setSig(false);
+			pw.print(gson.toJson(msg));
+			return;
+		}
+	}
 }

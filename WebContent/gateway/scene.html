@@ -34,11 +34,11 @@
 
 
 			<ul class="collapse navbar-collapse nav navbar-nav top-menu">
-				<li  class="active"><a href="/QASystem/gateway/task.html"><i class="glyphicon glyphicon-globe"></i>
+				<li ><a href="/QASystem/gateway/task.html"><i class="glyphicon glyphicon-globe"></i>
 						任务管理</a></li>
 				<li><a href="/QASystem/keyword/keywords.html"><i class="glyphicon glyphicon-globe"></i>
 						关键词管理</a></li>
-				<li><a href="/QASystem/gateway/scene.html"><i class="glyphicon glyphicon-globe"></i>
+				<li class="active"><a href="/QASystem/gateway/scene.html"><i class="glyphicon glyphicon-globe"></i>
 						预设场景管理</a></li>						
 <!-- 				<li class="dropdown"><a href="/QASystem/keyword/keywords.html" data-toggle="dropdown"><i -->
 <!-- 						class="glyphicon glyphicon-star"></i> 关键词管理 <span class="caret"></span></a> -->
@@ -179,6 +179,7 @@
 						<h3>新建/修改场景</h3>
 					</div>
 					<div class="modal-body">
+					<input type="hidden" name="sceneId" value="0"/>
 						<div class="form-inline">
 							<div class="form-group">
 								<label class="control-label">场景名称</label> <input type="text"
@@ -263,7 +264,7 @@
 	<script src="js/bootstrap.min.js"></script>
 	<!-- library for making tables responsive -->
 	<script src="js/responsive-tables.js"></script>
-	<script src="js/common.js"></script>
+	<script src="js/scene.js"></script>
 
 </body>
 

@@ -18,13 +18,11 @@ import com.jt.bean.gateway.PageMsg;
 import com.jt.gateway.util.CMyString;
 import com.jt.scene.bean.Scene;
 import com.jt.scene.service.SceneService;
-import com.jt.scene.service.SceneWordService;
 
 @Controller
 @RequestMapping("/scene")
 public class SceneAction {
 	private SceneService sceneService;
-	private SceneWordService sceneWordService;
 	private PageMsg msg;
 	private Gson gson;
 
@@ -36,15 +34,6 @@ public class SceneAction {
 		this.sceneService = sceneService;
 	}
 
-	
-	public SceneWordService getSceneWordService() {
-		return sceneWordService;
-	}
-	
-	@Resource(name="sceneWordServiceImpl") 
-	public void setSceneWordService(SceneWordService sceneWordService) {
-		this.sceneWordService = sceneWordService;
-	}
 	public SceneAction() {
 		msg = new PageMsg();
 		gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
@@ -62,10 +51,13 @@ public class SceneAction {
 			return;
 		}
 		Scene scene = null;
-		// 参数是否合法:包含场景名称即可
+		// 参数是否合法:同时包含场景名称、入口词、出口词即可
 		String sceneName = request.getParameter("sceneName");
+		String enterWords = request.getParameter("enterWords");
+		String outWords = request.getParameter("outWords");
 
-		if (sceneName != null && sceneName.length() > 0 ) {
+		if (sceneName != null && sceneName.length() > 0 && enterWords != null && enterWords.length() > 0
+				&& outWords != null && outWords.length() > 0) {
 			try {
 				// 该场景是否已经存在
 				scene = sceneService.getSceneByName(sceneName);
@@ -77,7 +69,7 @@ public class SceneAction {
 				}
 				// 不存在则写入数据库
 				Date date = new Date();
-				scene = new Scene(null, sceneName, date, null);
+				scene = new Scene(null, sceneName, enterWords, outWords, date, null);
 				sceneService.addScene(scene);
 
 				msg.setMsg("新增场景[" + sceneName + "]成功");
@@ -100,7 +92,7 @@ public class SceneAction {
 
 	}
 
-	// 删除场景，级联删除相关的场景词
+	// 删除任务
 	@RequestMapping(value = "delScene.do")
 	public void delScene(HttpServletRequest request, HttpServletResponse response) {
 		msg = new PageMsg();
@@ -126,11 +118,8 @@ public class SceneAction {
 		Scene scene = sceneService.getSceneById(sceneId);
 		if (sceneId != 0 && scene != null) {
 			try {
-				//删除关联的sceneWord
-				sceneService.get
 				// 删除scene信息
 				sceneService.deleteScene(scene);
-				
 			} catch (Exception e) {
 				msg.setMsg("删除场景[" + scene.getSceneName() + "]失败，错误信息:[" + e.getMessage() + "]");
 				pw.print(gson.toJson(msg));

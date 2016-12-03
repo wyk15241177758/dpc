@@ -2,13 +2,19 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-	<class name="com.jt.scene.bean.Scene" table="scene">
-		<id name="sceneId" type="java.lang.Integer">
-			<column name="SCENEID" />
+	<class name="com.jt.scene.bean.SceneWord" table="sceneword">
+		<id name="sceneWordId" type="java.lang.Integer">
+			<column name="SCENEWORDID" />
 			<generator class="native" />
 		</id>
 		<property name="sceneName" type="java.lang.String">
 			<column name="SCENENAME" length="64" not-null="true" />
+		</property>
+		<property name="enterWords" type="java.lang.String">
+			<column name="ENTERWORDS" length="500" not-null="true" />
+		</property>
+		<property name="outWords" type="java.lang.String">
+			<column name="OUTWORDS" length="500" not-null="true" />
 		</property>
 		<property name="createTime" type="java.sql.Timestamp" >
 			<column name="CREATETIME" length="19" not-null="false" />

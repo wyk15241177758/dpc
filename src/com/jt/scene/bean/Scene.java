@@ -1,9 +1,10 @@
 package com.jt.scene.bean;
 
 import java.util.Date;
+import java.util.List;
 
 /**
- * 预设场景，包括场景名称、入口词、出口词。其中入口词和出口词都是多个词的组合，使用英文分号分割
+ * 预设场景类型，包括场景名称和ID
  * 
  * @author zxb
  *
@@ -12,26 +13,33 @@ import java.util.Date;
 public class Scene {
 	private Integer sceneId;
 	private String sceneName;
-	private String enterWords;
-	private String outWords;
 	private Date createTime;
 	private Date updateTime;
-	
+	private List<SceneWord> sceneWordList;
 	public Scene(){
 		
 	}
 	
-	
-	public Scene(Integer sceneId, String sceneName, String enterWords, String outWords, Date createTime,
-			Date updateTime) {
+	public Scene(Integer sceneId, String sceneName, Date createTime, Date updateTime) {
+		super();
 		this.sceneId = sceneId;
 		this.sceneName = sceneName;
-		this.enterWords = enterWords;
-		this.outWords = outWords;
 		this.createTime = createTime;
 		this.updateTime = updateTime;
 	}
 
+	public Integer getSceneId() {
+		return sceneId;
+	}
+	public void setSceneId(Integer sceneId) {
+		this.sceneId = sceneId;
+	}
+	public String getSceneName() {
+		return sceneName;
+	}
+	public void setSceneName(String sceneName) {
+		this.sceneName = sceneName;
+	}
 	public Date getCreateTime() {
 		return createTime;
 	}
@@ -44,33 +52,12 @@ public class Scene {
 	public void setUpdateTime(Date updateTime) {
 		this.updateTime = updateTime;
 	}
-
-	public String getSceneName() {
-		return sceneName;
+	public List<SceneWord> getSceneWordList() {
+		return sceneWordList;
+	}
+	public void setSceneWordList(List<SceneWord> sceneWordList) {
+		this.sceneWordList = sceneWordList;
 	}
 
-	public void setSceneName(String sceneName) {
-		this.sceneName = sceneName;
-	}
-
-	public String getEnterWords() {
-		return enterWords;
-	}
-	public void setEnterWords(String enterWords) {
-		this.enterWords = enterWords;
-	}
-	public String getOutWords() {
-		return outWords;
-	}
-	public void setOutWords(String outWords) {
-		this.outWords = outWords;
-	}
-	public Integer getSceneId() {
-		return sceneId;
-	}
-
-	public void setSceneId(Integer sceneId) {
-		this.sceneId = sceneId;
-	}
 	
 }

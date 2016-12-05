@@ -7,6 +7,9 @@
 			<column name="SCENEWORDID" />
 			<generator class="native" />
 		</id>
+		<property name="sceneId" type="java.lang.String">
+			<column name="SCENEID" length="64" not-null="true" />
+		</property>
 		<property name="sceneName" type="java.lang.String">
 			<column name="SCENENAME" length="64" not-null="true" />
 		</property>

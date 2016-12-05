@@ -1,4 +1,9 @@
 $(document).ready(function () {
+	//头部的入口链接地址增加random，避免缓存
+	$(".top-menu a").each(function(){
+		$(this).attr("href",$(this).attr("href")+"?rand="+Math.random());
+	})
+	
     //设置浮层弹出
 //    $('.btn-setting').click(function (e) {
 //        e.preventDefault();

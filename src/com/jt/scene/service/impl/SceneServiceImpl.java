@@ -13,7 +13,6 @@ public class SceneServiceImpl  extends BasicServicveImpl implements SceneService
 	
 	private SceneWordService sceneWordService;
 	
-	
 	public SceneWordService getSceneWordService() {
 		return sceneWordService;
 	}

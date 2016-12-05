@@ -10,9 +10,9 @@ import java.util.Date;
  * 2016年11月27日
  */
 public class SceneWord {
+	private Integer sceneWordId;
 	private Integer sceneId;
 	private String sceneName;
-	private Integer sceneWordId;
 	private String enterWords;
 	private String outWords;
 	private Date createTime;
@@ -23,7 +23,7 @@ public class SceneWord {
 	}
 
 	
-	public SceneWord(Integer sceneId, String sceneName, Integer sceneWordId, String enterWords, String outWords,
+	public SceneWord(Integer sceneWordId,Integer sceneId, String sceneName,  String enterWords, String outWords,
 			Date createTime, Date updateTime) {
 		super();
 		this.sceneId = sceneId;

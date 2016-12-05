@@ -158,10 +158,17 @@
 	<bean id="sceneServiceImpl" parent="baseTransactionProxyBean">
 		<property name="target">
 			<bean class=" com.jt.scene.service.impl.SceneServiceImpl" autowire="byName">
+			<property name="sceneWordService" ref="sceneWordServiceImpl"></property>
 			</bean>
 		</property>
 	</bean>
-
+	
+	<bean id="sceneWordServiceImpl" parent="baseTransactionProxyBean">
+		<property name="target">
+			<bean class=" com.jt.scene.service.impl.SceneWordServiceImpl" autowire="byName">
+			</bean>
+		</property>
+	</bean>
 
 	<bean id="indexDao" class=" com.jt.lucene.IndexDao" init-method="initInSpring">
 		<property name="indexPath" value="${lucene.indexPath}" />

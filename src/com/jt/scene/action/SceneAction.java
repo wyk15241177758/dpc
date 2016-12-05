@@ -17,6 +17,7 @@ import com.google.gson.GsonBuilder;
 import com.jt.bean.gateway.PageMsg;
 import com.jt.gateway.util.CMyString;
 import com.jt.scene.bean.Scene;
+import com.jt.scene.bean.SceneWord;
 import com.jt.scene.service.SceneService;
 import com.jt.scene.service.SceneWordService;
 
@@ -127,10 +128,11 @@ public class SceneAction {
 		if (sceneId != 0 && scene != null) {
 			try {
 				//删除关联的sceneWord
-				sceneService.get
+				for(SceneWord curSceneWord:sceneWordService.getWordsBySceneId(scene.getSceneId())){
+					sceneWordService.deleteSceneWord(curSceneWord);
+				}
 				// 删除scene信息
 				sceneService.deleteScene(scene);
-				
 			} catch (Exception e) {
 				msg.setMsg("删除场景[" + scene.getSceneName() + "]失败，错误信息:[" + e.getMessage() + "]");
 				pw.print(gson.toJson(msg));
@@ -164,8 +166,6 @@ public class SceneAction {
 		Scene scene = null;
 		// 参数是否合法:同时包含场景ID、场景名称、入口词、出口词即可
 		String sceneName = request.getParameter("sceneName");
-		String enterWords = request.getParameter("enterWords");
-		String outWords = request.getParameter("outWords");
 
 		Integer sceneId = 0;
 		try {
@@ -179,8 +179,7 @@ public class SceneAction {
 		}
 		scene = sceneService.getSceneById(sceneId);
 		if (sceneId != 0 && scene != null) {
-			if (sceneName != null && sceneName.length() > 0 && enterWords != null && enterWords.length() > 0
-					&& outWords != null && outWords.length() > 0) {
+			if (sceneName != null && sceneName.length() > 0 ) {
 				try {
 					// 该场景不存在则不能修改
 					scene = sceneService.getSceneById(sceneId);
@@ -193,8 +192,6 @@ public class SceneAction {
 					// 场景存在，将场景写入到数据库
 					Date date = new Date();
 					scene.setSceneName(sceneName);
-					scene.setEnterWords(enterWords);
-					scene.setOutWords(outWords);
 					scene.setUpdateTime(date);
 					sceneService.updateScene(scene);
 					msg.setMsg("修改场景[" + sceneName + "]成功");

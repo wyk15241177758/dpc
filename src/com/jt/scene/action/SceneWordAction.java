@@ -1,5 +1,7 @@
 package com.jt.scene.action;
-
+/**
+ * 场景映射词action
+ */
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
@@ -17,30 +19,40 @@ import com.google.gson.GsonBuilder;
 import com.jt.bean.gateway.PageMsg;
 import com.jt.gateway.util.CMyString;
 import com.jt.scene.bean.Scene;
+import com.jt.scene.bean.SceneWord;
 import com.jt.scene.service.SceneService;
+import com.jt.scene.service.SceneWordService;
 
 @Controller
 @RequestMapping("/scene")
-public class SceneAction {
+public class SceneWordAction {
+	private SceneWordService sceneWordService;
 	private SceneService sceneService;
 	private PageMsg msg;
 	private Gson gson;
+	public SceneWordAction() {
+		msg = new PageMsg();
+		gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
+	}
+	public SceneWordService getSceneWordService() {
+		return sceneWordService;
+	}
+	@Resource(name="sceneWordServiceImpl") 
+	public void setSceneWordService(SceneWordService sceneWordService) {
+		this.sceneWordService = sceneWordService;
+	}
+
 
 	public SceneService getSceneService() {
 		return sceneService;
 	}
+	
 	@Resource(name="sceneServiceImpl") 
 	public void setSceneService(SceneService sceneService) {
 		this.sceneService = sceneService;
 	}
-
-	public SceneAction() {
-		msg = new PageMsg();
-		gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
-	}
-
-	@RequestMapping(value = "/addScene.do")
-	public void addScene(HttpServletRequest request, HttpServletResponse response) {
+	@RequestMapping(value = "/addSceneWord.do")
+	public void addSceneWord(HttpServletRequest request, HttpServletResponse response) {
 		response.setCharacterEncoding("utf-8");
 		msg = new PageMsg();
 		PrintWriter pw = null;
@@ -50,51 +62,67 @@ public class SceneAction {
 			e1.printStackTrace();
 			return;
 		}
-		Scene scene = null;
+		SceneWord sceneWord = null;
 		// 参数是否合法:同时包含场景名称、入口词、出口词即可
+		String sSceneId = request.getParameter("sceneId");
 		String sceneName = request.getParameter("sceneName");
 		String enterWords = request.getParameter("enterWords");
 		String outWords = request.getParameter("outWords");
 
+		Integer sceneId = 0;
+		try {
+			sceneId = Integer.parseInt(CMyString.getStrNotNullor0(sSceneId, "0"));
+		} catch (Exception e) {
+			e.printStackTrace();
+			msg.setMsg("添加场景映射词失败,错误信息为[转换sceneId类型失败]");
+			msg.setSig(false);
+			pw.print(gson.toJson(msg));
+			return;
+		}
 		if (sceneName != null && sceneName.length() > 0 && enterWords != null && enterWords.length() > 0
 				&& outWords != null && outWords.length() > 0) {
 			try {
-				// 该场景是否已经存在
-				scene = sceneService.getSceneByName(sceneName);
-				if (scene != null) {
-					msg.setMsg("新增场景[" + scene.getSceneName() + "]失败，错误信息为:[该场景已存在，无法新增]");
+				//对应的场景是否存在，不存在就报错
+				Scene scene = sceneService.getSceneById(sceneId);
+				if (sceneId != 0 && scene != null) {
+					try {
+						Date date = new Date();
+						sceneWord = new SceneWord(null,sceneId ,sceneName, enterWords, outWords, date, null);
+						sceneWordService.addSceneWord(sceneWord);
+					} catch (Exception e) {
+						e.printStackTrace();
+						msg.setMsg("新增场景映射词[" + sceneWord.getSceneWordId() + "]失败，错误信息为:["+e.getMessage()+"]");
+						pw.print(gson.toJson(msg));
+						return;
+					}
+					msg.setSig(true);
+					msg.setMsg("新增场景映射词[" + sceneWord.getEnterWords() + "]成功");
+					pw.print(gson.toJson(msg));
+					return;
+				} else {
+					msg.setMsg("添加场景映射词到场景id=[" + sceneId + "]失败,错误信息为[未获得场景ID或不存在指定的场景]");
 					msg.setSig(false);
 					pw.print(gson.toJson(msg));
 					return;
 				}
-				// 不存在则写入数据库
-				Date date = new Date();
-				scene = new Scene(null, sceneName, enterWords, outWords, date, null);
-				sceneService.addScene(scene);
-
-				msg.setMsg("新增场景[" + sceneName + "]成功");
-				msg.setSig(true);
-				pw.print(gson.toJson(msg));
-				return;
 			} catch (Exception e) {
 				e.printStackTrace();
-				msg.setMsg("新增场景[" + sceneName + "]失败，错误信息为:[" + e.getMessage() + "]");
+				msg.setMsg("添加场景映射词到场景id=[" + sceneId + "]失败，错误信息为:[" + e.getMessage() + "]");
 				msg.setSig(false);
 				pw.print(gson.toJson(msg));
 				return;
 			}
 		} else {
-			msg.setMsg("新增场景失败，错误信息为:[参数错误]");
+			msg.setMsg("添加场景映射词到场景id=[" + sceneId + "]失败，错误信息为:[参数错误]");
 			msg.setSig(false);
 			pw.print(gson.toJson(msg));
 			return;
 		}
-
 	}
 
-	// 删除任务
-	@RequestMapping(value = "delScene.do")
-	public void delScene(HttpServletRequest request, HttpServletResponse response) {
+	// 删除场景映射词
+	@RequestMapping(value = "delSceneWord.do")
+	public void delSceneWord(HttpServletRequest request, HttpServletResponse response) {
 		msg = new PageMsg();
 		response.setCharacterEncoding("utf-8");
 		PrintWriter pw = null;
@@ -105,41 +133,41 @@ public class SceneAction {
 			return;
 		}
 
-		Integer sceneId = 0;
+		Integer sceneWordId = 0;
 		try {
-			sceneId = Integer.parseInt(CMyString.getStrNotNullor0(request.getParameter("sceneId"), "0"));
+			sceneWordId = Integer.parseInt(CMyString.getStrNotNullor0(request.getParameter("sceneWordId"), "0"));
 		} catch (Exception e) {
 			e.printStackTrace();
-			msg.setMsg("删除场景id=[" + sceneId + "]失败,错误信息为[转换sceneId类型失败]");
+			msg.setMsg("删除场景映射词id=[" + sceneWordId + "]失败,错误信息为[转换sceneWordId类型失败]");
 			msg.setSig(false);
 			pw.print(gson.toJson(msg));
 			return;
 		}
-		Scene scene = sceneService.getSceneById(sceneId);
-		if (sceneId != 0 && scene != null) {
+		SceneWord sceneWord = sceneWordService.getSceneWordById(sceneWordId);
+		if (sceneWordId != 0 && sceneWord != null) {
 			try {
-				// 删除scene信息
-				sceneService.deleteScene(scene);
+				// 删除sceneWord信息
+				sceneWordService.deleteSceneWord(sceneWord);
 			} catch (Exception e) {
-				msg.setMsg("删除场景[" + scene.getSceneName() + "]失败，错误信息:[" + e.getMessage() + "]");
+				msg.setMsg("删除场景映射词[" + sceneWord.getSceneWordId() + "]失败，错误信息:[" + e.getMessage() + "]");
 				pw.print(gson.toJson(msg));
 				return;
 			}
 			msg.setSig(true);
-			msg.setMsg("删除场景[" + scene.getSceneName() + "]成功");
+			msg.setMsg("删除场景映射词[" + sceneWord.getSceneWordId() + "]成功");
 			pw.print(gson.toJson(msg));
 			return;
 		} else {
-			msg.setMsg("删除场景id=[" + sceneId + "]失败,错误信息为[未获得场景ID或不存在指定的场景]");
+			msg.setMsg("删除场景映射词id=[" + sceneWordId + "]失败,错误信息为[未获得场景ID或不存在指定的场景]");
 			msg.setSig(false);
 			pw.print(gson.toJson(msg));
 			return;
 		}
 	}
 
-	// 修改场景
-	@RequestMapping(value = "updateScene.do")
-	public void updateScene(HttpServletRequest request, HttpServletResponse response) {
+	// 修改场景映射词
+	@RequestMapping(value = "updateSceneWord.do")
+	public void updateSceneWord(HttpServletRequest request, HttpServletResponse response) {
 		msg = new PageMsg();
 		response.setCharacterEncoding("utf-8");
 		PrintWriter pw = null;
@@ -150,95 +178,83 @@ public class SceneAction {
 			return;
 		}
 
-		Scene scene = null;
-		// 参数是否合法:同时包含场景ID、场景名称、入口词、出口词即可
-		String sceneName = request.getParameter("sceneName");
+		SceneWord sceneWord = null;
+		// 参数是否合法:同时包含入口词、出口词即可。不允许修改所属场景
 		String enterWords = request.getParameter("enterWords");
 		String outWords = request.getParameter("outWords");
 
 		Integer sceneId = 0;
+		Integer sceneWordId = 0;
 		try {
 			sceneId = Integer.parseInt(CMyString.getStrNotNullor0(request.getParameter("sceneId"), "0"));
+			sceneWordId = Integer.parseInt(CMyString.getStrNotNullor0(request.getParameter("sceneWordId"), "0"));
 		} catch (Exception e) {
 			e.printStackTrace();
-			msg.setMsg("修改场景id=[" + sceneId + "]失败,错误信息为[转换sceneId类型失败]");
+			msg.setMsg("修改场景映射词失败,错误信息为[转换sceneId/sceneWordId类型失败]");
 			msg.setSig(false);
 			pw.print(gson.toJson(msg));
 			return;
 		}
-		scene = sceneService.getSceneById(sceneId);
-		if (sceneId != 0 && scene != null) {
-			if (sceneName != null && sceneName.length() > 0 && enterWords != null && enterWords.length() > 0
-					&& outWords != null && outWords.length() > 0) {
-				try {
-					// 该场景不存在则不能修改
-					scene = sceneService.getSceneById(sceneId);
-					if (scene == null) {
-						msg.setMsg("修改场景[" + sceneId + "]失败，错误信息为:[该场景不存在，无法修改]");
-						msg.setSig(false);
+		
+		if (enterWords != null && enterWords.length() > 0
+				&& outWords != null && outWords.length() > 0) {
+			try {
+				//对应的场景是否存在，不存在就报错
+				Scene scene = sceneService.getSceneById(sceneId);
+				sceneWord = sceneWordService.getSceneWordById(sceneWordId);
+				if (sceneId != 0 && scene != null&&sceneWordId!=0&&sceneWord!=null) {
+					try {
+						Date date = new Date();
+						sceneWord.setEnterWords(enterWords);
+						sceneWord.setOutWords(outWords);
+						sceneWord.setUpdateTime(new Date());
+						sceneWordService.updateSceneWord(sceneWord);
+					} catch (Exception e) {
+						e.printStackTrace();
+						msg.setMsg("修改场景映射词[" + sceneWord.getSceneWordId() + "]失败，错误信息为:["+e.getMessage()+"]");
 						pw.print(gson.toJson(msg));
 						return;
 					}
-					// 场景存在，将场景写入到数据库
-					Date date = new Date();
-					scene.setSceneName(sceneName);
-					scene.setEnterWords(enterWords);
-					scene.setOutWords(outWords);
-					scene.setUpdateTime(date);
-					sceneService.updateScene(scene);
-					msg.setMsg("修改场景[" + sceneName + "]成功");
 					msg.setSig(true);
+					msg.setMsg("修改场景映射词[" + sceneWord.getEnterWords() + "]成功");
 					pw.print(gson.toJson(msg));
 					return;
-				} catch (Exception e) {
-					e.printStackTrace();
-					msg.setMsg("修改[" + sceneName + "]场景失败，错误信息为:[" + e.getMessage() + "]");
+				} else {
+					msg.setMsg("修改场景映射词Id=["+sceneWordId+"] sceneId=["+sceneId+"]失败,错误信息为[未获得关联的场景或未获得指定的场景映射词]");
 					msg.setSig(false);
 					pw.print(gson.toJson(msg));
 					return;
 				}
-			} else {
-				msg.setMsg("修改场景id=[" + sceneId + "]失败,错误信息为[参数错误]");
+			} catch (Exception e) {
+				e.printStackTrace();
+				msg.setMsg("修改场景映射词Id=["+sceneWordId+"] sceneId=["+sceneId+"]失败,错误信息为["+e.getMessage()+"]");
 				msg.setSig(false);
 				pw.print(gson.toJson(msg));
 				return;
 			}
 		} else {
-			msg.setMsg("修改场景id=[" + sceneId + "]失败,错误信息为[未获得场景ID或不存在指定的场景]");
+			msg.setMsg("修改场景映射词id=[" + sceneWordId + "]失败，错误信息为:[参数错误]");
 			msg.setSig(false);
 			pw.print(gson.toJson(msg));
 			return;
 		}
 	}
 
-	@RequestMapping("/saveOrUpdateScene.do")
-	public void saveOrUpdateScene(HttpServletRequest request, HttpServletResponse response) {
-		String sceneId=request.getParameter("sceneId");
+	@RequestMapping("/saveOrUpdateSceneWord.do")
+	public void saveOrUpdateSceneWord(HttpServletRequest request, HttpServletResponse response) {
+		String sceneWordId=request.getParameter("sceneWordId");
 		//新增模式
-		if(sceneId==null||sceneId.length()==0){
-			addScene(request, response);
+		if(sceneWordId==null||sceneWordId.length()==0){
+			addSceneWord(request, response);
 		}else{
 			//修改模式
-			updateScene(request, response);
+			updateSceneWord(request, response);
 		}
-	}
-	@RequestMapping("/listScenes.do")
-	public void listScenes(HttpServletRequest request, HttpServletResponse response) {
-		response.setCharacterEncoding("utf-8");
-		msg = new PageMsg();
-		PrintWriter pw = null;
-		try {
-			pw = response.getWriter();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-			return;
-		}
-		List<Scene> list = sceneService.getAllScenes();
-		pw.print(gson.toJson(list));
 	}
 	
-	@RequestMapping("/getScene.do")
-	public void getScene(HttpServletRequest request, HttpServletResponse response) {
+	//可以传入sceneId，则查询关联的场景词
+	@RequestMapping("/listSceneWords.do")
+	public void listSceneWords(HttpServletRequest request, HttpServletResponse response) {
 		response.setCharacterEncoding("utf-8");
 		msg = new PageMsg();
 		PrintWriter pw = null;
@@ -248,41 +264,68 @@ public class SceneAction {
 			e1.printStackTrace();
 			return;
 		}
-		Scene scene = null;
+		
+		List<SceneWord> list=null;
 		Integer sceneId = 0;
 		try {
 			sceneId = Integer.parseInt(CMyString.getStrNotNullor0(request.getParameter("sceneId"), "0"));
 		} catch (Exception e) {
 			e.printStackTrace();
-			msg.setMsg("获得场景id=[" + sceneId + "]失败,错误信息为[转换sceneId类型失败]");
+		}
+		if(sceneId!=0){
+			list = sceneWordService.getWordsBySceneId(sceneId);
+		}else{
+			list = sceneWordService.getAllSceneWords();
+		}
+		pw.print(gson.toJson(list));
+	}
+	
+	@RequestMapping("/getSceneWord.do")
+	public void getSceneWord(HttpServletRequest request, HttpServletResponse response) {
+		response.setCharacterEncoding("utf-8");
+		msg = new PageMsg();
+		PrintWriter pw = null;
+		try {
+			pw = response.getWriter();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+			return;
+		}
+		SceneWord sceneWord = null;
+		Integer sceneWordId = 0;
+		try {
+			sceneWordId = Integer.parseInt(CMyString.getStrNotNullor0(request.getParameter("sceneWordId"), "0"));
+		} catch (Exception e) {
+			e.printStackTrace();
+			msg.setMsg("获得场景映射词id=[" + sceneWordId + "]失败,错误信息为[转换sceneWordId类型失败]");
 			msg.setSig(false);
 			pw.print(gson.toJson(msg));
 			return;
 		}
-		scene = sceneService.getSceneById(sceneId);
-		if (sceneId != 0 && scene != null) {
+		sceneWord = sceneWordService.getSceneWordById(sceneWordId);
+		if (sceneWordId != 0 && sceneWord != null) {
 			try {
 				// 该场景不存在则不能修改
-				scene = sceneService.getSceneById(sceneId);
-				if (scene == null) {
-					msg.setMsg("获得场景[" + sceneId + "]失败，错误信息为:[该场景不存在]");
+				sceneWord = sceneWordService.getSceneWordById(sceneWordId);
+				if (sceneWord == null) {
+					msg.setMsg("获得场景映射词[" + sceneWordId + "]失败，错误信息为:[该场景映射词不存在]");
 					msg.setSig(false);
 					pw.print(gson.toJson(msg));
 					return;
 				}
-				msg.setMsg(scene);
+				msg.setMsg(sceneWord);
 				msg.setSig(true);
 				pw.print(gson.toJson(msg));
 				return;
 			} catch (Exception e) {
 				e.printStackTrace();
-				msg.setMsg("获得场景[" + sceneId + "]失败，错误信息为:[" + e.getMessage() + "]");
+				msg.setMsg("获得场景映射词[" + sceneWordId + "]失败，错误信息为:[" + e.getMessage() + "]");
 				msg.setSig(false);
 				pw.print(gson.toJson(msg));
 				return;
 			}
 		} else {
-			msg.setMsg("获得场景[" + sceneId + "]失败,错误信息为[未获得场景ID或不存在指定的场景]");
+			msg.setMsg("获得场景映射词[" + sceneWordId + "]失败,错误信息为[未获得场景映射词ID或不存在指定的场景映射词]");
 			msg.setSig(false);
 			pw.print(gson.toJson(msg));
 			return;

@@ -13,4 +13,5 @@ public interface SceneWordService   {
 	public SceneWord getSceneWordById(Integer sceneWordId);
 	public List<SceneWord> getWordsBySceneId(Integer sceneId);
 	public List<SceneWord> getWordsBySceneName(String sceneName);
+	;
 }

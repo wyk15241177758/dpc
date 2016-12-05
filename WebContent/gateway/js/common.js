@@ -192,7 +192,10 @@ function deleteJob(curTrJobId){
 }
 
 $(document).ready(function () {
-	
+	//头部的入口链接地址增加random，避免缓存
+	$(".top-menu a").each(function(){
+		$(this).attr("href",$(this).attr("href")+"?rand="+Math.random());
+	})
 	//提示登录信息
 	var msg=getUrlParam("msg");
 	if(msg!=null&&msg.length>0){

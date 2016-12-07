@@ -223,7 +223,7 @@ public class SceneAction {
 	public void saveOrUpdateScene(HttpServletRequest request, HttpServletResponse response) {
 		String sceneId=request.getParameter("sceneId");
 		//新增模式
-		if(sceneId==null||sceneId.length()==0){
+		if(sceneId==null||sceneId.length()==0||"0".equals(sceneId)){
 			addScene(request, response);
 		}else{
 			//修改模式

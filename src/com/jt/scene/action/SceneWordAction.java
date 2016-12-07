@@ -149,12 +149,12 @@ public class SceneWordAction {
 				// 删除sceneWord信息
 				sceneWordService.deleteSceneWord(sceneWord);
 			} catch (Exception e) {
-				msg.setMsg("删除场景映射词[" + sceneWord.getSceneWordId() + "]失败，错误信息:[" + e.getMessage() + "]");
+				msg.setMsg("删除场景映射词id=[" + sceneWord.getSceneWordId() + "]失败，错误信息:[" + e.getMessage() + "]");
 				pw.print(gson.toJson(msg));
 				return;
 			}
 			msg.setSig(true);
-			msg.setMsg("删除场景映射词[" + sceneWord.getSceneWordId() + "]成功");
+			msg.setMsg("删除场景映射词id=[" + sceneWord.getSceneWordId() + "]成功");
 			pw.print(gson.toJson(msg));
 			return;
 		} else {
@@ -244,7 +244,7 @@ public class SceneWordAction {
 	public void saveOrUpdateSceneWord(HttpServletRequest request, HttpServletResponse response) {
 		String sceneWordId=request.getParameter("sceneWordId");
 		//新增模式
-		if(sceneWordId==null||sceneWordId.length()==0){
+		if(sceneWordId==null||sceneWordId.length()==0||"0".equals(sceneWordId)){
 			addSceneWord(request, response);
 		}else{
 			//修改模式

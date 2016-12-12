@@ -40,7 +40,20 @@ public class DocumentUtils {
 		if(time==null){
 			article.setDate(null);
 		}else{
-			article.setDate(new Date(Long.parseLong(time)));
+			try {
+				article.setDate(new Date(Long.parseLong(time)));
+			} catch (NumberFormatException e) {
+				System.out.println("转换为long型失败，time=["+time+"]尝试转为Data类型");
+				SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:SS");
+				try {
+					article.setDate(sdf.parse(time));
+				} catch (ParseException e1) {
+					System.out.println("转换Data类型失败，Data赋值为空");
+					article.setDate(null);
+					e1.printStackTrace();
+					
+				}
+			}
 		}
 		article.setCategory(getColumnIgnoreCase(doc, article.getMapedFieldName("category")));
 		article.setChannel(getColumnIgnoreCase(doc, article.getMapedFieldName("channel")));

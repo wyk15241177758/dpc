@@ -26,6 +26,7 @@
     <filter-name>userYorNfilter</filter-name>
     <url-pattern>/gateway/task.html</url-pattern>
     <url-pattern>/keyword/keywords.html</url-pattern>
+    <url-pattern>/gateway/scene.html</url-pattern>
     <dispatcher>REQUEST</dispatcher>
     <dispatcher>FORWARD</dispatcher>
   </filter-mapping>

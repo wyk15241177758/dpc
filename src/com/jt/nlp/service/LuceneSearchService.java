@@ -162,7 +162,6 @@ public class LuceneSearchService {
 	 * @return
 	 */
 	public List<Article> searchArticle(String[] queryString,Occur[] occurs,String[] fields,String sortField,SortField.Type sortFieldType,boolean reverse ,int firstResult, int maxResult) { 
-		System.out.println("检索词为");
 		for(String str:queryString){
 			System.out.println(str);
 		}

@@ -3,16 +3,18 @@
  */
 package com.jt.nlp.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.TreeSet;
 
+import org.apdplat.qa.parser.WordParser;
 import org.apdplat.qa.questiontypeanalysis.patternbased.MainPartExtracter;
 import org.apdplat.qa.questiontypeanalysis.patternbased.QuestionStructure;
+import org.apdplat.word.segmentation.Word;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -129,7 +131,18 @@ public class NlpService {
 		}
 		return set;
 	}
-
+	/**
+	 * 对传入的句子分词
+	 * @return
+	 */
+	public List<String> getParticle(String question){
+		List<Word> list=WordParser.parse(question);
+		List<String> particleList=new ArrayList<String>();
+		for(Word word:list){
+			particleList.add(word.getText());
+		}
+		return particleList;
+	}
 	public static void main(String[] args) {
 		NlpService service = new NlpService();
 //		String[] arr = { "杨浦有什么地方好玩？", "孩子转学需要什么手续？", "我想自主创业，政府有什么政策？", "噪音扰民怎么办?", "上海怎么办理居住证 " };

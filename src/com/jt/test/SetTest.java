@@ -10,8 +10,6 @@ public static void main(String[] args) {
 	set.add("2");
 	set.add("3");
 	set.add("4");
-	for(String str:set){
-		System.out.println(str);
-	}
+	System.out.println(set);
 }
 }

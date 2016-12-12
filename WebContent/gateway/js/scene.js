@@ -73,9 +73,18 @@ $(document).ready(function() {
     //检索预览按钮
     $(document).on("click","a[action='searchPreview']",function(){
     	var curOutWords=$(this).parent("td").parent("tr").children("td:eq(1)").html();
-    	console.log(curOutWords)
    		showSearchPreview(curOutWords);
     })
+    //设置列宽
+	$(".table-bordered").dataTable( {
+		  "columns": [
+		    null,
+		    null,
+		    null,
+		    { "width": "22%" ,"orderable": false }
+		  ],
+		  "order": [[ 2, 'desc' ]]
+		} );
 });
 //显示预览结果
 function showSearchPreview(curOutWords){
@@ -185,10 +194,10 @@ function sceneClick(sceneId) {
 	// 修改当前场景ID
 	curSceneId = sceneId;
 	curSceneName =$("i[sceneId="+sceneId+"]").attr("sceneName")
-	console.log("in sceneClick curSceneName=["+curSceneName+"]")
 	$("i[sceneId="+sceneId+"]").parent("a").parent("li").addClass("active").siblings().removeClass("active");
 	// 清空右侧数据
-	$(".table-bordered tbody").empty();
+	var table=$(".table-bordered").DataTable();
+	table.clear().draw();
 	// 修改右侧数据
 	var template = "<tr sceneId="
 			+ curSceneId
@@ -206,15 +215,27 @@ function sceneClick(sceneId) {
 		"random" : Math.random()
 	};
 	$.getJSON("/QASystem/admin/scene/listSceneWords.do", param, function(data) {
-		var cur = "";
 		for (i in data) {
-			cur += template.replace(/\{sceneWordId\}/g, data[i].sceneWordId)
-					.replace(/\{enterWord\}/g, data[i].enterWords).replace(
-							/\{outWord\}/g, data[i].outWords).replace(
-							/\{createTime\}/g, data[i].createTime);
+			var curRowNode=table.row.add([data[i].enterWords,data[i].outWords,data[i].createTime,"<a class=\"btn btn-success btn-sm\" href=\"#\" action='searchPreview'>" +
+			          					"<i class=\"glyphicon glyphicon-zoom-in icon-white\"></i>检索预览</a>" +
+			        					" <a class=\"btn btn-info btn-sm btn-setting\" href=\"#\" action='sceneWordEdit'> 	" +
+			        					"<i class=\"glyphicon glyphicon-edit icon-white\"></i>编辑 </a>" +
+			        					" <a class=\"btn btn-danger btn-sm btn-warn\" href=\"#\"  action='sceneWordDel'>" +
+			        					"<i class=\"glyphicon glyphicon-trash icon-white\"></i>删除 </a> "])
+			.draw()
+		    .node();
+			//新增行变色突出
+			$( curRowNode )
+		    .css( 'color', 'black' )
+		    .animate( { color: 'black' },500 );
+			//新增行增加属性
+			$( curRowNode ).attr("sceneId",curSceneId);
+			$( curRowNode ).attr("sceneWordId", data[i].sceneWordId);
+			//增加操作按钮
+			
 		}
-		$(".table-bordered tbody").append(cur);
-		$('.table-bordered').DataTable();
+		
+//		$('.table-bordered').DataTable();
 	})
 
 }
@@ -254,7 +275,8 @@ function addSceneWord(){
 					};
 			$("#sceneWordModal").find("input").each(function() {
 				if ($(this).attr("name") != undefined) {
-					param[$(this).attr('name')] = $(this).val();
+					//中文分号替换为英文，避免输错
+					param[$(this).attr('name')] = $(this).val().replace(/；/g,";");
 				}
 			})
 			$.getJSON(operationUrl, param, function(data) {

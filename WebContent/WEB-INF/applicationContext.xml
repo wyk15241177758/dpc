@@ -182,7 +182,8 @@
 
 	<bean id="qaService" class="com.jt.nlp.service.QAService" init-method="initNlp">
 		<property name="searchService" ref="searchService">
-			
+		</property>
+		<property name="sceneWordService" ref="sceneWordServiceImpl">
 		</property>
 	</bean>
 

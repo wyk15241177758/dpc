@@ -51,7 +51,7 @@ public class QAService {
 
 	// nlp第一次分析初始化很慢，不知道怎么初始化，直接触发一次检索
 	public void initNlp() {
-		QASearch("初始化", 1);
+		//QASearch("初始化", 1);
 		// System.out.println("######"+(searchService==null));
 		LOG.info("正在初始化NLP");
 	}

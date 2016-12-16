@@ -181,7 +181,25 @@ public class LuceneSearchService {
 		String[] queryString={"1"};
 		return dao.searchArticle(queryString, Occur.MUST, "searchall", Article.getMapedFieldName(orderBy), SortField.Type.LONG, reverse, 0, maxResult);
 	}
-	
+	/**
+	 * 分页查询
+	 * @param page
+	 *        页码
+	 * @param maxResult
+	 *        最大数目
+	 * @param orderBy
+	 * 排序字段，如date,id，具体字段请见Article类的属性。注意不是xq_id等数据库字段，而是映射之后的id,date等字段
+	 * @param reverse
+	 * 是否倒序，false为顺序，true为倒序
+	 * @return
+	 */
+	public List<Article> searchAll(int page,int maxResult,String orderBy,boolean reverse) { 
+		if(page<1){
+			page=1;
+		}
+		String[] queryString={"1"};
+		return dao.searchArticle(queryString, Occur.MUST, "searchall", Article.getMapedFieldName(orderBy), SortField.Type.LONG, reverse, (page-1)*maxResult, maxResult);
+	}
 	
 	public IndexDao getDao() {
 		return dao;

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+ 
+ <hibernate-mapping>
+ <class name="com.jt.keyword.bean.ParseHotWord" table="PARSEHOTWORD">
+  
+    <id name="id" type="java.lang.Integer">
+            <column name="ID" />
+            <generator class="native" />
+        </id>
+ 
+   <property  name="hotword"  type="java.lang.String"  column="HOTWORD"/>
+   <property  name="num"  type="java.lang.Integer"  column="NUM"/>
+  
+
+    <property name="createTime" type="java.sql.Timestamp">
+            <column name="CREATE_TIME" length="19" not-null="true">
+                <comment>创建时间</comment>
+            </column>
+        </property>
+       
+ </class>
+</hibernate-mapping>

@@ -51,7 +51,7 @@ public class QAService {
 
 	// nlp第一次分析初始化很慢，不知道怎么初始化，直接触发一次检索
 	public void initNlp() {
-		//QASearch("初始化", 1);
+		QASearch("初始化", 1);
 		// System.out.println("######"+(searchService==null));
 		LOG.info("正在初始化NLP");
 	}
@@ -91,13 +91,12 @@ public class QAService {
 		// 预设场景
 		Set<String> sceneWordSet = null;
 		sceneWordSet = presentScene(question);
+		questionSet = nlpService.getSearchWords(question);
 		// 未进入预设场景
-		if (sceneWordSet == null || sceneWordSet.size() == 0) {
-			questionSet = nlpService.getSearchWords(question);
-		} else {
+		if (sceneWordSet != null && sceneWordSet.size() > 0) {
 			LOG.info("进入预设场景，获得映射词"+sceneWordSet);
-			questionSet = sceneWordSet;
-		}
+			questionSet.addAll(sceneWordSet);
+		} 
 		LOG.info("实际检索词:"+questionSet);
 		if(questionSet==null||questionSet.size()==0)return null;
 		
@@ -114,13 +113,12 @@ public class QAService {
 		// 预设场景
 		Set<String> sceneWordSet = null;
 		sceneWordSet = presentScene(question);
+		questionSet = nlpService.getSearchWords(question);
 		// 未进入预设场景
-		if (sceneWordSet == null || sceneWordSet.size() == 0) {
-			questionSet = nlpService.getSearchWords(question);
-		} else {
+		if (sceneWordSet != null && sceneWordSet.size() > 0) {
 			LOG.info("进入预设场景，获得映射词"+sceneWordSet);
-			questionSet = sceneWordSet;
-		}
+			questionSet.addAll(sceneWordSet);
+		} 
 		LOG.info("实际检索词:"+questionSet);
 		if(questionSet==null||questionSet.size()==0)return null;
 

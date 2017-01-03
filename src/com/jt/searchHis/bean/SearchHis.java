@@ -8,6 +8,18 @@ public class SearchHis {
 	private int searchTimes;
 	private Date createTime;
 	private Date updateTime;
+	
+	public SearchHis(Long id, String searchContent, int searchTimes, Date createTime, Date updateTime) {
+		super();
+		this.id = id;
+		this.searchContent = searchContent;
+		this.searchTimes = searchTimes;
+		this.createTime = createTime;
+		this.updateTime = updateTime;
+	}
+	public SearchHis(){
+		
+	}
 	public Long getId() {
 		return id;
 	}

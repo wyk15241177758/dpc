@@ -35,9 +35,10 @@ public class SearchHisServiceImpl   extends BasicServicveImpl implements SearchH
 		this.dao.query(hql, paramList, firstResult, maxResults);
 		return list;
 	}
-	
-	
-	public static void main(String[] args) {
-		SearchHisServiceImpl a=null;
+	//分页查询，从0开始
+	public List<SearchHis> queryByPage(int pageIndex,	int pageSize){
+		int firstResult=pageIndex*pageSize;
+		int maxResults=pageSize;
+		return query(firstResult,maxResults);
 	}
 }

@@ -173,7 +173,7 @@
 	
 	<bean id="searchHisServiceImpl" parent="baseTransactionProxyBean">
 		<property name="target">
-			<bean class=" com.jt.scene.service.impl.SceneServiceImpl" autowire="byName">
+			<bean class="  com.jt.searchHis.service.impl.SearchHisServiceImpl" autowire="byName">
 			</bean>
 		</property>
 	</bean>

@@ -2,7 +2,11 @@ package com.jt.searchHis.bean;
 
 import java.util.Date;
 
-public class SearchHis {
+public class SearchHis  implements java.io.Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Long id;
 	private String searchContent;
 	private int searchTimes;

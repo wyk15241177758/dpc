@@ -1,3 +1,4 @@
+var table =null;
 $(document).ready(function() {
 
 	// 头部的入口链接地址增加random，避免缓存
@@ -5,6 +6,7 @@ $(document).ready(function() {
 		$(this).attr("href", $(this).attr("href") + "?rand=" + Math.random());
 	})
 
+	
 	//新建按钮
     $("#a_add").click(function(){
     	$("#editModal").modal("show");
@@ -16,21 +18,18 @@ $(document).ready(function() {
 	
 	//修改按钮
 	$(document).on("click","[action='edit']",function(){
-		//先清空现有的输入框内容
-    	$("#editModal").find("input").each(function(){
-    		$(this).val("");
-    	})
 		//给弹出层赋值
-		var curId=$(this).parent("td").parent("tr").attr("searchHisId")
+		var curId=table.row( $(this).parent("td").parent("tr") ).data()[0]
 		setSearchHisValue(curId);
 	})
 	
 	//删除按钮
 	$(document).on("click","[action='del']",function(){
-		var curSearchHisId=$(this).parent("td").parent("tr").attr("searchHisId")
-		var curSearchHisVal=$(this).parent("td").parent("tr").attr("searchHisVal")
+		var curSearchHisId=table.row( $(this).parent("td").parent("tr") ).data()[0]
+		var curSearchHisVal=table.row( $(this).parent("td").parent("tr") ).data()[1]
 		$("#warnModal-del").find("[name='searchHisId']").val(curSearchHisId);
-		$("#warnModal-del").html("确定要删除检索历史["+curSearchHisVal+"]吗？删除后无法恢复").modal('show')
+		$("#warnmsg-sceneWord-del").html("确定要删除检索历史["+curSearchHisVal+"]吗？删除后无法恢复")
+		$("#warnModal-del").modal('show')
 	})
 	//删除提示浮层按钮绑定事件
     $("#delConfirm").click(function(){
@@ -38,24 +37,48 @@ $(document).ready(function() {
     	$("#warnModal-del").show("hidden");
     	deleteSearchHis(curSearchHisId);
     })
-    //设置列宽
-	$(".table-bordered").dataTable( {
+    //设置列宽，排序等
+	$(".table-bordered").DataTable( {
+		"searching":false,
+		"order":[[3,"desc"]],
 		  "columns": [
-		    null,
-		    null,
-		    null,
+		     { "orderable": false },
+		     { "orderable": false },
+		     { "orderable": true },
+		     { "orderable": true },
 		    { "width": "22%" ,"orderable": false }
 		  ],
-		  "order": [[ 2, 'desc' ]]
-		} );
+		    "processing": true,
+		    "serverSide": true,
+		    "ajax": "/QASystem/admin/searchHis/listSearchHis.do",
+		    "columnDefs": [
+		                   {
+		                     "data": null,
+		                     "defaultContent": "<a class='btn btn-info btn-sm btn-setting' href='#' action='edit'> <i class='glyphicon glyphicon-edit icon-white'></i> 编辑 </a>  <a class='btn btn-danger btn-sm btn-warn' href='#'  action='del'>     <i class='glyphicon glyphicon-trash icon-white'></i> 删除 </a>",
+		                     "targets": 4
+		                   },
+		                   {
+		                	   "targets": 0,
+		                	   "visible":false
+		                   }
+		                 ]
+		}
+	);
+	
+	table = $('.table-bordered').DataTable();
+
+	 
+//	$('.table-bordered').on( 'click', 'tr', function () {
+//	    console.log( table.row( this ).data() );
+//	} );
 });
 
 
-//删除场景
-function deleteScene(sceneId){
-	var param={"sceneId":sceneId};
-	if(sceneId!=undefined){
-		  $.getJSON("/QASystem/admin/scene/delScene.do",param,function(data){
+//删除
+function deleteSearchHis(searchHisId){
+	var param={"searchHisId":searchHisId};
+	if(searchHisId!=undefined){
+		  $.getJSON("/QASystem/admin/searchHis/delSearchHis.do",param,function(data){
 				if (data.sig == false) {
 					$('#warnmsg').html(data.msg);
 					$('#warnModal').modal('show');
@@ -65,46 +88,23 @@ function deleteScene(sceneId){
 					$('#warnModal').modal('show');
 					window.setTimeout(function() {
 						$('#warnModal').modal('hide');
-						// 刷新场景列表
-						leftScene();
+						// 刷新列表
+						refreshList();
 					}, 2000)
 				}
 		  })
 	}
 }
 
-//删除场景映射词
-function deleteSceneWord(sceneWordId){
-	var param={"sceneWordId":sceneWordId};
-	if(sceneWordId!=undefined){
-		  $.getJSON("/QASystem/admin/scene/delSceneWord.do",param,function(data){
-				if (data.sig == false) {
-					$('#warnmsg').html(data.msg);
-					$('#warnModal').modal('show');
-				} else {
-					// 成功新建任务，自动关闭浮层
-					$('#warnmsg').html(data.msg);
-					$('#warnModal').modal('show');
-					window.setTimeout(function() {
-						$('#warnModal').modal('hide');
-						// 刷新场景映射词
-						sceneClick(curSceneId)
-					}, 2000)
-				}
-		  })
-	}
-}
-
-
-//新增或修改场景
-function addScene(){
-	var operationUrl = "/QASystem/admin/scene/saveOrUpdateScene.do"
-		if (!paramCheck($("#sceneModal"))) {
+//新增或修改
+function addSearchHis(){
+	var operationUrl = "/QASystem/admin/searchHis/saveOrUpdateSearchHis.do"
+		if (!paramCheck($("#editModal"))) {
 			// paramCheck中处理
 		} else {
 			$('#saveModal').modal('show');
 			var param = {};
-			$("#sceneModal").find("input").each(function() {
+			$("#editModal").find("input").each(function() {
 				if ($(this).attr("name") != undefined) {
 					param[$(this).attr('name')] = $(this).val();
 				}
@@ -120,180 +120,85 @@ function addScene(){
 					$('#warnModal').modal('show');
 					window.setTimeout(function() {
 						$('#warnModal').modal('hide');
-						$('#sceneModal').modal('hide');
+						$('#editModal').modal('hide');
 						//清空浮层中的数据
-						$("#sceneModal").find("input").val("");
+						$("#editModal").find("input").val("");
 						// 刷新场景列表
-						leftScene();
+						refreshList();
 					}, 2000)
 				}
 			})
 		}
 }
-// 点击场景
-function sceneClick(sceneId) {
-	
-	// 修改当前场景ID
-	curSceneId = sceneId;
-	curSceneName =$("i[sceneId="+sceneId+"]").attr("sceneName")
-	$("i[sceneId="+sceneId+"]").parent("a").parent("li").addClass("active").siblings().removeClass("active");
-	// 清空右侧数据
-	var table=$(".table-bordered").DataTable();
-	table.clear().draw();
-	// 修改右侧数据
-	var template = "<tr sceneId="
-			+ curSceneId
-			+ " sceneWordId={sceneWordId}><td>{enterWord}</td><td>{outWord}</td>" 
-			+ "<td>{createTime}</td><td class=\"center font-right\">" +
-					"<a class=\"btn btn-success btn-sm\" href=\"#\" action='searchPreview'>" +
-					"<i class=\"glyphicon glyphicon-zoom-in icon-white\"></i>检索预览</a>" +
-					" <a class=\"btn btn-info btn-sm btn-setting\" href=\"#\" action='sceneWordEdit'> 	" +
-					"<i class=\"glyphicon glyphicon-edit icon-white\"></i>编辑 </a>" +
-					" <a class=\"btn btn-danger btn-sm btn-warn\" href=\"#\"  action='sceneWordDel'>" +
-					"<i class=\"glyphicon glyphicon-trash icon-white\"></i>删除 </a> " +
-					"</td> </tr>";
-	var param = {
-		"sceneId" : curSceneId,
-		"random" : Math.random()
-	};
-	$.getJSON("/QASystem/admin/scene/listSceneWords.do", param, function(data) {
-		for (i in data) {
-			var curRowNode=table.row.add([data[i].enterWords,data[i].outWords,data[i].createTime,"<a class=\"btn btn-success btn-sm\" href=\"#\" action='searchPreview'>" +
-			          					"<i class=\"glyphicon glyphicon-zoom-in icon-white\"></i>检索预览</a>" +
-			        					" <a class=\"btn btn-info btn-sm btn-setting\" href=\"#\" action='sceneWordEdit'> 	" +
-			        					"<i class=\"glyphicon glyphicon-edit icon-white\"></i>编辑 </a>" +
-			        					" <a class=\"btn btn-danger btn-sm btn-warn\" href=\"#\"  action='sceneWordDel'>" +
-			        					"<i class=\"glyphicon glyphicon-trash icon-white\"></i>删除 </a> "])
-			.draw()
-		    .node();
-			//新增行变色突出
-			$( curRowNode )
-		    .css( 'color', 'black' )
-		    .animate( { color: 'black' },500 );
-			//新增行增加属性
-			$( curRowNode ).attr("sceneId",curSceneId);
-			$( curRowNode ).attr("sceneWordId", data[i].sceneWordId);
-			//增加操作按钮
-			
-		}
-		
-//		$('.table-bordered').DataTable();
+// 刷新
+function refreshList() {
+	$('.table-bordered').dataTable().fnDraw();
+//	var pageSize=1000;
+//	var pageIndex=0
+//	// 清空右侧数据
+//	var table=$(".table-bordered").DataTable();
+//	table.clear().draw();
+//	var param = {
+//		"pageSize" : pageSize,
+//		"pageIndex":pageIndex,
+//		"random" : Math.random()
+//	};
+
+//	$.getJSON("/QASystem/admin/searchHis/listSearchHis.do", param, function(data) {
+//
+//		
+//		for (i in data) {
+//			var curRowNode=table.row.add([data[i].searchContent,data[i].searchTimes,data[i].createTime," <a class=\"btn btn-info btn-sm btn-setting\" href=\"#\" action='edit'> 	" +
+//			        					"<i class=\"glyphicon glyphicon-edit icon-white\"></i> 编辑 </a>" +
+//			        					" <a class=\"btn btn-danger btn-sm btn-warn\" href=\"#\"  action='del'>" +
+//			        					"<i class=\"glyphicon glyphicon-trash icon-white\"></i> 删除 </a> "])
+//			.draw()
+//		    .node();
+//			//新增行变色突出
+//			$( curRowNode )
+//		    .css( 'color', 'black' )
+//		    .animate( { color: 'black' },500 );
+//			//新增行增加属性
+//			$( curRowNode ).attr("searchHisId",data[i].id);
+//			$( curRowNode ).attr("searchContent", data[i].searchContent);
+//			//增加操作按钮
+//			
+//		}
+//		
+////		$('.table-bordered').DataTable();
+//	})
+
+}
+
+//给弹出浮层赋值
+function setSearchHisValue(searchHisId){
+	//先清空现有的输入框内容
+	$("#editModal").find("input").each(function(){
+		$(this).val("");
 	})
-
-}
-
-// 左侧场景
-function leftScene() {
-	// 清空场景列表
-	$("#leftScene").empty();
-	var template = "<li><a href=\"javascript:void(0)\" class=\"ajax-link\">     <i name=\"leftword\" sceneId={sceneId} sceneName={sceneName}></i>{sceneName}</a></li>"
-	$.getJSON("/QASystem/admin/scene/listScenes.do", null, function(data) {
-		var cur = "";
-		for (i in data) {
-			cur += template.replace(/\{sceneId\}/g, data[i].sceneId).replace(
-					/\{sceneName\}/g, data[i].sceneName);
-			if (i == 0) {
-				curSceneId = data[i].sceneId;
-				curSceneName = data[i].sceneName;
-			}
-		}
-		$("#leftScene").append(cur);
-		// 点击curSceneId场景用于显示右侧场景映射词
-		$("i[sceneid=" + curSceneId + "]").parent("a").click();
-	})
-}
-
-
-//新增或修改场景映射词
-function addSceneWord(){
-	var operationUrl = "/QASystem/admin/scene/saveOrUpdateSceneWord.do"
-		if (!paramCheck($("#sceneWordModal"))) {
-			// paramCheck中处理
-		} else {
-			$('#saveModal').modal('show');
-			var param = {
-					"sceneName":curSceneName,
-					"sceneId":curSceneId
-					};
-			$("#sceneWordModal").find("input").each(function() {
-				if ($(this).attr("name") != undefined) {
-					//中文分号替换为英文，避免输错
-					param[$(this).attr('name')] = $(this).val().replace(/；/g,";");
-				}
-			})
-			$.getJSON(operationUrl, param, function(data) {
-				$('#saveModal').modal('hide');
-				if (data.sig == false) {
-					$('#warnmsg').html(data.msg);
-					$('#warnModal').modal('show');
-				} else {
-					// 成功新建映射词，自动关闭浮层
-					$('#warnmsg').html(data.msg);
-					$('#warnModal').modal('show');
-					window.setTimeout(function() {
-						$('#warnModal').modal('hide');
-						$('#sceneWordModal').modal('hide');
-						//清空浮层中的数据
-						$("#sceneWordModal").find("input").val("");
-						// 刷新场景映射词列表
-						sceneClick(curSceneId)
-						
-					}, 2000)
-				}
-
-			})
-		}
-}
-
-//修改场景映射词给弹出浮层赋值
-function setSceneWordValue(sceneWordId){
-	//正在修改的sceneWordId
-	$('#sceneWordModal').find("[name='sceneWordId']").val(sceneWordId);
-
-	
-	var param={"sceneWordId":sceneWordId};
-	 $.getJSON("/QASystem/admin/scene/getSceneWord.do",param,function(data){
+	//正在修改的ID
+	$('#editModal').find("[name='searchHisId']").val(searchHisId);
+	var param={"searchHisId":searchHisId};
+	 $.getJSON("/QASystem/admin/searchHis/getSearchHis.do",param,function(data){
 		  if(data==null||typeof(data.sig)=='undefined'
 			  ||typeof(data.msg)=='undefined'){
-				$('#warnmsg').html("获得sceneWordId=["+param.sceneWordId+"]的映射词信息失败");
+				$('#warnmsg').html("获得ID=["+param.searchHisId+"]的搜索历史信息失败");
 				$('#warnModal').modal('show');
 		  }else if(data.sig==false){
 			$('#warnmsg').html(data.msg);
      		$('#warnModal').modal('show');
 		  }else{
 			  var msg=data.msg;
-			  $("input[name='enterWords']").val(msg.enterWords);
-			  $("input[name='outWords']").val(msg.outWords);
+			  for(i in msg){
+				  $("input[name='"+i+"']").val(msg[i]);
+			  }
   			  //显示设置浮层
-  			 $('#sceneWordModal').modal('show');
+  			 $('#editModal').modal('show');
 		  }
 		  
 	  })
 }
-//修改场景给弹出浮层赋值
-function setSceneValue(sceneId){
-	//正在修改的sceneWordId
-	$('#sceneModal').find("[name='sceneId']").val(sceneId);
 
-	
-	var param={"sceneId":sceneId};
-	 $.getJSON("/QASystem/admin/scene/getScene.do",param,function(data){
-		  if(data==null||typeof(data.sig)=='undefined'
-			  ||typeof(data.msg)=='undefined'){
-				$('#warnmsg').html("获得sceneId=["+param.sceneId+"]的场景信息失败");
-				$('#warnModal').modal('show');
-		  }else if(data.sig==false){
-			$('#warnmsg').html(data.msg);
-     		$('#warnModal').modal('show');
-		  }else{
-			  var msg=data.msg;
-			  $("input[name='sceneName']").val(msg.sceneName);
-  			  //显示设置浮层
-  			 $('#sceneModal').modal('show');
-		  }
-		  
-	  })
-}
 
 // 参数校验
 function paramCheck(obj) {

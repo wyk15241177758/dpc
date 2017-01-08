@@ -10,5 +10,7 @@ public interface SearchHisService {
 	public void updateSearchHis(SearchHis searchHis);
 	public SearchHis getSearchHisById(Long id);
 	public List<SearchHis> query(final int firstResult,	final int maxResults);
-	public List<SearchHis> queryByPage(int pageIndex,	int pageSize);
+	public List<SearchHis> queryByPage(int pageIndex,int pageSize,List paramList,String order);
+	public long getTotalCount();
+	public List<SearchHis> query(final int firstResult,	final int maxResults,List paramList,String order);
 }

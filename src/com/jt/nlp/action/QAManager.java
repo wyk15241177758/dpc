@@ -19,6 +19,7 @@ import com.jt.bean.gateway.PageMsg;
 import com.jt.lucene.Article;
 import com.jt.nlp.service.LuceneSearchService;
 import com.jt.nlp.service.QAService;
+import com.jt.searchHis.service.SearchHisRtService;
 
 @Controller
 
@@ -26,8 +27,16 @@ public class QAManager {
 	private PageMsg msg;
 	private QAService qaService;
 	private Gson gson;
+	private SearchHisRtService searchHisRtService;
 	public QAManager(){
 		gson= new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
+	}
+	public SearchHisRtService getSearchHisRtService() {
+		return searchHisRtService;
+	}
+	@Resource(name="searchHisRtServiceImpl") 
+	public void setSearchHisRtService(SearchHisRtService searchHisRtService) {
+		this.searchHisRtService = searchHisRtService;
 	}
 	public QAService getQaService() {
 		return qaService;
@@ -146,5 +155,19 @@ public class QAManager {
 			msg.setMsg("没有检索的结果");
 		}
 		pw.print(gson.toJson(msg));
+		
+		//将问题写入缓存
+		if(question.length()>0){
+			String sSearchHisId=request.getParameter("searchHisId");
+			Long searchHisId=0l;
+			try {
+				searchHisId=Long.parseLong(sSearchHisId);
+			} catch (Exception e) {
+				System.out.println("转换检索历史ID为long失败，改为默认值0");
+				searchHisId=0l;
+			}
+			searchHisRtService.add(question, searchHisId);
+		}
+		
 	}
 }

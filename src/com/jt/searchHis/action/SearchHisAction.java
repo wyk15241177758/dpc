@@ -2,7 +2,10 @@ package com.jt.searchHis.action;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Types;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.jt.base.page.Param;
 import com.jt.bean.gateway.PageMsg;
 import com.jt.gateway.util.CMyString;
 import com.jt.searchHis.bean.SearchHis;
@@ -212,6 +216,22 @@ public class SearchHisAction {
 			updateSearchHis(request, response);
 		}
 	}
+
+	
+	@RequestMapping("/getCount.do")
+	public void getCount(HttpServletRequest request, HttpServletResponse response) {
+		response.setCharacterEncoding("utf-8");
+		PrintWriter pw = null;
+		try {
+			pw = response.getWriter();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+			return;
+		}
+		pw.print(searchHisService.getTotalCount());
+	}
+	
+	
 	@RequestMapping("/listSearchHis.do")
 	public void listSearchHis(HttpServletRequest request, HttpServletResponse response) {
 		response.setCharacterEncoding("utf-8");
@@ -223,23 +243,50 @@ public class SearchHisAction {
 			e1.printStackTrace();
 			return;
 		}
-		String sPageSize=request.getParameter("pageSize");
-		String sPageIndex=request.getParameter("pageIndex");
-		
+		String sPageSize=request.getParameter("length");
+		String sPageIndex=request.getParameter("start");
+		String sDraw=request.getParameter("draw");
+		String sOrder=request.getParameter("order[0][column]");
+		String sOrderDir=request.getParameter("order[0][dir]");
+		String sSearch=request.getParameter("search[value]");
+		String order=null;
 		int pageSize=0;
 		int pageIndex=0;
 		try {
 			pageSize=Integer.parseInt(sPageSize);
-			pageIndex=Integer.parseInt(sPageIndex);
+			pageIndex=Integer.parseInt(sPageIndex)/pageSize;
 		} catch (NumberFormatException e) {
-			e.printStackTrace();
-			msg.setMsg("获得检索历史失败,传入的参数错误，错误信息为:[" + e.getMessage() + "]");
-			msg.setSig(false);
-			pw.print(gson.toJson(msg));
-			return;
+			log.info("pageSize和pageIndex参数错误，置为默认值10和0");
+			pageSize=10;
+			pageIndex=0;
 		}
-		List<SearchHis> list=searchHisService.queryByPage(pageIndex, pageSize);
-		pw.print(gson.toJson(list));
+		//映射排序字段
+		if(sOrder.equals("2")){
+			order="searchTimes";
+		}else{
+			order="createTime";
+		}
+		List<Param> paramList=new ArrayList<Param>();
+		//先暂时不提供检索功能
+//		if(sSearch!=null&&sSearch.length()>0){
+//			paramList.add(new Param(Types.VARCHAR, sSearch));
+//		}
+		List<SearchHis> list=searchHisService.queryByPage(pageIndex, pageSize,paramList, order+" "+sOrderDir);
+		String[][] arr=new String[list.size()][];
+		for(int i=0;i<list.size();i++){
+			SearchHis curHis=list.get(i);
+			arr[i]=new String[4];
+			arr[i][0]=curHis.getId()+"";
+			arr[i][1]=curHis.getSearchContent()+"";
+			arr[i][2]=curHis.getSearchTimes()+"";
+			arr[i][3]=curHis.getCreateTime()+"";
+		}
+		HashMap map=new HashMap();
+		map.put("recordsTotal", searchHisService.getTotalCount());
+		map.put("recordsFiltered", searchHisService.getTotalCount());
+		map.put("data", arr);
+		map.put("draw",sDraw);
+		pw.print(gson.toJson(map));
 	}
 	
 	@RequestMapping("/getSearchHis.do")

@@ -209,12 +209,16 @@
 		</property>
 	</bean>
 
+	<bean id="searchHisRtServiceImpl" class="com.jt.searchHis.service.impl.SearchHisRtServiceImpl">
+		<property name="searchHisService" ref="searchHisServiceImpl"></property>
+		<property name="vectorSize" value="2"></property>
+	</bean>
+
+
 	<bean id="jobInit" class="com.jt.gateway.service.management.JobInit"
 		init-method="init">
 		<property name="jobService" ref="jobInfImpl"></property>
 	</bean>
-
-
 	<!-- <bean id="springTest" class="com.jt.test.spring.SpringTest" init-method="test"> -->
 	<!-- <property name="pro" value="testpro"></property> -->
 	<!-- </bean> -->

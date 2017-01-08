@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-	<class name=" com.jt.searchHis.bean.SearchHis" table="SEARCHHIS">
+	<class name="com.jt.searchHis.bean.SearchHis" table="SEARCHHIS">
 		<id name="id" type="java.lang.Long">
 			<column name="ID"  not-null="true"/>
 			<generator class="native" />
@@ -10,7 +10,7 @@
 		<property name="searchContent" type="java.lang.String">
 			<column name="SEARCHCONTENT" not-null="true" />
 		</property>
-		<property name="searchTimes" type="java.lang.String">
+		<property name="searchTimes" type="java.lang.Integer">
 			<column name="SEARCHTIMES"  not-null="false" />
 		</property>
 		<property name="createTime" type="java.sql.Timestamp" >

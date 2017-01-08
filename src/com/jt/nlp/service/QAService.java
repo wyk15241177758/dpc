@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -17,10 +16,8 @@ import java.util.Set;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.jt.keyword.bean.KeyWord;
 import com.jt.lucene.Article;
 import com.jt.lucene.IndexDao;
 import com.jt.scene.bean.SceneWord;
@@ -33,7 +30,7 @@ public class QAService {
 	private NlpService nlpService;
 	private LuceneSearchService searchService;
 	private SceneWordService sceneWordService;
-
+	
 	// 本地测试使用,indexpath为索引所在目录
 	public QAService(String indexPath) {
 		nlpService = new NlpService();

@@ -70,77 +70,78 @@ public class LuceneSearchService {
 		return dao.search(queryString, occurs, field, sortField, sortFieldType, reverse, firstResult, maxResult);
 	}
 
-	/**
-	 * 检索词的与、或关系统一定义
-	 * 
-	 * @param queryString
-	 *            支持传入多个检索词
-	 * @param occur
-	 *            多个检索词之间的关系，Occur.MUST(结果“与”)，
-	 *            Occur.MUST_NOT(结果“不包含”)，Occur.SHOULD(结果“或”)
-	 * @param field
-	 *            当前应用使用title
-	 * @param sortField
-	 *            排序字段，传入null则按照相关度排序
-	 * @param sortFieldType
-	 *            排序字段的类型，如long、int等
-	 * @param reverse
-	 *            排序方式，顺序(false)还是倒序(true)
-	 * @param firstResult
-	 *            结果从第几个开始
-	 * @param maxResult
-	 *            结果到第几个结束，可以传入-1，则限制为1000条
-	 * @return
-	 */
-	public List<Article> searchArticle(String[] queryString, Occur occur, String field, String sortField,
-			SortField.Type sortFieldType, boolean reverse, int firstResult, int maxResult) {
-		return dao.searchArticle(queryString, occur, field, sortField, sortFieldType, reverse, firstResult, maxResult);
-	}
+//	/**
+//	 * 检索词的与、或关系统一定义
+//	 * 
+//	 * @param queryString
+//	 *            支持传入多个检索词
+//	 * @param occur
+//	 *            多个检索词之间的关系，Occur.MUST(结果“与”)，
+//	 *            Occur.MUST_NOT(结果“不包含”)，Occur.SHOULD(结果“或”)
+//	 * @param field
+//	 *            当前应用使用title
+//	 * @param sortField
+//	 *            排序字段，传入null则按照相关度排序
+//	 * @param sortFieldType
+//	 *            排序字段的类型，如long、int等
+//	 * @param reverse
+//	 *            排序方式，顺序(false)还是倒序(true)
+//	 * @param firstResult
+//	 *            结果从第几个开始
+//	 * @param maxResult
+//	 *            结果到第几个结束，可以传入-1，则限制为1000条
+//	 * @return
+//	 */
+//	public List<Article> searchArticle(String[] queryString, Occur occur, String field, String sortField,
+//			SortField.Type sortFieldType, boolean reverse, int firstResult, int maxResult) {
+//		return dao.searchArticle(queryString, occur, field, sortField, sortFieldType, reverse, firstResult, maxResult);
+//	}
+//
+//	/**
+//	 * 支持定义每个检索词的与、或关系
+//	 * 
+//	 * @param queryString
+//	 *            支持传入多个检索词
+//	 * @param occurs
+//	 *            多个检索词之间的关系，Occur.MUST(结果“与”)，
+//	 *            Occur.MUST_NOT(结果“不包含”)，Occur.SHOULD(结果“或”)
+//	 * @param field
+//	 *            当前应用使用title
+//	 * @param sortField
+//	 *            排序字段，传入null则按照相关度排序
+//	 * @param sortFieldType
+//	 *            排序字段的类型，如long、int等
+//	 * @param reverse
+//	 *            排序方式，顺序(false)还是倒序(true)
+//	 * @param firstResult
+//	 *            结果从第几个开始
+//	 * @param maxResult
+//	 *            结果到第几个结束，可以传入-1，则限制为1000条
+//	 * @return
+//	 */
+//	public List<Article> searchArticle(String[] queryString, Occur[] occurs, String field, String sortField,
+//			SortField.Type sortFieldType, boolean reverse, int firstResult, int maxResult) {
+//		return dao.searchArticle(queryString, occurs, field, sortField, sortFieldType, reverse, firstResult, maxResult);
+//	}
+//
+//	/**
+//	 * 简易检索，各个字段之间是or关系，默认按照相关性排序
+//	 * @param queryString
+//	 * @param field
+//	 * @param firstResult
+//	 * @param maxResult
+//	 * @return
+//	 */
+//	public List<Article> searchArticle(String[] queryString,String field,int firstResult, int maxResult){ 
+//		System.out.println("检索词为");
+//		for(String str:queryString){
+//			System.out.println(str);
+//		}
+//			
+//		return dao.searchArticle(queryString, field, firstResult, maxResult);
+//	}
+//	
 
-	/**
-	 * 支持定义每个检索词的与、或关系
-	 * 
-	 * @param queryString
-	 *            支持传入多个检索词
-	 * @param occurs
-	 *            多个检索词之间的关系，Occur.MUST(结果“与”)，
-	 *            Occur.MUST_NOT(结果“不包含”)，Occur.SHOULD(结果“或”)
-	 * @param field
-	 *            当前应用使用title
-	 * @param sortField
-	 *            排序字段，传入null则按照相关度排序
-	 * @param sortFieldType
-	 *            排序字段的类型，如long、int等
-	 * @param reverse
-	 *            排序方式，顺序(false)还是倒序(true)
-	 * @param firstResult
-	 *            结果从第几个开始
-	 * @param maxResult
-	 *            结果到第几个结束，可以传入-1，则限制为1000条
-	 * @return
-	 */
-	public List<Article> searchArticle(String[] queryString, Occur[] occurs, String field, String sortField,
-			SortField.Type sortFieldType, boolean reverse, int firstResult, int maxResult) {
-		return dao.searchArticle(queryString, occurs, field, sortField, sortFieldType, reverse, firstResult, maxResult);
-	}
-
-	/**
-	 * 简易检索，各个字段之间是or关系，默认按照相关性排序
-	 * @param queryString
-	 * @param field
-	 * @param firstResult
-	 * @param maxResult
-	 * @return
-	 */
-	public List<Article> searchArticle(String[] queryString,String field,int firstResult, int maxResult){ 
-		System.out.println("检索词为");
-		for(String str:queryString){
-			System.out.println(str);
-		}
-			
-		return dao.searchArticle(queryString, field, firstResult, maxResult);
-	}
-	
 	/**
 	 * 支持定义每个检索词的与、或关系，支持检索指定字段
 	 * @param queryString
@@ -150,22 +151,24 @@ public class LuceneSearchService {
 	 * @param field
 	 * 当前应用使用title
 	 * @param sortField
-	 * 排序字段，传入null则按照相关度排序
+	 * 排序字段，支持多个字段
 	 * @param sortFieldType
 	 * 排序字段的类型，如long、int等
 	 * @param reverse
 	 * 排序方式，顺序(false)还是倒序(true)
+	 * @param isRelevancy
+	 * 是否按照相关性排序
 	 * @param firstResult
 	 * 结果从第几个开始
 	 * @param maxResult
 	 * 结果到第几个结束，可以传入-1，则限制为1000条
 	 * @return
 	 */
-	public List<Article> searchArticle(String[] queryString,Occur[] occurs,String[] fields,String sortField,SortField.Type sortFieldType,boolean reverse ,int firstResult, int maxResult) { 
+	public List<Article> searchArticle(String[] queryString,Occur[] occurs,String[] fields,String[] sortField,SortField.Type[] sortFieldType,boolean[] reverse,boolean isRelevancy ,int firstResult, int maxResult) { 
 		for(String str:queryString){
 			System.out.println(str);
 		}
-		return dao.searchArticle(queryString,occurs,fields,sortField,sortFieldType, reverse , firstResult,  maxResult) ;
+		return dao.searchArticle(queryString,occurs,fields,sortField,sortFieldType, reverse,isRelevancy , firstResult,  maxResult) ;
 	}
 	/**
 	 * 获得所有数据，必须传入maxResult个数限制
@@ -179,7 +182,9 @@ public class LuceneSearchService {
 	 */
 	public List<Article> searchAll(int maxResult,String orderBy,boolean reverse) { 
 		String[] queryString={"1"};
-		return dao.searchArticle(queryString, Occur.MUST, "searchall", Article.getMapedFieldName(orderBy), SortField.Type.LONG, reverse, 0, maxResult);
+		Occur[] occurs={ Occur.MUST};
+		String[] fields={"searchall"};
+		return dao.searchArticle(queryString, occurs, fields, null, null, null, false,0, maxResult);
 	}
 	/**
 	 * 分页查询
@@ -198,7 +203,9 @@ public class LuceneSearchService {
 			page=1;
 		}
 		String[] queryString={"1"};
-		return dao.searchArticle(queryString, Occur.MUST, "searchall", Article.getMapedFieldName(orderBy), SortField.Type.LONG, reverse, (page-1)*maxResult, maxResult);
+		Occur[] occurs={ Occur.MUST};
+		String[] fields={"searchall"};
+		return dao.searchArticle(queryString, occurs, fields, null,null, null, false,(page-1)*maxResult, maxResult);
 	}
 	
 	public IndexDao getDao() {

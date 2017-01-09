@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -19,14 +17,13 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
-import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
-import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.highlight.Formatter;
 import org.apache.lucene.search.highlight.Highlighter;
 import org.apache.lucene.search.highlight.QueryScorer;
@@ -67,13 +64,55 @@ public class IndexDao {
 		
 	}
 	public void initInSpring(){
+		
+		
 		try {
 			util=new LuceneUtilsGw(indexPath);
 			logger.info("初始化indexdao");
+			
+			//检查指定目录下是否有分词文件，没有就自动新建空索引，避免报错
+			File file=new File(indexPath);
+			if(!file.exists()){
+				createBlankIndex();
+			}else{
+				String[] fileList=file.list();
+				boolean flag=false;
+				for(String str:fileList){
+					if(str.indexOf("segments")!=-1){
+						flag=true;
+						break;
+					}
+				}
+				if(!flag){
+					createBlankIndex();
+				}
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
+	
+	//创建空的索引，避免报错
+	public void createBlankIndex(){
+		logger.info("指定的索引文件["+indexPath+"]不存在，尝试创建空索引文件");
+		File file=new File(indexPath);
+		if(!file.exists()){
+			try {
+				if(!file.mkdir()){
+					throw new Exception("创建文件["+indexPath+"]失败");
+				};
+			} catch (Exception e) {
+				e.printStackTrace();
+				return;
+			}
+		}
+		Document doc = new Document();
+		doc.add(new Field("temp", "",TextField.TYPE_STORED));
+		save(doc);
+		logger.info("创建空索引成功");
+		
+	}
+	
 	
 	public int batchSave(List<Document> docList){
 		int jobSize=0;
@@ -417,77 +456,77 @@ public class IndexDao {
 		return null;
 	}
 	
-	/**
-	 * 简易检索，各个字段之间是or关系，默认按照相关性排序
-	 * @param queryString
-	 * @param field
-	 * @param firstResult
-	 * @param maxResult
-	 * @return
-	 */
-	public List<Article> searchArticle(String[] queryString,String field,int firstResult, int maxResult) {
-		Occur occur=Occur.SHOULD;
-		return searchArticle(queryString, occur, field, null, null,false, firstResult, maxResult);
-	}
-		
-	
-/**
- * 检索词的与、或关系统一定义
- * @param queryString
- * 支持传入多个检索词
- * @param occur
- * 多个检索词之间的关系，Occur.MUST(结果“与”)， Occur.MUST_NOT(结果“不包含”)，Occur.SHOULD(结果“或”)
- * @param field
- * 当前应用使用title
- * @param sortField
- * 排序字段，传入null则按照相关度排序
- * @param sortFieldType
- * 排序字段的类型，如long、int等
- * @param reverse
- * 排序方式，顺序(false)还是倒序(true)
- * @param firstResult
- * 结果从第几个开始
- * @param maxResult
- * 结果到第几个结束，可以传入-1，则限制为1000条
- * @return
- */
-	public List<Article> searchArticle(String[] queryString,Occur occur,String field,String sortField,SortField.Type sortFieldType,boolean reverse ,int firstResult, int maxResult) {
-		Occur[] occurs=new Occur[queryString.length];
-		for(int i=0;i<occurs.length;i++){
-			occurs[i]=occur;
-		}
-		return searchArticle(queryString, occurs, field, sortField, sortFieldType, reverse, firstResult, maxResult);
-	}
-	
-	
-/**
- * 支持定义每个检索词的与、或关系，只检索一个字段
- * @param queryString
- * 支持传入多个检索词
- * @param occurs
- * 多个检索词之间的关系，Occur.MUST(结果“与”)， Occur.MUST_NOT(结果“不包含”)，Occur.SHOULD(结果“或”)
- * @param field
- * 当前应用使用title
- * @param sortField
- * 排序字段，传入null则按照相关度排序
- * @param sortFieldType
- * 排序字段的类型，如long、int等
- * @param reverse
- * 排序方式，顺序(false)还是倒序(true)
- * @param firstResult
- * 结果从第几个开始
- * @param maxResult
- * 结果到第几个结束，可以传入-1，则限制为1000条
- * @return
- */
-	public List<Article> searchArticle(String[] queryString,Occur[] occurs,String field,String sortField,SortField.Type sortFieldType,boolean reverse ,int firstResult, int maxResult) {
-		String fields[]=new String[queryString.length];
-		for(int i=0;i<fields.length;i++){
-			fields[i]=field;
-		}
-		return searchArticle(queryString,occurs,fields, sortField, sortFieldType ,reverse , firstResult, maxResult);
-	}
-	
+//	/**
+//	 * 简易检索，各个字段之间是or关系，默认按照相关性排序
+//	 * @param queryString
+//	 * @param field
+//	 * @param firstResult
+//	 * @param maxResult
+//	 * @return
+//	 */
+//	public List<Article> searchArticle(String[] queryString,String field,int firstResult, int maxResult) {
+//		Occur occur=Occur.SHOULD;
+//		return searchArticle(queryString, occur, field, null, null,false, firstResult, maxResult);
+//	}
+//		
+//	
+///**
+// * 检索词的与、或关系统一定义
+// * @param queryString
+// * 支持传入多个检索词
+// * @param occur
+// * 多个检索词之间的关系，Occur.MUST(结果“与”)， Occur.MUST_NOT(结果“不包含”)，Occur.SHOULD(结果“或”)
+// * @param field
+// * 当前应用使用title
+// * @param sortField
+// * 排序字段，传入null则按照相关度排序
+// * @param sortFieldType
+// * 排序字段的类型，如long、int等
+// * @param reverse
+// * 排序方式，顺序(false)还是倒序(true)
+// * @param firstResult
+// * 结果从第几个开始
+// * @param maxResult
+// * 结果到第几个结束，可以传入-1，则限制为1000条
+// * @return
+// */
+//	public List<Article> searchArticle(String[] queryString,Occur occur,String field,String sortField,SortField.Type sortFieldType,boolean reverse ,int firstResult, int maxResult) {
+//		Occur[] occurs=new Occur[queryString.length];
+//		for(int i=0;i<occurs.length;i++){
+//			occurs[i]=occur;
+//		}
+//		return searchArticle(queryString, occurs, field, sortField, sortFieldType, reverse, firstResult, maxResult);
+//	}
+//	
+//	
+///**
+// * 支持定义每个检索词的与、或关系，只检索一个字段
+// * @param queryString
+// * 支持传入多个检索词
+// * @param occurs
+// * 多个检索词之间的关系，Occur.MUST(结果“与”)， Occur.MUST_NOT(结果“不包含”)，Occur.SHOULD(结果“或”)
+// * @param field
+// * 当前应用使用title
+// * @param sortField
+// * 排序字段，传入null则按照相关度排序
+// * @param sortFieldType
+// * 排序字段的类型，如long、int等
+// * @param reverse
+// * 排序方式，顺序(false)还是倒序(true)
+// * @param firstResult
+// * 结果从第几个开始
+// * @param maxResult
+// * 结果到第几个结束，可以传入-1，则限制为1000条
+// * @return
+// */
+//	public List<Article> searchArticle(String[] queryString,Occur[] occurs,String field,String[] sortField,SortField.Type[] sortFieldType,boolean[] reverse, boolean isRelevancy ,int firstResult, int maxResult) {
+//		String fields[]=new String[queryString.length];
+//		for(int i=0;i<fields.length;i++){
+//			fields[i]=field;
+//		}
+//		return searchArticle(queryString,occurs,fields, sortField, sortFieldType ,reverse,isRelevancy , firstResult, maxResult);
+//	}
+//	
 	
 	/**
 	 * 支持定义每个检索词的与、或关系，支持检索指定字段
@@ -498,18 +537,20 @@ public class IndexDao {
 	 * @param field
 	 * 当前应用使用title
 	 * @param sortField
-	 * 排序字段，传入null则按照相关度排序
+	 * 排序字段，支持多个字段
 	 * @param sortFieldType
 	 * 排序字段的类型，如long、int等
 	 * @param reverse
 	 * 排序方式，顺序(false)还是倒序(true)
+	 * @param isRelevancy
+	 * 是否按照相关性排序
 	 * @param firstResult
 	 * 结果从第几个开始
 	 * @param maxResult
 	 * 结果到第几个结束，可以传入-1，则限制为1000条
 	 * @return
 	 */
-		public List<Article> searchArticle(String[] queryString,Occur[] occurs,String[] fields,String sortField,SortField.Type sortFieldType,boolean reverse ,int firstResult, int maxResult) {
+		public List<Article> searchArticle(String[] queryString,Occur[] occurs,String[] fields,String[] sortField,SortField.Type[] sortFieldType,boolean[] reverse,boolean isRelevancy ,int firstResult, int maxResult) {
 			List<Article> list = new ArrayList<Article>();
 			TopDocs topDocs =null;
 			Sort sort=null;
@@ -530,8 +571,18 @@ public class IndexDao {
 				Query query =MultiFieldQueryParser.parse(queryString,fields,occurs,util.getAnalyzer());
 				logger.info("Lucene检索条件为["+query+"]");
 				
-				if(sortField!=null&&sortFieldType!=null){
-					sort=new Sort(new SortField(sortField, sortFieldType,reverse));//生成排序类
+				if(sortField!=null&&sortFieldType!=null&&reverse!=null){
+					List<SortField> sortList=new ArrayList<SortField>();
+					if(isRelevancy){
+						sortList.add( SortField.FIELD_SCORE);
+					}
+					for(int i=0;i<sortField.length;i++){
+						SortField curSortField=new SortField(sortField[i], sortFieldType[i],reverse[i]);
+						sortList.add(curSortField);
+					}
+					SortField[] sortArr=new SortField[list.size()];
+					sortList.toArray(sortArr);
+					sort=new Sort(sortArr);
 					topDocs = isearcher.search(query, firstResult + maxResult,sort);
 				}else{
 					topDocs = isearcher.search(query, firstResult + maxResult);

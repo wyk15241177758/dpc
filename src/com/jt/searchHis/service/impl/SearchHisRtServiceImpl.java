@@ -6,9 +6,10 @@ import java.util.Vector;
 
 
 import com.jt.searchHis.bean.SearchHis;
+import com.jt.searchHis.service.SearchHisRtService;
 import com.jt.searchHis.service.SearchHisService;
 
-public class SearchHisRtServiceImpl {
+public class SearchHisRtServiceImpl implements SearchHisRtService{
 	private Vector<SearchHis> questionVector;
 	private SearchHisService searchHisService;
 	//达到上限则存入数据库

@@ -136,10 +136,10 @@ public class LunceneTest {
 //			System.out.println(doc.getValues("xq_title")[0]);
 //			
 //		}
-		List<Article> list=dao.searchArticle(queryStr, "xq_title", 0, 10);
-		for(Article a:list){
-			System.out.println(a.getTitle());
-		}
+//		List<Article> list=dao.searchArticle(queryStr, "xq_title", 0, 10);
+//		for(Article a:list){
+//			System.out.println(a.getTitle());
+//		}
        } catch (IOException e1) {
 		e1.printStackTrace();
 	}

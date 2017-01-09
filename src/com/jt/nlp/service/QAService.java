@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.lucene.search.BooleanClause.Occur;
+import org.apache.lucene.search.SortField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -99,7 +100,18 @@ public class QAService {
 		
 		String[] searchWord = new String[questionSet.size()];
 		questionSet.toArray(searchWord);
-		return searchService.searchArticle(searchWord, Article.getMapedFieldName("title"), begin, end);
+		
+		
+		
+		//检索参数
+		String [] searchField={Article.getMapedFieldName("title")};
+		Occur[] occurs = {Occur.MUST};
+		//排序参数
+		String[] sortField={Article.getMapedFieldName("date")};
+		SortField.Type[] sortFieldType={SortField.Type.LONG};
+		boolean[] reverse={true};
+		boolean isRelevancy = true;
+		return searchService.searchArticle(searchWord, occurs, searchField, sortField, sortFieldType, reverse, isRelevancy, begin, end);
 	}
 
 	// 根据分类检索
@@ -129,7 +141,15 @@ public class QAService {
 		String[] searchWord = { questionStr, category };
 		Occur[] occurs = { Occur.MUST, Occur.MUST };
 		String[] fields = { Article.getMapedFieldName("title"), Article.getMapedFieldName("category") };
-		return searchService.searchArticle(searchWord, occurs, fields, null, null, false, begin, end);
+		
+		
+		//排序参数
+		String[] sortField={Article.getMapedFieldName("date")};
+		SortField.Type[] sortFieldType={SortField.Type.LONG};
+		boolean[] reverse={true};
+		boolean isRelevancy = true;
+		
+		return searchService.searchArticle(searchWord, occurs, fields, sortField, sortFieldType, reverse, isRelevancy, begin, end);
 	}
 
 	public NlpService getNlpService() {

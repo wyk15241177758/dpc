@@ -35,10 +35,10 @@ public class IndexDaoTest {
 //			System.out.println(doc.getValues("xq_title")[0]);
 //			
 //		}
-		List<Article> list=indexDao.searchArticle(queryStr, "xq_title", 0, 10);
-		for(Article a:list){
-			System.out.println(a.getTitle());
-		}
+//		List<Article> list=indexDao.searchArticle(queryStr, "xq_title", 0, 10);
+//		for(Article a:list){
+//			System.out.println(a.getTitle());
+//		}
   }
   public static void main(String[] args) {
 	IndexDaoTest test=new IndexDaoTest();

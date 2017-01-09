@@ -10,6 +10,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.lucene.search.SortField;
+import org.apache.lucene.search.BooleanClause.Occur;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -91,7 +93,23 @@ public class QAManager {
 		}
 		String[] arrQuestion=question.split(" ");
 		LuceneSearchService luceneService=qaService.getSearchService();
-		List<Article> list=luceneService.searchArticle(arrQuestion, "xq_title", iBegin, iEnd);
+		
+		//检索参数
+		String [] searchField=new String[arrQuestion.length];
+		Occur[] occurs = new Occur[arrQuestion.length]; 
+		for(int i=0;i<searchField.length;i++){
+			searchField[i]=Article.getMapedFieldName("title");
+			occurs[i]=Occur.MUST;
+		}
+			
+		//排序参数
+		String[] sortField={Article.getMapedFieldName("date")};
+		SortField.Type[] sortFieldType={SortField.Type.LONG};
+		boolean[] reverse={true};
+		boolean isRelevancy = true;
+		
+		
+		List<Article> list=luceneService.searchArticle(arrQuestion, occurs, searchField, sortField, sortFieldType, reverse, isRelevancy, iBegin, iEnd);
 		if(list!=null){
 			msg.setMsg(list);
 		}else{

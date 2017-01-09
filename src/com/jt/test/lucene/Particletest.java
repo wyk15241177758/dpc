@@ -28,12 +28,12 @@ public static void main(String[] args) {
 //			System.out.println(doc.getValues("xq_title")[0]);
 //			
 //		}
-		List<Article> list=dao.searchArticle(queryStr, occurs, fieldName,
-				null, null, false, 0, 5);
-				//.searchArticle(queryStr, "xq_title", 0, 5);
-		for(Article a:list){
-			System.out.println(a);
-		}
+//		List<Article> list=dao.searchArticle(queryStr, occurs, fieldName,
+//				null, null, false, 0, 5);
+//				//.searchArticle(queryStr, "xq_title", 0, 5);
+//		for(Article a:list){
+//			System.out.println(a);
+//		}
     } catch (IOException e1) {
 		e1.printStackTrace();
 	}

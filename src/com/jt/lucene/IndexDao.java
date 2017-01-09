@@ -581,8 +581,9 @@ public class IndexDao {
 						sortList.add(curSortField);
 					}
 					SortField[] sortArr=new SortField[list.size()];
-					sortList.toArray(sortArr);
+					sortArr=sortList.toArray(sortArr);
 					sort=new Sort(sortArr);
+					
 					topDocs = isearcher.search(query, firstResult + maxResult,sort);
 				}else{
 					topDocs = isearcher.search(query, firstResult + maxResult);

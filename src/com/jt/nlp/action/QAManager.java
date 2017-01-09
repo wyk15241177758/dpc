@@ -67,6 +67,10 @@ public class QAManager {
 		String question=request.getParameter("question");
 		String sBegin=request.getParameter("begin");
 		String sEnd=request.getParameter("end");
+		//按照参数分割问题，适用于场景映射词
+		String splitBy=request.getParameter("splitBy");
+		//是否分词，适用于前台检索提示
+		String isParticle=request.getParameter("isParticle");
 		
 		//增加解码
 		try {
@@ -92,7 +96,7 @@ public class QAManager {
 			question="";
 		}
 		String[] arrQuestion=question.split(" ");
-		LuceneSearchService luceneService=qaService.getSearchService();
+		Lucen eSearchService luceneService=qaService.getSearchService();
 		
 		//检索参数
 		String [] searchField=new String[arrQuestion.length];

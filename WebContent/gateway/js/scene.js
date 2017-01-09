@@ -90,7 +90,8 @@ $(document).ready(function() {
 function showSearchPreview(curOutWords){
 	var param={
 			"question":curOutWords,
-			"end":10
+			"end":10,
+			"splitBy":" "
 	}
 	$("#log").html("");
 	 $.getJSON("/QASystem/admin/luceneSearch.do",param,function(data){

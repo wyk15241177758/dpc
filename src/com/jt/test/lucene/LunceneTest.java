@@ -13,6 +13,7 @@ import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TermQuery;
 import org.apdplat.word.analysis.Hits;
 
@@ -130,16 +131,50 @@ public class LunceneTest {
        
        try {
 		IndexDao dao=new IndexDao(indexPath);
-		String[] queryStr={"临湘市","卫生"};
+		String[] queryStr={"保险","合同"};
 //		List<Document> list=dao.search(queryStr, Occur.SHOULD, "xq_title",null,null, false, 0, -1);
 //		for(Document doc:list){
 //			System.out.println(doc.getValues("xq_title")[0]);
 //			
 //		}
-//		List<Article> list=dao.searchArticle(queryStr, "xq_title", 0, 10);
+		//检索参数
+		String [] searchField=new String[queryStr.length];
+		Occur[] occurs = new Occur[queryStr.length]; 
+		for(int i=0;i<searchField.length;i++){
+			searchField[i]=Article.getMapedFieldName("title");
+			occurs[i]=Occur.MUST;
+		}
+			
+		//排序参数
+		String[] sortField= {Article.getMapedFieldName("date")};
+		SortField.Type[] sortFieldType={SortField.Type.LONG};
+		boolean[] reverse={true};
+		boolean isRelevancy = true;
+		
+		List<Article> list=dao.searchArticle(queryStr, occurs, searchField, sortField, sortFieldType, reverse, isRelevancy, 0,10);
+		for(Article a:list){
+			System.out.println(a.getTitle()+" "+a.getDate());
+		}
+
+
+		
+//		//检索参数
+//		String [] question={"1"};
+//		String [] searchField={"searchall"};
+//		Occur[] occurs = {Occur.MUST}; 
+//			
+//		//排序参数
+//		String[] sortField= {"load_time"};
+//		SortField.Type[] sortFieldType={SortField.Type.LONG};
+//		boolean[] reverse={true};
+//		boolean isRelevancy = true;
+//		
+//		List<Article> list=dao.searchArticle(question, occurs, searchField, sortField, sortFieldType, reverse, isRelevancy, 0,-1);
 //		for(Article a:list){
-//			System.out.println(a.getTitle());
+//			System.out.println(a.getTitle()+" "+a.getDate());
 //		}
+		
+		
        } catch (IOException e1) {
 		e1.printStackTrace();
 	}

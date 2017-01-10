@@ -181,11 +181,18 @@
 	<bean id="indexDao" class=" com.jt.lucene.IndexDao" init-method="initInSpring">
 		<property name="indexPath" value="${lucene.indexPath}" />
 	</bean>
-
+	
+	<bean id="indexDao_searchHis" class=" com.jt.lucene.IndexDao" init-method="initInSpring">
+		<property name="indexPath" value="${lucene.indexPath_searchHis}" />
+	</bean>
 
 
 	<bean id="searchService" class="com.jt.nlp.service.LuceneSearchService" autowire="byName">
-				<property name="dao" ref="indexDao" />
+		<property name="dao" ref="indexDao" />
+	</bean>
+	
+	<bean id="searchService_searchHis" class="com.jt.nlp.service.LuceneSearchService" autowire="byName">
+		<property name="dao" ref="indexDao_searchHis" />
 	</bean>
 
 	<bean id="qaService" class="com.jt.nlp.service.QAService" init-method="initNlp">

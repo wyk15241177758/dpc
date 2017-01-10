@@ -34,6 +34,7 @@ public class QAManager {
 	private NlpService nlpService;
 	private Gson gson;
 	private SearchHisRtService searchHisRtService;
+	private LuceneSearchService searchService_searchHis;
 	public QAManager(){
 		gson= new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
 	}
@@ -58,7 +59,17 @@ public class QAManager {
 	public void setNlpService(NlpService nlpService) {
 		this.nlpService = nlpService;
 	}
+
+	public LuceneSearchService getSearchService_searchHis() {
+		return searchService_searchHis;
+	}
+	@Resource(name="searchService_searchHis") 
+	public void setSearchService_searchHis(LuceneSearchService searchService_searchHis) {
+		this.searchService_searchHis = searchService_searchHis;
+	}
+	
 	/**
+	 * 场景映射词
 	 * 不做NLP分析，分词检索
 	 * @param request
 	 * @param response
@@ -78,13 +89,7 @@ public class QAManager {
 		String question=request.getParameter("question");
 		String sBegin=request.getParameter("begin");
 		String sEnd=request.getParameter("end");
-		//按照参数分割问题，适用于场景映射词
-		//isSplit默认为假，splitBy默认为空格
-		String isSplit=CMyString.getStrNotNullor0(request.getParameter("isSplit"),"false");
-		String splitBy=CMyString.getStrNotNullor0(request.getParameter("splitBy")," ");
-		//是否分词，适用于前台检索提示。默认为false
-		String isParticle=CMyString.getStrNotNullor0(request.getParameter("isParticle"),"false");
-		
+
 		
 		//增加解码
 		try {
@@ -109,21 +114,7 @@ public class QAManager {
 		if(question==null){
 			question="";
 		}
-		String[] arrQuestion=null;
-		List<String> particleQuestion=new ArrayList<String>();
-		if("true".equals(isSplit)){
-			arrQuestion=question.split(splitBy);
-		}else{
-			arrQuestion=new String[1];
-			arrQuestion[0]=question;
-		}
-		
-		if("true".equals(isParticle)){
-			for(int i=0;i<arrQuestion.length;i++){
-				particleQuestion.addAll(nlpService.getParticle(arrQuestion[i]));
-			}
-			arrQuestion=particleQuestion.toArray(arrQuestion);
-		}
+		String[] arrQuestion=question.split(" ");;
 				
 		LuceneSearchService luceneService=qaService.getSearchService();
 		
@@ -150,6 +141,95 @@ public class QAManager {
 		}
 		pw.print(gson.toJson(msg));
 	}
+
+	
+//	/**
+//	 * 检索历史的全文检索
+//	 * @param request
+//	 * @param response
+//	 */
+//	@RequestMapping(value="luceneSearch_searchHis.do")
+//	public void luceneSearch_searchHis(HttpServletRequest request, HttpServletResponse response) {
+//		response.setCharacterEncoding("utf-8");
+//		msg=new PageMsg();
+//		msg.setSig(true);
+//		PrintWriter pw=null;
+//		try {
+//			pw=response.getWriter();
+//		} catch (IOException e1) {
+//			e1.printStackTrace();
+//			return;
+//		}
+//		String question=request.getParameter("question");
+//		String sBegin=request.getParameter("begin");
+//		String sEnd=request.getParameter("end");
+//		//是否分词，适用于前台检索提示。默认为false
+//		String isParticle=CMyString.getStrNotNullor0(request.getParameter("isParticle"),"false");
+//		//问题词是否为或包含
+//		String isShould=CMyString.getStrNotNullor0(request.getParameter("isShould"),"false");
+//		
+//		
+//		//增加解码
+//		try {
+//			question=URLDecoder.decode(question, "utf-8");
+//		} catch (UnsupportedEncodingException e1) {
+//			e1.printStackTrace();
+//			question="";
+//		}
+//		
+//		int iBegin=0;
+//		int iEnd=0;
+//		try {
+//			iBegin=Integer.parseInt(sBegin);
+//		}catch(Exception e){
+//			iBegin=0;
+//		}
+//		try {
+//			iEnd=Integer.parseInt(sEnd);
+//		}catch(Exception e){
+//			iEnd=5;
+//		}
+//		if(question==null){
+//			question="";
+//		}
+//		String[] arrQuestion={question};
+//		List<String> particleQuestion=new ArrayList<String>();
+//		
+//		if("true".equals(isParticle)){
+//			for(int i=0;i<arrQuestion.length;i++){
+//				particleQuestion.addAll(nlpService.getParticle(arrQuestion[i]));
+//			}
+//			arrQuestion=particleQuestion.toArray(arrQuestion);
+//		}
+//				
+//		//检索参数
+//		String [] searchField=new String[arrQuestion.length];
+//		Occur[] occurs = new Occur[arrQuestion.length]; 
+//		for(int i=0;i<searchField.length;i++){
+//			searchField[i]=Article.getMapedFieldName("title");
+//			if("true".equals(isShould)){
+//				occurs[i]=Occur.SHOULD;
+//			}else{
+//				occurs[i]=Occur.MUST;
+//			}
+//		}
+//			
+//		//排序参数，按照相关度、检索次数、时间排序
+//		String[] sortField={"searchTimes",};
+//		SortField.Type[] sortFieldType={SortField.Type.LONG};
+//		boolean[] reverse={true};
+//		boolean isRelevancy = true;
+//		
+//		
+//		List<Article> list=luceneService.searchArticle(arrQuestion, occurs, searchField, sortField, sortFieldType, reverse, isRelevancy, iBegin, iEnd);
+//		if(list!=null){
+//			msg.setMsg(list);
+//		}else{
+//			msg.setMsg("没有检索的结果");
+//		}
+//		pw.print(gson.toJson(msg));
+//	}
+	
 	/**
 	 * NLP分析之后再进行检索
 	 * @param request

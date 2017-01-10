@@ -407,13 +407,12 @@ public class IndexDao {
  * 结果到第几个结束，可以传入-1，则限制为1000条
  * @return
  */
-	public List<Document> search(String[] queryString,Occur[] occurs,String field,String sortField,SortField.Type sortFieldType,boolean reverse ,int firstResult, int maxResult) {
+	public List<Document> search(String[] queryString,Occur[] occurs,String[] fields,String[] sortField,SortField.Type[] sortFieldType,boolean[] reverse,boolean isRelevancy ,int firstResult, int maxResult) {
 		List<Document> list = new ArrayList<Document>();
 		TopDocs topDocs =null;
 		Sort sort=null;
 		DirectoryReader ireader=null;
 		IndexSearcher isearcher=null;
-		String[]fields=new String[queryString.length];
 		if(maxResult==-1){
 			maxResult=1000;
 		}
@@ -423,14 +422,25 @@ public class IndexDao {
 			isearcher = new IndexSearcher(ireader);
 			// 3、第三步，类似SQL，进行关键字查询
 //			parser = new QueryParser(field, util.getAnalyzer());
-			for(int i=0;i<queryString.length;i++){
-				fields[i]=field;
-			}
+//			for(int i=0;i<queryString.length;i++){
+//				fields[i]=field;
+//			}
 			Query query =MultiFieldQueryParser.parse(queryString,fields,occurs,util.getAnalyzer());
-
+			logger.info("Lucene检索条件为["+query+"]");
 			
-			if(sortField!=null&&sortFieldType!=null){
-				sort=new Sort(new SortField(sortField, sortFieldType,reverse));//生成排序类
+			if(sortField!=null&&sortFieldType!=null&&reverse!=null){
+				List<SortField> sortList=new ArrayList<SortField>();
+				if(isRelevancy){
+					sortList.add( SortField.FIELD_SCORE);
+				}
+				for(int i=0;i<sortField.length;i++){
+					SortField curSortField=new SortField(sortField[i], sortFieldType[i],reverse[i]);
+					sortList.add(curSortField);
+				}
+				SortField[] sortArr=new SortField[list.size()];
+				sortArr=sortList.toArray(sortArr);
+				sort=new Sort(sortArr);
+				
 				topDocs = isearcher.search(query, firstResult + maxResult,sort);
 			}else{
 				topDocs = isearcher.search(query, firstResult + maxResult);
@@ -552,60 +562,9 @@ public class IndexDao {
 	 */
 		public List<Article> searchArticle(String[] queryString,Occur[] occurs,String[] fields,String[] sortField,SortField.Type[] sortFieldType,boolean[] reverse,boolean isRelevancy ,int firstResult, int maxResult) {
 			List<Article> list = new ArrayList<Article>();
-			TopDocs topDocs =null;
-			Sort sort=null;
-			DirectoryReader ireader=null;
-			IndexSearcher isearcher=null;
-			if(maxResult==-1){
-				maxResult=1000;
-			}
-			try {
-				ireader = DirectoryReader.open(util.getDirectory());
-				// 2、第二步，创建搜索器
-				isearcher = new IndexSearcher(ireader);
-				// 3、第三步，类似SQL，进行关键字查询
-//				parser = new QueryParser(field, util.getAnalyzer());
-//				for(int i=0;i<queryString.length;i++){
-//					fields[i]=field;
-//				}
-				Query query =MultiFieldQueryParser.parse(queryString,fields,occurs,util.getAnalyzer());
-				logger.info("Lucene检索条件为["+query+"]");
-				
-				if(sortField!=null&&sortFieldType!=null&&reverse!=null){
-					List<SortField> sortList=new ArrayList<SortField>();
-					if(isRelevancy){
-						sortList.add( SortField.FIELD_SCORE);
-					}
-					for(int i=0;i<sortField.length;i++){
-						SortField curSortField=new SortField(sortField[i], sortFieldType[i],reverse[i]);
-						sortList.add(curSortField);
-					}
-					SortField[] sortArr=new SortField[list.size()];
-					sortArr=sortList.toArray(sortArr);
-					sort=new Sort(sortArr);
-					
-					topDocs = isearcher.search(query, firstResult + maxResult,sort);
-				}else{
-					topDocs = isearcher.search(query, firstResult + maxResult);
-				}
-				ScoreDoc[] hits = topDocs.scoreDocs;// 第二个参数，指定最多返回前n条结果
-				// 高亮
-//				Formatter formatter = new SimpleHTMLFormatter("<font color='red'>", "</font>");
-//				Scorer source = new QueryScorer(query);
-//				Highlighter highlighter = new Highlighter(formatter, source);
-				
-				// 处理结果
-				int endIndex = Math.min(firstResult + maxResult, hits.length);
-				
-				for (int i = firstResult; i < endIndex; i++) {
-					Document hitDoc = isearcher.doc(hits[i].doc);
-					list.add(DocumentUtils.document2Ariticle(hitDoc));
-				}
-				ireader.close();
-				return list;
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			List<Document> list_doc = new ArrayList<Document>();
+			list_doc=search(queryString, occurs, fields, sortField, sortFieldType, reverse, isRelevancy, firstResult, maxResult);
+			
 			return null;
 		}
 		

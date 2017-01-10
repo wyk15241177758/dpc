@@ -131,7 +131,7 @@ public class LunceneTest {
        
        try {
 		IndexDao dao=new IndexDao(indexPath);
-		String[] queryStr={"保险","合同"};
+		String[] queryStr={"保险"};
 //		List<Document> list=dao.search(queryStr, Occur.SHOULD, "xq_title",null,null, false, 0, -1);
 //		for(Document doc:list){
 //			System.out.println(doc.getValues("xq_title")[0]);
@@ -153,7 +153,7 @@ public class LunceneTest {
 		
 		List<Article> list=dao.searchArticle(queryStr, occurs, searchField, sortField, sortFieldType, reverse, isRelevancy, 0,10);
 		for(Article a:list){
-			System.out.println(a.getTitle()+" "+a.getDate());
+			System.out.println(a);
 		}
 
 

@@ -65,10 +65,10 @@ public class LuceneSearchService {
 	 *            结果到第几个结束，可以传入-1，则限制为1000条
 	 * @return
 	 */
-	public List<Document> search(String[] queryString, Occur[] occurs, String field, String sortField,
-			SortField.Type sortFieldType, boolean reverse, int firstResult, int maxResult) {
-		return dao.search(queryString, occurs, field, sortField, sortFieldType, reverse, firstResult, maxResult);
-	}
+//	public List<Document> search(String[] queryString, Occur[] occurs, String field, String sortField,
+//			SortField.Type sortFieldType, boolean reverse, int firstResult, int maxResult) {
+//		return dao.search(queryString, occurs, field, sortField, sortFieldType, reverse, firstResult, maxResult);
+//	}
 
 //	/**
 //	 * 检索词的与、或关系统一定义

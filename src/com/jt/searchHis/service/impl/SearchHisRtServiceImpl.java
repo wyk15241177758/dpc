@@ -45,6 +45,7 @@ public class SearchHisRtServiceImpl implements SearchHisRtService{
 		searchHis.setSearchContent(question);
 		if(searchHisId!=0){
 			searchHis.setId(searchHisId);
+			searchHis.setSearchTimes(searchHis.getSearchTimes()+1);
 		}else{
 			searchHis.setId(0l);
 		}

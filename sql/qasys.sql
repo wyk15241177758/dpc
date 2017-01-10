@@ -1,16 +1,16 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : local
-Source Server Version : 50508
-Source Host           : localhost:3306
+Source Server         : mariadb
+Source Server Version : 50505
+Source Host           : localhost:3307
 Source Database       : qasys
 
 Target Server Type    : MYSQL
-Target Server Version : 50508
+Target Server Version : 50505
 File Encoding         : 65001
 
-Date: 2016-11-08 10:07:37
+Date: 2017-01-10 16:06:20
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -20,8 +20,8 @@ SET FOREIGN_KEY_CHECKS=0;
 -- ----------------------------
 DROP TABLE IF EXISTS `gwfield`;
 CREATE TABLE `gwfield` (
-  `fieldid` bigint(20) NOT NULL AUTO_INCREMENT,
-  `jobid` bigint(20) NOT NULL,
+  `fieldid` int(11) NOT NULL AUTO_INCREMENT,
+  `jobid` int(11) NOT NULL,
   `name` varchar(50) NOT NULL,
   `tablekey` tinyint(10) NOT NULL,
   `type` varchar(10) NOT NULL,
@@ -68,7 +68,7 @@ CREATE TABLE `jobinf` (
 -- ----------------------------
 -- Records of jobinf
 -- ----------------------------
-INSERT INTO `jobinf` VALUES ('10', '数据推送', 'JOBGROUP_NAME', '1', '0 0/30 * * * ?', 'com.jt.gateway.service.operation.IndexTask', null, 'TRIGGER_NAME测试2', 'TRIGGERGROUP_NAME', '2016-11-07 22:34:29', '2016-11-08 00:02:10', 'D:/indexpath', '127.0.0.1', 'root', 'root', 'jtcrawler', '3306', 'crawler_xq');
+INSERT INTO `jobinf` VALUES ('10', '数据推送', 'JOBGROUP_NAME', '1', '0 0/30 * * * ?', 'com.jt.gateway.service.operation.IndexTask', null, 'TRIGGER_NAME测试2', 'TRIGGERGROUP_NAME', '2016-11-07 22:34:29', '2017-01-02 16:26:37', '/indexpath', '127.0.0.1', 'root', 'root', 'jtcrawler', '3306', 'crawler_xq');
 
 -- ----------------------------
 -- Table structure for `joblog`
@@ -87,6 +87,31 @@ CREATE TABLE `joblog` (
 -- ----------------------------
 -- Records of joblog
 -- ----------------------------
+INSERT INTO `joblog` VALUES ('10', '1', '1607', '2632', '2017-01-04 09:51:12', '2017-01-04 09:51:15');
+
+-- ----------------------------
+-- Table structure for `job_inf`
+-- ----------------------------
+DROP TABLE IF EXISTS `job_inf`;
+CREATE TABLE `job_inf` (
+  `jobId` int(11) NOT NULL AUTO_INCREMENT,
+  `jobName` varchar(64) NOT NULL,
+  `jobGroup` varchar(64) NOT NULL,
+  `jobStatus` int(11) NOT NULL,
+  `cronExpression` varchar(225) NOT NULL,
+  `beanClass` varchar(125) NOT NULL,
+  `description` blob,
+  `triggerName` varchar(64) NOT NULL,
+  `triggerGroupName` varchar(64) NOT NULL,
+  `createTime` datetime NOT NULL,
+  `updateTime` datetime NOT NULL,
+  PRIMARY KEY (`jobId`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of job_inf
+-- ----------------------------
+INSERT INTO `job_inf` VALUES ('1', '智能问答数据抽取', 'EXTJWEB_JOBGROUP_NAME', '1', '0 0/1 * * * ?', 'com.jt.gateway.service.operation.IndexTask', 0x74657374, 'TRIGGER_NAME', 'TRIGGERGROUP_NAME', '0000-00-00 00:00:00', '0000-00-00 00:00:00');
 
 -- ----------------------------
 -- Table structure for `keyword`
@@ -108,4 +133,81 @@ CREATE TABLE `keyword` (
 
 -- ----------------------------
 -- Records of keyword
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `parsehotword`
+-- ----------------------------
+DROP TABLE IF EXISTS `parsehotword`;
+CREATE TABLE `parsehotword` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `HOTWORD` varchar(255) DEFAULT NULL,
+  `NUM` int(11) DEFAULT NULL,
+  `CREATE_TIME` datetime NOT NULL COMMENT '创建时间',
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of parsehotword
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `scene`
+-- ----------------------------
+DROP TABLE IF EXISTS `scene`;
+CREATE TABLE `scene` (
+  `SCENEID` int(11) NOT NULL AUTO_INCREMENT,
+  `SCENENAME` varchar(64) NOT NULL,
+  `CREATETIME` datetime NOT NULL,
+  `UPDATETIME` datetime DEFAULT NULL,
+  PRIMARY KEY (`SCENEID`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of scene
+-- ----------------------------
+INSERT INTO `scene` VALUES ('1', 'test', '2016-12-05 22:37:32', null);
+INSERT INTO `scene` VALUES ('2', 'test2', '2016-11-15 20:55:21', null);
+
+-- ----------------------------
+-- Table structure for `sceneword`
+-- ----------------------------
+DROP TABLE IF EXISTS `sceneword`;
+CREATE TABLE `sceneword` (
+  `sceneWordId` int(11) NOT NULL AUTO_INCREMENT,
+  `sceneId` int(11) NOT NULL,
+  `sceneName` varchar(64) NOT NULL,
+  `enterWords` varchar(500) NOT NULL,
+  `outWords` varchar(500) NOT NULL,
+  `createTime` datetime NOT NULL,
+  `updateTime` datetime DEFAULT NULL,
+  PRIMARY KEY (`sceneWordId`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of sceneword
+-- ----------------------------
+INSERT INTO `sceneword` VALUES ('1', '1', 'test', '入口词1;入口词21111', '出口词1;出口词2', '2016-12-06 23:34:18', '2016-12-10 19:43:18');
+INSERT INTO `sceneword` VALUES ('2', '1', 'test', '11入口词', '出口词1;出口词2;出口词3', '2016-12-06 23:48:00', '2016-12-10 20:01:15');
+INSERT INTO `sceneword` VALUES ('3', '1', 'test', '南阳', '市长', '2016-12-11 17:57:32', '2016-12-11 17:58:22');
+INSERT INTO `sceneword` VALUES ('4', '1', 'test', '22入口词22入口词22入口词22入口词22入口词22入口词', '33出口词', '2016-12-11 22:05:36', '2016-12-11 22:06:14');
+INSERT INTO `sceneword` VALUES ('5', '1', 'test', '333', 'fdsa', '2016-12-11 22:11:48', null);
+INSERT INTO `sceneword` VALUES ('6', '1', 'test', '居住证', '居住证', '2017-01-04 09:54:47', null);
+INSERT INTO `sceneword` VALUES ('7', '1', 'test', '结婚证', '结婚证', '2017-01-04 09:55:23', null);
+
+-- ----------------------------
+-- Table structure for `searchhis`
+-- ----------------------------
+DROP TABLE IF EXISTS `searchhis`;
+CREATE TABLE `searchhis` (
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
+  `SEARCHCONTENT` varchar(255) NOT NULL,
+  `SEARCHTIMES` int(11) DEFAULT NULL,
+  `createtime` datetime DEFAULT NULL,
+  `updateTime` datetime DEFAULT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of searchhis
 -- ----------------------------

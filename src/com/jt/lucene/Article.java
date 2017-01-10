@@ -26,50 +26,25 @@ public class Article {
 	//返回与jtcrawler表的字段对应关系，必须小写
 	public static String getMapedFieldName(String articleField) {
 		if(articleField.equalsIgnoreCase("id")){
-			return "xq_id";
+			return "XQ_ID";
 		}
 		if(articleField.equalsIgnoreCase("title")){
-			return "xq_title";
+			return "XQ_TITLE";
 		}
 		if(articleField.equalsIgnoreCase("url")){
-			return "xq_url";
+			return "XQ_URL";
 		}
 		if(articleField.equalsIgnoreCase("channel")){
-			return "lm_name";
+			return "LM_NAME";
 		}
 		if(articleField.equalsIgnoreCase("site")){
-			return "zd_name";
+			return "ZD_NAME";
 		}
 		if(articleField.equalsIgnoreCase("category")){
-			return "sjfl";
+			return "SJFL";
 		}
 		if(articleField.equalsIgnoreCase("date")){
-			return "load_time";
-		}
-		return null;
-	}
-	
-	public static String getFieldType(String articleField){
-		if(articleField.equalsIgnoreCase("id")||articleField.equalsIgnoreCase("xq_id")){
-			return "long";
-		}
-		if(articleField.equalsIgnoreCase("title")||articleField.equalsIgnoreCase("xq_title")){
-			return "string";
-		}
-		if(articleField.equalsIgnoreCase("url")||articleField.equalsIgnoreCase("xq_url")){
-			return "string";
-		}
-		if(articleField.equalsIgnoreCase("channel")||articleField.equalsIgnoreCase("lm_name")){
-			return "string";
-		}
-		if(articleField.equalsIgnoreCase("site")||articleField.equalsIgnoreCase("zd_name")){
-			return "string";
-		}
-		if(articleField.equalsIgnoreCase("category")||articleField.equalsIgnoreCase("sjfl")){
-			return "string";
-		}
-		if(articleField.equalsIgnoreCase("date")||articleField.equalsIgnoreCase("load_time")){
-			return "date";
+			return "LOAD_TIME";
 		}
 		return null;
 	}

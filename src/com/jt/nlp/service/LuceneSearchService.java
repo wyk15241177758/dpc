@@ -183,7 +183,7 @@ public class LuceneSearchService {
 	public List<Article> searchAll(int maxResult,String orderBy,boolean reverse) { 
 		String[] queryString={"1"};
 		Occur[] occurs={ Occur.MUST};
-		String[] fields={"searchall"};
+		String[] fields={"SEARCHALL"};
 		return dao.searchArticle(queryString, occurs, fields, null, null, null, false,0, maxResult);
 	}
 	/**
@@ -204,7 +204,7 @@ public class LuceneSearchService {
 		}
 		String[] queryString={"1"};
 		Occur[] occurs={ Occur.MUST};
-		String[] fields={"searchall"};
+		String[] fields={"SEARCHALL"};
 		return dao.searchArticle(queryString, occurs, fields, null,null, null, false,(page-1)*maxResult, maxResult);
 	}
 	

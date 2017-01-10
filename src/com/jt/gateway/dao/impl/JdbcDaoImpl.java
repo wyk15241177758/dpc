@@ -338,29 +338,29 @@ public class JdbcDaoImpl implements JdbcDao{
 				 //System.out.println(  rs.getMetaData().getColumnType(i)  );
 				 switch( rs.getMetaData().getColumnType(i) ){
 			 	 case Types.VARCHAR:
-			 		col.put(rs.getMetaData().getColumnName(i), rs.getString(i));
+			 		col.put(rs.getMetaData().getColumnName(i).toUpperCase(), rs.getString(i));
 			 		break;
 			 	 case Types.INTEGER:
-				 	col.put(rs.getMetaData().getColumnName(i), rs.getInt(i));
+				 	col.put(rs.getMetaData().getColumnName(i).toUpperCase(), rs.getInt(i));
 				 	break;	
 			 	 case Types.BLOB:
 			 		InputStream in = rs.getBinaryStream(i);
-				 	col.put(rs.getMetaData().getColumnName(i), in );
+				 	col.put(rs.getMetaData().getColumnName(i).toUpperCase(), in );
 				 	break;
 			 	case Types.BIGINT:
-			 		col.put(rs.getMetaData().getColumnName(i), rs.getLong(i));
+			 		col.put(rs.getMetaData().getColumnName(i).toUpperCase(), rs.getLong(i));
 			    	break;
 				case Types.DOUBLE:
-					col.put(rs.getMetaData().getColumnName(i),  rs.getDouble(i));
+					col.put(rs.getMetaData().getColumnName(i).toUpperCase(),  rs.getDouble(i));
 					break;
 				case Types.DATE:
-					col.put(rs.getMetaData().getColumnName(i), rs.getDate(i));
+					col.put(rs.getMetaData().getColumnName(i).toUpperCase(), rs.getDate(i));
 					break;
 				case Types.TIMESTAMP:
-					col.put(rs.getMetaData().getColumnName(i), rs.getTimestamp(i));
+					col.put(rs.getMetaData().getColumnName(i).toUpperCase(), rs.getTimestamp(i));
 					break;
 				 default:
-					 col.put(rs.getMetaData().getColumnName(i), rs.getString(i));
+					 col.put(rs.getMetaData().getColumnName(i).toUpperCase(), rs.getString(i));
 				 	break;	
 				 }
 				 

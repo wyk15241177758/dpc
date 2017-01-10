@@ -123,12 +123,11 @@ public class IndexDao {
 			for(Document doc:docList){
 				try {
 					//加入一个特殊字段，此字段的值都一样，用于获得所有数据。且此值仅用于索引，因此不做存储TextField.TYPE_NOT_STORED
-					doc.add(new Field("searchall", "1",TextField.TYPE_NOT_STORED));
+					doc.add(new Field("SEARCHALL", "1",TextField.TYPE_NOT_STORED));
 					indexWriter.addDocument(doc);
 					jobSize++;
 				} catch (Exception e) {
 					e.printStackTrace();
-					logger.error("docid=["+doc.get("xq_id")+"]存储错误");
 				}
 			}
 		} catch (Exception e) {

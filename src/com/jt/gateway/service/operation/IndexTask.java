@@ -117,13 +117,13 @@ public class IndexTask extends ApplicationObjectSupport implements Job {
 		jobRunningLogService.addRunningLog(job.getJobId(), "开始生成新的索引文件");
 		// 获得数据总数，并按照batchSize分批写入索引
 		rsMap = JdbcDao.executeQueryForMap(sql);
-		maxId = Long.parseLong(rsMap.get("maxid") + "");
+		maxId = Long.parseLong(rsMap.get("MAXID") + "");
 
 		// 获得最小值
 		sql = "select min(" + gwFieldService.getIdField(job.getJobId()).getName() + ") as minid from "
 				+ job.getSqlTable();
 		rsMap = JdbcDao.executeQueryForMap(sql);
-		minId = Long.parseLong(rsMap.get("minid") + "");
+		minId = Long.parseLong(rsMap.get("MINID") + "");
 		logger.debug("minId=[" + minId + "]");
 		logger.info("ID区间为[" + minId + "-" + maxId + "]");
 		jobRunningLogService.addRunningLog(job.getJobId(), "ID区间为[" + minId + "-" + maxId + "]");
@@ -150,7 +150,7 @@ public class IndexTask extends ApplicationObjectSupport implements Job {
 					+ gwFieldService.getIdField(job.getJobId()).getName() + ">=" + curMinId
 					+ " and "
 					+ gwFieldService.getIdField(job.getJobId()).getName() + "<" + curMaxId;
-			logger.debug("curSql=[" + curSql + "]");
+			logger.info("curSql=[" + curSql + "]");
 			List<Map<String, Object>> rsList = JdbcDao.executeQueryForList(curSql);
 			
 			//获得job指定表的所有字段名称和类型，便于后续排序使用
@@ -160,33 +160,34 @@ public class IndexTask extends ApplicationObjectSupport implements Job {
 				Document doc = new Document();
 				for (GwField df : list) {
 					// 数据库中某些字段为空则跳过，
-					if (map.get(df.getName().toUpperCase()) == null) {
-						logger.info(df.getName().toUpperCase()+"字段为空，跳过");
+					if (map.get(df.getName()) == null) {
+						logger.info(df.getName()+"字段为空，跳过");
 						continue;
 					}
-					logger.debug("value=[" + map.get(df.getName().toUpperCase()).toString() + "]" + " type= ["
+					logger.debug("value=[" + map.get(df.getName()).toString() + "]" + " type= ["
 							+ df.getType() + "]");
 					//判断字段类型，如果是long类型则调用特殊的field，便于后续检索和排序
-					if("bigint".equalsIgnoreCase(columnTypeMap.get(df.getName().toUpperCase()))||
-							"int".equalsIgnoreCase(columnTypeMap.get(df.getName().toUpperCase()))){
+					if("bigint".equalsIgnoreCase(columnTypeMap.get(df.getName()))||
+							"int".equalsIgnoreCase(columnTypeMap.get(df.getName()))){
 						try {
-							indexDao.addLongPoint(doc, df.getName().toLowerCase(),Long.parseLong( map.get(df.getName().toUpperCase()).toString()));
+							indexDao.addLongPoint(doc, df.getName().toLowerCase(),Long.parseLong( map.get(df.getName()).toString()));
 						} catch (Exception e) {
 							e.printStackTrace();
-							logger.error("转换long类型错误 id=["+map.get(df.getName().toLowerCase())+"]");
+							logger.error("转换long类型错误 id=["+map.get(df.getName())+"]");
 						}
-					}else if("date".equalsIgnoreCase(columnTypeMap.get(df.getName().toUpperCase()))||
-							"timestamp".equalsIgnoreCase(columnTypeMap.get(df.getName().toUpperCase()))){
+					}else if("datetime".equalsIgnoreCase(columnTypeMap.get(df.getName()))||
+							"date".equalsIgnoreCase(columnTypeMap.get(df.getName()))||
+							"timestamp".equalsIgnoreCase(columnTypeMap.get(df.getName()))){
 						try {
 							SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:SS");
-							indexDao.addLongPoint(doc, df.getName().toLowerCase(),sdf.parse(map.get(df.getName().toUpperCase()).toString()).getTime());
+							indexDao.addLongPoint(doc, df.getName().toLowerCase(),sdf.parse(map.get(df.getName()).toString()).getTime());
 						} catch (Exception e) {
 							e.printStackTrace();
 							e.printStackTrace();
 							logger.error("转换long/date类型错误 id=["+df.getName().toLowerCase()+"]");
 						}
 					}else{
-						doc.add(new Field(df.getName().toLowerCase(), map.get(df.getName().toUpperCase()).toString(),
+						doc.add(new Field(df.getName().toLowerCase(), map.get(df.getName()).toString(),
 								df.getFieldType()));
 					}
 				}
@@ -286,13 +287,13 @@ public class IndexTask extends ApplicationObjectSupport implements Job {
 		logger.info("开始在目录[" + file.getAbsolutePath() + "]生成新的索引文件");
 		// 获得数据总数，并按照batchSize分批写入索引
 		rsMap = JdbcDao.executeQueryForMap(sql);
-		maxId = Long.parseLong(rsMap.get("maxid") + "");
+		maxId = Long.parseLong(rsMap.get("MAXID") + "");
 
 		// 获得最小值
 		sql = "select min(" + gwFieldService.getIdField(job.getJobId()).getName() + ") as minid from "
 				+ job.getSqlTable();
 		rsMap = JdbcDao.executeQueryForMap(sql);
-		minId = Long.parseLong(rsMap.get("minid") + "");
+		minId = Long.parseLong(rsMap.get("MINID") + "");
 		logger.debug("minId=[" + minId + "]");
 		logger.info("ID区间为[" + minId + "-" + maxId + "]");
 
@@ -320,12 +321,12 @@ public class IndexTask extends ApplicationObjectSupport implements Job {
 				Document doc = new Document();
 				for (GwField df : list) {
 					// 数据库中某些字段为空则跳过，
-					if (map.get(df.getName().toUpperCase()) == null) {
+					if (map.get(df.getName()) == null) {
 						continue;
 					}
-					logger.debug("value=[" + map.get(df.getName().toUpperCase()).toString() + "]" + " type= ["
+					logger.debug("value=[" + map.get(df.getName()).toString() + "]" + " type= ["
 							+ df.getType() + "]");
-					doc.add(new Field(df.getName().toLowerCase(), map.get(df.getName().toUpperCase()).toString(),
+					doc.add(new Field(df.getName().toLowerCase(), map.get(df.getName()).toString(),
 							df.getFieldType()));
 				}
 				
@@ -493,7 +494,7 @@ public class IndexTask extends ApplicationObjectSupport implements Job {
 		
 		Map<String,String> map=new HashMap<String,String>();
 		for(Map<String,Object> curRow:rsList_column){
-			map.put(curRow.get("COLUMN_NAME").toString(),curRow.get("DATA_TYPE").toString());
+			map.put(curRow.get("COLUMN_NAME").toString().toUpperCase(),curRow.get("DATA_TYPE").toString());
 		}
 		return map;
 	}

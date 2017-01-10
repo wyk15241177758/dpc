@@ -141,7 +141,7 @@ public class LunceneTest {
 		String [] searchField=new String[queryStr.length];
 		Occur[] occurs = new Occur[queryStr.length]; 
 		for(int i=0;i<searchField.length;i++){
-			searchField[i]="searchall";
+			searchField[i]="SEARCHALL";
 			occurs[i]=Occur.MUST;
 		}
 			
@@ -160,7 +160,7 @@ public class LunceneTest {
 		
 //		//检索参数
 //		String [] question={"1"};
-//		String [] searchField={"searchall"};
+//		String [] searchField={"SEARCHALL"};
 //		Occur[] occurs = {Occur.MUST}; 
 //			
 //		//排序参数

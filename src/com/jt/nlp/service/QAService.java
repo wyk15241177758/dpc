@@ -44,7 +44,6 @@ public class QAService {
 	}
 
 	public QAService() {
-		nlpService = new NlpService();
 	}
 
 	// nlp第一次分析初始化很慢，不知道怎么初始化，直接触发一次检索

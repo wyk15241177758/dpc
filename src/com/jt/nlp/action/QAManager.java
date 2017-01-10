@@ -4,22 +4,25 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.BooleanClause.Occur;
+import org.apache.lucene.search.SortField;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jt.bean.gateway.PageMsg;
+import com.jt.gateway.util.CMyString;
 import com.jt.lucene.Article;
 import com.jt.nlp.service.LuceneSearchService;
+import com.jt.nlp.service.NlpService;
 import com.jt.nlp.service.QAService;
 import com.jt.searchHis.service.SearchHisRtService;
 
@@ -28,6 +31,7 @@ import com.jt.searchHis.service.SearchHisRtService;
 public class QAManager {
 	private PageMsg msg;
 	private QAService qaService;
+	private NlpService nlpService;
 	private Gson gson;
 	private SearchHisRtService searchHisRtService;
 	public QAManager(){
@@ -46,6 +50,13 @@ public class QAManager {
 	@Resource(name="qaService") 
 	public void setQaService(QAService qaService) {
 		this.qaService = qaService;
+	}
+	public NlpService getNlpService() {
+		return nlpService;
+	}
+	@Resource(name="nlpService") 
+	public void setNlpService(NlpService nlpService) {
+		this.nlpService = nlpService;
 	}
 	/**
 	 * 不做NLP分析，分词检索
@@ -68,9 +79,12 @@ public class QAManager {
 		String sBegin=request.getParameter("begin");
 		String sEnd=request.getParameter("end");
 		//按照参数分割问题，适用于场景映射词
-		String splitBy=request.getParameter("splitBy");
-		//是否分词，适用于前台检索提示
-		String isParticle=request.getParameter("isParticle");
+		//isSplit默认为假，splitBy默认为空格
+		String isSplit=CMyString.getStrNotNullor0(request.getParameter("isSplit"),"false");
+		String splitBy=CMyString.getStrNotNullor0(request.getParameter("splitBy")," ");
+		//是否分词，适用于前台检索提示。默认为false
+		String isParticle=CMyString.getStrNotNullor0(request.getParameter("isParticle"),"false");
+		
 		
 		//增加解码
 		try {
@@ -95,8 +109,23 @@ public class QAManager {
 		if(question==null){
 			question="";
 		}
-		String[] arrQuestion=question.split(" ");
-		Lucen eSearchService luceneService=qaService.getSearchService();
+		String[] arrQuestion=null;
+		List<String> particleQuestion=new ArrayList<String>();
+		if("true".equals(isSplit)){
+			arrQuestion=question.split(splitBy);
+		}else{
+			arrQuestion=new String[1];
+			arrQuestion[0]=question;
+		}
+		
+		if("true".equals(isParticle)){
+			for(int i=0;i<arrQuestion.length;i++){
+				particleQuestion.addAll(nlpService.getParticle(arrQuestion[i]));
+			}
+			arrQuestion=particleQuestion.toArray(arrQuestion);
+		}
+				
+		LuceneSearchService luceneService=qaService.getSearchService();
 		
 		//检索参数
 		String [] searchField=new String[arrQuestion.length];

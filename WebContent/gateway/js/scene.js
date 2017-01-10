@@ -91,7 +91,8 @@ function showSearchPreview(curOutWords){
 	var param={
 			"question":curOutWords,
 			"end":10,
-			"splitBy":" "
+			"splitBy":" ",
+			"isSplit":"true"
 	}
 	$("#log").html("");
 	 $.getJSON("/QASystem/admin/luceneSearch.do",param,function(data){

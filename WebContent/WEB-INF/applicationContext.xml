@@ -193,6 +193,8 @@
 		</property>
 		<property name="sceneWordService" ref="sceneWordServiceImpl">
 		</property>
+		<property name="nlpService" ref="nlpService">
+		</property>
 	</bean>
 
 
@@ -213,6 +215,11 @@
 		<property name="searchHisService" ref="searchHisServiceImpl"></property>
 		<property name="vectorSize" value="2"></property>
 	</bean>
+	
+	<bean id="nlpService" class="com.jt.nlp.service.NlpService">
+	</bean>
+
+
 
 
 	<bean id="jobInit" class="com.jt.gateway.service.management.JobInit"

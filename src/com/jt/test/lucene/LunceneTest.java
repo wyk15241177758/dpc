@@ -23,7 +23,7 @@ import com.jt.lucene.IndexDao;
 import com.jt.lucene.LuceneUtilsGw;
 
 public class LunceneTest {
-    private static String indexPath = "D:\\indexpath";    // 索引保存目录
+    private static String indexPath = "D:\\indexpath_searchHis";    // 索引保存目录
     private static LuceneUtilsGw util=null;
     public static void createIndex(){    // 建立索引
        IndexWriter writer;
@@ -131,7 +131,7 @@ public class LunceneTest {
        
        try {
 		IndexDao dao=new IndexDao(indexPath);
-		String[] queryStr={"保险"};
+		String[] queryStr={"1"};
 //		List<Document> list=dao.search(queryStr, Occur.SHOULD, "xq_title",null,null, false, 0, -1);
 //		for(Document doc:list){
 //			System.out.println(doc.getValues("xq_title")[0]);
@@ -141,7 +141,7 @@ public class LunceneTest {
 		String [] searchField=new String[queryStr.length];
 		Occur[] occurs = new Occur[queryStr.length]; 
 		for(int i=0;i<searchField.length;i++){
-			searchField[i]=Article.getMapedFieldName("title");
+			searchField[i]="searchall";
 			occurs[i]=Occur.MUST;
 		}
 			
@@ -151,8 +151,8 @@ public class LunceneTest {
 		boolean[] reverse={true};
 		boolean isRelevancy = true;
 		
-		List<Article> list=dao.searchArticle(queryStr, occurs, searchField, sortField, sortFieldType, reverse, isRelevancy, 0,10);
-		for(Article a:list){
+		List<Document> list=dao.search(queryStr, occurs, searchField, sortField, sortFieldType, reverse, isRelevancy, 0,10);
+		for(Document a:list){
 			System.out.println(a);
 		}
 

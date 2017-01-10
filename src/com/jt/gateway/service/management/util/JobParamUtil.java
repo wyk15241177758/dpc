@@ -49,6 +49,12 @@ public class JobParamUtil {
 		Gson gson=new Gson();
 		try {
 			gwFields=gson.fromJson(request.getParameter("datafields"), type);
+			//字段名称改为大写
+			for(GwField gf:gwFields){
+				gf.setName(gf.getName().toUpperCase());
+			}
+			
+			
 			HashSet<String> set=new HashSet<String>();
 			//排重
 			boolean simFlag=false;

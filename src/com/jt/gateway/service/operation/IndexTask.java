@@ -1,9 +1,12 @@
 package com.jt.gateway.service.operation;
 
 import java.io.File;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,8 +14,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.document.FieldType;
-import org.apache.lucene.document.TextField;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -29,7 +30,6 @@ import com.jt.gateway.service.job.JobInfService;
 import com.jt.gateway.service.job.JobLogService;
 import com.jt.gateway.service.job.JobRunningLogService;
 import com.jt.gateway.util.FileUtil;
-import com.jt.lucene.Article;
 import com.jt.lucene.IndexDao;
 
 /**
@@ -153,31 +153,37 @@ public class IndexTask extends ApplicationObjectSupport implements Job {
 			logger.debug("curSql=[" + curSql + "]");
 			List<Map<String, Object>> rsList = JdbcDao.executeQueryForList(curSql);
 			
+			//获得job指定表的所有字段名称和类型，便于后续排序使用
+			Map<String,String> columnTypeMap=getColumnTypeMap(job.getSqlTable());
+			
 			for (Map<String, Object> map : rsList) {
 				Document doc = new Document();
 				for (GwField df : list) {
 					// 数据库中某些字段为空则跳过，
 					if (map.get(df.getName().toUpperCase()) == null) {
+						logger.info(df.getName().toUpperCase()+"字段为空，跳过");
 						continue;
 					}
 					logger.debug("value=[" + map.get(df.getName().toUpperCase()).toString() + "]" + " type= ["
 							+ df.getType() + "]");
 					//判断字段类型，如果是long类型则调用特殊的field，便于后续检索和排序
-					if("long".equals(Article.getFieldType(df.getName().toLowerCase()))){
+					if("bigint".equalsIgnoreCase(columnTypeMap.get(df.getName().toUpperCase()))||
+							"int".equalsIgnoreCase(columnTypeMap.get(df.getName().toUpperCase()))){
 						try {
 							indexDao.addLongPoint(doc, df.getName().toLowerCase(),Long.parseLong( map.get(df.getName().toUpperCase()).toString()));
 						} catch (Exception e) {
 							e.printStackTrace();
-							logger.error("转换long类型错误 id=["+map.get("xq_id")+"]");
+							logger.error("转换long类型错误 id=["+map.get(df.getName().toLowerCase())+"]");
 						}
-					}else if("date".equals(Article.getFieldType(df.getName().toLowerCase()))){
+					}else if("date".equalsIgnoreCase(columnTypeMap.get(df.getName().toUpperCase()))||
+							"timestamp".equalsIgnoreCase(columnTypeMap.get(df.getName().toUpperCase()))){
 						try {
 							SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:SS");
 							indexDao.addLongPoint(doc, df.getName().toLowerCase(),sdf.parse(map.get(df.getName().toUpperCase()).toString()).getTime());
 						} catch (Exception e) {
 							e.printStackTrace();
 							e.printStackTrace();
-							logger.error("转换long/date类型错误 id=["+map.get("xq_id")+"]");
+							logger.error("转换long/date类型错误 id=["+df.getName().toLowerCase()+"]");
 						}
 					}else{
 						doc.add(new Field(df.getName().toLowerCase(), map.get(df.getName().toUpperCase()).toString(),
@@ -476,6 +482,20 @@ public class IndexTask extends ApplicationObjectSupport implements Job {
 
 	public void setJob(JobInf job) {
 		this.job = job;
+	}
+	
+	//获得指定表的字段类型
+	private Map<String,String> getColumnTypeMap(String tableName) throws ClassNotFoundException, SQLException{
+		
+		String sql_column = "select column_name,data_type from information_schema.`COLUMNS` where"
+				+" table_name='"+tableName+"'" ;
+		List<Map<String, Object>> rsList_column = JdbcDao.executeQueryForList(sql_column);
+		
+		Map<String,String> map=new HashMap<String,String>();
+		for(Map<String,Object> curRow:rsList_column){
+			map.put(curRow.get("COLUMN_NAME").toString(),curRow.get("DATA_TYPE").toString());
+		}
+		return map;
 	}
 
 	public static void main(String[] args) {

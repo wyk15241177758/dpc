@@ -170,7 +170,7 @@ public class IndexTask extends ApplicationObjectSupport implements Job {
 					if("bigint".equalsIgnoreCase(columnTypeMap.get(df.getName()))||
 							"int".equalsIgnoreCase(columnTypeMap.get(df.getName()))){
 						try {
-							indexDao.addLongPoint(doc, df.getName().toLowerCase(),Long.parseLong( map.get(df.getName()).toString()));
+							indexDao.addLongPoint(doc, df.getName(),Long.parseLong( map.get(df.getName()).toString()));
 						} catch (Exception e) {
 							e.printStackTrace();
 							logger.error("转换long类型错误 id=["+map.get(df.getName())+"]");
@@ -180,14 +180,14 @@ public class IndexTask extends ApplicationObjectSupport implements Job {
 							"timestamp".equalsIgnoreCase(columnTypeMap.get(df.getName()))){
 						try {
 							SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:SS");
-							indexDao.addLongPoint(doc, df.getName().toLowerCase(),sdf.parse(map.get(df.getName()).toString()).getTime());
+							indexDao.addLongPoint(doc, df.getName(),sdf.parse(map.get(df.getName()).toString()).getTime());
 						} catch (Exception e) {
 							e.printStackTrace();
 							e.printStackTrace();
-							logger.error("转换long/date类型错误 id=["+df.getName().toLowerCase()+"]");
+							logger.error("转换long/date类型错误 id=["+df.getName()+"]");
 						}
 					}else{
-						doc.add(new Field(df.getName().toLowerCase(), map.get(df.getName()).toString(),
+						doc.add(new Field(df.getName(), map.get(df.getName()).toString(),
 								df.getFieldType()));
 					}
 				}
@@ -326,7 +326,7 @@ public class IndexTask extends ApplicationObjectSupport implements Job {
 					}
 					logger.debug("value=[" + map.get(df.getName()).toString() + "]" + " type= ["
 							+ df.getType() + "]");
-					doc.add(new Field(df.getName().toLowerCase(), map.get(df.getName()).toString(),
+					doc.add(new Field(df.getName(), map.get(df.getName()).toString(),
 							df.getFieldType()));
 				}
 				

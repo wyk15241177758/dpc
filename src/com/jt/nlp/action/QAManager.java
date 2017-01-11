@@ -5,12 +5,15 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.lucene.document.Document;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.SortField;
 import org.springframework.stereotype.Controller;
@@ -143,92 +146,106 @@ public class QAManager {
 	}
 
 	
-//	/**
-//	 * 检索历史的全文检索
-//	 * @param request
-//	 * @param response
-//	 */
-//	@RequestMapping(value="luceneSearch_searchHis.do")
-//	public void luceneSearch_searchHis(HttpServletRequest request, HttpServletResponse response) {
-//		response.setCharacterEncoding("utf-8");
-//		msg=new PageMsg();
-//		msg.setSig(true);
-//		PrintWriter pw=null;
-//		try {
-//			pw=response.getWriter();
-//		} catch (IOException e1) {
-//			e1.printStackTrace();
-//			return;
-//		}
-//		String question=request.getParameter("question");
-//		String sBegin=request.getParameter("begin");
-//		String sEnd=request.getParameter("end");
-//		//是否分词，适用于前台检索提示。默认为false
-//		String isParticle=CMyString.getStrNotNullor0(request.getParameter("isParticle"),"false");
-//		//问题词是否为或包含
-//		String isShould=CMyString.getStrNotNullor0(request.getParameter("isShould"),"false");
-//		
-//		
-//		//增加解码
-//		try {
-//			question=URLDecoder.decode(question, "utf-8");
-//		} catch (UnsupportedEncodingException e1) {
-//			e1.printStackTrace();
-//			question="";
-//		}
-//		
-//		int iBegin=0;
-//		int iEnd=0;
-//		try {
-//			iBegin=Integer.parseInt(sBegin);
-//		}catch(Exception e){
-//			iBegin=0;
-//		}
-//		try {
-//			iEnd=Integer.parseInt(sEnd);
-//		}catch(Exception e){
-//			iEnd=5;
-//		}
-//		if(question==null){
-//			question="";
-//		}
-//		String[] arrQuestion={question};
-//		List<String> particleQuestion=new ArrayList<String>();
-//		
-//		if("true".equals(isParticle)){
-//			for(int i=0;i<arrQuestion.length;i++){
-//				particleQuestion.addAll(nlpService.getParticle(arrQuestion[i]));
-//			}
-//			arrQuestion=particleQuestion.toArray(arrQuestion);
-//		}
-//				
-//		//检索参数
-//		String [] searchField=new String[arrQuestion.length];
-//		Occur[] occurs = new Occur[arrQuestion.length]; 
-//		for(int i=0;i<searchField.length;i++){
-//			searchField[i]=Article.getMapedFieldName("title");
-//			if("true".equals(isShould)){
-//				occurs[i]=Occur.SHOULD;
-//			}else{
-//				occurs[i]=Occur.MUST;
-//			}
-//		}
-//			
-//		//排序参数，按照相关度、检索次数、时间排序
-//		String[] sortField={"searchTimes",};
-//		SortField.Type[] sortFieldType={SortField.Type.LONG};
-//		boolean[] reverse={true};
-//		boolean isRelevancy = true;
-//		
-//		
-//		List<Article> list=luceneService.searchArticle(arrQuestion, occurs, searchField, sortField, sortFieldType, reverse, isRelevancy, iBegin, iEnd);
-//		if(list!=null){
-//			msg.setMsg(list);
-//		}else{
-//			msg.setMsg("没有检索的结果");
-//		}
-//		pw.print(gson.toJson(msg));
-//	}
+	/**
+	 * 检索历史的全文检索
+	 * @param request
+	 * @param response
+	 */
+	@RequestMapping(value="luceneSearch_searchHis.do")
+	public void luceneSearch_searchHis(HttpServletRequest request, HttpServletResponse response) {
+		response.setCharacterEncoding("utf-8");
+		msg=new PageMsg();
+		msg.setSig(true);
+		PrintWriter pw=null;
+		try {
+			pw=response.getWriter();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+			return;
+		}
+		String question=request.getParameter("question");
+		String sBegin=request.getParameter("begin");
+		String sEnd=request.getParameter("end");
+		//是否分词，适用于前台检索提示。默认为false
+		String isParticle=CMyString.getStrNotNullor0(request.getParameter("isParticle"),"false");
+		//问题词是否为或包含
+		String isShould=CMyString.getStrNotNullor0(request.getParameter("isShould"),"false");
+		
+		
+		//增加解码
+		try {
+			question=URLDecoder.decode(question, "utf-8");
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+			question="";
+		}
+		
+		int iBegin=0;
+		int iEnd=0;
+		try {
+			iBegin=Integer.parseInt(sBegin);
+		}catch(Exception e){
+			iBegin=0;
+		}
+		try {
+			iEnd=Integer.parseInt(sEnd);
+		}catch(Exception e){
+			iEnd=5;
+		}
+		if(question==null){
+			question="";
+		}
+		String[] arrQuestion={question};
+		List<String> particleQuestion=new ArrayList<String>();
+		
+		if("true".equals(isParticle)){
+			for(int i=0;i<arrQuestion.length;i++){
+				particleQuestion.addAll(nlpService.getParticle(arrQuestion[i]));
+			}
+			arrQuestion=particleQuestion.toArray(arrQuestion);
+		}
+				
+		//检索参数
+		String [] searchField=new String[arrQuestion.length];
+		Occur[] occurs = new Occur[arrQuestion.length]; 
+		for(int i=0;i<searchField.length;i++){
+			searchField[i]="SEARCHCONTENT";
+			if("true".equals(isShould)){
+				occurs[i]=Occur.SHOULD;
+			}else{
+				occurs[i]=Occur.MUST;
+			}
+		}
+			
+		//排序参数，按照相关度、检索次数、时间排序
+		String[] sortField={"SEARCHTIMES","UPDATETIME"};
+		SortField.Type[] sortFieldType={SortField.Type.LONG,SortField.Type.LONG};
+		boolean[] reverse={true,true};
+		boolean isRelevancy = true;
+		
+		List<Document> list=searchService_searchHis.search(arrQuestion, occurs, searchField, sortField, sortFieldType, reverse, isRelevancy, iBegin, iEnd);
+		
+		//按照SearchHis的字段进行格式化
+		List<Map<String,String>> formatList=new ArrayList<Map<String,String>>();
+		Map<String,String> columnMap=null;
+		for(Document doc:list){
+			columnMap=new HashMap<String,String>();
+			//ID，SEARCHCONTENT,SEARCHTIMES,CREATETIME,UPDATETIME
+			columnMap.put("ID",doc.get("ID"));
+			columnMap.put("SEARCHCONTENT",doc.get("SEARCHCONTENT"));
+			columnMap.put("SEARCHTIMES",doc.get("SEARCHTIMES"));
+			columnMap.put("CREATETIME",doc.get("CREATETIME"));
+			columnMap.put("UPDATETIME",doc.get("UPDATETIME"));
+			formatList.add(columnMap);
+		}
+		
+		if(formatList.size()>0){
+			msg.setMsg(formatList);
+		}else{
+			msg.setMsg("没有检索的结果");
+		}
+		pw.print(gson.toJson(msg));
+	}
 	
 	/**
 	 * NLP分析之后再进行检索

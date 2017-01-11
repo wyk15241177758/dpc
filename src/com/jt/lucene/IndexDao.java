@@ -68,7 +68,7 @@ public class IndexDao {
 		
 		try {
 			util=new LuceneUtilsGw(indexPath);
-			logger.info("初始化indexdao");
+			logger.info("初始化indexdao,indexPath=["+indexPath+"]");
 			
 			//检查指定目录下是否有分词文件，没有就自动新建空索引，避免报错
 			File file=new File(indexPath);

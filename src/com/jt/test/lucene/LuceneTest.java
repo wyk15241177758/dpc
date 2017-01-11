@@ -1,8 +1,11 @@
 package com.jt.test.lucene;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
@@ -17,12 +20,13 @@ import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TermQuery;
 import org.apdplat.word.analysis.Hits;
 
+import com.jt.gateway.util.CMyString;
 import com.jt.lucene.Article;
 import com.jt.lucene.DocumentUtils;
 import com.jt.lucene.IndexDao;
 import com.jt.lucene.LuceneUtilsGw;
 
-public class LunceneTest {
+public class LuceneTest {
     private static String indexPath = "D:\\indexpath_searchHis";    // 索引保存目录
     private static LuceneUtilsGw util=null;
     public static void createIndex(){    // 建立索引
@@ -124,87 +128,147 @@ public class LunceneTest {
               
        }
     }
-    public static void main(String[] args) {    //contests字段上查找含有"我们","今晚"这两个字段的Doument
-       Query query;
-       IndexSearcher searcher;
-//       createIndex();
-       
-       try {
-		IndexDao dao=new IndexDao(indexPath);
-		String[] queryStr={"1"};
-//		List<Document> list=dao.search(queryStr, Occur.SHOULD, "xq_title",null,null, false, 0, -1);
-//		for(Document doc:list){
-//			System.out.println(doc.getValues("xq_title")[0]);
-//			
-//		}
+    
+  
+    
+    public static void SearchTest(){
+    	  Query query;
+          IndexSearcher searcher;
+//          createIndex();
+          
+          try {
+   		IndexDao dao=new IndexDao(indexPath);
+   		String[] queryStr={"1"};
+//   		List<Document> list=dao.search(queryStr, Occur.SHOULD, "xq_title",null,null, false, 0, -1);
+//   		for(Document doc:list){
+//   			System.out.println(doc.getValues("xq_title")[0]);
+//   			
+//   		}
+   		//检索参数
+   		String [] searchField=new String[queryStr.length];
+   		Occur[] occurs = new Occur[queryStr.length]; 
+   		for(int i=0;i<searchField.length;i++){
+   			searchField[i]="SEARCHALL";
+   			occurs[i]=Occur.MUST;
+   		}
+   			
+   		//排序参数
+   		String[] sortField= {Article.getMapedFieldName("date")};
+   		SortField.Type[] sortFieldType={SortField.Type.LONG};
+   		boolean[] reverse={true};
+   		boolean isRelevancy = true;
+   		
+   		List<Document> list=dao.search(queryStr, occurs, searchField, sortField, sortFieldType, reverse, isRelevancy, 0,10);
+   		for(Document a:list){
+   			System.out.println(a);
+   		}
+
+
+   		
+//   		//检索参数
+//   		String [] question={"1"};
+//   		String [] searchField={"SEARCHALL"};
+//   		Occur[] occurs = {Occur.MUST}; 
+//   			
+//   		//排序参数
+//   		String[] sortField= {"load_time"};
+//   		SortField.Type[] sortFieldType={SortField.Type.LONG};
+//   		boolean[] reverse={true};
+//   		boolean isRelevancy = true;
+//   		
+//   		List<Article> list=dao.searchArticle(question, occurs, searchField, sortField, sortFieldType, reverse, isRelevancy, 0,-1);
+//   		for(Article a:list){
+//   			System.out.println(a.getTitle()+" "+a.getDate());
+//   		}
+
+//      try {
+//          //生成索引
+//          createIndex();
+////      	util=new LuceneUtilsGw(indexPath);
+////          DirectoryReader ireader = DirectoryReader.open(util.getDirectory());
+////          searcher = new IndexSearcher(ireader);
+////          //要查找的字符串数组
+////          String [] stringQuery={"我们","今晚"};
+////          //待查找字符串对应的字段
+////          String[] fields={"contents","contents"};
+////          //Occur.MUST表示对应字段必须有查询值， Occur.MUST_NOT 表示对应字段必须没有查询值
+////          Occur[] occ={Occur.SHOULD,Occur.SHOULD};
+////          
+////          query=MultiFieldQueryParser.parse(stringQuery,fields,occ,new StandardAnalyzer());
+////          TopDocs topDocs = searcher.search(query,1);
+////          System.out.println(topDocs.totalHits);
+////          ScoreDoc[]score=topDocs.scoreDocs;
+////          for(int i=0;i<score.length;i++){
+////          	System.out.println("score["+i+"].doc=["+score[i].doc+"]");
+////          	Document hitDoc=searcher.doc(score[i].doc);
+////          	System.out.println(hitDoc.get("contents"));
+////          }
+//     } 
+//     catch (Exception e) {
+//  	   e.printStackTrace();
+//  	   
+//     } 
+   		
+          } catch (IOException e1) {
+   		e1.printStackTrace();
+   	}
+    }
+    
+    public  static void searchHis() throws IOException{
+    	IndexDao dao=new IndexDao(indexPath);
+    	String question="区长信箱";
+		int begin=0;
+		int end=5;
+		String[] arrQuestion={question};
+		List<String> particleQuestion=new ArrayList<String>();
+		particleQuestion.add("区长");
+		particleQuestion.add("信箱");
+		particleQuestion.add("郑晓彬");
+		particleQuestion.add("岳阳市");
+		arrQuestion=particleQuestion.toArray(arrQuestion);
 		//检索参数
-		String [] searchField=new String[queryStr.length];
-		Occur[] occurs = new Occur[queryStr.length]; 
+		String [] searchField=new String[arrQuestion.length];
+		Occur[] occurs = new Occur[arrQuestion.length]; 
 		for(int i=0;i<searchField.length;i++){
-			searchField[i]="SEARCHALL";
-			occurs[i]=Occur.MUST;
+			searchField[i]="SEARCHCONTENT";
+			occurs[i]=Occur.SHOULD;
 		}
 			
-		//排序参数
-		String[] sortField= {Article.getMapedFieldName("date")};
-		SortField.Type[] sortFieldType={SortField.Type.LONG};
-		boolean[] reverse={true};
+		//排序参数，按照相关度、检索次数、时间排序
+		String[] sortField={"SEARCHTIMES","UPDATETIME"};
+		SortField.Type[] sortFieldType={SortField.Type.LONG,SortField.Type.LONG};
+		boolean[] reverse={true,true};
 		boolean isRelevancy = true;
 		
-		List<Document> list=dao.search(queryStr, occurs, searchField, sortField, sortFieldType, reverse, isRelevancy, 0,10);
-		for(Document a:list){
-			System.out.println(a);
+		List<Document> list=dao.search(arrQuestion, occurs, searchField, sortField, sortFieldType, reverse, isRelevancy, begin, end);
+		
+		
+		
+		//按照SearchHis的字段进行格式化
+		List<Map<String,String>> formatList=new ArrayList<Map<String,String>>();
+		Map<String,String> columnMap=null;
+		for(Document doc:list){
+			columnMap=new HashMap<String,String>();
+			//ID，SEARCHCONTENT,SEARCHTIMES,CREATETIME,UPDATETIME
+			columnMap.put("ID",doc.get("ID"));
+			columnMap.put("SEARCHCONTENT",doc.get("SEARCHCONTENT"));
+			columnMap.put("SEARCHTIMES",doc.get("SEARCHTIMES"));
+			columnMap.put("CREATETIME",doc.get("CREATETIME"));
+			columnMap.put("UPDATETIME",doc.get("UPDATETIME"));
+			formatList.add(columnMap);
 		}
-
-
 		
-//		//检索参数
-//		String [] question={"1"};
-//		String [] searchField={"SEARCHALL"};
-//		Occur[] occurs = {Occur.MUST}; 
-//			
-//		//排序参数
-//		String[] sortField= {"load_time"};
-//		SortField.Type[] sortFieldType={SortField.Type.LONG};
-//		boolean[] reverse={true};
-//		boolean isRelevancy = true;
-//		
-//		List<Article> list=dao.searchArticle(question, occurs, searchField, sortField, sortFieldType, reverse, isRelevancy, 0,-1);
-//		for(Article a:list){
-//			System.out.println(a.getTitle()+" "+a.getDate());
-//		}
+		System.out.println(formatList);
 		
-		
-       } catch (IOException e1) {
-		e1.printStackTrace();
-	}
-       
-//        try {
-//            //生成索引
-//            createIndex();
-////        	util=new LuceneUtilsGw(indexPath);
-////            DirectoryReader ireader = DirectoryReader.open(util.getDirectory());
-////            searcher = new IndexSearcher(ireader);
-////            //要查找的字符串数组
-////            String [] stringQuery={"我们","今晚"};
-////            //待查找字符串对应的字段
-////            String[] fields={"contents","contents"};
-////            //Occur.MUST表示对应字段必须有查询值， Occur.MUST_NOT 表示对应字段必须没有查询值
-////            Occur[] occ={Occur.SHOULD,Occur.SHOULD};
-////            
-////            query=MultiFieldQueryParser.parse(stringQuery,fields,occ,new StandardAnalyzer());
-////            TopDocs topDocs = searcher.search(query,1);
-////            System.out.println(topDocs.totalHits);
-////            ScoreDoc[]score=topDocs.scoreDocs;
-////            for(int i=0;i<score.length;i++){
-////            	System.out.println("score["+i+"].doc=["+score[i].doc+"]");
-////            	Document hitDoc=searcher.doc(score[i].doc);
-////            	System.out.println(hitDoc.get("contents"));
-////            }
-//       } 
-//       catch (Exception e) {
-//    	   e.printStackTrace();
-//    	   
-//       } 
+    }
+    
+    public static void main(String[] args) {    //contests字段上查找含有"我们","今晚"这两个字段的Doument
+    	try {
+			searchHis();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+//    	SearchTest();
     }
 }

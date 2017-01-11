@@ -16,9 +16,11 @@ $(function(){
  	  
  	  var showTipTimeOut;
 	$("#messCon").keyup(function(){
+		 
 		clearTimeout(showTipTimeOut);
 		var msg=$(this).val();
 		showTipTimeOut=setTimeout(function(){
+			$(".tipDiv").css("display","none")
 			showTip();
 		},500);
 	})
@@ -98,6 +100,7 @@ $(function(){
 
 })
 
+var tipArr=new Array();
 
 //显示提示浮层
 function showTip(){
@@ -105,20 +108,34 @@ function showTip(){
 	var param={"question":$("#messCon").val(),"isParticle":"true","isShould":"true"}
 	if($.trim($("#messCon").val()).length>0){
 		$.getJSON(url,param,function(data){
+			tipArr=new Array()
 			var msg=data.msg;
-			var out="";
-			for(var i=0;i<msg.length;i++){
-				out+="<li UPDATETIME='"+msg[i].UPDATETIME+"' SEARCHCONTENT='"+msg[i].SEARCHCONTENT+
-				"' SEARCHTIMES='"+msg[i].SEARCHTIMES+"' CREATETIME='"+msg[i].CREATETIME+"'>"+msg[i].SEARCHCONTENT+"</li>"
-			}
-			if(msg.length>0){
-				$(".tipDiv ul").html(out);
-				$(".tipDiv").css("display","block");
+			if(data.sig==true){
+				var out="";
+				for(var i=0;i<msg.length;i++){
+					tipArr.push(msg[i]);
+//					out+="<li ID='"+msg[i].ID+"' UPDATETIME='"+msg[i].UPDATETIME+"' SEARCHCONTENT='"+msg[i].SEARCHCONTENT+
+//					"' SEARCHTIMES='"+msg[i].SEARCHTIMES+"' CREATETIME='"+msg[i].CREATETIME+"'>"+msg[i].SEARCHCONTENT+"</li>"
+					out+="<li>"+msg[i].SEARCHCONTENT+"</li>"
+				}
+				if(msg.length>0){
+					$(".tipDiv ul").html(out);
+					$(".tipDiv").css("display","block");
+				}
 			}
 		})
 	}
 	
 }
+//获得传入问题相同的提示，并将此提示ID作为参数传入后台
+function getSimTip(question){
+	for(var i=0;i<tipArr.length;i++){
+		if(question==tipArr[i].SEARCHCONTENT){
+			return tipArr[i].ID
+		}
+	}
+}
+
 
 //阻止事件气泡
 function stopPropagation(e){
@@ -136,16 +153,32 @@ function qaSearch(question){
 	addQuestion(question);
 	scrollToBottom();
 	
+	var searchHisId=getSimTip(question)+"";
+	searchHisId=searchHisId.length==0?"0":searchHisId;
 	//发起N次请求，N为config.js中分类的个数
 	var qaData={"msg":new Array()};
 	//记录当前Ajax执行的个数
 	var ajaxPos=0;
 	for(i=0;i<categoryArray.length;i++){
-		var param={
-				"question":encodeURIComponent(question),
-				"category":categoryArray[i],
-				"begin":0,
-				"end":5};
+		var param=null;
+		//最后一次请求才记录检索历史
+		if((i+1)==categoryArray.length){
+			param={
+					"question":encodeURIComponent(question),
+					"category":categoryArray[i],
+					"begin":0,
+					"end":5,
+					"searchHisId":searchHisId,
+					"isStorgeHis":"true"};
+			
+		}else{
+			param={
+					"question":encodeURIComponent(question),
+					"category":categoryArray[i],
+					"begin":0,
+					"end":5};
+		}
+		
 		$.getJSON("/QASystem/admin/qaSearch.do",param,function(data){
 			ajaxPos++;
 			qaData.msg=qaData.msg.concat(data.msg);

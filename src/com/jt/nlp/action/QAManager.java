@@ -13,6 +13,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.SortField;
@@ -32,6 +33,8 @@ import com.jt.searchHis.service.SearchHisRtService;
 @Controller
 
 public class QAManager {
+	private static Logger logger = Logger.getLogger(QAManager.class);
+
 	private PageMsg msg;
 	private QAService qaService;
 	private NlpService nlpService;
@@ -140,7 +143,8 @@ public class QAManager {
 		if(list!=null){
 			msg.setMsg(list);
 		}else{
-			msg.setMsg("没有检索的结果");
+			msg.setSig(false);
+			msg.setMsg("没有检索到结果");
 		}
 		pw.print(gson.toJson(msg));
 	}
@@ -242,7 +246,8 @@ public class QAManager {
 		if(formatList.size()>0){
 			msg.setMsg(formatList);
 		}else{
-			msg.setMsg("没有检索的结果");
+			msg.setSig(false);
+			msg.setMsg("没有检索到结果");
 		}
 		pw.print(gson.toJson(msg));
 	}
@@ -300,22 +305,28 @@ public class QAManager {
 		if(list!=null){
 			msg.setMsg(list);
 		}else{
+			msg.setSig(false);
 			msg.setMsg("没有检索的结果");
 		}
 		pw.print(gson.toJson(msg));
 		
-		//将问题写入缓存
-		if(question.length()>0){
-			String sSearchHisId=request.getParameter("searchHisId");
-			Long searchHisId=0l;
-			try {
-				searchHisId=Long.parseLong(sSearchHisId);
-			} catch (Exception e) {
-				System.out.println("转换检索历史ID为long失败，改为默认值0");
-				searchHisId=0l;
+		//是否需要记录历史，默认为false
+		String isStorgeHis=CMyString.getStrNotNullor0(request.getParameter("isStorgeHis"), "false");
+		if("true".equalsIgnoreCase(isStorgeHis)){
+			//将问题写入缓存
+			if(question.length()>0){
+				String sSearchHisId=request.getParameter("searchHisId");
+				Long searchHisId=0l;
+				try {
+					searchHisId=Long.parseLong(sSearchHisId);
+				} catch (Exception e) {
+					logger.info("转换检索历史ID为long失败，改为默认值0");
+					searchHisId=0l;
+				}
+				searchHisRtService.add(question, searchHisId);
 			}
-			searchHisRtService.add(question, searchHisId);
 		}
+
 		
 	}
 }

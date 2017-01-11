@@ -20,7 +20,9 @@ import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TermQuery;
 import org.apdplat.word.analysis.Hits;
 
-import com.jt.gateway.util.CMyString;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.jt.bean.gateway.PageMsg;
 import com.jt.lucene.Article;
 import com.jt.lucene.DocumentUtils;
 import com.jt.lucene.IndexDao;
@@ -257,8 +259,12 @@ public class LuceneTest {
 			columnMap.put("UPDATETIME",doc.get("UPDATETIME"));
 			formatList.add(columnMap);
 		}
-		
-		System.out.println(formatList);
+		PageMsg msg=new PageMsg();
+		msg.setMsg(formatList);
+		msg.setSig(true);
+		Gson gson= new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
+		;
+		System.out.println(gson.toJson(msg));
 		
     }
     

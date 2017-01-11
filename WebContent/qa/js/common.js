@@ -1,6 +1,28 @@
+
 $(function(){
 	
-
+	  $(document).on("mouseover",".tipDiv li",function(){
+		  $(this).addClass("tipLiActive").siblings("li").removeClass("tipLiActive")
+	  })
+	
+	  $(document).on("click",".tipDiv li",function(){
+	  	$("#messCon").val($(this).text());
+	  	$(".tipDiv").css("display","none")
+		stopPropagation(e) //停止dom事件层次传播
+	  })
+ 	  $(document).on("click","body",function(){
+ 		 $(".tipDiv").css("display","none")
+ 	  })
+ 	  
+ 	  var showTipTimeOut;
+	$("#messCon").keyup(function(){
+		clearTimeout(showTipTimeOut);
+		var msg=$(this).val();
+		showTipTimeOut=setTimeout(function(){
+			showTip();
+		},500);
+	})
+	
 	//左侧标签点击效果
 	$("#main0 a").click(function(){
 		qaSearch($(this).text());
@@ -75,6 +97,39 @@ $(function(){
 
 
 })
+
+
+//显示提示浮层
+function showTip(){
+	var url="/QASystem/admin/luceneSearch_searchHis.do"
+	var param={"question":$("#messCon").val(),"isParticle":"true","isShould":"true"}
+	if($.trim($("#messCon").val()).length>0){
+		$.getJSON(url,param,function(data){
+			var msg=data.msg;
+			var out="";
+			for(var i=0;i<msg.length;i++){
+				out+="<li UPDATETIME='"+msg[i].UPDATETIME+"' SEARCHCONTENT='"+msg[i].SEARCHCONTENT+
+				"' SEARCHTIMES='"+msg[i].SEARCHTIMES+"' CREATETIME='"+msg[i].CREATETIME+"'>"+msg[i].SEARCHCONTENT+"</li>"
+			}
+			if(msg.length>0){
+				$(".tipDiv ul").html(out);
+				$(".tipDiv").css("display","block");
+			}
+		})
+	}
+	
+}
+
+//阻止事件气泡
+function stopPropagation(e){
+	e=window.event||e;
+	if(document.all){
+		e.cancelBubble=true;
+	}else{
+		e.stopPropagation();
+	}
+}
+
 
 function qaSearch(question){
 	//显示问题并移动到底部

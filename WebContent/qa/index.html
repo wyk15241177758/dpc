@@ -5,10 +5,29 @@
 
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<title></title>
+		<title>QA智能咨询平台</title>
 		<link rel="stylesheet" type="text/css" href="css/global.css" />
 		<link rel="stylesheet" type="text/css" href="css/main.css" />
 		<script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
+		<style>
+			.tipDiv{
+			    color: #222;
+			    position: absolute;
+			    bottom: 70px;
+			    border: 1px solid #aaa;
+			    width: 95%;
+			    background-color: white;
+			    margin-left: 5px;
+			    display:none;
+			    background: #fff url("images/ui-bg_flat_75_ffffff_40x100.png") 50% 50% repeat-x;
+			}
+			.tipDiv li{
+			  padding-left: 20px;
+			}
+			.tipLiActive{
+    			background: #dadada url("images/ui-bg_glass_75_dadada_1x400.png") 50% 50% repeat-x;
+			}
+		</style>
 	</head>
 
 	<body>
@@ -177,10 +196,16 @@
 							
 							</div>
 						</div>
+						<div style="position:relative">
+						<div class="tipDiv">
+							<ul>
+							</ul>
+						</div>
 						<div class="input" style="width: 493px;">
 							<textarea type="text" id="messCon"></textarea>
 							<p id="fontNum"><i>还可以输入<span id="number"><strong>100</strong></span>字</i></p>
 							<button id="sendMess">发送 Enter</button>
+						</div>
 						</div>
 					</div>
 				</div>

@@ -16,19 +16,21 @@ import com.jt.searchHis.service.SearchHisService;
 public class SearchHisRtServiceImpl implements SearchHisRtService{
 	private static Logger logger = Logger.getLogger(SearchHisRtServiceImpl.class);
 
-	
+	//有searchHisId的检索
 	private Map<Long ,SearchHis> questionMap;
+	//没有searchHisId的检索
+	private Map<String,Integer> newMap;
 	private SearchHisService searchHisService;
 	//达到上限则存入数据库
-	private int vectorSize;
+	private int limitSize;
 	
-	public int getVectorSize() {
-		return vectorSize;
+
+	public int getLimitSize() {
+		return limitSize;
 	}
-	public void setVectorSize(int vectorSize) {
-		this.vectorSize = vectorSize;
+	public void setLimitSize(int limitSize) {
+		this.limitSize = limitSize;
 	}
-	
 	public Map<Long, SearchHis> getQuestionMap() {
 		return questionMap;
 	}
@@ -45,40 +47,50 @@ public class SearchHisRtServiceImpl implements SearchHisRtService{
 	
 	public SearchHisRtServiceImpl(){
 		questionMap=new HashMap<Long,SearchHis>();
+		newMap = new HashMap<String,Integer>();
 	}
 	public void add(String question,long searchHisId){
 		logger.info("存储检索历史进入缓存begin");
 		SearchHis searchHis=questionMap.get(searchHisId);
-		if(searchHis==null){
-			searchHis=new SearchHis();
-		}
-		searchHis.setSearchContent(question);
-		if(searchHisId!=0){
-			searchHis.setId(searchHisId);
-			searchHis.setSearchTimes(searchHis.getSearchTimes()+1);
+		//新的检索
+		if(searchHisId==0l){
+			Integer searchTimes=newMap.get(question);
+			if(searchTimes==null){
+				newMap.put(question, 1);
+			}else{
+				newMap.put(question,searchTimes+1);
+			}
 		}else{
-			searchHis.setId(0l);
+			//存在此检索历史
+			//但是map中没有
+			if(searchHis==null){
+				searchHis=new SearchHis();
+				searchHis.setId(searchHisId);
+				searchHis.setSearchTimes(1);
+				questionMap.put(searchHisId, searchHis);
+			}else{
+				searchHis.setSearchTimes(searchHis.getSearchTimes()+1);
+			}
 		}
-		
-		logger.info("ID=["+searchHis.getId()+"] searchTimes=["+searchHis.getSearchTimes()+"] questionMap.size=["+questionMap.size()+"]");
-		if(questionMap.size()>=vectorSize){
+		//达到上限
+		if(questionMap.size()>=limitSize||newMap.size()>=limitSize){
+			//保存newmap中数据并清空map
+			for(Entry<String, Integer>curEntry:newMap.entrySet()){
+				SearchHis curSearchHis=new SearchHis(null,curEntry.getKey(),curEntry.getValue(),new Date(),new Date());
+				searchHisService.addSearchHis(curSearchHis);
+			}
+			newMap.clear();
+			
+			//保存questionMap中数据并清空
 			for(Entry<Long, SearchHis>curEntry:questionMap.entrySet()){
 				SearchHis curSearchHis=curEntry.getValue();
-				if(curSearchHis.getId()!=0){
-					SearchHis dbSearchHis=searchHisService.getSearchHisById(searchHis.getId());
-					dbSearchHis.setSearchTimes(dbSearchHis.getSearchTimes()+searchHis.getSearchTimes());
-					dbSearchHis.setUpdateTime(new Date());
-					searchHisService.updateSearchHis(dbSearchHis);
-					logger.info("update SearchHis content=["+dbSearchHis.getSearchContent()+"] searchTimes=["+dbSearchHis.getSearchTimes()
-					+"] updateTime=["+dbSearchHis.getUpdateTime()+"]");
-				}else{
-					searchHisService.addSearchHis(curSearchHis);
-					logger.info("create SearchHis content=["+curSearchHis.getSearchContent()+"] searchTimes=["+curSearchHis.getSearchTimes()
-					+"] updateTime=["+curSearchHis.getUpdateTime()+"]");
-				}
+				SearchHis dbSearchHis=searchHisService.getSearchHisById(curSearchHis.getId());
+				dbSearchHis.setSearchTimes(dbSearchHis.getSearchTimes()+curSearchHis.getSearchTimes());
+				dbSearchHis.setUpdateTime(new Date());
+				searchHisService.updateSearchHis(dbSearchHis);
 			}
 			//清空缓存
-			questionMap=new HashMap<Long,SearchHis>();
+			questionMap.clear();
 			logger.info("清空缓存");
 		}
 		logger.info("存储检索历史进入缓存end");

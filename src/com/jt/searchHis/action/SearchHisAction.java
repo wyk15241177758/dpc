@@ -72,7 +72,7 @@ public class SearchHisAction {
 		if (searchContent != null && searchContent.length() > 0 ) {
 			try {
 				Date date = new Date();
-				searchHis = new SearchHis(null, searchContent, searchTimes, date, null);
+				searchHis = new SearchHis(null, searchContent, searchTimes, date, date);
 				searchHisService.addSearchHis(searchHis);
 				msg.setMsg("新增检索历史[" + searchContent + "]成功");
 				msg.setSig(true);

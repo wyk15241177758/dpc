@@ -151,14 +151,14 @@
 
 	<bean id="gwFieldImpl" parent="baseTransactionProxyBean">
 		<property name="target">
-			<bean class="  com.jt.gateway.service.job.GwFieldImpl" autowire="byName">
+			<bean class="com.jt.gateway.service.job.GwFieldImpl" autowire="byName">
 			</bean>
 		</property>
 	</bean>
 
 	<bean id="sceneServiceImpl" parent="baseTransactionProxyBean">
 		<property name="target">
-			<bean class=" com.jt.scene.service.impl.SceneServiceImpl" autowire="byName">
+			<bean class="com.jt.scene.service.impl.SceneServiceImpl" autowire="byName">
 			<property name="sceneWordService" ref="sceneWordServiceImpl"></property>
 			</bean>
 		</property>
@@ -166,23 +166,31 @@
 	
 	<bean id="sceneWordServiceImpl" parent="baseTransactionProxyBean">
 		<property name="target">
-			<bean class=" com.jt.scene.service.impl.SceneWordServiceImpl" autowire="byName">
+			<bean class="com.jt.scene.service.impl.SceneWordServiceImpl" autowire="byName">
+			<property name="scenePageService" ref="scenePageServiceImpl"></property>
 			</bean>
 		</property>
 	</bean>
 	
+	<bean id="scenePageServiceImpl" parent="baseTransactionProxyBean">
+		<property name="target">
+			<bean class="com.jt.scene.service.impl.ScenePageServiceImpl" autowire="byName">
+			</bean>
+		</property>
+	</bean>
+		 
 	<bean id="searchHisServiceImpl" parent="baseTransactionProxyBean">
 		<property name="target">
-			<bean class="  com.jt.searchHis.service.impl.SearchHisServiceImpl" autowire="byName">
+			<bean class="com.jt.searchHis.service.impl.SearchHisServiceImpl" autowire="byName">
 			</bean>
 		</property>
 	</bean>
 
-	<bean id="indexDao" class=" com.jt.lucene.IndexDao" init-method="initInSpring">
+	<bean id="indexDao" class="com.jt.lucene.IndexDao" init-method="initInSpring">
 		<property name="indexPath" value="${lucene.indexPath}" />
 	</bean>
 	
-	<bean id="indexDao_searchHis" class=" com.jt.lucene.IndexDao" init-method="initInSpring">
+	<bean id="indexDao_searchHis" class="com.jt.lucene.IndexDao" init-method="initInSpring">
 		<property name="indexPath" value="${lucene.indexPath_searchHis}" />
 	</bean>
 
@@ -220,7 +228,7 @@
 
 	<bean id="searchHisRtServiceImpl" class="com.jt.searchHis.service.impl.SearchHisRtServiceImpl">
 		<property name="searchHisService" ref="searchHisServiceImpl"></property>
-		<property name="vectorSize" value="2"></property>
+		<property name="limitSize" value="2"></property>
 	</bean>
 	
 	<bean id="nlpService" class="com.jt.nlp.service.NlpService">

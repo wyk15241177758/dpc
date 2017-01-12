@@ -5,9 +5,18 @@ import java.util.Date;
 
 
 public class Temp {
+	private Integer test;
+	
+public Integer getTest() {
+		return test;
+	}
+
+	public void setTest(Integer test) {
+		this.test = test;
+	}
+
 public static void main(String[] args) throws Exception {
-	String a="2016-11-15 22:47:44.0";
-	SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:SS");
-	System.out.println(sdf.parse(a));
+	Temp temp=new Temp();
+	System.out.println(temp.getTest()==0);
 }
 }

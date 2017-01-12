@@ -1,6 +1,7 @@
 package com.jt.scene.bean;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 预设场景，包括场景名称、入口词、出口词。其中入口词和出口词都是多个词的组合，使用英文分号分割
@@ -17,22 +18,49 @@ public class SceneWord {
 	private String outWords;
 	private Date createTime;
 	private Date updateTime;
-	
+	private String sjfl;
+	private List<ScenePage> scenePageList;
 	public SceneWord(){
 		
 	}
 
 	
-	public SceneWord(Integer sceneWordId,Integer sceneId, String sceneName,  String enterWords, String outWords,
-			Date createTime, Date updateTime) {
+
+
+	public SceneWord(Integer sceneWordId, Integer sceneId, String sceneName, String enterWords, String outWords,
+			Date createTime, Date updateTime, String sjfl, List<ScenePage> scenePageList) {
 		super();
+		this.sceneWordId = sceneWordId;
 		this.sceneId = sceneId;
 		this.sceneName = sceneName;
-		this.sceneWordId = sceneWordId;
 		this.enterWords = enterWords;
 		this.outWords = outWords;
 		this.createTime = createTime;
 		this.updateTime = updateTime;
+		this.sjfl = sjfl;
+		this.scenePageList = scenePageList;
+	}
+
+
+
+
+	public List<ScenePage> getScenePageList() {
+		return scenePageList;
+	}
+
+
+	public void setScenePageList(List<ScenePage> scenePageList) {
+		this.scenePageList = scenePageList;
+	}
+
+
+	public String getSjfl() {
+		return sjfl;
+	}
+
+
+	public void setSjfl(String sjfl) {
+		this.sjfl = sjfl;
 	}
 
 

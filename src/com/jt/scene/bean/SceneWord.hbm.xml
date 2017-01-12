@@ -19,6 +19,15 @@
 		<property name="outWords" type="java.lang.String">
 			<column name="OUTWORDS" length="500" not-null="true" />
 		</property>
+		<property name="sjfl" type="java.lang.String">
+			<column name="SJFL" length="500" not-null="true" />
+		</property>
+		<property name="pageTitle" type="java.lang.String">
+			<column name="PAGETITLE" length="500" not-null="true" />
+		</property>
+		<property name="pageLink" type="java.lang.String">
+			<column name="PAGELINK" length="500" not-null="true" />
+		</property>
 		<property name="createTime" type="java.sql.Timestamp" >
 			<column name="CREATETIME" length="19" not-null="false" />
 		</property>

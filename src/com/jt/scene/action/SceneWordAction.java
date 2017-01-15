@@ -12,6 +12,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -24,10 +26,13 @@ import com.jt.scene.bean.ScenePage;
 import com.jt.scene.bean.SceneWord;
 import com.jt.scene.service.SceneService;
 import com.jt.scene.service.SceneWordService;
+import com.mysql.jdbc.log.Log;
 
 @Controller
 @RequestMapping("/scene")
 public class SceneWordAction {
+	private static final Logger LOG = LoggerFactory.getLogger(SceneWordAction.class);
+
 	private SceneWordService sceneWordService;
 	private SceneService sceneService;
 	private PageMsg msg;
@@ -73,11 +78,13 @@ public class SceneWordAction {
 		String sjfl=request.getParameter("sjfl");
 		String pageTitles=CMyString.getStrNotNullor0(request.getParameter("pageTitles"), "");
 		String pageLinks=CMyString.getStrNotNullor0(request.getParameter("pageLinks"),"");
-		String pageIds=CMyString.getStrNotNullor0(request.getParameter("pageLinks"),"");
+		String pageIds=CMyString.getStrNotNullor0(request.getParameter("pageIds"),"");
+		String pageSjfls=CMyString.getStrNotNullor0(request.getParameter("pageSjfls"),"");
 		String[] pageTitleArr=pageTitles.split(";");
 		String[] pageLinkArr=pageLinks.split(";");
 		String[] sPageIdArr=pageIds.split(";");
 		Integer[] pageIdArr=new Integer[sPageIdArr.length];
+		String[] pageSjflArr=pageSjfls.split(";");
 		Integer sceneId = 0;
 		try {
 			sceneId = Integer.parseInt(CMyString.getStrNotNullor0(sSceneId, "0"));
@@ -101,7 +108,9 @@ public class SceneWordAction {
 						//是否存在预设页面，且预设页面的title和link数量一致
 						if(pageTitles.length()>0&&pageLinks.length()>0&&pageIds.length()>0
 								&&(pageTitleArr.length==pageLinkArr.length
-								&&(pageTitleArr.length==pageIdArr.length))){
+								&&(pageTitleArr.length==pageIdArr.length)
+								&&(pageTitleArr.length==pageSjflArr.length)
+								)){
 							List<ScenePage> scenePageList=new ArrayList<ScenePage>();
 							for(int i=0;i<pageTitleArr.length;i++){
 								try {
@@ -109,8 +118,9 @@ public class SceneWordAction {
 								} catch (Exception e) {
 									pageIdArr[i]=0;
 								}
-								ScenePage curScenePage=new ScenePage(pageIdArr[i],sceneWord.getSceneWordId(),pageTitleArr[i],pageLinkArr[i],date,date
-										);
+								pageSjflArr[i]=pageSjflArr[i].replace(",", ";");
+								ScenePage curScenePage=new ScenePage(pageIdArr[i],sceneWord.getSceneWordId(),pageTitleArr[i],pageLinkArr[i],
+										pageSjflArr[i],date,date);
 								scenePageList.add(curScenePage);
 							}
 							sceneWord.setScenePageList(scenePageList);
@@ -213,12 +223,16 @@ public class SceneWordAction {
 		String pageTitles=CMyString.getStrNotNullor0(request.getParameter("pageTitles"), "");
 		String pageLinks=CMyString.getStrNotNullor0(request.getParameter("pageLinks"),"");
 		String pageIds=CMyString.getStrNotNullor0(request.getParameter("pageLinks"),"");
+		String pageSjfls=CMyString.getStrNotNullor0(request.getParameter("pageSjfls"),"");
 		String[] pageTitleArr=pageTitles.split(";");
 		String[] pageLinkArr=pageLinks.split(";");
 		String[] sPageIdArr=pageIds.split(";");
 		Integer[] pageIdArr=new Integer[sPageIdArr.length];
 		Integer sceneId = 0;
 		Integer sceneWordId = 0;
+		String[] pageSjflArr=pageSjfls.split(";");
+		
+		
 		try {
 			sceneId = Integer.parseInt(CMyString.getStrNotNullor0(request.getParameter("sceneId"), "0"));
 			sceneWordId = Integer.parseInt(CMyString.getStrNotNullor0(request.getParameter("sceneWordId"), "0"));
@@ -247,20 +261,19 @@ public class SceneWordAction {
 						//是否存在预设页面，且预设页面的title和link数量一致
 						if(pageTitles.length()>0&&pageLinks.length()>0&&pageIds.length()>0
 								&&(pageTitleArr.length==pageLinkArr.length
-								&&(pageTitleArr.length==pageIdArr.length))){
-							//直接清空原先的关联page，再新增
+								&&(pageTitleArr.length==pageIdArr.length)
+								&&(pageTitleArr.length==pageSjflArr.length)
+										)){
 							List<ScenePage> scenePageList=new ArrayList<ScenePage>();
-							if(scenePageList==null){
-								scenePageList=new ArrayList<ScenePage>();
-							}
 							for(int i=0;i<pageTitleArr.length;i++){
 								try {
 									pageIdArr[i]=Integer.parseInt(sPageIdArr[i]);
 								} catch (Exception e) {
 									pageIdArr[i]=0;
 								}
-								ScenePage curScenePage=	new ScenePage(pageIdArr[i],sceneWord.getSceneWordId(),pageTitleArr[i],pageLinkArr[i],date,date
-										);
+								pageSjflArr[i]=pageSjflArr[i].replace(",", ";");
+								ScenePage curScenePage=	new ScenePage(pageIdArr[i],sceneWord.getSceneWordId(),
+										pageTitleArr[i],pageLinkArr[i],pageSjflArr[i],date,date);
 								
 								scenePageList.add(curScenePage);
 							}
@@ -391,5 +404,30 @@ public class SceneWordAction {
 			pw.print(gson.toJson(msg));
 			return;
 		}
+	}
+	
+	@RequestMapping("/getQaSjfl.do")
+	public void getQaSjfl(HttpServletRequest request, HttpServletResponse response) {
+		response.setCharacterEncoding("utf-8");
+		msg = new PageMsg();
+		PrintWriter pw = null;
+		try {
+			pw = response.getWriter();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+			return;
+		}
+		String sjfl=sceneWordService.getQaSjfl();
+		System.out.println("sjfl=["+sjfl+"]");
+		if(sjfl!=null&&sjfl.length()>0){
+			msg.setMsg(sjfl.split(","));
+			msg.setSig(true);
+		}else{
+			LOG.error("关联分类列表为空，请检查jdbc.properties是否有qa.sjfl属性");
+			msg.setMsg("关联分类列表为空，请检查jdbc.properties是否有qa.sjfl属性");
+			msg.setSig(false);
+		}
+		pw.print(gson.toJson(msg));
+		return;
 	}
 }

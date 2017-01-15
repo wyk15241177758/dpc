@@ -15,6 +15,7 @@
 
 	<bean id="propertyConfigurer"
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="fileEncoding" value="UTF-8" />   
 		<property name="locations">
 			<list>
 				<value>classpath:jdbc.properties</value>
@@ -168,6 +169,7 @@
 		<property name="target">
 			<bean class="com.jt.scene.service.impl.SceneWordServiceImpl" autowire="byName">
 			<property name="scenePageService" ref="scenePageServiceImpl"></property>
+			<property name="qaSjfl" value="${qa.sjfl}"/>
 			</bean>
 		</property>
 	</bean>

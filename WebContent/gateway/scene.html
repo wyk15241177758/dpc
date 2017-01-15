@@ -12,9 +12,12 @@
 <link id="bs-css" href="css/bootstrap-cerulean.min.css" rel="stylesheet">
 <link href="css/app.css" rel="stylesheet">
 <link href='css/responsive-tables.css' rel='stylesheet'>
-<link href='css/jquery.dataTables.min.css'  rel='stylesheet'>
+<link href='css/jquery.dataTables.min.css' rel='stylesheet'>
 <!-- jQuery -->
 <script src="js/jquery.min.js"></script>
+<script src="js/jquery-ui.js"></script>
+<link rel="stylesheet"
+	href="css/jquery-ui.css">
 
 <!-- The HTML5 shim, for IE6-8 support of HTML5 elements -->
 <!--[if lt IE 9]>
@@ -23,8 +26,12 @@
 
 <!-- The fav icon -->
 <link rel="shortcut icon" href="img/favicon1.ico">
+<style>
+.ui-front {
+	z-index: 9999
+}
+</style>
 </head>
-
 <body>
 	<!-- topbar starts -->
 	<div class="navbar navbar-default" role="navigation">
@@ -35,26 +42,26 @@
 
 
 			<ul class="collapse navbar-collapse nav navbar-nav top-menu">
-				<li ><a href="/QASystem/gateway/task.html"><i class="glyphicon glyphicon-globe"></i>
-						任务管理</a></li>
-				<li><a href="/QASystem/keyword/keywords.html"><i class="glyphicon glyphicon-globe"></i>
-						关键词管理</a></li>
-				<li class="active"><a href="/QASystem/gateway/scene.html"><i class="glyphicon glyphicon-globe"></i>
-						预设场景管理</a></li>
-				<li><a href="/QASystem/gateway/searchHis.html"><i class="glyphicon glyphicon-globe"></i>
-						QA历史管理</a></li>							
-<!-- 				<li class="dropdown"><a href="/QASystem/keyword/keywords.html" data-toggle="dropdown"><i -->
-<!-- 						class="glyphicon glyphicon-star"></i> 关键词管理 <span class="caret"></span></a> -->
-<!-- 					<ul class="dropdown-menu" role="menu"> -->
-<!-- 						<li><a href="#">Action</a></li> -->
-<!-- 						<li><a href="#">Another action</a></li> -->
-<!-- 						<li><a href="#">Something else here</a></li> -->
-<!-- 						<li class="divider"></li> -->
-<!-- 						<li><a href="#">Separated link</a></li> -->
-<!-- 						<li class="divider"></li> -->
-<!-- 						<li><a href="#">One more separated link</a></li> -->
-<!-- 					</ul></li> -->
-				
+				<li><a href="/QASystem/gateway/task.html"><i
+						class="glyphicon glyphicon-globe"></i> 任务管理</a></li>
+				<li><a href="/QASystem/keyword/keywords.html"><i
+						class="glyphicon glyphicon-globe"></i> 关键词管理</a></li>
+				<li class="active"><a href="/QASystem/gateway/scene.html"><i
+						class="glyphicon glyphicon-globe"></i> 预设场景管理</a></li>
+				<li><a href="/QASystem/gateway/searchHis.html"><i
+						class="glyphicon glyphicon-globe"></i> QA历史管理</a></li>
+				<!-- 				<li class="dropdown"><a href="/QASystem/keyword/keywords.html" data-toggle="dropdown"><i -->
+				<!-- 						class="glyphicon glyphicon-star"></i> 关键词管理 <span class="caret"></span></a> -->
+				<!-- 					<ul class="dropdown-menu" role="menu"> -->
+				<!-- 						<li><a href="#">Action</a></li> -->
+				<!-- 						<li><a href="#">Another action</a></li> -->
+				<!-- 						<li><a href="#">Something else here</a></li> -->
+				<!-- 						<li class="divider"></li> -->
+				<!-- 						<li><a href="#">Separated link</a></li> -->
+				<!-- 						<li class="divider"></li> -->
+				<!-- 						<li><a href="#">One more separated link</a></li> -->
+				<!-- 					</ul></li> -->
+
 			</ul>
 
 
@@ -87,15 +94,16 @@
 						<div class="nav-sm nav nav-stacked"></div>
 						<ul class="nav nav-pills nav-stacked main-menu">
 							<li class="nav-header">导航</li>
-							<li class="accordion">
-		                            <a href="#"><i class="glyphicon glyphicon-tags"></i><span>场景</span><i class="glyphicon glyphicon-chevron-down pull-right hidden-sm"></i></a>
-		                            <ul class="nav nav-pills nav-stacked" id="leftScene" style="overflow: auto; display: block;">
-<!-- 			                            <li><a href="javascript:void(0)" class="ajax-link"> -->
-<!-- 			                            <i name="leftword" id="1" value="测试"></i>测试</a></li> -->
-<!-- 			                            <li><a href="javascript:void(0)" class="ajax-link"> -->
-<!-- 			                            <i name="leftword" id="2" value="测试2"></i>测试2</a></li> -->
-		                            </ul>
-		                        </li>
+							<li class="accordion"><a href="#"><i
+									class="glyphicon glyphicon-tags"></i><span>场景</span><i
+									class="glyphicon glyphicon-chevron-down pull-right hidden-sm"></i></a>
+								<ul class="nav nav-pills nav-stacked" id="leftScene"
+									style="overflow: auto; display: block;">
+									<!-- 			                            <li><a href="javascript:void(0)" class="ajax-link"> -->
+									<!-- 			                            <i name="leftword" id="1" value="测试"></i>测试</a></li> -->
+									<!-- 			                            <li><a href="javascript:void(0)" class="ajax-link"> -->
+									<!-- 			                            <i name="leftword" id="2" value="测试2"></i>测试2</a></li> -->
+								</ul></li>
 						</ul>
 						<label id="for-is-ajax" for="is-ajax" style="display: none;"><input
 							id="is-ajax" type="checkbox"> Ajax on menu</label>
@@ -111,24 +119,23 @@
 				<div class="row">
 					<div class="box col-md-12" style="margin: 0;">
 						<div class="box-inner">
-							<div class="box-header well" style="height:40px">
+							<div class="box-header well" style="height: 40px">
 								<h2>
 									<i class="glyphicon glyphicon-list"></i>场景操作
 								</h2>
 								<div style="padding-left: 30px; float: left;">
-							     	<a class="btn btn-success btn-sm" href="#" id="a_addScene">
+									<a class="btn btn-success btn-sm" href="#" id="a_addScene">
 										<i class="glyphicon glyphicon-plus icon-white"></i>添加
-									</a>
-									<a class="btn btn-info btn-sm btn-setting" href="#" id="a_editScene">
-										<i class="glyphicon glyphicon-edit icon-white"></i>修改
-									</a>
-									<a class="btn btn-danger btn-sm btn-warn" href="#" id="a_delScene">
-										<i class="glyphicon glyphicon-trash icon-white"></i>删除
-									</a>
-									<a class="btn btn-success btn-sm" href="#" id="a_addSceneWord">
+									</a> <a class="btn btn-info btn-sm btn-setting" href="#"
+										id="a_editScene"> <i
+										class="glyphicon glyphicon-edit icon-white"></i>修改
+									</a> <a class="btn btn-danger btn-sm btn-warn" href="#"
+										id="a_delScene"> <i
+										class="glyphicon glyphicon-trash icon-white"></i>删除
+									</a> <a class="btn btn-success btn-sm" href="#" id="a_addSceneWord">
 										<i class="glyphicon glyphicon-plus icon-white"></i>添加场景映射词
 									</a>
-							     </div>
+								</div>
 							</div>
 							<div class="box-content">
 								<table class="table table-striped table-bordered responsive">
@@ -170,13 +177,13 @@
 
 									</tbody>
 								</table>
-<!-- 任务日志 开始-->
+								<!-- 任务日志 开始-->
 								<div role="tabpanel">
 									<!-- Nav tabs -->
 									<ul class="nav nav-tabs" role="tablist">
 										<li role="presentation" class="active"><a href="#log"
 											aria-controls="log" role="tab" data-toggle="tab"><strong>预览结果</strong></a></li>
-										</ul>
+									</ul>
 
 									<!-- Tab panes -->
 									<div class="tab-content">
@@ -204,11 +211,11 @@
 
 		<hr>
 
-<!-- 场景维护浮层开始-->
+		<!-- 场景维护浮层开始-->
 		<div class="modal fade" id="sceneModal" tabindex="-1" role="dialog"
 			aria-labelledby="myModalLabel" aria-hidden="true"
 			style="overflow-y: scroll">
-		<input type="hidden" value="0" name="sceneId"/>
+			<input type="hidden" value="0" name="sceneId" />
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
@@ -235,18 +242,23 @@
 
 
 		<!-- 场景映射词浮层开始-->
-		<div class="modal fade" id="sceneWordModal" tabindex="-1" role="dialog"
-			aria-labelledby="myModalLabel" aria-hidden="true"
+		<div class="modal fade" id="sceneWordModal" tabindex="-1"
+			role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
 			style="overflow-y: scroll">
 
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal">×</button>
-						<h3>新建/修改场景</h3>
+						<h3>新建/修改场景映射词</h3>
 					</div>
 					<div class="modal-body">
-					<input type="hidden" name="sceneWordId" value="0"/>
+						<input type="hidden" name="sceneWordId" value="0" />
+						<input type="hidden" name="sjfl" />
+						<input type="hidden" name="pageTitles" />
+						<input type="hidden" name="pageLinks" />
+						<input type="hidden" name="pageIds" />
+						<input type="hidden" name="pageSjfls" />
 						<div class="form-inline">
 							<div class="form-group">
 								<label class="control-label">入口词</label> <input type="text"
@@ -254,24 +266,77 @@
 									name='enterWords' placeholder="英文分号分割多个入口词">
 							</div>
 						</div>
-						
+
 						<div class="form-inline">
 							<div class="form-group">
 								<label class="control-label">出口词</label> <input type="text"
-									class="form-control" required='true' desc='出口词'
-									name='outWords' placeholder="英文分号分割多个出口词">
+									class="form-control" required='true' desc='出口词' name='outWords'
+									placeholder="英文分号分割多个出口词">
 							</div>
 						</div>
-						
-<!-- 						<div class="form-inline"> -->
-<!-- 							<div class="form-group"> -->
-<!-- 								<label class="control-label">测试词</label>  -->
-<!-- 								<div class="token" style="box-sizing:border-box;display:inline-block;border-radius:3px;margin:-1px 5px 5px 0;vertical-align:top;cursor:default;padding: 0 7px;height:24px;line-height:24px;border:1px solid #f2f2f2;background-color:#f2f2f2;font-size:13px"> -->
-<!-- 									<span class="token-label" style="max-width: 307px;display:inline-block;over-flow:hidden;font-size:13px;color:gray;white-space:nowrap">123456789012</span> -->
-<!-- 									<a href="#" class="close" tabindex="-1">×</a> -->
-<!-- 								</div> -->
-<!-- 							</div> -->
-<!-- 						</div> -->
+
+						<div class="form-inline">
+							<div class="form-group">
+								<label class="control-label">关联分类</label> 
+								<div style="width:77%;float:right" id="sceneSjfl">
+								
+    </div>
+							</div>
+						</div>
+						<hr>
+						<p class="title-right">
+							<strong>预设页面</strong>
+							<button class="glyphicon glyphicon-plus data-add"
+								style="float: right;"></button>
+						</p>
+						<hr>
+						<div id="pageDiv">
+							<!--<div>
+						<div class="form-inline">
+							<div><a href="#">删除此页面</a></div>
+								<label class="control-label">关联分类</label> 
+								<div style="width:77%;float:right">
+								<label for="checkbox-nested-1">走进岳阳
+      <input type="checkbox" name="checkbox-nested-1">
+    </label>
+    <label for="checkbox-nested-2">2 Queen
+      <input type="checkbox" name="checkbox-nested-2">
+    </label>
+    <label for="checkbox-nested-3">1 Queen
+      <input type="checkbox" name="checkbox-nested-3">
+    </label>
+    <label for="checkbox-nested-4">1 King
+      <input type="checkbox" name="checkbox-nested-4">
+    </label>
+    </div>
+    
+						</div>
+												<div class="form-inline">
+							<div class="form-group">
+								<label class="control-label">页面标题</label> <input type="text"
+									class="form-control" required='true' desc='入口词'
+									name='enterWords' placeholder="英文分号分割多个入口词">
+							</div>
+						</div>
+												<div class="form-inline">
+							<div class="form-group">
+								<label class="control-label">页面地址</label> <input type="text"
+									class="form-control" required='true' desc='入口词'
+									name='enterWords' placeholder="英文分号分割多个入口词">
+							</div>
+							</div>
+							
+							</div>-->
+						</div>
+						<!-- 						<div class="form-inline"> -->
+						<!-- 							<div class="form-group"> -->
+						<!-- 								<label class="control-label">测试词</label>  -->
+						<!-- 								<div class="token" style="box-sizing:border-box;display:inline-block;border-radius:3px;margin:-1px 5px 5px 0;vertical-align:top;cursor:default;padding: 0 7px;height:24px;line-height:24px;border:1px solid #f2f2f2;background-color:#f2f2f2;font-size:13px"> -->
+						<!-- 									<span class="token-label" style="max-width: 307px;display:inline-block;over-flow:hidden;font-size:13px;color:gray;white-space:nowrap">123456789012</span> -->
+						<!-- 									<a href="#" class="close" tabindex="-1">×</a> -->
+						<!-- 								</div> -->
+						<!-- 							</div> -->
+						<!-- 						</div> -->
 					</div>
 					<div class="modal-footer">
 						<a href="#" class="btn btn-default" data-dismiss="modal">关闭</a> <a
@@ -303,7 +368,7 @@
 		</div>
 		<!-- 提示浮层结束-->
 
-	
+
 		<!-- 删除场景提示浮层开始-->
 		<div class="modal fade" id="warnModal-del" tabindex="-1" role="dialog"
 			aria-labelledby="myModalLabel" aria-hidden="true">
@@ -327,9 +392,9 @@
 		<!-- 删除场景提示浮层结束-->
 
 
-<!-- 删除场景映射词提示浮层开始-->
-		<div class="modal fade" id="warnModal-sceneWord-del" tabindex="-1" role="dialog"
-			aria-labelledby="myModalLabel" aria-hidden="true">
+		<!-- 删除场景映射词提示浮层开始-->
+		<div class="modal fade" id="warnModal-sceneWord-del" tabindex="-1"
+			role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 			<input type="hidden" name="sceneWordId" />
 			<div class="modal-dialog">
 				<div class="modal-content">

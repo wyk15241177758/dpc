@@ -11,7 +11,8 @@ import com.jt.scene.service.SceneWordService;
 
 public class SceneWordServiceImpl  extends BasicServicveImpl implements SceneWordService{
 	private ScenePageService scenePageService;
-
+	//关联分类列表
+	private String qaSjfl;
 	
 	public ScenePageService getScenePageService() {
 		return scenePageService;
@@ -19,6 +20,14 @@ public class SceneWordServiceImpl  extends BasicServicveImpl implements SceneWor
 
 	public void setScenePageService(ScenePageService scenePageService) {
 		this.scenePageService = scenePageService;
+	}
+
+	public String getQaSjfl() {
+		return qaSjfl;
+	}
+
+	public void setQaSjfl(String qaSjfl) {
+		this.qaSjfl = qaSjfl;
 	}
 
 	//增加任务

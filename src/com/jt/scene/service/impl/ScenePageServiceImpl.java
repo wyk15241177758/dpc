@@ -36,7 +36,7 @@ public class ScenePageServiceImpl  extends BasicServicveImpl implements ScenePag
 	//获得场景词中的所有预设页面
 	public List<ScenePage> getScenePages(Integer sceneWordId){
 		List<ScenePage> list=this.dao.query("from com.jt.scene.bean.ScenePage"
-				+ " where sceneWordId='+sceneWordId+'");
+				+ " where sceneWordId='"+sceneWordId+"'");
 		return list;
 	}
 }

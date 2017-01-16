@@ -1,20 +1,41 @@
 var curSceneId = 0;
 var curSceneName="";
+var sjfl=""
 $(document).ready(function() {
 
+	
 	// 头部的入口链接地址增加random，避免缓存
 	$(".top-menu a").each(function() {
 		$(this).attr("href", $(this).attr("href") + "?rand=" + Math.random());
 	})
+
 	// 显示左侧的场景
 	leftScene();
-
+	//显示关联分类
+	getAllSjfl("scene",function(data){
+		$("#sceneSjfl").empty().append(data);
+	})
+	//绑定增加预设页面的增加按钮
+	$(".title-right button").click(function(){
+		addPage(0,"","","")
+	})
+	
+	//绑定删除预设页面按钮
+	$(document).on("click","[action='a_delPage']",function(){
+		$(this).parents(".pageEleDiv").remove()
+	})
+	
 	// 点击左侧场景绑定事件
 	$(document).on("click", ".ajax-link", function() {
 		sceneClick($(this).children("i").attr("sceneId"));
 	})
 	// 新建按钮场景绑定事件
 	$(document).on("click", "#a_addScene", function() {
+		
+		//先清空现有的输入框内容
+    	$("#sceneModal").find("input").each(function(){
+    		$(this).val("");
+    	})
 		$("#sceneModal").modal("show");
 	})
 	// 保存按钮场景绑定事件
@@ -38,6 +59,16 @@ $(document).ready(function() {
     })
 	//新建按钮场景映射词绑定事件
     $("#a_addSceneWord").click(function(){
+    	//先清空现有的输入框内容
+    	$("#sceneWordModal").find("input").each(function(){
+    		$(this).val("");
+    		$(this).prop("checked",false)
+    		$("[type='checkbox']").checkboxradio({
+	    		icon: false
+	    	});	
+    	})
+    	//清空预设页面
+		$("#pageDiv").empty();
     	$("#sceneWordModal").modal("show");
     })
     //保存按钮场景映射词绑定事件
@@ -85,7 +116,35 @@ $(document).ready(function() {
 		  ],
 		  "order": [[ 2, 'desc' ]]
 		} );
+//		window.setTimeout(function(){
+//			$($("[action='sceneWordEdit']")[0]).click();
+//		},1000)
 });
+
+//获得所有的分类
+function getAllSjfl(eleIdPre,callBack){
+	var template="<label for='{eleId}'>{sjfl}<input type='checkbox' name='{eleId}' id='{eleId}' ></label>"
+	var url="/QASystem/admin/scene/getQaSjfl.do";
+	var param=null;
+	$.getJSON(url,param,function(data){
+		var out="";
+		if(data.sig){
+			for(var i=0;i<data.msg.length;i++){
+				var msg=data.msg[i];
+				var obj=[
+					{"name":"eleId","value":eleIdPre+"_"+i},
+					{"name":"sjfl","value":msg}
+				];
+				out+=replaceTemplate(template,obj);
+			}
+			if(typeof(callBack)=="function"){
+				callBack(out)
+			}
+		}
+		
+	})
+}
+
 //显示预览结果
 function showSearchPreview(curOutWords){
 	var param={
@@ -108,6 +167,28 @@ function showSearchPreview(curOutWords){
 			$("#log").html("检索["+param.question+"]失败，错误信息为"+msgArray);
 		}
 	  })
+}
+
+//预设页面
+function addPage(pageId,pageTitle,pageLink,sjfl){
+	var curPageIndex=$(".pageEleDiv").length;
+	var template="<div class='pageEleDiv'><input type='hidden' name='pageId' value='{pageId}'/><div class='form-inline'><div><a href='#' action='a_delPage'>删除此页面</a></div><div class='form-group'><label class='control-label'>页面标题</label> <input type='text'	class='form-control' required='true' desc='页面标题'	name='pageTitle' value='{pageTitle}'></div>	</div><div class='form-inline'><div class='form-group'><label class='control-label'>页面地址</label> <input type='text'	class='form-control' required='true' desc='页面地址'	name='pageLink' value='{pageLink}'></div><div class='form-inline' style='height:55px'><label class='control-label'>关联分类</label> <div style='width:77%;float:right' id='{sjflId}'></div>	</div></div>"
+	if(curPageIndex>0){
+		template="<hr>"+template;
+	}
+	var obj=[
+				{"name":"pageTitle","value":pageTitle},
+				{"name":"pageLink","value":pageLink},
+				{"name":"pageId","value":pageId},
+				{"name":"sjflId","value":"sjflId_"+curPageIndex}
+			];
+	template=replaceTemplate(template,obj);
+	$("#pageDiv").append(template);
+	getAllSjfl("pageSjfl_"+curPageIndex,function(data){
+		$("#sjflId_"+curPageIndex).empty().append(data);
+		//修改选中状态
+		initSjflStatus("sjflId_"+curPageIndex,sjfl.split(";"))
+	})
 }
 
 
@@ -271,6 +352,33 @@ function addSceneWord(){
 			// paramCheck中处理
 		} else {
 			$('#saveModal').modal('show');
+			//处理关联分类
+			var sjfl="";
+			sjfl=generateSjflParam($("#sceneSjfl"),";")
+			$("#sceneWordModal").find("input[name='sjfl']").val(sjfl);
+			//处理预设页面
+			var pageTitles="";
+			var pageLinks="";
+			var pageIds="";
+			var pageSjfls="";
+			$(".pageEleDiv").each(function(){
+				if(pageTitles.length==0){
+					pageTitles=$(this).find("[name='pageTitle']").val();
+					pageLinks=$(this).find("[name='pageLink']").val();
+					pageIds=$(this).find("[name='pageId']").val();
+					pageSjfls=generateSjflParam($(this).find("#sjflId_*"),",")
+				}else{
+					pageTitles+=";"+$(this).find("[name='pageTitle']").val();
+					pageLinks+=";"+$(this).find("[name='pageLink']").val();
+					pageIds+=";"+$(this).find("[name='pageId']").val();
+					pageSjfls+=";"+generateSjflParam($(this).find("#sjflId_*"),",")					
+				}
+			})
+			$("#sceneWordModal").find("input[name='pageTitles']").val(pageTitles);
+			$("#sceneWordModal").find("input[name='pageLinks']").val(pageLinks);
+			$("#sceneWordModal").find("input[name='pageIds']").val(pageIds);
+			$("#sceneWordModal").find("input[name='pageSjfls']").val(pageSjfls);
+			
 			var param = {
 					"sceneName":curSceneName,
 					"sceneId":curSceneId
@@ -305,6 +413,21 @@ function addSceneWord(){
 		}
 }
 
+//组合提交时关联分类的值
+function generateSjflParam(obj,splitBy){
+	var sjfl="";
+	obj.find("input[type='checkbox']").each(function(){
+		if($(this).prop("checked")){
+			if(sjfl.length==0){
+				sjfl=$(this).parent("label").text();
+			}else{
+				sjfl+=splitBy+$(this).parent("label").text();
+			}
+		}
+	})
+	return sjfl;
+}
+
 //修改场景映射词给弹出浮层赋值
 function setSceneWordValue(sceneWordId){
 	//正在修改的sceneWordId
@@ -324,12 +447,41 @@ function setSceneWordValue(sceneWordId){
 			  var msg=data.msg;
 			  $("input[name='enterWords']").val(msg.enterWords);
 			  $("input[name='outWords']").val(msg.outWords);
+			  if(msg.sjfl){
+			  	$("input[name='sceneSjfl']").val(msg.sjfl)
+			  	var tempArr=msg.sjfl.split(";")
+				initSjflStatus("sceneSjfl",tempArr)
+				//清空预设页面
+				$("#pageDiv").empty();
+				//预设页面
+				var pageArr=msg.scenePageList;
+				for(var i=0;i<pageArr.length;i++){
+					addPage(pageArr[i].scenePageId,pageArr[i].pageTitle,pageArr[i].pageLink,pageArr[i].sjfl)
+				}
+			  }
+			  
   			  //显示设置浮层
   			 $('#sceneWordModal').modal('show');
 		  }
 		  
 	  })
 }
+
+//修改关联分类的选中状态
+function initSjflStatus(divId,sjflArr){
+  	$("#"+divId).find("label").each(function(){
+		for(var i=0;i<sjflArr.length;i++){
+			if($(this).text()==sjflArr[i]){
+				$(this).children("input").prop("checked",true)
+				break;
+			}
+		}
+	})
+	$("[type='checkbox']").checkboxradio({
+		icon: false
+	});	
+}
+
 //修改场景给弹出浮层赋值
 function setSceneValue(sceneId){
 	//正在修改的sceneWordId
@@ -391,4 +543,13 @@ function paramCheck(obj) {
 	}
 
 	return flag;
+}
+function replaceTemplate(template,obj){
+	var out="";
+	for(i in obj){
+		var reg=new RegExp("\\{"+obj[i].name+"\\}","g");
+		template=template.replace(reg,obj[i].value);
+	}
+	out=template;
+	return out;
 }

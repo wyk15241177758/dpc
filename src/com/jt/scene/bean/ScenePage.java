@@ -12,14 +12,23 @@ import java.util.Date;
 public class ScenePage {
 	private Integer scenePageId;
 	private Integer sceneWordId;
-	private Date createTime;
-	private Date updateTime;
 	private String pageTitle;
 	private String pageLink;
+	private String sjfl;
+	private Date createTime;
+	private Date updateTime;
 	public ScenePage(){
 		
 	}
 	
+	public String getSjfl() {
+		return sjfl;
+	}
+
+	public void setSjfl(String sjfl) {
+		this.sjfl = sjfl;
+	}
+
 	public Integer getScenePageId() {
 		return scenePageId;
 	}
@@ -56,16 +65,19 @@ public class ScenePage {
 	public void setPageLink(String pageLink) {
 		this.pageLink = pageLink;
 	}
-	public ScenePage(Integer scenePageId, Integer sceneWordId, String pageTitle,
-			String pageLink, Date createTime, Date updateTime) {
+
+	public ScenePage(Integer scenePageId, Integer sceneWordId, String pageTitle, String pageLink, String sjfl,
+			Date createTime, Date updateTime) {
 		super();
 		this.scenePageId = scenePageId;
 		this.sceneWordId = sceneWordId;
-		this.createTime = createTime;
-		this.updateTime = updateTime;
 		this.pageTitle = pageTitle;
 		this.pageLink = pageLink;
+		this.sjfl = sjfl;
+		this.createTime = createTime;
+		this.updateTime = updateTime;
 	}
+
 
 	
 	

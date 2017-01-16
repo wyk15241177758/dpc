@@ -563,8 +563,10 @@ public class IndexDao {
 			List<Article> list = new ArrayList<Article>();
 			List<Document> list_doc = new ArrayList<Document>();
 			list_doc=search(queryString, occurs, fields, sortField, sortFieldType, reverse, isRelevancy, firstResult, maxResult);
-			
-			return null;
+			for(Document doc:list_doc){
+				list.add(DocumentUtils.document2Ariticle(doc));
+			}
+			return list;
 		}
 		
 	

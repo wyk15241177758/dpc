@@ -29,7 +29,7 @@ import com.jt.lucene.IndexDao;
 import com.jt.lucene.LuceneUtilsGw;
 
 public class LuceneTest {
-    private static String indexPath = "D:\\indexpath_searchHis";    // 索引保存目录
+    private static String indexPath = "D:\\indexpath_zxh";    // 索引保存目录
     private static LuceneUtilsGw util=null;
     public static void createIndex(){    // 建立索引
        IndexWriter writer;
@@ -140,7 +140,7 @@ public class LuceneTest {
           
           try {
    		IndexDao dao=new IndexDao(indexPath);
-   		String[] queryStr={"1"};
+   		String[] queryStr={"\"工作\""};
 //   		List<Document> list=dao.search(queryStr, Occur.SHOULD, "xq_title",null,null, false, 0, -1);
 //   		for(Document doc:list){
 //   			System.out.println(doc.getValues("xq_title")[0]);
@@ -150,7 +150,7 @@ public class LuceneTest {
    		String [] searchField=new String[queryStr.length];
    		Occur[] occurs = new Occur[queryStr.length]; 
    		for(int i=0;i<searchField.length;i++){
-   			searchField[i]="SEARCHALL";
+   			searchField[i]="KEY_WORD";
    			occurs[i]=Occur.MUST;
    		}
    			
@@ -269,12 +269,12 @@ public class LuceneTest {
     }
     
     public static void main(String[] args) {    //contests字段上查找含有"我们","今晚"这两个字段的Doument
-    	try {
-			searchHis();
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-//    	SearchTest();
+//    	try {
+//			searchHis();
+//			
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+    	SearchTest();
     }
 }

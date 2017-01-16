@@ -76,7 +76,7 @@ public class EncryptUtils {
     }  
     
     public static void main(String[] args) throws IOException {  
-        String user = "oneadmin";  
+        String user = "trsadmin";  
         System.out.println("原始字符串 " + user);  
         System.out.println("MD5加密 " + encodeMD5(user));  
         System.out.println("SHA加密 " + encodeSHA(user));  

@@ -187,7 +187,12 @@ function addPage(pageId,pageTitle,pageLink,sjfl){
 	getAllSjfl("pageSjfl_"+curPageIndex,function(data){
 		$("#sjflId_"+curPageIndex).empty().append(data);
 		//修改选中状态
-		initSjflStatus("sjflId_"+curPageIndex,sjfl.split(";"))
+		if(sjfl){
+			initSjflStatus("sjflId_"+curPageIndex,sjfl.split(";"))
+		}else{
+			initSjflStatus("sjflId_"+curPageIndex,new Array())
+		}
+		
 	})
 }
 
@@ -366,12 +371,12 @@ function addSceneWord(){
 					pageTitles=$(this).find("[name='pageTitle']").val();
 					pageLinks=$(this).find("[name='pageLink']").val();
 					pageIds=$(this).find("[name='pageId']").val();
-					pageSjfls=generateSjflParam($(this).find("#sjflId_*"),",")
+					pageSjfls=generateSjflParam($(this),",")
 				}else{
 					pageTitles+=";"+$(this).find("[name='pageTitle']").val();
 					pageLinks+=";"+$(this).find("[name='pageLink']").val();
 					pageIds+=";"+$(this).find("[name='pageId']").val();
-					pageSjfls+=";"+generateSjflParam($(this).find("#sjflId_*"),",")					
+					pageSjfls+=";"+generateSjflParam($(this),",")					
 				}
 			})
 			$("#sceneWordModal").find("input[name='pageTitles']").val(pageTitles);
@@ -451,16 +456,15 @@ function setSceneWordValue(sceneWordId){
 			  	$("input[name='sceneSjfl']").val(msg.sjfl)
 			  	var tempArr=msg.sjfl.split(";")
 				initSjflStatus("sceneSjfl",tempArr)
-				//清空预设页面
-				$("#pageDiv").empty();
-				//预设页面
-				var pageArr=msg.scenePageList;
-				for(var i=0;i<pageArr.length;i++){
-					addPage(pageArr[i].scenePageId,pageArr[i].pageTitle,pageArr[i].pageLink,pageArr[i].sjfl)
-				}
 			  }
-			  
-  			  //显示设置浮层
+			//清空预设页面
+			$("#pageDiv").empty();
+			//预设页面
+			var pageArr=msg.scenePageList;
+			for(var i=0;i<pageArr.length;i++){
+				addPage(pageArr[i].scenePageId,pageArr[i].pageTitle,pageArr[i].pageLink,pageArr[i].sjfl)
+			}
+  			//显示设置浮层
   			 $('#sceneWordModal').modal('show');
 		  }
 		  

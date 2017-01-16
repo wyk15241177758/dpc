@@ -12,16 +12,9 @@
 	<body>
 		<script>
 			$(function(){
-				var url="/QASystem/admin/luceneSearch_searchHis.do"
-				var param={
-						"question":"区长信箱",
-						"isParticle":"true",
-						"isShould":"true",
-				}
-				$.getJSON(url,param,function(data){
-					console.log(data)
-				})
+				console.log($("#test_?").val())
 			})
 		</script>
+		<input type="text" id="test_1" value="1111"/>
 	</body>
 </html>

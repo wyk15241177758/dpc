@@ -59,15 +59,26 @@ public class SceneWordServiceImpl  extends BasicServicveImpl implements SceneWor
 	//修改，需要将scenePage保存起来
 	public void updateSceneWord(SceneWord sceneWord){
 		this.dao.update(sceneWord);
+		List<ScenePage> oldScenePageList=scenePageService.getScenePages(sceneWord.getSceneWordId());
 		List<ScenePage> scenePageList=sceneWord.getScenePageList();
 		if(scenePageList!=null){
 			for(ScenePage scenePage:scenePageList){
+				for(int i=0;i<oldScenePageList.size();i++){
+					ScenePage oldPage=oldScenePageList.get(i);
+					if(scenePage.getScenePageId()==oldPage.getScenePageId()){
+						oldScenePageList.remove(i);
+						break;
+					}
+				}
 				if(scenePage.getScenePageId()!=null&&scenePage.getScenePageId()!=0){
 					scenePageService.updateScenePage(scenePage);	
 				}else{
 					scenePageService.addScenePage(scenePage);
 				}
 			}
+		}
+		for(ScenePage page:oldScenePageList){
+			scenePageService.deleteScenePage(page);
 		}
 	}
 	

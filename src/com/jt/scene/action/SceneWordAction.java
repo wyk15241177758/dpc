@@ -84,7 +84,23 @@ public class SceneWordAction {
 		String[] pageLinkArr=pageLinks.split(";");
 		String[] sPageIdArr=pageIds.split(";");
 		Integer[] pageIdArr=new Integer[sPageIdArr.length];
-		String[] pageSjflArr=pageSjfls.split(";");
+		
+		//需要考虑关联分类为空的情况
+		String[] pageSjflArr=new String[pageTitleArr.length];
+		String[] temp=pageSjfls.split(";");
+		for(int i=0;i<pageSjflArr.length;i++){
+			if(temp.length<=i){
+				pageSjflArr[i]=null;
+			}else{
+				//如参数为;的情况
+				if(temp[i].length()==0){
+					pageSjflArr[i]=null;					
+				}else{
+					pageSjflArr[i]=temp[i];
+				}
+			}
+		}
+		
 		Integer sceneId = 0;
 		try {
 			sceneId = Integer.parseInt(CMyString.getStrNotNullor0(sSceneId, "0"));
@@ -104,7 +120,7 @@ public class SceneWordAction {
 					try {
 						Date date = new Date();
 						sceneWord = new SceneWord(null,sceneId ,sceneName, enterWords, outWords, date,date, sjfl,null);
-						
+						sceneWordService.addSceneWord(sceneWord);
 						//是否存在预设页面，且预设页面的title和link数量一致
 						if(pageTitles.length()>0&&pageLinks.length()>0&&pageIds.length()>0
 								&&(pageTitleArr.length==pageLinkArr.length
@@ -118,24 +134,27 @@ public class SceneWordAction {
 								} catch (Exception e) {
 									pageIdArr[i]=0;
 								}
-								pageSjflArr[i]=pageSjflArr[i].replace(",", ";");
+								if(pageSjflArr[i]!=null){
+									pageSjflArr[i]=pageSjflArr[i].replace(",", ";");
+								}
 								ScenePage curScenePage=new ScenePage(pageIdArr[i],sceneWord.getSceneWordId(),pageTitleArr[i],pageLinkArr[i],
 										pageSjflArr[i],date,date);
 								scenePageList.add(curScenePage);
 							}
 							sceneWord.setScenePageList(scenePageList);
-							sceneWordService.addSceneWord(sceneWord);
+							//需要先保存sceneWord获取ID
+							sceneWordService.updateSceneWord(sceneWord);;
 						}
+						msg.setSig(true);
+						msg.setMsg("新增场景映射词[" + sceneWord.getEnterWords() + "]成功");
+						pw.print(gson.toJson(msg));
+						return;
 					} catch (Exception e) {
 						e.printStackTrace();
 						msg.setMsg("新增场景映射词[" + sceneWord.getSceneWordId() + "]失败，错误信息为:["+e.getMessage()+"]");
 						pw.print(gson.toJson(msg));
 						return;
 					}
-					msg.setSig(true);
-					msg.setMsg("新增场景映射词[" + sceneWord.getEnterWords() + "]成功");
-					pw.print(gson.toJson(msg));
-					return;
 				} else {
 					msg.setMsg("添加场景映射词到场景id=[" + sceneId + "]失败,错误信息为[未获得场景ID或不存在指定的场景]");
 					msg.setSig(false);
@@ -219,10 +238,11 @@ public class SceneWordAction {
 		// 参数是否合法:同时包含入口词、出口词即可。不允许修改所属场景
 		String enterWords = request.getParameter("enterWords");
 		String outWords = request.getParameter("outWords");
-		String sjfl=request.getParameter("outWords");
+		String sjfl=request.getParameter("sjfl");
 		String pageTitles=CMyString.getStrNotNullor0(request.getParameter("pageTitles"), "");
 		String pageLinks=CMyString.getStrNotNullor0(request.getParameter("pageLinks"),"");
-		String pageIds=CMyString.getStrNotNullor0(request.getParameter("pageLinks"),"");
+		String pageIds=CMyString.getStrNotNullor0(request.getParameter("pageIds"),"");
+		//需要考虑关联分类为空的情况
 		String pageSjfls=CMyString.getStrNotNullor0(request.getParameter("pageSjfls"),"");
 		String[] pageTitleArr=pageTitles.split(";");
 		String[] pageLinkArr=pageLinks.split(";");
@@ -230,7 +250,21 @@ public class SceneWordAction {
 		Integer[] pageIdArr=new Integer[sPageIdArr.length];
 		Integer sceneId = 0;
 		Integer sceneWordId = 0;
-		String[] pageSjflArr=pageSjfls.split(";");
+		//需要考虑关联分类为空的情况
+		String[] pageSjflArr=new String[pageTitleArr.length];
+		String[] temp=pageSjfls.split(";");
+		for(int i=0;i<pageSjflArr.length;i++){
+			if(temp.length<=i){
+				pageSjflArr[i]=null;
+			}else{
+				//如参数为;的情况
+				if(temp[i].length()==0){
+					pageSjflArr[i]=null;					
+				}else{
+					pageSjflArr[i]=temp[i];
+				}
+			}
+		}
 		
 		
 		try {
@@ -271,10 +305,19 @@ public class SceneWordAction {
 								} catch (Exception e) {
 									pageIdArr[i]=0;
 								}
-								pageSjflArr[i]=pageSjflArr[i].replace(",", ";");
-								ScenePage curScenePage=	new ScenePage(pageIdArr[i],sceneWord.getSceneWordId(),
-										pageTitleArr[i],pageLinkArr[i],pageSjflArr[i],date,date);
-								
+								if(pageSjflArr[i]!=null){
+									pageSjflArr[i]=pageSjflArr[i].replace(",", ";");
+								}
+								ScenePage curScenePage= sceneWordService.getScenePageService().getScenePageById(pageIdArr[i]);
+								if(curScenePage==null){
+									curScenePage = new ScenePage(pageIdArr[i],sceneWord.getSceneWordId(),
+											pageTitleArr[i],pageLinkArr[i],pageSjflArr[i],date,date);
+								}else{
+									curScenePage.setPageTitle(pageTitleArr[i]);
+									curScenePage.setPageLink(pageLinkArr[i]);
+									curScenePage.setSjfl(pageSjflArr[i]);
+									curScenePage.setUpdateTime(date);
+								}
 								scenePageList.add(curScenePage);
 							}
 							sceneWord.setScenePageList(scenePageList);

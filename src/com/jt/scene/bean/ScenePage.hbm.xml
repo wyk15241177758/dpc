@@ -17,7 +17,7 @@
 			<column name="PAGELINK" length="300" not-null="true" />
 		</property>
 		<property name="sjfl" type="java.lang.String">
-			<column name="SJFL" length="500" not-null="true" />
+			<column name="SJFL" length="500" not-null="false" />
 		</property>
 		<property name="createTime" type="java.sql.Timestamp" >
 			<column name="CREATETIME" length="19" not-null="false" />

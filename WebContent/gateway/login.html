@@ -64,5 +64,19 @@
 <!-- external javascript -->
 <script src="js/bootstrap.min.js"></script>
 <script src="js/common.js"></script>
+<script>
+//获得url参数
+function getQueryString(name) {
+var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+var r = decodeURIComponent(window.location.search).substr(1).match(reg);
+if (r != null) return unescape(r[2]); return null;
+}
+$(function(){
+	var param=getQueryString("msg")
+	if(param!=null&&param.length>0){
+		$(".alert").html(param).removeClass("hide");
+	}
+})
+</script>
 </body>
 </html>

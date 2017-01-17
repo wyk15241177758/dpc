@@ -9,8 +9,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.lucene.search.BooleanClause.Occur;
@@ -21,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import com.jt.lucene.Article;
 import com.jt.lucene.IndexDao;
+import com.jt.scene.bean.ScenePage;
 import com.jt.scene.bean.SceneWord;
 import com.jt.scene.service.SceneWordService;
 
@@ -31,7 +34,10 @@ public class QAService {
 	private NlpService nlpService;
 	private LuceneSearchService searchService;
 	private SceneWordService sceneWordService;
-	
+	//存储场景的关联分类
+	private Set<String> sceneSjflSet;
+	//存储检索结果
+	private Map<String,List<Article>> qaResultMap;
 	// 本地测试使用,indexpath为索引所在目录
 	public QAService(String indexPath) {
 		nlpService = new NlpService();
@@ -44,6 +50,8 @@ public class QAService {
 	}
 
 	public QAService() {
+		sceneSjflSet=new HashSet<String>();
+		qaResultMap=new HashMap<String,List<Article>>();
 	}
 
 	// nlp第一次分析初始化很慢，不知道怎么初始化，直接触发一次检索
@@ -70,12 +78,40 @@ public class QAService {
 			for (SceneWord sceneWord : sceneWordList) {
 				if (sceneWord.getEnterWords().indexOf(str) != -1) {
 					sceneWordSet.addAll(Arrays.asList(sceneWord.getOutWords().split(";")));
+					//将场景关联的分类放入list，此后的检索只遍历此list（如果有值）
+					String sceneSjfl=sceneWord.getSjfl();
+					if(sceneSjfl!=null&&sceneSjfl.length()>0){
+						sceneSjflSet.addAll(Arrays.asList(sceneSjfl.split(";")));
+					}
+					//是否有关联页面，如果有则按照当前场景的关联分类筛选，不属于当前场景关联页面子类的过滤掉
+//					List<ScenePage> pageList=sceneWord.getScenePageList();
+//					if(pageList!=null&&pageList.size()>0){
+//						for(ScenePage curPage:pageList){
+//							if(curPage.getSjfl())
+//						}
+//					}
 				}
 			}
 		}
 		return sceneWordSet;
 	}
 
+	//判断这个预设页面的分类是否在场景分类范围之内
+	private boolean isContainSjfl(String sceneSjfl,String pageSjfl){
+		HashMap<String,String> sceneSjflMap=new HashMap<String,String>();
+		if(sceneSjfl==null||pageSjfl==null){
+			return false;
+		}
+		for(String str:sceneSjfl.split(";")){
+			for(String pSjfl:pageSjfl.split(";")){
+				if(str.length()>0&&str.equals(pSjfl)){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 	public List<Article> QASearch(String question, int size) {
 		return QASearch(question, 0, size);
 	}

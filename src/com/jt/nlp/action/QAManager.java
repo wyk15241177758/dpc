@@ -272,7 +272,6 @@ public class QAManager {
 		String question=request.getParameter("question");
 		String sBegin=request.getParameter("begin");
 		String sEnd=request.getParameter("end");
-		String category=request.getParameter("category");
 		//增加解码
 		try {
 			question=URLDecoder.decode(question, "utf-8");
@@ -296,14 +295,10 @@ public class QAManager {
 		if(question==null){
 			question="";
 		}
-		List<Article> list=null;
-		if(category==null||category.length()==0){
-			list=qaService.QASearch(question, iBegin,iEnd);
-		}else{
-			list=qaService.QASearchByCategory(question, category, iBegin, iEnd);
-		}
-		if(list!=null){
-			msg.setMsg(list);
+		Map<String,List<Article>> map=null;
+			map=qaService.QASearch(question, iBegin,iEnd);
+		if(map!=null){
+			msg.setMsg(map);
 		}else{
 			msg.setSig(false);
 			msg.setMsg("没有检索的结果");

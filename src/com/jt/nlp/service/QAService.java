@@ -30,7 +30,7 @@ import com.jt.scene.service.SceneWordService;
 @Service
 public class QAService {
 	private static final Logger LOG = LoggerFactory.getLogger(QAService.class);
-
+	private boolean isPageContinue;
 	private NlpService nlpService;
 	private LuceneSearchService searchService;
 	private SceneWordService sceneWordService;
@@ -56,7 +56,7 @@ public class QAService {
 
 	// nlp第一次分析初始化很慢，不知道怎么初始化，直接触发一次检索
 	public void initNlp() {
-		QASearch("初始化", 1);
+		QASearch("初始化", 0,1);
 		// System.out.println("######"+(searchService==null));
 		LOG.info("正在初始化NLP");
 	}
@@ -84,12 +84,15 @@ public class QAService {
 						sceneSjflSet.addAll(Arrays.asList(sceneSjfl.split(";")));
 					}
 					//是否有关联页面，如果有则按照当前场景的关联分类筛选，不属于当前场景关联页面子类的过滤掉
-//					List<ScenePage> pageList=sceneWord.getScenePageList();
-//					if(pageList!=null&&pageList.size()>0){
-//						for(ScenePage curPage:pageList){
-//							if(curPage.getSjfl())
-//						}
-//					}
+					List<ScenePage> pageList=sceneWord.getScenePageList();
+					if(pageList!=null&&pageList.size()>0){
+						for(int i=0;i<pageList.size();i++){
+							ScenePage curPage=pageList.get(i);
+							if(isContainSjfl(sceneSjfl, curPage.getSjfl())){
+								pushQaRsMap(curPage);
+							}
+						}
+					}
 				}
 			}
 		}
@@ -98,7 +101,6 @@ public class QAService {
 
 	//判断这个预设页面的分类是否在场景分类范围之内
 	private boolean isContainSjfl(String sceneSjfl,String pageSjfl){
-		HashMap<String,String> sceneSjflMap=new HashMap<String,String>();
 		if(sceneSjfl==null||pageSjfl==null){
 			return false;
 		}
@@ -112,46 +114,25 @@ public class QAService {
 		return false;
 	}
 	
-	public List<Article> QASearch(String question, int size) {
-		return QASearch(question, 0, size);
+	//将预设页面放入检索结果
+	private void pushQaRsMap(ScenePage page){
+		String[] pageSjfl=page.getSjfl().split(";");
+		for(int i=0;i<pageSjfl.length;i++){
+			List<Article> articleList=qaResultMap.get(pageSjfl[i]);
+			if(articleList==null){
+				articleList=new ArrayList<Article>();
+			}
+			Article article=new Article();
+			article.setTitle(page.getPageTitle());
+			article.setUrl(page.getPageLink());
+			articleList.add(article);
+			qaResultMap.put(pageSjfl[i], articleList);
+		}
 	}
-
-	public List<Article> QASearch(String question, int begin, int end) {
-		// 检索结果
-		List<Article> list = new ArrayList<Article>();
-		// 检索词
-		Set<String> questionSet = null;
-		// 预设场景
-		Set<String> sceneWordSet = null;
-		sceneWordSet = presentScene(question);
-		questionSet = nlpService.getSearchWords(question);
-		// 未进入预设场景
-		if (sceneWordSet != null && sceneWordSet.size() > 0) {
-			LOG.info("进入预设场景，获得映射词"+sceneWordSet);
-			questionSet.addAll(sceneWordSet);
-		} 
-		LOG.info("实际检索词:"+questionSet);
-		if(questionSet==null||questionSet.size()==0)return null;
-		
-		String[] searchWord = new String[questionSet.size()];
-		questionSet.toArray(searchWord);
-		
-		
-		
-		//检索参数
-		String [] searchField={Article.getMapedFieldName("title")};
-		Occur[] occurs = {Occur.MUST};
-		//排序参数
-		String[] sortField={Article.getMapedFieldName("date")};
-		SortField.Type[] sortFieldType={SortField.Type.LONG};
-		boolean[] reverse={true};
-		boolean isRelevancy = true;
-		return searchService.searchArticle(searchWord, occurs, searchField, sortField, sortFieldType, reverse, isRelevancy, begin, end);
-	}
+	
 
 	// 根据分类检索
-	public List<Article> QASearchByCategory(String question, String category, int begin, int end) {
-		List<Article> list = new ArrayList<Article>();
+	public Map<String,List<Article>> QASearch(String question, int begin, int end) {
 		// 检索词
 		Set<String> questionSet = null;
 		// 预设场景
@@ -173,7 +154,7 @@ public class QAService {
 		}
 		// 分类作为必须包含的字段进行检索
 
-		String[] searchWord = { questionStr, category };
+		String[] searchWord = { questionStr, "" };
 		Occur[] occurs = { Occur.MUST, Occur.MUST };
 		String[] fields = { Article.getMapedFieldName("title"), Article.getMapedFieldName("category") };
 		
@@ -183,8 +164,32 @@ public class QAService {
 		SortField.Type[] sortFieldType={SortField.Type.LONG};
 		boolean[] reverse={true};
 		boolean isRelevancy = true;
+
+		//存在预设场景关联分类，则遍历指定的分类，否则遍历系统配置的默认分类
+		if(sceneSjflSet.size()>0){
+			for(String str:sceneSjflSet){
+				//赋值分类value
+				searchWord[1]=str;
+				List<Article> rsList=qaResultMap.get(str);
+				if(rsList==null){
+					rsList=new ArrayList<Article>();
+				}
+				//配置项，如果已有预设页面，是否还继续做检索
+				if(isPageContinue){
+					if(rsList.size()<end){
+						rsList.addAll(searchService.searchArticle(searchWord, occurs, fields, sortField, sortFieldType, reverse, isRelevancy, begin, end-rsList.size()));
+					}
+				}else{
+					if(rsList.size()==0){
+						rsList.addAll(searchService.searchArticle(searchWord, occurs, fields, sortField, sortFieldType, reverse, isRelevancy, begin, end));
+					}
+				}
+				qaResultMap.put(str, rsList);
+			}
+		}
 		
-		return searchService.searchArticle(searchWord, occurs, fields, sortField, sortFieldType, reverse, isRelevancy, begin, end);
+		
+		return qaResultMap;
 	}
 
 	public NlpService getNlpService() {

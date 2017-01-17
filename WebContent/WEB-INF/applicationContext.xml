@@ -212,6 +212,7 @@
 		</property>
 		<property name="nlpService" ref="nlpService">
 		</property>
+		<property name="isPageContinue" value="${qa.isPageContinue}"></property>
 	</bean>
 
 

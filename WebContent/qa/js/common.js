@@ -157,39 +157,18 @@ function qaSearch(question){
 	searchHisId=searchHisId.length==0?"0":searchHisId;
 	//发起N次请求，N为config.js中分类的个数
 	var qaData={"msg":new Array()};
-	//记录当前Ajax执行的个数
-	var ajaxPos=0;
-	for(i=0;i<categoryArray.length;i++){
-		var param=null;
-		//最后一次请求才记录检索历史
-		if((i+1)==categoryArray.length){
-			param={
-					"question":encodeURIComponent(question),
-					"category":categoryArray[i],
-					"begin":0,
-					"end":5,
-					"searchHisId":searchHisId,
-					"isStorgeHis":"true"};
-			
-		}else{
-			param={
-					"question":encodeURIComponent(question),
-					"category":categoryArray[i],
-					"begin":0,
-					"end":5};
-		}
-		
-		$.getJSON("/QASystem/admin/qaSearch.do",param,function(data){
-			ajaxPos++;
-			qaData.msg=qaData.msg.concat(data.msg);
-			if(ajaxPos==categoryArray.length){
-				//最后一个ajax请求返回，显示答案，并移动到底部
-				addAnswer(question,qaData);
-				scrollToBottom();
-			}
-		})
-	}
-	
+	var param={
+			"question":encodeURIComponent(question),
+			"category":categoryArray[i],
+			"begin":0,
+			"end":5,
+			"searchHisId":searchHisId,
+			"isStorgeHis":"true"};
+	$.getJSON("/QASystem/admin/qaSearch.do",param,function(data){
+		qaData.msg=qaData.msg.concat(data.msg);
+		addAnswer(question,qaData);
+		scrollToBottom();
+	})	
 }
 function scrollToBottom(){
 	$("#message").scrollTop(parseInt($("#message")[0].scrollHeight)-parseInt($("#message").css("height")));

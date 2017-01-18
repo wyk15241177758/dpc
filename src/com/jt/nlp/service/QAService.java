@@ -31,6 +31,7 @@ import com.jt.scene.service.SceneWordService;
 public class QAService {
 	private static final Logger LOG = LoggerFactory.getLogger(QAService.class);
 	private boolean isPageContinue;
+	private String sPageContinue;
 	private NlpService nlpService;
 	private LuceneSearchService searchService;
 	private SceneWordService sceneWordService;
@@ -59,6 +60,19 @@ public class QAService {
 		QASearch("初始化", 0,1);
 		// System.out.println("######"+(searchService==null));
 		LOG.info("正在初始化NLP");
+	}
+
+	public String getsPageContinue() {
+		return sPageContinue;
+	}
+
+	public void setsPageContinue(String sPageContinue) {
+		this.sPageContinue = sPageContinue;
+		if("true".equals(sPageContinue)){
+			this.isPageContinue=true;
+		}else{
+			this.isPageContinue=false;
+		}
 	}
 
 	/**
@@ -131,6 +145,14 @@ public class QAService {
 	}
 	
 
+	public boolean isPageContinue() {
+		return isPageContinue;
+	}
+
+	public void setPageContinue(boolean isPageContinue) {
+		this.isPageContinue = isPageContinue;
+	}
+
 	// 根据分类检索
 	public Map<String,List<Article>> QASearch(String question, int begin, int end) {
 		// 检索词
@@ -186,15 +208,37 @@ public class QAService {
 				}
 				qaResultMap.put(str, rsList);
 			}
+		}else{
+			String qaSjfl=sceneWordService.getQaSjfl();
+			if(qaSjfl!=null&&qaSjfl.length()>0){
+				String[] sjfl=qaSjfl.split(";");
+				for(String str:sjfl){
+					//赋值分类value
+					searchWord[1]=str;
+					List<Article> rsList=qaResultMap.get(str);
+					if(rsList==null){
+						rsList=new ArrayList<Article>();
+					}
+					//配置项，如果已有预设页面，是否还继续做检索
+					if(isPageContinue){
+						if(rsList.size()<end){
+							rsList.addAll(searchService.searchArticle(searchWord, occurs, fields, sortField, sortFieldType, reverse, isRelevancy, begin, end-rsList.size()));
+						}
+					}else{
+						if(rsList.size()==0){
+							rsList.addAll(searchService.searchArticle(searchWord, occurs, fields, sortField, sortFieldType, reverse, isRelevancy, begin, end));
+						}
+					}
+					qaResultMap.put(str, rsList);
+				}
+			}
 		}
 		
 		
 		return qaResultMap;
 	}
+	
 
-	public NlpService getNlpService() {
-		return nlpService;
-	}
 
 	public void setNlpService(NlpService nlpService) {
 		this.nlpService = nlpService;

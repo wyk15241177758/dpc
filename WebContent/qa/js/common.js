@@ -159,14 +159,12 @@ function qaSearch(question){
 	var qaData={"msg":new Array()};
 	var param={
 			"question":encodeURIComponent(question),
-			"category":categoryArray[i],
 			"begin":0,
 			"end":5,
 			"searchHisId":searchHisId,
 			"isStorgeHis":"true"};
 	$.getJSON("/QASystem/admin/qaSearch.do",param,function(data){
-		qaData.msg=qaData.msg.concat(data.msg);
-		addAnswer(question,qaData);
+		addAnswer(question,data);
 		scrollToBottom();
 	})	
 }
@@ -182,48 +180,79 @@ function addQuestion(question){
 	//移动滚动条
 	scrollToBottom();
 }
-function addAnswer(question,qalist){
+function addAnswer(question,qaMsg){
 	var template="<div class='dialog_tab'><div><img src='images/robot.png' class='answer_man' width='40' height='40'/><img src='images/right_arrow.gif' class='right_arrow'/><div class='right_arrow'></div><p>您的问题是：<span>{question}</span>,我为您找到了以下答案:</p><div class='tab2_title'><ul>{categoryLi}</ul></div><div class='tab2_content'>{qaDiv}</div></div></div>";
 	
 	template=template.replace(/\{question\}/g,question);
 	
-	var answerArray=new Array();
-	//遍历分类，将答案放入对应分类的answerArray中
-	for(i=0;i<categoryArray.length;i++){
-		var curCategory={"name":categoryArray[i],"qa":new Array()};
-		for(j in qalist.msg){
-			if(categoryArray[i]==qalist.msg[j].category){
-				curCategory.qa.push(qalist.msg[j]);
-			}
-		}
-		if(curCategory.qa.length!=0){
-			answerArray.push(curCategory);
-		}
-	}
+//	var answerArray=new Array();
+//	//遍历分类，将答案放入对应分类的answerArray中
+//	for(i=0;i<categoryArray.length;i++){
+//		var curCategory={"name":categoryArray[i],"qa":new Array()};
+//		for(j in qalist.msg){
+//			if(categoryArray[i]==qalist.msg[j].category){
+//				curCategory.qa.push(qalist.msg[j]);
+//			}
+//		}
+//		if(curCategory.qa.length!=0){
+//			answerArray.push(curCategory);
+//		}
+//	}
 	//遍历归类好的答案并显示
 	var categoryLi="";
 	var qaDiv="";
 	
-	for(i=0;i<answerArray.length;i++){
+//	for(i=0;i<answerArray.length;i++){
+//		var curQa=""
+//		//遍历这个分类下的答案
+//		for(j=0;j<answerArray[i].qa.length;j++){
+//			if(answerArray[i].qa[j].url.indexOf("http")==-1){
+//				curQa+="<li><a href='http://"+answerArray[i].qa[j].url+"' target='_blank'>"+answerArray[i].qa[j].title+"</a></li>"
+//			}else{
+//				curQa+="<li><a href='"+answerArray[i].qa[j].url+"' target='_blank'>"+answerArray[i].qa[j].title+"</a></li>"
+//			}
+//		}
+//		
+//		//遍历分类
+//		if(i==0){
+//			categoryLi="<li class='slected2'>"+answerArray[i].name+"</li>"
+//			qaDiv="<div class='container'> <ul class='news'> "+curQa+" </ul> </div>";
+//		}else{
+//			categoryLi+="<li>"+answerArray[i].name+"</li>"
+//			qaDiv+="<div class='container hide'> <ul class='news'> "+curQa+" </ul> </div>";
+//		}
+//	}
+	
+	var msg=qaMsg.msg;
+	var index=0;
+	for(i in msg){
 		var curQa=""
-		//遍历这个分类下的答案
-		for(j=0;j<answerArray[i].qa.length;j++){
-			if(answerArray[i].qa[j].url.indexOf("http")==-1){
-				curQa+="<li><a href='http://"+answerArray[i].qa[j].url+"' target='_blank'>"+answerArray[i].qa[j].title+"</a></li>"
-			}else{
-				curQa+="<li><a href='"+answerArray[i].qa[j].url+"' target='_blank'>"+answerArray[i].qa[j].title+"</a></li>"
-			}
-		}
-		
 		//遍历分类
-		if(i==0){
-			categoryLi="<li class='slected2'>"+answerArray[i].name+"</li>"
+		if(index==0){
+			categoryLi="<li class='slected2'>"+i+"</li>"
+			for(var j=0;j<msg[i].length;j++){
+				if(msg[i][j].url.indexOf("http")==-1){
+					curQa+="<li><a href='http://"+msg[i][j].url+"' target='_blank'>"+msg[i][j].title+"</a></li>"
+				}else{
+					curQa+="<li><a href='"+msg[i][j].url+"' target='_blank'>"+msg[i][j].title+"</a></li>"
+				}
+			}
 			qaDiv="<div class='container'> <ul class='news'> "+curQa+" </ul> </div>";
 		}else{
-			categoryLi+="<li>"+answerArray[i].name+"</li>"
+			categoryLi+="<li>"+i+"</li>"
+			for(var j=0;j<msg[i].length;j++){
+				if(msg[i][j].url.indexOf("http")==-1){
+					curQa+="<li><a href='http://"+msg[i][j].url+"' target='_blank'>"+msg[i][j].title+"</a></li>"
+				}else{
+					curQa+="<li><a href='"+msg[i][j].url+"' target='_blank'>"+msg[i][j].title+"</a></li>"
+				}
+			}
 			qaDiv+="<div class='container hide'> <ul class='news'> "+curQa+" </ul> </div>";
 		}
+		index++;
 	}
+	
+	
 	
 	template=template.replace(/\{categoryLi\}/g,categoryLi);
 	template=template.replace(/\{qaDiv\}/g,qaDiv);

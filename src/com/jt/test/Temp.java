@@ -1,7 +1,9 @@
 package com.jt.test;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 
 
 public class Temp {
@@ -16,7 +18,9 @@ public Integer getTest() {
 	}
 
 public static void main(String[] args) throws Exception {
-	Temp temp=new Temp();
-	System.out.println(temp.getTest()==0);
+	String a="";
+	List<String> b=new ArrayList<String>();
+	b=Arrays.asList(a.split(";"));
+	System.out.println(b.size());
 }
 }

@@ -29,7 +29,7 @@ import com.jt.lucene.IndexDao;
 import com.jt.lucene.LuceneUtilsGw;
 
 public class LuceneTest {
-    private static String indexPath = "D:\\indexpath_zxh";    // 索引保存目录
+    private static String indexPath = "D:\\indexpath";    // 索引保存目录
     private static LuceneUtilsGw util=null;
     public static void createIndex(){    // 建立索引
        IndexWriter writer;
@@ -133,24 +133,19 @@ public class LuceneTest {
     
   
     
-    public static void SearchTest(){
+    public static void SearchAllTest(){
     	  Query query;
           IndexSearcher searcher;
 //          createIndex();
           
           try {
    		IndexDao dao=new IndexDao(indexPath);
-   		String[] queryStr={"\"工作\""};
-//   		List<Document> list=dao.search(queryStr, Occur.SHOULD, "xq_title",null,null, false, 0, -1);
-//   		for(Document doc:list){
-//   			System.out.println(doc.getValues("xq_title")[0]);
-//   			
-//   		}
+   		String[] queryStr={"1"};
    		//检索参数
    		String [] searchField=new String[queryStr.length];
    		Occur[] occurs = new Occur[queryStr.length]; 
    		for(int i=0;i<searchField.length;i++){
-   			searchField[i]="KEY_WORD";
+   			searchField[i]="SEARCHALL";
    			occurs[i]=Occur.MUST;
    		}
    			
@@ -160,56 +155,50 @@ public class LuceneTest {
    		boolean[] reverse={true};
    		boolean isRelevancy = true;
    		
-   		List<Document> list=dao.search(queryStr, occurs, searchField, sortField, sortFieldType, reverse, isRelevancy, 0,10);
+   		List<Document> list=dao.search(queryStr, occurs, searchField, sortField, sortFieldType, reverse, isRelevancy, 0,100);
    		for(Document a:list){
    			System.out.println(a);
    		}
 
-
    		
-//   		//检索参数
-//   		String [] question={"1"};
-//   		String [] searchField={"SEARCHALL"};
-//   		Occur[] occurs = {Occur.MUST}; 
-//   			
-//   		//排序参数
-//   		String[] sortField= {"load_time"};
-//   		SortField.Type[] sortFieldType={SortField.Type.LONG};
-//   		boolean[] reverse={true};
-//   		boolean isRelevancy = true;
-//   		
-//   		List<Article> list=dao.searchArticle(question, occurs, searchField, sortField, sortFieldType, reverse, isRelevancy, 0,-1);
-//   		for(Article a:list){
-//   			System.out.println(a.getTitle()+" "+a.getDate());
-//   		}
-
-//      try {
-//          //生成索引
+          } catch (IOException e1) {
+   		e1.printStackTrace();
+   	}
+    }
+    
+    
+    public static void SearchTest(){
+    	  Query query;
+          IndexSearcher searcher;
 //          createIndex();
-////      	util=new LuceneUtilsGw(indexPath);
-////          DirectoryReader ireader = DirectoryReader.open(util.getDirectory());
-////          searcher = new IndexSearcher(ireader);
-////          //要查找的字符串数组
-////          String [] stringQuery={"我们","今晚"};
-////          //待查找字符串对应的字段
-////          String[] fields={"contents","contents"};
-////          //Occur.MUST表示对应字段必须有查询值， Occur.MUST_NOT 表示对应字段必须没有查询值
-////          Occur[] occ={Occur.SHOULD,Occur.SHOULD};
-////          
-////          query=MultiFieldQueryParser.parse(stringQuery,fields,occ,new StandardAnalyzer());
-////          TopDocs topDocs = searcher.search(query,1);
-////          System.out.println(topDocs.totalHits);
-////          ScoreDoc[]score=topDocs.scoreDocs;
-////          for(int i=0;i<score.length;i++){
-////          	System.out.println("score["+i+"].doc=["+score[i].doc+"]");
-////          	Document hitDoc=searcher.doc(score[i].doc);
-////          	System.out.println(hitDoc.get("contents"));
-////          }
-//     } 
-//     catch (Exception e) {
-//  	   e.printStackTrace();
-//  	   
-//     } 
+          
+          try {
+   		IndexDao dao=new IndexDao(indexPath);
+   		String[] queryStr={"拱墅"};
+//   		List<Document> list=dao.search(queryStr, Occur.SHOULD, "xq_title",null,null, false, 0, -1);
+//   		for(Document doc:list){
+//   			System.out.println(doc.getValues("xq_title")[0]);
+//   			
+//   		}
+   		//检索参数
+   		String [] searchField=new String[queryStr.length];
+   		Occur[] occurs = new Occur[queryStr.length]; 
+   		for(int i=0;i<searchField.length;i++){
+   			searchField[i]="XQ_TITLE";
+   			occurs[i]=Occur.MUST;
+   		}
+   			
+   		//排序参数
+   		String[] sortField= {Article.getMapedFieldName("date")};
+   		SortField.Type[] sortFieldType={SortField.Type.LONG};
+   		boolean[] reverse={true};
+   		boolean isRelevancy = true;
+   		
+   		List<Document> list=dao.search(queryStr, occurs, searchField, sortField, sortFieldType, reverse, isRelevancy, 0,100);
+   		for(Document a:list){
+   			System.out.println(a);
+   		}
+
    		
           } catch (IOException e1) {
    		e1.printStackTrace();
@@ -275,6 +264,6 @@ public class LuceneTest {
 //		} catch (IOException e) {
 //			e.printStackTrace();
 //		}
-    	SearchTest();
+    	SearchAllTest();
     }
 }

@@ -36,9 +36,8 @@ public class QAService {
 	private LuceneSearchService searchService;
 	private SceneWordService sceneWordService;
 	//存储场景的关联分类
-	private Set<String> sceneSjflSet;
-	//存储检索结果
-	private Map<String,List<Article>> qaResultMap;
+//	private Set<String> sceneSjflSet;
+//	private Map<String,List<Article>> qaResultMap;
 	// 本地测试使用,indexpath为索引所在目录
 	public QAService(String indexPath) {
 		nlpService = new NlpService();
@@ -51,8 +50,6 @@ public class QAService {
 	}
 
 	public QAService() {
-		sceneSjflSet=new HashSet<String>();
-		qaResultMap=new HashMap<String,List<Article>>();
 	}
 
 	// nlp第一次分析初始化很慢，不知道怎么初始化，直接触发一次检索
@@ -81,7 +78,7 @@ public class QAService {
 	 * @param word
 	 * @return 查询问题是否包含预设场景的词汇，此方法应该在lucene检索和NLP分析之前
 	 */
-	private Set<String> presentScene(String question) {
+	private Set<String> presentScene(String question,Set<String> sceneSjflSet,Map<String,List<Article>> qaResultMap) {
 		Set<String> sceneWordSet = new HashSet<String>();
 		List<String> questionParticleList = nlpService.getParticle(question);
 		List<SceneWord> sceneWordList = sceneWordService.getAllSceneWords();
@@ -103,7 +100,7 @@ public class QAService {
 						for(int i=0;i<pageList.size();i++){
 							ScenePage curPage=pageList.get(i);
 							if(isContainSjfl(sceneSjfl, curPage.getSjfl())){
-								pushQaRsMap(curPage);
+								pushQaRsMap(curPage,qaResultMap);
 							}
 						}
 					}
@@ -129,10 +126,10 @@ public class QAService {
 	}
 	
 	//将预设页面放入检索结果
-	private void pushQaRsMap(ScenePage page){
+	private Map<String,List<Article>> pushQaRsMap(ScenePage page,Map<String,List<Article>> map){
 		String[] pageSjfl=page.getSjfl().split(";");
 		for(int i=0;i<pageSjfl.length;i++){
-			List<Article> articleList=qaResultMap.get(pageSjfl[i]);
+			List<Article> articleList=map.get(pageSjfl[i]);
 			if(articleList==null){
 				articleList=new ArrayList<Article>();
 			}
@@ -140,8 +137,9 @@ public class QAService {
 			article.setTitle(page.getPageTitle());
 			article.setUrl(page.getPageLink());
 			articleList.add(article);
-			qaResultMap.put(pageSjfl[i], articleList);
+			map.put(pageSjfl[i], articleList);
 		}
+		return map;
 	}
 	
 
@@ -159,7 +157,10 @@ public class QAService {
 		Set<String> questionSet = null;
 		// 预设场景
 		Set<String> sceneWordSet = null;
-		sceneWordSet = presentScene(question);
+		
+		Set<String> sceneSjflSet = new HashSet<String>();
+		Map<String,List<Article>> qaResultMap= new HashMap<String,List<Article>>();
+		sceneWordSet = presentScene(question,sceneSjflSet,qaResultMap);
 		questionSet = nlpService.getSearchWords(question);
 		// 未进入预设场景
 		if (sceneWordSet != null && sceneWordSet.size() > 0) {

@@ -435,10 +435,21 @@ function generateSjflParam(obj,splitBy){
 
 //修改场景映射词给弹出浮层赋值
 function setSceneWordValue(sceneWordId){
+	//先清空原先的值
+	$("#sceneWordModal").find("input").each(function(){
+		var name=$(this).attr("name")
+		if($(this).attr("type")=='checkbox'){
+			$(this).prop("checked",false)
+			console.log($(this).attr("name"))
+		}
+		else{
+			$(this).val("")
+		}
+	})
+	
+	
 	//正在修改的sceneWordId
 	$('#sceneWordModal').find("[name='sceneWordId']").val(sceneWordId);
-
-	
 	var param={"sceneWordId":sceneWordId};
 	 $.getJSON("/QASystem/admin/scene/getSceneWord.do",param,function(data){
 		  if(data==null||typeof(data.sig)=='undefined'

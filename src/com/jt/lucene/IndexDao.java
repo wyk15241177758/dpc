@@ -2,7 +2,9 @@ package com.jt.lucene;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
@@ -464,6 +466,94 @@ public class IndexDao {
 		}
 		return null;
 	}
+	
+	
+	
+	
+/**
+ * 返回命中记录数和命中结果集
+ * 支持定义每个检索词的与、或关系
+ * @param queryString
+ * 支持传入多个检索词
+ * @param occurs
+ * 多个检索词之间的关系，Occur.MUST(结果“与”)， Occur.MUST_NOT(结果“不包含”)，Occur.SHOULD(结果“或”)
+ * @param field
+ * 当前应用使用title
+ * @param sortField
+ * 排序字段，传入null则按照相关度排序
+ * @param sortFieldType
+ * 排序字段的类型，如long、int等
+ * @param reverse
+ * 排序方式，顺序(false)还是倒序(true)
+ * @param firstResult
+ * 结果从第几个开始
+ * @param maxResult
+ * 结果到第几个结束，可以传入-1，则限制为1000条
+ * @return
+ */
+	public Map<String,Object> searchRs(String[] queryString,Occur[] occurs,String[] fields,String[] sortField,SortField.Type[] sortFieldType,boolean[] reverse,boolean isRelevancy ,int firstResult, int maxResult) {
+		Map<String,Object> map=new HashMap<String,Object>();
+		List<Document> list = new ArrayList<Document>();
+		TopDocs topDocs =null;
+		Sort sort=null;
+		DirectoryReader ireader=null;
+		IndexSearcher isearcher=null;
+		if(maxResult==-1){
+			maxResult=1000;
+		}
+		try {
+			ireader = DirectoryReader.open(util.getDirectory());
+			// 2、第二步，创建搜索器
+			isearcher = new IndexSearcher(ireader);
+			// 3、第三步，类似SQL，进行关键字查询
+//			parser = new QueryParser(field, util.getAnalyzer());
+//			for(int i=0;i<queryString.length;i++){
+//				fields[i]=field;
+//			}
+			Query query =MultiFieldQueryParser.parse(queryString,fields,occurs,util.getAnalyzer());
+			logger.info("Lucene检索条件为["+query+"]");
+			
+			if(sortField!=null&&sortFieldType!=null&&reverse!=null){
+				List<SortField> sortList=new ArrayList<SortField>();
+				if(isRelevancy){
+					sortList.add( SortField.FIELD_SCORE);
+				}
+				for(int i=0;i<sortField.length;i++){
+					SortField curSortField=new SortField(sortField[i], sortFieldType[i],reverse[i]);
+					sortList.add(curSortField);
+				}
+				SortField[] sortArr=new SortField[list.size()];
+				sortArr=sortList.toArray(sortArr);
+				sort=new Sort(sortArr);
+				
+				topDocs = isearcher.search(query, firstResult + maxResult,sort);
+			}else{
+				topDocs = isearcher.search(query, firstResult + maxResult);
+			}
+			ScoreDoc[] hits = topDocs.scoreDocs;// 第二个参数，指定最多返回前n条结果
+			//一共多少命中点
+			map.put("size", topDocs.totalHits);
+			// 高亮
+//			Formatter formatter = new SimpleHTMLFormatter("<font color='red'>", "</font>");
+//			Scorer source = new QueryScorer(query);
+//			Highlighter highlighter = new Highlighter(formatter, source);
+			
+			// 处理结果
+			int endIndex = Math.min(firstResult + maxResult, hits.length);
+			
+			for (int i = firstResult; i < endIndex; i++) {
+				Document hitDoc = isearcher.doc(hits[i].doc);
+				list.add(hitDoc);
+			}
+			ireader.close();
+			map.put("documents", list);
+			return map;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	
 //	/**
 //	 * 简易检索，各个字段之间是or关系，默认按照相关性排序

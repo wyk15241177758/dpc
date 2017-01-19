@@ -321,6 +321,9 @@ public class SceneWordAction {
 								scenePageList.add(curScenePage);
 							}
 							sceneWord.setScenePageList(scenePageList);
+						}else{
+							//没有预设页面也得赋值，用于删除预设页面
+							sceneWord.setScenePageList(null);
 						}
 						
 						
@@ -461,9 +464,8 @@ public class SceneWordAction {
 			return;
 		}
 		String sjfl=sceneWordService.getQaSjfl();
-		System.out.println("sjfl=["+sjfl+"]");
 		if(sjfl!=null&&sjfl.length()>0){
-			msg.setMsg(sjfl.split(","));
+			msg.setMsg(sjfl.split(";"));
 			msg.setSig(true);
 		}else{
 			LOG.error("关联分类列表为空，请检查jdbc.properties是否有qa.sjfl属性");

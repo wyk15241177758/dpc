@@ -1,6 +1,7 @@
 package com.jt.searchHis.service.impl;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 /**
@@ -8,10 +9,16 @@ import java.util.Map.Entry;
  */
 
 import org.apache.log4j.Logger;
+import org.apache.lucene.search.SortField;
+import org.apache.lucene.search.BooleanClause.Occur;
+import org.apache.lucene.document.Document;
 
+import com.jt.lucene.DocumentUtils;
+import com.jt.nlp.service.LuceneSearchService;
 import com.jt.searchHis.bean.SearchHis;
 import com.jt.searchHis.service.SearchHisRtService;
 import com.jt.searchHis.service.SearchHisService;
+
 
 public class SearchHisRtServiceImpl implements SearchHisRtService{
 	private static Logger logger = Logger.getLogger(SearchHisRtServiceImpl.class);
@@ -21,15 +28,22 @@ public class SearchHisRtServiceImpl implements SearchHisRtService{
 	//没有searchHisId的检索
 	private Map<String,Integer> newMap;
 	private SearchHisService searchHisService;
-	//达到上限则存入数据库
-	private int limitSize;
+	private LuceneSearchService luceneSearchService;
+	//达到时间间隔则存入数据库
+	private long waitTime;
 	
-
-	public int getLimitSize() {
-		return limitSize;
+	
+	public LuceneSearchService getLuceneSearchService() {
+		return luceneSearchService;
 	}
-	public void setLimitSize(int limitSize) {
-		this.limitSize = limitSize;
+	public void setLuceneSearchService(LuceneSearchService luceneSearchService) {
+		this.luceneSearchService = luceneSearchService;
+	}
+	public long getWaitTime() {
+		return waitTime;
+	}
+	public void setWaitTime(long waitTime) {
+		this.waitTime = waitTime;
 	}
 	public Map<Long, SearchHis> getQuestionMap() {
 		return questionMap;
@@ -45,12 +59,77 @@ public class SearchHisRtServiceImpl implements SearchHisRtService{
 		this.searchHisService = searchHisService;
 	}
 	
+	
+	
 	public SearchHisRtServiceImpl(){
 		questionMap=new HashMap<Long,SearchHis>();
 		newMap = new HashMap<String,Integer>();
 	}
-	public void add(String question,long searchHisId){
-		logger.info("存储检索历史进入缓存begin");
+	
+	/**
+	 * 系统启动时
+	 * 将检索结果读入内存
+	 */
+	private void loadSearchHis(){
+		logger.info("开始将检索历史读入内存");
+		long begin=System.currentTimeMillis();
+		List<SearchHis> list=searchHisService.query(0, (int)searchHisService.getTotalCount());
+		for(SearchHis search:list){
+			questionMap.put(search.getId(), search);
+		}
+		long end=System.currentTimeMillis();
+		logger.info("结束将检索历史读入内存，耗时:"+(end-begin)+" ms");
+	}
+	
+	/**
+	 * 传入question，返回匹配的检索历史
+	 * @param question
+	 * @return
+	 */
+	private List<Document> getSearchHisByLucene(String question){
+		//检索参数
+		String[] queryString={question};
+		Occur[] occurs={Occur.MUST};
+		String[] fields={DocumentUtils.getMapedFieldName("searchHis", "content")};
+		
+		//排序参数
+		String[] sortField={DocumentUtils.getMapedFieldName("searchHis", "times")};
+		SortField.Type[] sortFieldType={SortField.Type.LONG};
+		boolean[] reverse={true};
+		List<Document> list=luceneSearchService.search(queryString, occurs, fields, sortField,sortFieldType, reverse, true, 0, 10);
+		return list;
+	}
+	
+	public void add(String question){
+		SearchHis searchHis=null;
+		List<Document> list=getSearchHisByLucene(question);
+		//全文检索之后在严格判断是否相等，只返回第一条
+		if(list!=null){
+			for(Document doc:list){
+				if(doc.get(DocumentUtils.getMapedFieldName("searchHis", "content")).equals(question)){
+					try {
+						Long searchHisId=Long.parseLong(doc.get(DocumentUtils.getMapedFieldName("searchHis", "id")));
+						searchHis=searchHisService.getSearchHisById(searchHisId);
+						break;
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		if(searchHis!=null){
+			SearchHis temp=questionMap.get(searchHis.getId());
+			if(temp!=null){
+				temp.setSearchTimes(searchHis.getSearchTimes()+1);
+			}else{
+				questionMap.put(searchHis.getId(), searchHis);
+			}
+		}else{
+			questionMap.put(searchHis.getId(), searchHis);
+		}
+		
+		
+		
 		SearchHis searchHis=questionMap.get(searchHisId);
 		//新的检索
 		if(searchHisId==0l){

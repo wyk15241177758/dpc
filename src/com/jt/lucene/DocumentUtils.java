@@ -72,4 +72,22 @@ public class DocumentUtils {
 		doc.add(new Field(article.getMapedFieldName("date"),sdf.format(article.getDate()),TextField.TYPE_STORED));
 		return doc;
 	}
+	
+	//字段映射，方便后续统一修改
+		public static String getMapedFieldName(String type,String fieldName) {
+			if("searchHis".equalsIgnoreCase(type)){
+				if(fieldName.equalsIgnoreCase("id")){
+					return "ID";
+				}else if(fieldName.equalsIgnoreCase("content")){
+					return "SEARCHCONTENT";
+				}else if(fieldName.equalsIgnoreCase("times")){
+					return "SEARCHTIMES";
+				}else if(fieldName.equalsIgnoreCase("date")){
+					return "UPDATETIME";
+				}
+			}else if("article".equalsIgnoreCase(type)){
+				return Article.getMapedFieldName(fieldName);
+			}
+			return null;
+		}
 }

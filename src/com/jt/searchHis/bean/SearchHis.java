@@ -9,14 +9,17 @@ public class SearchHis  implements java.io.Serializable{
 	private static final long serialVersionUID = 1L;
 	private Long id;
 	private String searchContent;
+	private String contentMd5;
 	private int searchTimes;
 	private Date createTime;
 	private Date updateTime;
 	
-	public SearchHis(Long id, String searchContent, int searchTimes, Date createTime, Date updateTime) {
+	public SearchHis(Long id, String searchContent, String contentMd5, int searchTimes, Date createTime,
+			Date updateTime) {
 		super();
 		this.id = id;
 		this.searchContent = searchContent;
+		this.contentMd5 = contentMd5;
 		this.searchTimes = searchTimes;
 		this.createTime = createTime;
 		this.updateTime = updateTime;
@@ -53,6 +56,12 @@ public class SearchHis  implements java.io.Serializable{
 	}
 	public void setUpdateTime(Date updateTime) {
 		this.updateTime = updateTime;
+	}
+	public String getContentMd5() {
+		return contentMd5;
+	}
+	public void setContentMd5(String contentMd5) {
+		this.contentMd5 = contentMd5;
 	}
 	
 }

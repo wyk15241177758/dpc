@@ -4,5 +4,5 @@ package com.jt.searchHis.service;
  */
 
 public interface SearchHisRtService {
-	public void add(String question,long searchHisId);
+	public void add(String question);
 }

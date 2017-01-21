@@ -27,7 +27,7 @@ public class SimpleQuartzTest {
 	public static void main(String[] args) throws Exception {
 	        Scheduler scheduler = SimpleQuartzTest.gSchedulerFactory.getScheduler();
 	        // 系统当前时间10秒后
-	        long startTime = System.currentTimeMillis() + 10000L;
+	        long startTime = System.currentTimeMillis() + 5000L;
 	        SimpleTrigger trigger = new SimpleTrigger("myTrigger", null, new Date(
 	                startTime),  new Date(startTime+5000l), 0, 0L);
 
@@ -38,7 +38,7 @@ public class SimpleQuartzTest {
 
 	        scheduler.scheduleJob(jobDetail, trigger);
 	        scheduler.start();
-	        scheduler.shutdown();
+//	        scheduler.shutdown();
 	        
 	}
 }

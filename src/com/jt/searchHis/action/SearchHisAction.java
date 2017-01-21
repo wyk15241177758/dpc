@@ -21,6 +21,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jt.base.page.Param;
 import com.jt.bean.gateway.PageMsg;
+import com.jt.common.util.EncryptUtils;
 import com.jt.gateway.util.CMyString;
 import com.jt.searchHis.bean.SearchHis;
 import com.jt.searchHis.service.SearchHisService;
@@ -72,7 +73,7 @@ public class SearchHisAction {
 		if (searchContent != null && searchContent.length() > 0 ) {
 			try {
 				Date date = new Date();
-				searchHis = new SearchHis(null, searchContent, searchTimes, date, date);
+				searchHis = new SearchHis(null, searchContent,EncryptUtils.encodeMD5(searchContent), searchTimes,  date, date);
 				searchHisService.addSearchHis(searchHis);
 				msg.setMsg("新增检索历史[" + searchContent + "]成功");
 				msg.setSig(true);
@@ -177,6 +178,7 @@ public class SearchHisAction {
 				try {
 					Date date = new Date();
 					searchHis.setSearchContent(searchContent);
+					searchHis.setContentMd5(EncryptUtils.encodeMD5(searchContent));
 					searchHis.setSearchTimes(searchTimes);
 					searchHis.setUpdateTime(date);
 					searchHisService.updateSearchHis(searchHis);

@@ -67,7 +67,12 @@ public class SearchHisRtServiceImpl implements SearchHisRtService,Job{
 			if(curMd5==null){
 				curMd5=EncryptUtils.encodeMD5(search.getSearchContent());
 				search.setContentMd5(curMd5);
-				searchHisService.updateSearchHis(search);
+				try {
+					searchHisService.updateSearchHis(search,search.getSearchContent(),false);
+				} catch (Exception e) {
+					logger.error("修改检索历史Id=["+search.getId()+"]失败 错误信息为：");
+					logger.error(e);
+				}
 			}
 			List<SearchHis> curList=questionMap.get(curMd5);
 			if(curList==null){
@@ -124,63 +129,49 @@ public class SearchHisRtServiceImpl implements SearchHisRtService,Job{
 		}
 		String qMd5=EncryptUtils.encodeMD5(question);
 		List<SearchHis> list=questionMap.get(qMd5);
-		//不存在此md5，new list加入map
+		//不存在此md5，直接返回
 		if(list==null){
-			SearchHis search=new SearchHis(null, question, qMd5, 1, new Date(), new Date());
-			list=new ArrayList<SearchHis>();
-			list.add(search);
-			questionMap.put(qMd5, list);
+			return;
 		}else{
-			//存在此md5，遍历list，是否有相同的检索历史，有则检索次数+1，没有则插入list
-			boolean exist=false;
+			//存在此md5，遍历list，是否有相同的检索历史，有则删除，没有则返回
 			for(SearchHis search:list){
 				if(search.getSearchContent().equalsIgnoreCase(question)){
-					search.setSearchTimes(search.getSearchTimes()+1);
-					search.setChanged(true);
-					exist=true;
+					//删除前先锁定list，避免多线程问题
+					synchronized (list) {
+						list.remove(search);
+					}
 					break;
 				}
-			}
-			//不存在相同的检索历史，new检索历史插入list
-			if(!exist){
-				SearchHis search=new SearchHis(null, question, qMd5, 1, new Date(), new Date());
-				list.add(search);
 			}
 		}
 	}
 	
 	
-	public void update(String question){
+	public void update(String oldQuestion,SearchHis searchHis){
 		if(isLocked){
 			logger.info("正在同步到数据库，禁止写入");
 			return;
 		}
-		String qMd5=EncryptUtils.encodeMD5(question);
+		String qMd5=EncryptUtils.encodeMD5(oldQuestion);
 		List<SearchHis> list=questionMap.get(qMd5);
-		//不存在此md5，new list加入map
+		//不存在此md5，跳过
 		if(list==null){
-			SearchHis search=new SearchHis(null, question, qMd5, 1, new Date(), new Date());
-			list=new ArrayList<SearchHis>();
-			list.add(search);
-			questionMap.put(qMd5, list);
+			return;
 		}else{
-			//存在此md5，遍历list，是否有相同的检索历史，有则检索次数+1，没有则插入list
-			boolean exist=false;
+			//存在此md5，遍历list，是否有相同的检索历史，有则修改，没有则不处理
 			for(SearchHis search:list){
-				if(search.getSearchContent().equalsIgnoreCase(question)){
-					search.setSearchTimes(search.getSearchTimes()+1);
-					search.setChanged(true);
-					exist=true;
+				if(search.getSearchContent().equalsIgnoreCase(oldQuestion)){
+					search.setChanged(false);
+					search.setContentMd5(searchHis.getContentMd5());
+					search.setSearchContent(searchHis.getSearchContent());
+					search.setSearchTimes(searchHis.getSearchTimes());
+					search.setUpdateTime(searchHis.getUpdateTime());
 					break;
 				}
 			}
-			//不存在相同的检索历史，new检索历史插入list
-			if(!exist){
-				SearchHis search=new SearchHis(null, question, qMd5, 1, new Date(), new Date());
-				list.add(search);
-			}
 		}
 	}
+	
 	
 	
 	private void init4Quartz(){
@@ -214,11 +205,21 @@ public class SearchHisRtServiceImpl implements SearchHisRtService,Job{
 					num++;
 					//新增
 					if(search.getId()==0){
-						searchHisService.addSearchHis(search);
+						try {
+							searchHisService.addSearchHis(search,false);
+						} catch (Exception e) {
+							logger.error("同步新增检索历史["+search.getSearchContent()+"]到数据库失败，错误信息为");
+							logger.error(e);
+						}
 					}else{
 						//更新，只更新有修改标记的检索历史，更新之后将修改标记置为false
 						if(search.isChanged()){
-							searchHisService.updateSearchHis(search);
+							try {
+								searchHisService.updateSearchHis(search,search.getSearchContent(),false);
+							} catch (Exception e) {
+								logger.error("修改检索历史Id=["+search.getId()+"]失败 错误信息为：");
+								logger.error(e);
+							}
 							search.setChanged(false);
 						}
 					}

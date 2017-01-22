@@ -21,23 +21,87 @@ public class SearchHisServiceImpl   extends BasicServicveImpl implements SearchH
 		this.searchHisRtService = searchHisRtService;
 	}
 
-	//需要同步到内存的SearchHisRtService中
-	public void addSearchHis(SearchHis searchHis) throws InterruptedException{
-		for(int i=0;i<waitTimes;i++){
-			if(searchHisRtService.isLocked()){
-				Thread.sleep(2000l);
+/**
+ * isSync为false则不同步到内存，true则同步到内存
+ * @param searchHis
+ * @param isSync
+ * @throws Exception
+ */
+	public void addSearchHis(SearchHis searchHis,boolean isSync) throws Exception{
+		if(!isSync){
+			//不需要同步到内存
+			this.dao.save(searchHis);
+		}else{
+			//需要同步到内存
+			boolean timeOut=true;
+			for(int i=0;i<waitTimes;i++){
+				if(searchHisRtService.isLocked()){
+					Thread.sleep(2000l);
+				}else{
+					timeOut=false;
+					searchHisRtService.add(searchHis.getSearchContent());
+					this.dao.save(searchHis);
+					break;
+				}
+			}
+			if(timeOut){
+				throw new Exception("检索历史正在同步，保存失败，请检查");
+			}			
+		}
+	}
+	
+	/**
+	 * isSync为false则不同步到内存，true则同步到内存
+	 * @param searchHis
+	 * @param isSync
+	 * @throws Exception
+	 */
+	public void deleteSearchHis(SearchHis searchHis,boolean isSync) throws Exception{
+		if(!isSync){
+			//不需要同步到内存
+			this.dao.delete(searchHis);
+		}else{
+			//需要同步到内存
+			boolean timeOut=true;
+			for(int i=0;i<waitTimes;i++){
+				if(searchHisRtService.isLocked()){
+					Thread.sleep(2000l);
+				}else{
+					timeOut=false;
+					searchHisRtService.delete(searchHis.getSearchContent());
+					this.dao.delete(searchHis);
+					break;
+				}
+			}
+			if(timeOut){
+				throw new Exception("检索历史正在同步，删除失败，请检查");
 			}
 		}
-		searchHisRtService.add(searchHis.getSearchContent());
-		this.dao.save(searchHis);
 	}
 	
-	public void deleteSearchHis(SearchHis searchHis){
-		this.dao.delete(searchHis);
-	}
 	
-	public void updateSearchHis(SearchHis searchHis){
-		this.dao.update(searchHis);
+	public void updateSearchHis(SearchHis searchHis,String oldQuestion,boolean isSync) throws Exception{
+		if(!isSync){
+			//不需要同步到内存
+			this.dao.update(searchHis);
+		}else{
+			//需要同步到内存
+			boolean timeOut=true;
+			for(int i=0;i<waitTimes;i++){
+				if(searchHisRtService.isLocked()){
+					Thread.sleep(2000l);
+				}else{
+					timeOut=false;
+					searchHisRtService.update(oldQuestion, searchHis);
+					this.dao.update(searchHis);
+					break;
+				}
+			}
+			if(timeOut){
+				throw new Exception("检索历史正在同步，修改失败，请检查");
+			}
+		}
+		
 	}
 	
 	public SearchHis getSearchHisById(Long id){

@@ -74,7 +74,7 @@ public class SearchHisAction {
 			try {
 				Date date = new Date();
 				searchHis = new SearchHis(null, searchContent,EncryptUtils.encodeMD5(searchContent), searchTimes,  date, date);
-				searchHisService.addSearchHis(searchHis);
+				searchHisService.addSearchHis(searchHis,true);
 				msg.setMsg("新增检索历史[" + searchContent + "]成功");
 				msg.setSig(true);
 				pw.print(gson.toJson(msg));
@@ -121,7 +121,7 @@ public class SearchHisAction {
 		SearchHis searchHis = searchHisService.getSearchHisById(searchHisId);
 		if (searchHisId != 0 && searchHis != null) {
 			try {
-				searchHisService.deleteSearchHis(searchHis);
+				searchHisService.deleteSearchHis(searchHis,true);
 			} catch (Exception e) {
 				msg.setMsg("删除[" + searchHis.getSearchContent() + "]失败，错误信息:[" + e.getMessage() + "]");
 				pw.print(gson.toJson(msg));
@@ -173,6 +173,7 @@ public class SearchHisAction {
 			log.info("sSearchTimes=["+sSearchTimes+"] searchTimes=0");
 		}
 		searchHis = searchHisService.getSearchHisById(searchHisId);
+		String oldQuestion=searchHis.getSearchContent();
 		if (searchHisId != 0 && searchHis != null) {
 			if (searchContent != null && searchContent.length() > 0 ) {
 				try {
@@ -181,7 +182,7 @@ public class SearchHisAction {
 					searchHis.setContentMd5(EncryptUtils.encodeMD5(searchContent));
 					searchHis.setSearchTimes(searchTimes);
 					searchHis.setUpdateTime(date);
-					searchHisService.updateSearchHis(searchHis);
+					searchHisService.updateSearchHis(searchHis,oldQuestion,true);
 					msg.setMsg("修改检索历史[" + searchContent + "]成功");
 					msg.setSig(true);
 					pw.print(gson.toJson(msg));

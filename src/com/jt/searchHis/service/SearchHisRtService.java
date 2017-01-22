@@ -13,4 +13,6 @@ public interface SearchHisRtService {
 	public void add(String question);
 	public Map<String ,List<SearchHis>> tempList();
 	public boolean isLocked();
+	public void delete(String question);
+	public void update(String oldQuestion,SearchHis searchHis);
 }

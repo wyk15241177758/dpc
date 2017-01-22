@@ -14,6 +14,10 @@ public class SearchHis  implements java.io.Serializable{
 	private Date createTime;
 	private Date updateTime;
 	
+	//仅用于searchHisRtService，用于标记当前内存中的检索历史是否有修改，避免update没有修改的searchHis。
+	//这个属性不存入数据库
+	private boolean isChanged=false;
+	
 	public SearchHis(Long id, String searchContent, String contentMd5, int searchTimes, Date createTime,
 			Date updateTime) {
 		super();
@@ -62,6 +66,12 @@ public class SearchHis  implements java.io.Serializable{
 	}
 	public void setContentMd5(String contentMd5) {
 		this.contentMd5 = contentMd5;
+	}
+	public boolean isChanged() {
+		return isChanged;
+	}
+	public void setChanged(boolean isChanged) {
+		this.isChanged = isChanged;
 	}
 	
 }

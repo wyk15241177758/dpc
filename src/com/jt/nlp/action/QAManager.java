@@ -39,18 +39,18 @@ public class QAManager {
 	private QAService qaService;
 	private NlpService nlpService;
 	private Gson gson;
-//	private SearchHisRtService searchHisRtService;
+	private SearchHisRtService searchHisRtService;
 	private LuceneSearchService searchService_searchHis;
 	public QAManager(){
 		gson= new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
 	}
-//	public SearchHisRtService getSearchHisRtService() {
-//		return searchHisRtService;
-//	}
-//	@Resource(name="searchHisRtServiceImpl") 
-//	public void setSearchHisRtService(SearchHisRtService searchHisRtService) {
-//		this.searchHisRtService = searchHisRtService;
-//	}
+	public SearchHisRtService getSearchHisRtService() {
+		return searchHisRtService;
+	}
+	@Resource(name="searchHisRtServiceImpl") 
+	public void setSearchHisRtService(SearchHisRtService searchHisRtService) {
+		this.searchHisRtService = searchHisRtService;
+	}
 	public QAService getQaService() {
 		return qaService;
 	}
@@ -305,22 +305,14 @@ public class QAManager {
 		}
 		pw.print(gson.toJson(msg));
 		
-//		//是否需要记录历史，默认为false
-//		String isStorgeHis=CMyString.getStrNotNullor0(request.getParameter("isStorgeHis"), "false");
-//		if("true".equalsIgnoreCase(isStorgeHis)){
-//			//将问题写入缓存
-//			if(question.length()>0){
-//				String sSearchHisId=request.getParameter("searchHisId");
-//				Long searchHisId=0l;
-//				try {
-//					searchHisId=Long.parseLong(sSearchHisId);
-//				} catch (Exception e) {
-//					logger.info("转换检索历史ID为long失败，改为默认值0");
-//					searchHisId=0l;
-//				}
-//				searchHisRtService.add(question, searchHisId);
-//			}
-//		}
+		//是否需要记录历史，默认为false
+		String isStorgeHis=CMyString.getStrNotNullor0(request.getParameter("isStorgeHis"), "false");
+		if("true".equalsIgnoreCase(isStorgeHis)){
+			//将问题写入缓存
+			if(question.length()>0){
+				searchHisRtService.add(question);
+			}
+		}
 
 		
 	}

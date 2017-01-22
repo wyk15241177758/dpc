@@ -5,7 +5,7 @@ import java.util.List;
 import com.jt.searchHis.bean.SearchHis;
 
 public interface SearchHisService {
-	public void addSearchHis(SearchHis searchHis);
+	public void addSearchHis(SearchHis searchHis) throws InterruptedException;
 	public void deleteSearchHis(SearchHis searchHis);
 	public void updateSearchHis(SearchHis searchHis);
 	public SearchHis getSearchHisById(Long id);

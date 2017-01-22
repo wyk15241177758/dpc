@@ -229,10 +229,6 @@
 		</property>
 	</bean>
 
-	<bean id="searchHisRtServiceImpl" class="com.jt.searchHis.service.impl.SearchHisRtServiceImpl">
-		<property name="searchHisService" ref="searchHisServiceImpl"></property>
-		<property name="limitSize" value="2"></property>
-	</bean>
 	
 	<bean id="nlpService" class="com.jt.nlp.service.NlpService">
 	</bean>
@@ -244,6 +240,26 @@
 		init-method="init">
 		<property name="jobService" ref="jobInfImpl"></property>
 	</bean>
+	
+	
+	<bean id="searchHisRtServiceImpl" class="com.jt.searchHis.service.impl.SearchHisRtServiceImpl"
+		init-method="loadSearchHis">
+		<property name="searchHisService" ref="searchHisServiceImpl"></property>
+	</bean>
+	
+	<bean id="quartzCenter" class="com.jt.quartz.QuartzCenter"
+		init-method="registerToQuartz">
+		 <property name="list">
+            <list>
+            <map>
+                <entry key="jobName" value="定时同步检索历史" />
+                <entry key="interval" value="1800000" />
+                <entry key="className" value="com.jt.searchHis.service.impl.SearchHisRtServiceImpl" />
+            </map>
+            </list>
+        </property>
+	</bean>
+	
 	<!-- <bean id="springTest" class="com.jt.test.spring.SpringTest" init-method="test"> -->
 	<!-- <property name="pro" value="testpro"></property> -->
 	<!-- </bean> -->

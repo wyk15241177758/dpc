@@ -2,15 +2,33 @@ package com.jt.searchHis.service.impl;
 
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import com.jt.gateway.service.job.BasicServicveImpl;
 import com.jt.searchHis.bean.SearchHis;
+import com.jt.searchHis.service.SearchHisRtService;
 import com.jt.searchHis.service.SearchHisService;
 
-import sun.rmi.runtime.Log;
 
 public class SearchHisServiceImpl   extends BasicServicveImpl implements SearchHisService{
+	private SearchHisRtService searchHisRtService;
+	private int waitTimes=5;
+	public SearchHisRtService getSearchHisRtService() {
+		return searchHisRtService;
+	}
+	@Resource(name="searchHisRtServiceImpl") 
+	public void setSearchHisRtService(SearchHisRtService searchHisRtService) {
+		this.searchHisRtService = searchHisRtService;
+	}
 
-	public void addSearchHis(SearchHis searchHis){
+	//需要同步到内存的SearchHisRtService中
+	public void addSearchHis(SearchHis searchHis) throws InterruptedException{
+		for(int i=0;i<waitTimes;i++){
+			if(searchHisRtService.isLocked()){
+				Thread.sleep(2000l);
+			}
+		}
+		searchHisRtService.add(searchHis.getSearchContent());
 		this.dao.save(searchHis);
 	}
 	

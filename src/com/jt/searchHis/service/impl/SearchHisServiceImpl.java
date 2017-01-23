@@ -4,6 +4,9 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.springframework.web.context.ContextLoader;
+import org.springframework.web.context.WebApplicationContext;
+
 import com.jt.gateway.service.job.BasicServicveImpl;
 import com.jt.searchHis.bean.SearchHis;
 import com.jt.searchHis.service.SearchHisRtService;
@@ -16,7 +19,6 @@ public class SearchHisServiceImpl   extends BasicServicveImpl implements SearchH
 	public SearchHisRtService getSearchHisRtService() {
 		return searchHisRtService;
 	}
-	@Resource(name="searchHisRtServiceImpl") 
 	public void setSearchHisRtService(SearchHisRtService searchHisRtService) {
 		this.searchHisRtService = searchHisRtService;
 	}
@@ -28,6 +30,11 @@ public class SearchHisServiceImpl   extends BasicServicveImpl implements SearchH
  * @throws Exception
  */
 	public void addSearchHis(SearchHis searchHis,boolean isSync) throws Exception{
+		if(searchHisRtService==null){
+			WebApplicationContext webContext = ContextLoader.getCurrentWebApplicationContext();
+			this.searchHisRtService= (SearchHisRtServiceImpl) webContext.getBean("searchHisRtServiceImpl");
+		}
+		
 		if(!isSync){
 			//不需要同步到内存
 			this.dao.save(searchHis);
@@ -57,6 +64,11 @@ public class SearchHisServiceImpl   extends BasicServicveImpl implements SearchH
 	 * @throws Exception
 	 */
 	public void deleteSearchHis(SearchHis searchHis,boolean isSync) throws Exception{
+		if(searchHisRtService==null){
+			WebApplicationContext webContext = ContextLoader.getCurrentWebApplicationContext();
+			this.searchHisRtService= (SearchHisRtServiceImpl) webContext.getBean("searchHisRtServiceImpl");
+		}
+		
 		if(!isSync){
 			//不需要同步到内存
 			this.dao.delete(searchHis);
@@ -81,6 +93,11 @@ public class SearchHisServiceImpl   extends BasicServicveImpl implements SearchH
 	
 	
 	public void updateSearchHis(SearchHis searchHis,String oldQuestion,boolean isSync) throws Exception{
+		if(searchHisRtService==null){
+			WebApplicationContext webContext = ContextLoader.getCurrentWebApplicationContext();
+			this.searchHisRtService= (SearchHisRtServiceImpl) webContext.getBean("searchHisRtServiceImpl");
+		}
+		
 		if(!isSync){
 			//不需要同步到内存
 			this.dao.update(searchHis);

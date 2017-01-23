@@ -215,7 +215,14 @@
         	$("#fldiv").html(flcountResultsStr);
         	$("#sourcediv").html(sourcecountResultsStr);
         }
-        
+        function getQueryStr(str){   
+    	    var rs = new RegExp("(^|&)"+str+"=([^&]*)(&|$)","i");
+                   var  tmp=window.location.search.substr(1).match(rs);  
+    	    if(tmp!=null){    
+    	        return tmp[2];   
+    	    }   
+    	    return "";   
+    	} 
         $(document).ready(function(){
        	  $("#searchmessage").css("display","none");
        	  $("#fldiv").html("暂无数据");
@@ -224,6 +231,13 @@
        	  $("#datadiv").html("暂无数据");
        	  $("#footdiv").css("display","none");
        	  $("#userDiv").html("暂无数据");
+          var  word=decodeURIComponent(getQueryStr("word"));
+          if(word!=null&&word!=""){
+              jQuery("#searchInput").val(word);
+              submitdata();
+          }
+          
+          
        });
 		
 		</script>

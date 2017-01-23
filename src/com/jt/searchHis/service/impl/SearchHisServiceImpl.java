@@ -1,11 +1,13 @@
 package com.jt.searchHis.service.impl;
 
+import java.sql.Types;
+import java.util.ArrayList;
 import java.util.List;
-
 
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 
+import com.jt.base.page.Param;
 import com.jt.gateway.service.job.BasicServicveImpl;
 import com.jt.searchHis.bean.SearchHis;
 import com.jt.searchHis.service.SearchHisRtService;
@@ -29,6 +31,15 @@ public class SearchHisServiceImpl   extends BasicServicveImpl implements SearchH
  * @throws Exception
  */
 	public void addSearchHis(SearchHis searchHis,boolean isSync) throws Exception{
+		//排重，不允许重复的md5
+		Param param=new Param(Types.VARCHAR, searchHis.getContentMd5());
+		List<Param> paramList=new ArrayList<Param>();
+		paramList.add(param);
+		List<SearchHis> qList=query(0, 1, paramList, null);
+		if(qList!=null&&qList.size()>0){
+			throw new Exception("存在重复的检索历史ID=["+qList.get(0).getId()+"] content=["+qList.get(0).getSearchContent()+"] md5=["+qList.get(0).getContentMd5()+"]"
+					+ " 准备新增的检索历史ID=["+searchHis.getId()+"] content=["+searchHis.getSearchContent()+"] md5=["+searchHis.getContentMd5()+"]，保存失败，请检查");
+		}
 		
 		if(!isSync){
 			//不需要同步到内存
@@ -91,6 +102,15 @@ public class SearchHisServiceImpl   extends BasicServicveImpl implements SearchH
 	
 	
 	public void updateSearchHis(SearchHis searchHis,String oldQuestion,boolean isSync) throws Exception{
+		//排重，不允许重复的md5
+		Param param=new Param(Types.VARCHAR, searchHis.getContentMd5());
+		List<Param> paramList=new ArrayList<Param>();
+		paramList.add(param);
+		List<SearchHis> qList=query(0, 1, paramList, null);
+		if(qList!=null&&qList.size()>0&&qList.get(0).getId()!=searchHis.getId()){
+			throw new Exception("存在重复的检索历史ID=["+qList.get(0).getId()+"] content=["+qList.get(0).getSearchContent()+"] md5=["+qList.get(0).getContentMd5()+"]"
+					+ " 准备修改的检索历史ID=["+searchHis.getId()+"] content=["+searchHis.getSearchContent()+"] md5=["+searchHis.getContentMd5()+"]，保存失败，请检查");
+		}
 		
 		if(!isSync){
 			//不需要同步到内存
@@ -125,11 +145,13 @@ public class SearchHisServiceImpl   extends BasicServicveImpl implements SearchH
 	
 	public List<SearchHis> query(final int firstResult,	final int maxResults,List paramList,String order){
 		List<SearchHis> list=null;
-		String hql="";
+		String hql="from com.jt.searchHis.bean.SearchHis where 1=1";
+		if(paramList!=null&&paramList.size()==1){
+			hql+=" and contentMd5=? ";
+		}
+		
 		if(order!=null){
-			hql=" from com.jt.searchHis.bean.SearchHis order by "+order;
-		}else{
-			hql=" from com.jt.searchHis.bean.SearchHis";
+			hql+=" order by "+order;
 		}
 		
 		list=this.dao.query(hql, paramList, firstResult, maxResults);

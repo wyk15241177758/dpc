@@ -21,19 +21,21 @@ import com.jt.searchHis.service.SearchHisService;
 public class SearchHisRtServiceImpl implements SearchHisRtService,Job{
 	private static Logger logger = Logger.getLogger(SearchHisRtServiceImpl.class);
 
-	//key:md5,value:searchHis List，不同的string加密之后可能得到同一个MD5值，可能性较小，也一并考虑吧
+	//key:md5,value:searchHis List，不同的string加密之后可能得到同一个MD5值，可能性较小，不考虑!!
 	//由spring负责new此map
-	private Map<String ,List<SearchHis>> questionMap;
+	private Map<String ,SearchHis> questionMap;
 	private SearchHisService searchHisService;
 	//定时写入数据库时不再允许写入map，也不允许修改map中的list
 	private boolean isLocked;
 
-	public Map<String, List<SearchHis>> getQuestionMap() {
+	public Map<String, SearchHis> getQuestionMap() {
 		return questionMap;
 	}
-	public void setQuestionMap(Map<String, List<SearchHis>> questionMap) {
+
+	public void setQuestionMap(Map<String, SearchHis> questionMap) {
 		this.questionMap = questionMap;
 	}
+
 	public SearchHisService getSearchHisService() {
 		return searchHisService;
 	}
@@ -43,7 +45,7 @@ public class SearchHisRtServiceImpl implements SearchHisRtService,Job{
 	}
 	
 	public SearchHisRtServiceImpl(){
-		questionMap=new HashMap<String ,List<SearchHis>>();
+		questionMap=new HashMap<String ,SearchHis>();
 	}
 	
 	public boolean isLocked() {
@@ -64,29 +66,24 @@ public class SearchHisRtServiceImpl implements SearchHisRtService,Job{
 		for(SearchHis search:list){
 			//没有md5则加入此字段value
 			String curMd5=search.getContentMd5();
-			if(curMd5==null){
+			if(curMd5==null||curMd5.length()==0){
 				curMd5=EncryptUtils.encodeMD5(search.getSearchContent());
 				search.setContentMd5(curMd5);
 				try {
 					searchHisService.updateSearchHis(search,search.getSearchContent(),false);
 				} catch (Exception e) {
 					logger.error("修改检索历史Id=["+search.getId()+"]失败 错误信息为：");
-					logger.error(e);
+					e.printStackTrace();
 				}
 			}
-			List<SearchHis> curList=questionMap.get(curMd5);
-			if(curList==null){
-				curList=new ArrayList<SearchHis>();
-				curList.add(search);
-				questionMap.put(curMd5, curList);
-			}else{
-				//不考虑数据库中重复数据的情况，应该在记录检索历史时避免重复
-				curList.add(search);
+			SearchHis curSearch=questionMap.get(curMd5);
+			if(curSearch==null){
+				questionMap.put(curMd5, search);
 			}
 		}
 	    long m2 = Runtime.getRuntime().freeMemory();
 		long end=System.currentTimeMillis();
-		logger.info("结束将检索历史读入内存，耗时["+(end-begin)+"]ms 占用内存["+(float)(m1-m2)/1024/1024+"]MB 检索历史md5计算之后共["+questionMap.size()+"]条");
+		logger.info("结束将检索历史读入内存，耗时["+(end-begin)+"]ms 占用内存["+(float)(m1-m2)/1024/1024+"]MB 检索历史共["+questionMap.size()+"]条");
 	}
 	
 	public void add(String question){
@@ -95,29 +92,13 @@ public class SearchHisRtServiceImpl implements SearchHisRtService,Job{
 			return;
 		}
 		String qMd5=EncryptUtils.encodeMD5(question);
-		List<SearchHis> list=questionMap.get(qMd5);
-		//不存在此md5，new list加入map
-		if(list==null){
-			SearchHis search=new SearchHis(null, question, qMd5, 1, new Date(), new Date());
-			list=new ArrayList<SearchHis>();
-			list.add(search);
-			questionMap.put(qMd5, list);
+		//不存在则插入，存在则+1
+		SearchHis search=questionMap.get(qMd5);
+		if(search==null){
+			search=new SearchHis(null, question, qMd5, 1, new Date(), new Date());
+			questionMap.put(qMd5, search);
 		}else{
-			//存在此md5，遍历list，是否有相同的检索历史，有则检索次数+1，没有则插入list
-			boolean exist=false;
-			for(SearchHis search:list){
-				if(search.getSearchContent().equalsIgnoreCase(question)){
-					search.setSearchTimes(search.getSearchTimes()+1);
-					search.setChanged(true);
-					exist=true;
-					break;
-				}
-			}
-			//不存在相同的检索历史，new检索历史插入list
-			if(!exist){
-				SearchHis search=new SearchHis(null, question, qMd5, 1, new Date(), new Date());
-				list.add(search);
-			}
+			search.setSearchTimes(search.getSearchTimes()+1);
 		}
 	}
 	
@@ -128,20 +109,13 @@ public class SearchHisRtServiceImpl implements SearchHisRtService,Job{
 			return;
 		}
 		String qMd5=EncryptUtils.encodeMD5(question);
-		List<SearchHis> list=questionMap.get(qMd5);
-		//不存在此md5，直接返回
-		if(list==null){
+		SearchHis search=questionMap.get(qMd5);
+		//不存在此md5，直接返回。存在则remove
+		if(search==null){
 			return;
 		}else{
-			//存在此md5，遍历list，是否有相同的检索历史，有则删除，没有则返回
-			for(SearchHis search:list){
-				if(search.getSearchContent().equalsIgnoreCase(question)){
-					//删除前先锁定list，避免多线程问题
-					synchronized (list) {
-						list.remove(search);
-					}
-					break;
-				}
+			synchronized (questionMap) {
+				questionMap.remove(qMd5);
 			}
 		}
 	}
@@ -153,22 +127,18 @@ public class SearchHisRtServiceImpl implements SearchHisRtService,Job{
 			return;
 		}
 		String qMd5=EncryptUtils.encodeMD5(oldQuestion);
-		List<SearchHis> list=questionMap.get(qMd5);
-		//不存在此md5，跳过
-		if(list==null){
-			return;
+		SearchHis search=questionMap.get(qMd5);
+		searchHis.setChanged(false);
+
+		//不存在此md5，加入
+		if(search==null){
+			questionMap.put(searchHis.getContentMd5(),searchHis);
 		}else{
-			//存在此md5，遍历list，是否有相同的检索历史，有则修改，没有则不处理
-			for(SearchHis search:list){
-				if(search.getSearchContent().equalsIgnoreCase(oldQuestion)){
-					search.setChanged(false);
-					search.setContentMd5(searchHis.getContentMd5());
-					search.setSearchContent(searchHis.getSearchContent());
-					search.setSearchTimes(searchHis.getSearchTimes());
-					search.setUpdateTime(searchHis.getUpdateTime());
-					break;
-				}
+			//存在此md5，删除再增加，增加时不考虑是否有重复，在保存时排重
+			synchronized (questionMap) {
+				questionMap.remove(qMd5);
 			}
+			questionMap.put(searchHis.getContentMd5(),searchHis);
 		}
 	}
 	
@@ -183,56 +153,71 @@ public class SearchHisRtServiceImpl implements SearchHisRtService,Job{
 	}
 	
 	
-	//定时任务
-	@Override
-	public void execute(JobExecutionContext context) throws JobExecutionException {
-		Map paramMap=(Map)(context.getJobDetail().getJobDataMap().get("param"));
-		int num=0;
+	public String doExecute(Map paramMap){
+		String executeRs="";
+		int successNum=0;
+		int failNum=0;
+		int unChangeNum=0;
 		if(paramMap!=null){
 			logger.info("++++++++开始执行任务["+paramMap.get("jobName")+"]");
 		}else{
-			logger.error("获得任务名称失败，结束任务");
-			return;
+			logger.error("获得任务名称失败，继续执行");
 		}
 		init4Quartz();
 		if(isLocked){
 			logger.info("检索历史正在同步，跳过本次同步");
 		}else{
 			isLocked=true;
-			for(Map.Entry<String, List<SearchHis>> curEntry:questionMap.entrySet()){
-				List<SearchHis> list=curEntry.getValue();
-				for(SearchHis search:list){
-					num++;
+			for(Map.Entry<String, SearchHis> curEntry:questionMap.entrySet()){
+					SearchHis search=curEntry.getValue();
 					//新增
 					if(search.getId()==0){
 						try {
 							searchHisService.addSearchHis(search,false);
+							successNum++;
 						} catch (Exception e) {
+							failNum++;
 							logger.error("同步新增检索历史["+search.getSearchContent()+"]到数据库失败，错误信息为");
-							logger.error(e);
+							e.printStackTrace();
 						}
 					}else{
 						//更新，只更新有修改标记的检索历史，更新之后将修改标记置为false
 						if(search.isChanged()){
 							try {
 								searchHisService.updateSearchHis(search,search.getSearchContent(),false);
+								successNum++;
 							} catch (Exception e) {
+								failNum++;
 								logger.error("修改检索历史Id=["+search.getId()+"]失败 错误信息为：");
-								logger.error(e);
+								e.printStackTrace();
 							}
 							search.setChanged(false);
+						}else{
+							unChangeNum++;
 						}
 					}
-				}
 			}
 			isLocked=false;
 		}
-		logger.info("本次共同步检索历史["+num+"]条");
-		logger.info("++++++++结束执行任务["+paramMap.get("jobName")+"]");
+		executeRs="本次共同步检索历史成功["+successNum+"]条，失败["+failNum+"]条,未修改记录["+unChangeNum+"]条,内存中检索历史共["+questionMap.size()+"]条";
+		logger.info(executeRs);
+		if(paramMap==null){
+			logger.info("++++++++结束执行任务");
+		}else{
+			logger.info("++++++++结束执行任务["+paramMap.get("jobName")+"]");
+		}
+		return executeRs;
+	}
+	
+	//定时任务
+	@Override
+	public void execute(JobExecutionContext context) throws JobExecutionException {
+		Map paramMap=(Map)(context.getJobDetail().getJobDataMap().get("param"));
+		doExecute(paramMap);
 	}
 	
 	//调试使用
-	public Map<String ,List<SearchHis>> tempList(){
+	public Map<String ,SearchHis> tempList(){
 		return this.questionMap;
 	}
 }

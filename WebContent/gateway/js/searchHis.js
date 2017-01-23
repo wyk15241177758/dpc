@@ -11,6 +11,11 @@ $(document).ready(function() {
     $("#a_add").click(function(){
     	$("#editModal").modal("show");
     })
+    //同步内存到数据库
+    $("#a_sync").click(function(){
+    	syncSearchHis();
+    })
+    
     //保存按钮
     $("#editModal").find(".btn-save").click(function(){
 		addSearchHis();
@@ -94,6 +99,16 @@ function deleteSearchHis(searchHisId){
 				}
 		  })
 	}
+}
+
+//同步内存中的检索历史到数据库
+function syncSearchHis(){
+	var operationUrl = "/QASystem/admin/searchHisRt/syncToDb.do"
+	var param = {};
+	$.getJSON(operationUrl, param, function(data) {
+			$('#warnmsg').html(data.msg);
+			$('#warnModal').modal('show');
+	})
 }
 
 //新增或修改

@@ -10,6 +10,10 @@
 		<property name="searchContent" type="java.lang.String">
 			<column name="SEARCHCONTENT" not-null="true" />
 		</property>
+		<property name="contentMd5" type="java.lang.String">
+			<column name="CONTENTMD5" not-null="true" />
+		</property>
+		
 		<property name="searchTimes" type="java.lang.Integer">
 			<column name="SEARCHTIMES"  not-null="false" />
 		</property>

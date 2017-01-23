@@ -1,7 +1,7 @@
 package com.jt.searchHis.service;
 
-import java.util.List;
 import java.util.Map;
+
 
 import com.jt.searchHis.bean.SearchHis;
 
@@ -11,8 +11,9 @@ import com.jt.searchHis.bean.SearchHis;
 
 public interface SearchHisRtService {
 	public void add(String question);
-	public Map<String ,List<SearchHis>> tempList();
+	public Map<String ,SearchHis> tempList();
 	public boolean isLocked();
 	public void delete(String question);
 	public void update(String oldQuestion,SearchHis searchHis);
+	public String doExecute(Map paramMap);
 }

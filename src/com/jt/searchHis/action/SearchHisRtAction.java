@@ -2,7 +2,6 @@ package com.jt.searchHis.action;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -53,9 +52,32 @@ public class SearchHisRtAction {
 			return;
 		}
 		
-		Map<String ,List<SearchHis>> map=searchHisRtService.tempList();
+		Map<String ,SearchHis> map=searchHisRtService.tempList();
 		msg.setMsg(map);
 		msg.setSig(false);
 		pw.print(gson.toJson(msg));
 	}
+	/**
+	 * 将内存中数据同步到数据库
+	 * @param request
+	 * @param response
+	 */
+	@RequestMapping(value = "/syncToDb.do")
+	public void syncToDb(HttpServletRequest request, HttpServletResponse response) {
+		response.setCharacterEncoding("utf-8");
+		msg = new PageMsg();
+		PrintWriter pw = null;
+		try {
+			pw = response.getWriter();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+			return;
+		}
+		
+		String rs=searchHisRtService.doExecute(null);
+		msg.setMsg(rs);
+		msg.setSig(true);
+		pw.print(gson.toJson(msg));
+	}
+	
 }

@@ -9,9 +9,228 @@
 		<link rel="stylesheet" type="text/css" href="css/global.css" />
 		<link rel="stylesheet" type="text/css" href="css/main.css" />
 		<script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
+		<script type="text/javascript">
+        var  rootPath="/QASystem"
+
+		function  submitdata(){
+        	var  word=$("#searchInput").val();			
+			 $.ajax({
+      			url:rootPath+'/admin/search/list.do?random='+Math.random(),
+      			type:"POST",
+      			cache:false,
+      			dataType:"json",
+      			data:{'word':word},
+      			success:function(data){
+      				if(data.ok){
+      					var obj = eval('(' + data.queryResutList + ')');
+      					parseResultData(obj,data.keyword);
+      					var reKeyWords=data.reKeyWords;
+      					parseRight(reKeyWords);
+      					}
+      			},
+      			error:function(){	
+      			}
+      			}); 
+		}
+      
+        function  ajaxsubmitdata(word,pageNum,fl,source){
+			 $.ajax({
+      			url:rootPath+'/admin/search/ajaxlist.do?random='+Math.random(),
+      			type:"POST",
+      			cache:false,
+      			dataType:"json",
+      			data:{'keyword':word,'pageNum':pageNum,'fl':fl,'source':source},
+      			success:function(data){
+      				if(data.ok){
+      					var obj = eval('(' + data.queryResutList + ')');
+      					parseResultData(obj,data.keyword);
+      					var reKeyWords=data.reKeyWords;
+      					parseRight(reKeyWords);
+      					
+      					}
+      			},
+      			error:function(){	
+      			}
+      			}); 
+		}
+        
+        
+        function   parseRight(reword){
+        	if(reword.length>0){
+        		var  rightDiv="";
+        		for (var i = 0; i < reword.length; i++) {
+					if(i==0){
+						rightDiv=rightDiv+"<a href=\"#\" wordvalue=\""+reword[i]+"\" onclick=\"rightSubmit(this)\" ><span>"+reword[i]+"</span></a>";
+						
+					}else{
+						rightDiv=rightDiv+"<a href=\"#\" wordvalue=\""+reword[i]+"\" onclick=\"rightSubmit(this)\" >"+reword[i]+"</a>";
+					}
+					
+				}
+        		$("#userDiv").html(rightDiv);
+        	}
+        }
+        function  go(pageNum){
+        	var word=$("#topkeyword").html();
+        	var fl=$("#fl").val();
+        	var source=$("#source").val();
+        	ajaxsubmitdata(word,pageNum,fl,source);
+        }
+        function  goclick(){
+        	var word=$("#topkeyword").html();
+        	var fl=$("#fl").val();
+        	var source=$("#source").val();
+        	var page=$("#page").val();
+        	var gopageNum=$("#gopageNum").val();
+            if(gopageNum<1){
+            	alert("不能小于1");
+            	return;
+            }
+            if(gopageNum>gopageNum){
+            	alert("不能大于总页码");
+            	return;
+            }
+        	ajaxsubmitdata(word,gopageNum,fl,source);
+        }
+        function source(obj){
+        var  source=$(obj).attr("keyvalue");
+             $("#source").val(source);
+            if(source==""){
+          		$("#topsource").html("数据来源: 全部 ")
+          	}else{
+          		$("#topsource").html("数据来源: "+source)
+          	}
+            var fl=$("#fl").val();
+        	var word=$("#topkeyword").html();
+        	ajaxsubmitdata(word,1,fl,source);
+        }
+        function fl(obj){
+        	var  fl=$(obj).attr("keyvalue");
+        	    $("#fl").val(fl);
+        	    if(fl==""){
+             		$("#topfl").html("数据分类: 全部 ")
+             	}else{
+             		$("#topfl").html("数据分类: "+fl)
+             	}
+        	var source=$("#source").val();
+        	var word=$("#topkeyword").html();
+        	ajaxsubmitdata(word,1,fl,source);
+        }
+        function  rightSubmit(obj){
+        	var  word=$(obj).attr("wordvalue");
+       $("#searchInput").val(word);			
+
+        	ajaxsubmitdata(word,1,"","");
+        }
+        
+        function  parseResultData(queryResutList,keyword){
+        	var pageNum=queryResutList.pageNum;
+        	var pageSize=queryResutList.pageSize;
+        	var page=queryResutList.page;
+        	var totalNUm=queryResutList.totalNUm;
+        	if(totalNUm==0){
+             	  $("#searchmessage").css("display","block");
+             	  $("#fldiv").html("暂无数据");
+              	  $("#sourcediv").html("暂无数据");
+             	  $("#datadiv").html("请更换查询条件再尝试查询！");
+              	  $("#footdiv").css("display","none");
+              	$("#topkeyword").html(keyword);
+            	$("#toptotalNUm").html(totalNUm);
+        		return;
+        	}else{
+             	  $("#searchmessage").css("display","none");
+        	}
+			//共<span>716</span>页，当前第<span>1</span>页  <a href="javascript:void(0)">首页 </a>
+			//<a href="javascript:void(0)">上一页</a>
+			//<a href="javascript:void(0)">下一页</a><a href="javascript:void(0)">尾页</a>
+			//<input class="page_input page_ie"/>页<input type="button" class="page_btn page_ie" value="跳转"/>
+             var footdiv="共<span>"+page+"</span>页，当前第<span>"+pageNum+"</span>页";
+                if(pageNum==1){
+                	footdiv=footdiv+"<a href=\"#\" >首页 </a>";
+                	footdiv=footdiv+"<a href=\"#\" >上一页</a>";
+                }else{
+                	footdiv=footdiv+"<a href=\"#\" onclick=\"go(1)\">首页 </a>";
+                	footdiv=footdiv+"<a href=\"#\" onclick=\"go("+(pageNum-1)+")\">上一页</a>";
+                }  
+                if(pageNum==page){
+                	footdiv=footdiv+"<a href=\"#\">下一页</a>";
+                	footdiv=footdiv+"<a href=\"#\">尾页</a>";
+                }else{
+                	footdiv=footdiv+"<a href=\"#\" onclick=\"go("+(pageNum+1)+")\">下一页</a>";
+                	footdiv=footdiv+"<a href=\"#\" onclick=\"go("+page+")\">尾页</a>";
+                }
+                footdiv=footdiv+"<input class=\"page_input page_ie\" id=\"gopageNum\"/>页<input type=\"button\" class=\"page_btn page_ie\" value=\"跳转\" onclick=\"goclick()\"/>";
+                
+        	var xqResults=queryResutList.xqResults;
+        	var resultDataStr="";
+        	for (var i = 0; i < xqResults.length; i++) {
+				 var xqResult=xqResults[i];
+				 var id=xqResult.id;
+				 var title=xqResult.title;
+				 var source=xqResult.source;
+				 var fl=xqResult.fl;
+				 var keywords=xqResult.keywords;
+				 var keywordstr="<p class=\"news_tag\">标签：";
+				//	<p class="news_tag">标签：<a href=""><span>实施细则</span></a><a href="">就医</a><a href="">实施项目</a><a href="">交纳</a><a href="">项目管理</a><a href="">医疗卫生</a><a href="">付费</a><a href="">施行细则</a><a href="">征询</a></p>
+
+				 for (var j = 0; j < keywords.length; j++) {
+					var keywordstrl=keywords[j];
+					if(keywordstrl==keyword){
+						keywordstr=keywordstr+"<a href=\"#\"><span>"+keywordstrl+"</span></a>";
+					}else{
+						keywordstr=keywordstr+"<a href=\"#\" wordvalue=\""+keywordstrl+"\"  onclick=\"rightSubmit(this)\">"+keywordstrl+"</a>";
+
+					}
+				}
+				 keywordstr=keywordstr+"</p>";
+				 var url=xqResult.url;
+				 var crdate=xqResult.crdate;
+				 resultDataStr=resultDataStr+"<li>";
+				 resultDataStr=resultDataStr+"<p><a href=\""+url+"\" target=\"_blank\"><strong>"+title+"</strong></a></p>";
+				 resultDataStr=resultDataStr+keywordstr;
+				 resultDataStr=resultDataStr+"<p>日期："+crdate+"</p>";
+				 resultDataStr=resultDataStr+"<p>分类："+fl+"<i></i>提供单位："+source+"</p>";
+				 resultDataStr=resultDataStr+"</li>";
+			}
+            var flcountResults=queryResutList.flcountResults;
+        	var sourcecountResults=queryResutList.sourcecountResults;
+        	var flcountResultsStr="<li><a href=\"#\" class=\"list_hover\" keyvalue=\"\" onclick=\"fl(this)\">全部</a></li>";
+        	for (var i = 0; i < flcountResults.length; i++) {
+        		var flobj=flcountResults[i];
+        		flcountResultsStr=flcountResultsStr+"<li><a href=\"#\" keyvalue=\""+flobj.wordValue+"\" onclick=\"fl(this)\">"+flobj.wordValue+"<span>（"+flobj.num+"）</span></a></li>";
+			}
+        	var sourcecountResultsStr="<li><a href=\"#\" class=\"list_hover\" keyvalue=\"\" onclick=\"source(this)\">全部</a></li>";
+        	for (var i = 0; i < sourcecountResults.length; i++) {
+        		var sobj=sourcecountResults[i];
+        		sourcecountResultsStr=sourcecountResultsStr+"<li><a href=\"#\" keyvalue=\""+sobj.wordValue+"\" onclick=\"source(this)\">"+sobj.wordValue+"<span>（"+sobj.num+"）</span></a></li>";
+			}
+        	
+        	$("#pageNum").val(pageNum);
+        	$("#page").val(page);
+        	$("#topkeyword").html(keyword);
+        	$("#toptotalNUm").html(totalNUm);
+        	$("#datadiv").html(resultDataStr);
+        	$("#footdiv").html(footdiv);
+         	$("#footdiv").css("display","block");
+        	$("#fldiv").html(flcountResultsStr);
+        	$("#sourcediv").html(sourcecountResultsStr);
+        }
+        
+        $(document).ready(function(){
+       	  $("#searchmessage").css("display","none");
+       	  $("#fldiv").html("暂无数据");
+       	  $("#sourcediv").html("暂无数据");
+       	  $("#topdiv").html("<li>标签: <span id=\"topkeyword\"> </span></li><li id=\"topfl\">数据分类: 全部 </li><li id=\"topsource\">数据来源: 全部 </li><li>结果: 共计<span id=\"toptotalNUm\">0</span>条信息</li>");
+       	  $("#datadiv").html("暂无数据");
+       	  $("#footdiv").css("display","none");
+       	  $("#userDiv").html("暂无数据");
+       });
+		
+		</script>
 	</head>
 
-	<body>
+	<body style="display: ">
+	
 		<!--<div class="header">
 			<div class="header_wrap">
                 <div class="logo"><img src="images/logo.jpg" width="254" height="86"/></div>
@@ -72,15 +291,19 @@
 				<div class="list_wrap">
 					<div class="list_title">标签查询</div>
 					<div class="list_content">
-						<input id="searchInput" />
-						<input type="button" id="searchBtn" value="查询"/>
-						<p class="search_tag">抱歉！没有找到相关标签!</p>
+						<input id="searchInput" name="searchInput" value="" />
+						<input id="pageNum" name="pageNum" value="1" type="hidden"/>
+						<input id="fl" name="fl" value="" type="hidden"/>
+						<input id="source" name="source" value="" type="hidden"/>
+						<input id="page" name="page" value="1" type="hidden"/>
+						<input type="button" id="searchBtn" value="查询"  onclick="submitdata()"  style="cursor: pointer;"/>
+						<p class="search_tag" id="searchmessage">抱歉！没有找到相关标签!</p>
 					</div>
 				</div>
 				<div class="list_wrap data">
 					<div class="list_title">数据分类</div>
-					<div class="list_content">
-						<ul>
+					<div class="list_content" >
+						<ul id="fldiv">
 							<li><a href="" class="list_hover">全部</a></li>
 							<li><a href="">公开 <span>（202）</span></a></li>
 							<li><a href="">资讯 <span>（56）</span></a></li>
@@ -90,8 +313,8 @@
 				</div>
 				<div class="list_wrap data">
 					<div class="list_title">数据来源</div>
-					<div class="list_content">
-						<ul>
+					<div class="list_content"  >
+						<ul id="sourcediv">
 							<li><a href="" class="list_hover">全部</a></li>
 							<li><a href="">信息公开 <span>（202）</span></a></li>
 							<li><a href="">门户网站 <span>（56）</span></a></li>
@@ -102,15 +325,15 @@
 			</div>
 			<div class="con_list">
 				<div class="list_tag">
-					<ul>
-						<li>标签: <span>计划生育 </span></li>
-						<li>数据分类: 全部 </li>
-						<li>数据来源: 全部 </li>
-						<li>结果: 共计<span>317</span>条信息</li>
+					<ul id="topdiv">
+						<li>标签: <span id="topkeywrd">计划生育 </span></li>
+						<li id="topfl">数据分类: 全部 </li>
+						<li id="topsource">数据来源: 全部 </li>
+						<li>结果: 共计<span id="toptotalNUm">317</span>条信息</li>
 					</ul>
 				</div>
-				<div class="list_news">
-					<ul>
+				<div class="list_news" >
+					<ul id="datadiv">
 						<!-- 信息循环开始，每页6条-->
 						<li>
 							<p><a href="" target="_blank"><strong>关于《医疗卫生和计划生育项目转移支付补助资金移支付补助资金管理实施细则...</strong></a></p>
@@ -151,8 +374,8 @@
 						</li>
 						
 					</ul>
-					<div class="page">
-						共<span>716</span>页，当前第<span>1</span>页  <a href="javascript:void(0)">首页 </a>  <a href="javascript:void(0)">上一页</a><a href="javascript:void(0)">下一页</a><a href="javascript:void(0)">尾页</a><input class="page_input page_ie"/>页<input type="button" class="page_btn page_ie" value="跳转"/>
+					<div class="page" id="footdiv">
+						共<span>716</span>页，当前第<span>1</span>页  <a href="javascript:void(0)">首页 </a>  <a href="javascript:void(0)">上一页</a><a href="javascript:void(0)">下一页</a><a href="javascript:void(0)">尾页</a><input class="page_input page_ie" id="gopageNum"/>页<input type="button" class="page_btn page_ie" value="跳转" onclick="goclick()"/>
 					</div>
 				</div>
 				
@@ -161,7 +384,7 @@
 			<div class="con_classify">
 				<div class="list_wrap">
 					<div class="list_title">用户关注</div>
-					<div class="list_content focus">
+					<div class="list_content focus" id="userDiv">
 						<a href=""><span>教育</span></a>
 						<a href="">出生</a>
 						<a href="">新生儿</a>

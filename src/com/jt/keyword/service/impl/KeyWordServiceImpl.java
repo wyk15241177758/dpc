@@ -252,6 +252,7 @@ public class KeyWordServiceImpl  implements  KeyWordService{
 		
 	}
 	
+
 	
 	
 
@@ -301,6 +302,21 @@ public class KeyWordServiceImpl  implements  KeyWordService{
 	public void setDao(IDao dao) {
 		this.dao = dao;
 	}
+	@Override
+	public List<KeyWord> queryAll() {
+    	String  hql=" FROM com.jt.keyword.bean.KeyWord WHERE  1=1";
+		return dao.query(hql);
+	}
+	@Override
+	public List<KeyWord> queryAllFirst() {
+    	String  hql=" FROM com.jt.keyword.bean.KeyWord WHERE  floor=0";
+		return dao.query(hql);
+	}
+	@Override
+	public KeyWord queryById(Class cla, Integer id) {
+		return (KeyWord) dao.getById(KeyWord.class, id);
+	}
+	
 
 	
 	

@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.jt.keyword.bean.KeyWord;
 import com.jt.keyword.service.KeyWordService;
+import com.jt.keyword.task.KeyWordAutoJob;
+import com.jt.keyword.task.ParamUtil;
 
 
 @Controller
@@ -22,7 +24,7 @@ public class KeyWordAct {
 	
     public  static  int  pageSize=10;
 	private KeyWordService service;
-
+	private KeyWordAutoJob keyWordAutoJob;
 	
     /**
      * 左侧一级菜单
@@ -34,10 +36,25 @@ public class KeyWordAct {
 	public  void  leftWord(String word,HttpServletRequest request,
 			HttpServletResponse response){
 		String json = service.queryPage(word);
-		System.out.println(json);
 		renderJson(response, json);
 
 	}
+	@RequestMapping("/startWord.do")
+	public  void  startWord(String word,HttpServletRequest request,
+			HttpServletResponse response) throws JSONException{
+		JSONObject json = new JSONObject();
+        if(ParamUtil.isWordRun){
+        	json.put("success", false);
+        }else{
+    		keyWordAutoJob.autoJobTask();
+        	json.put("success", true);
+
+        }
+	
+		renderJson(response, json.toString());
+
+	}
+	
 	/**
 	 * 左侧单击事件
 	 * @param pid
@@ -103,6 +120,8 @@ public class KeyWordAct {
 		
 		service.delete(KeyWord.class, ids);
 		json.put("success", true);
+		ParamUtil.keywords=service.queryAll();
+
 		renderJson(response, json.toString());
 
 	}
@@ -116,7 +135,9 @@ public class KeyWordAct {
 			service.addKeyword(keyvalue, pId);
 	
 		json.put("success", true);
+		ParamUtil.keywords=service.queryAll();
 		renderJson(response, json.toString());
+		
 	}
 	@RequestMapping("/edit.do")
 	public  void   edit(Integer id,HttpServletRequest request,
@@ -139,8 +160,10 @@ public class KeyWordAct {
 			service.updateKeyword(wordvalue, id);
 			json.put("success", true);
 			
+			ParamUtil.keywords=service.queryAll();
 
 			renderJson(response, json.toString());
+
 	}
 	@RequestMapping("/isExist.do")
 	public   void   isExist(String wordvalue,HttpServletRequest request,
@@ -155,6 +178,7 @@ public class KeyWordAct {
 		renderJson(response, json.toString());
 
 	}
+
 	
 	
 	 public static void renderJson(HttpServletResponse response, String text)
@@ -180,5 +204,13 @@ public class KeyWordAct {
 	public void setService(KeyWordService service) {
 		this.service = service;
 	}
+	public KeyWordAutoJob getKeyWordAutoJob() {
+		return keyWordAutoJob;
+	}
+	@Resource(name="keyWordAutoJob") 
+	public void setKeyWordAutoJob(KeyWordAutoJob keyWordAutoJob) {
+		this.keyWordAutoJob = keyWordAutoJob;
+	}
+	
 
 }

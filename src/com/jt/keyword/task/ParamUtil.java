@@ -1,9 +1,13 @@
 package com.jt.keyword.task;
 
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
+
+import com.jt.keyword.bean.KeyWord;
 
 /**
  * 全局变量
@@ -31,6 +35,7 @@ public class ParamUtil {
      * 细缆同步辅助类
      */
     public static CountDownLatch parselatch = new CountDownLatch(totalpools);
+	
     /**
      * 
      * @param key
@@ -43,7 +48,16 @@ public class ParamUtil {
     		map.put(key, num+1);
     	}
     }
+    
+    public  static  List<KeyWord> keywords=new ArrayList<KeyWord>();
 	
+	public  static  ConcurrentHashMap<Long,String> keywordXq=new ConcurrentHashMap<Long,String>();
+
+	
+    public  static  List<ParseWord>   parseWords=new ArrayList<ParseWord>();
+    
+    public  static  boolean  isWordRun=false;
+
 	public static void main(String[] args) {
 		
 	}

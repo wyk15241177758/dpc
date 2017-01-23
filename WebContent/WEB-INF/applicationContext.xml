@@ -259,7 +259,61 @@
             </list>
         </property>
 	</bean>
+	<bean id="hotWordService" parent="baseTransactionProxyBean">
+		<property name="target">
+			<bean class="com.jt.keyword.service.impl.ParseHotWordServiceImpl" autowire="byName">
+			</bean>
+		</property>
+	</bean>
+
+<bean id="keyWordAutoJob" class="com.jt.keyword.task.KeyWordAutoJob">
+ <property name="searchService" ref="searchService"></property>
+  <property name="keyWordService" ref="keyWordService"></property>
+ </bean>
+<!-- 启动触发器的配置开始 -->
+	<bean name="startQuertz" lazy-init="false" autowire="no"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+                <ref bean="keyWordAutoJobTrigger"/> 
+			</list>
+		</property>
+	</bean>
+	<!-- 启动触发器的配置结束 -->
+
+
+	<!-- 调度的配置开始 -->
+
+	<bean id="keyWordAutoJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="keyWordAutoJobDetail" />
+		</property>
+		<property name="cronExpression">
+			<!-- 每天凌晨1点触发 -->
+			<value>0 31 13 * * ?</value>
+
+		</property>
+	</bean>
+	<bean id="keyWordAutoJobDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="keyWordAutoJob" />
+		</property>
+		<property name="targetMethod">
+			<value>autoJobTask</value>
+		</property>
+	</bean>
+   <bean id="reKeyWordService" parent="baseTransactionProxyBean">
+		<property name="target">
+			<bean class="com.jt.keyword.service.impl.ReKeyWordServiceImpl"
+				autowire="byName">
+			</bean>
+		</property>
+	</bean>
+	<bean id="reKeyWordListService" class="com.jt.keyword.service.impl.ReKeyWordListServiceImpl">
+	<property name="dao" ref="indexDao"></property>
 	
+	</bean>
 	<!-- <bean id="springTest" class="com.jt.test.spring.SpringTest" init-method="test"> -->
 	<!-- <property name="pro" value="testpro"></property> -->
 	<!-- </bean> -->

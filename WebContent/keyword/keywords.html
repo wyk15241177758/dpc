@@ -22,6 +22,10 @@
 	    <![endif]-->
 
 		<!-- The fav icon -->
+		<style type="text/css">
+		 .reul{list-style:none;}
+         .reli{float:left;width:90px;}
+       </style>
 		<link rel="shortcut icon" href="img/favicon1.ico">
 	</head>
 
@@ -32,9 +36,7 @@
 			<div class="navbar-inner">
 				<a class="navbar-brand" href=""> <img alt="Charisma Logo" src="img/logo20.png" class="hidden-xs" />
 					<span>数据抽取系统</span></a>
-
-
-<ul class="collapse navbar-collapse nav navbar-nav top-menu">
+                <ul class="collapse navbar-collapse nav navbar-nav top-menu">
 				<li><a href="/QASystem/gateway/task.html"><i class="glyphicon glyphicon-globe"></i>
 						任务管理</a></li>
 				<li class="active"><a href="/QASystem/keyword/keywords.html"><i class="glyphicon glyphicon-globe"></i>
@@ -131,6 +133,14 @@
 									<a class="btn btn-danger btn-sm btn-warn" onclick="leftdel()" href="#">
 										<i class="glyphicon glyphicon-trash icon-white" ></i>删除
 									</a>
+									<a class="btn btn-success btn-sm btn-warn" onclick="reword()" href="#">
+										<i class="halflings-icon tag icon-white" ></i>关联
+									</a>
+									<a class="btn btn-info btn-sm btn-warn" onclick="start()" href="#">
+										<i class="glyphicon glyphicon-play icon-white" ></i>手工启动打标任务
+									</a>
+									
+									
 							     </div>
 							</div>
 							<div class="box-inner" style="margin-top: 15px;">
@@ -373,7 +383,65 @@
 		    <!-- 删除提示浮层结束-->	
 
 
+  <!-- 右侧删除提示浮层开始-->
+		    <div class="modal fade" id="startModal" tabindex="-1" role="dialog" aria-labelledby="startModalLabel"
+		         aria-hidden="true">
+		        <div class="modal-dialog">
+		            <div class="modal-content">
+		                <div class="modal-header">
+		                    <button type="button" class="close" data-dismiss="modal">×</button>
+		                    <h3>提示</h3>
+		                </div>
+		                <div class="modal-body">
+			                <div class="form-inline">
+			                    <div class="form-group">
+			                                                     打标任务正在执行中。。。
+			                    </div>
+			                </div>
+		                </div>
+		                <div class="modal-footer">
+		                    <a href="#" class="btn btn-default" data-dismiss="modal">取消</a>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+		    <!-- 删除提示浮层结束-->
 
+
+           <div  id="relworddiv"  style="z-index: 99;position: absolute; left: 10px;top: 80px;background-color: ghostwhite; overflow-y:auto;  width:900px; height:500px;">
+           <div >
+           <fieldset>
+           <legend>已关联：</legend>
+           <div id="selectDiv">
+           <ul class="reul" id="selectDivUl">
+            </ul>
+           </div>
+            <br>
+           
+           <div>
+           <input type="button"  id="unselectSubmit"  value="取消关联" style=" float:right;" >
+           <input type="button"  id="submit"  value="保  存" style=" float:right;margin-right: 10px;">
+           <input type="button"    value="关   闭" style=" float:right;margin-right: 10px;" onclick="closeRelworddiv()">
+           </div>           
+           </fieldset>
+           </div>
+           <hr>
+           <div id="allReDiv">
+           <div id="selected_"  ></div>
+           <div >
+              <input type="button"  id="selectSubmit"  value="选为关联" style=" float:right;" >
+           </div>
+           <br>
+           <div>
+                      
+           
+           <ul class="reul" id="allReDivUl">
+             
+           </ul>
+           </div>
+           </div>
+           
+           </div>
 			
 		    <!-- 保存浮层结束-->
 
@@ -437,6 +505,8 @@
         function  leftClick(){
         	
         	$("#leftword > li").click( function () { 
+           	   $("#relworddiv").css("display","none");
+
         		//$("input[name=leftword]:checked").attr("disabled",true);
         		var id=$(this).children("a").children("i").attr("id");
         		var leftwordvalue=$(this).children("a").children("i").attr("value");
@@ -648,11 +718,7 @@
          				$("#tbody").html("<tr><td colspan=\"4\">没有相关数据！</td></tr>");
          			}
          			});
-        		
-        		
-        	}
-        	
-        	
+        		        	}        	
         }
         function go(pageNum){
     		$("#pageNum").val(pageNum);
@@ -672,7 +738,7 @@
 		    $("#lefteditword").val(word);
 		    $("#lefteditModal").modal('show');
 			
-		        }
+		  }
 	      function   leftdel(){
 			    $("#leftdelModal").modal('show');
 
@@ -961,7 +1027,6 @@
 				         		        	$("#rightdelModal").modal('hide');
 				         		        	rightsubmit();
 				         		        	}else{
-				         						alert("删除失败！");	
 				         					}
 				         			},
 				         			error:function(){	
@@ -978,14 +1043,236 @@
            	 leftClick();
 
          }
+         function reword(){
+        	 $("#relworddiv").css("display","none");
+  			 $("#selectDivUl").html("");
+   			 $("#allReDivUl").html(""); 
+   			 $("#relworddiv").css("display","block");
+        	 var id=$("#pid").val();
+        	 if(id==undefined||id==""){
+        		 alert("请选择标签！");
+        		 return;}
+        	 jQuery.ajax({
+					url:rootPath+"/admin/rekeyWord/queryReKeyWord.do",
+					type:"POST",
+					data:{'id':id},
+					dataType:"json",
+					success:function(data){
+						nselectParse(data.allrelations,id);
+						if(data.relations==0){
+							
+						}else{
+							alert(1);
+							selectParse(data.relations);
+						}
+						initReword();	
+
+					}
+				});
+        	 
+         }
+         
+         function selectParse(selected){
+        	 var selectDiv="";
+        	 for (var key in selected) {  
+             	selectDiv=selectDiv+"<li id=\"se_"+key+"\" class=\"reli\"><input type=\"checkbox\" name=\"yselect\" value=\""+key+"\" />"+selected[key]+"</li>";
+             	 var selecteds=$("input[name=nselect][value^='"+key+"']");
+				 selecteds.attr("disabled",true);
+				 selecteds.parent().css("color","#CCC");
+        	 }  
+        	 
+ 			$("#selectDivUl").html(selectDiv);        			
+
+         }
+         
+         function nselectParse(nselect,id){
+        	 var nselectDiv="";
+        	 for (var key in nselect) {  
+                 if(id!=key)
+                 nselectDiv=nselectDiv+"<li class=\"reli\"><input type=\"checkbox\" value=\""+key+"_"+nselect[key]+"\" name=\"nselect\" >"+nselect[key]+"</li>";
+                
+        	 }  
+  			$("#allReDivUl").html(nselectDiv);        			
+         }
+         
+         function  initReword(){
+        		$("input[name=nselect]").click(function(){        		
+        			var  checkunselect=$("input[name=nselect]:checked");
+        	
+        			 var   checkselect=$("input[name=yselect]");
+        			 if((checkunselect.length+checkselect.length)>100){
+        				 jAlert("最多只能关注100个！","提示");
+        				 $(this).attr("checked",false);
+        				 return;
+        			 }
+        			 var  htmlSelect="<p style=\" float:left;\" >已选中：</p>";
+        			 for(var i=0;i<checkunselect.length;i++){
+        				 var id_title=checkunselect[i].value;
+        					var id=id_title.split("_")[0];
+        					var title=id_title.split("_")[1];
+        				 
+        					htmlSelect+="<p  style=\"float:left;\">["+title+"] </p>";			 
+        			 }
+        			
+        			$("#selected_").html(htmlSelect);        			
+        		});
+        		
+        		$("#selectSubmit").click(function(){
+        			 $("#selected_").html("");
+        			 var toselectcheckboxes = document.getElementsByName("nselect");
+        			 var selectedcheckboxes = document.getElementsByName("yselect");
+        			 var toselectcount=0;
+        			 for(var i=0;i<toselectcheckboxes.length;i++){
+        				 if(toselectcheckboxes[i].checked){
+        					var  idselected=toselectcheckboxes[i].value.split("_")[0];
+        					var titleselected=toselectcheckboxes[i].value.split("_")[1];
+        					for(var j=0;j<selectedcheckboxes.length;j++){
+        						if(idselected==selectedcheckboxes[j].value){
+        							jAlert(titleselected+"已选为关联！","提示");
+        							return;
+        						}
+        						
+        					}
+        					 
+        					 
+        				 }
+        			 }
+        			 for(var i=0;i<toselectcheckboxes.length;i++){
+        				 if(toselectcheckboxes[i].checked){
+        					 toselectcount++;
+        				 }
+        			 }
+        			 
+        			 if(toselectcount==0){
+        				 jAlert("请选择标签！","提示");
+        					return;
+        				}
+        			 var count=toselectcount+selectedcheckboxes.length;
+        			 if(count>100){
+        				 jAlert("已关联的不能超过100个！","提示");
+        					return;
+        			 }
+        			 var innertext="";
+        			 for(var i=0;i<toselectcheckboxes.length;i++){
+        					if(toselectcheckboxes[i].checked){
+        						var id_title=toselectcheckboxes[i].value;
+        						var id=id_title.split("_")[0];
+        						var title=id_title.split("_")[1];
+        						var jid="se_"+id;
+        						innertext+="<li id=\""+jid+"\" class=\"reli\"><input type=\"checkbox\" name=\"yselect\" value=\""+id+"\" />"+title+"</li>";
+        					}
+        				}
+        			 $("#selectDivUl").append(innertext);
+        			 
+        			 var  checkunselect=$("input[name=nselect]:checked");
+        			
+        			 checkunselect.attr("checked",false);
+        			 checkunselect.attr("disabled",true);
+        			 checkunselect.parent().css("color","#CCC");
+        		
+        		 });
+        		 $("#unselectSubmit").click(function(){
+        			 
+        			 var checkboxes = document.getElementsByName("yselect");
+        			 var checkselect=$("input[name=yselect]:checked");
+        			 if(checkselect.length==0){
+        				 jAlert("请选择标签！","提示");
+        					return; 
+        			 }
+        			 var removeid="";
+        			 for(var i=0;i<checkboxes.length;i++){
+        					if(checkboxes[i].checked){
+        						var id=checkboxes[i].value;
+        						if(removeid==""){
+        							removeid+="#se_"+id;
+        						}else{
+        							removeid+=",#se_"+id;
+        						}
+        					}
+        				}
+        			 $(removeid).remove();
+        			 for(var i=0;i<checkselect.length;i++){
+        				 var id=checkselect[i].value;
+        				 var selected=$("input[name=nselect][value^='"+id+"']");
+        				 selected.attr("disabled",false);
+        				 selected.parent().css("color","#000");
+        				 
+        			 }
+        			 
+        		 });
+        		 $("#submit").click(function(){
+        				
+        			 var selectedcheckboxes = document.getElementsByName("yselect");
+        			 var selectedIds="";
+        			 for(var i=0;i<selectedcheckboxes.length;i++){
+        				var id=selectedcheckboxes[i].value;
+        				if(i<(selectedcheckboxes.length-1))
+        				selectedIds=selectedIds+id+";";
+        				else
+        				selectedIds=selectedIds+id;		
+        				}
+                	 var id=$("#pid").val();
+        			 jQuery.ajax({
+        					url:rootPath+"/admin/rekeyWord/updateOrSave.do",
+        					type:"POST",
+        					data:{'ids':selectedIds,'id':id},
+        					dataType:"json",
+        					success:function(data){
+        						if(data.success){
+        				        $("#relworddiv").css("display","none");
+        						 jAlert("成功保存！","提示");
+        						 }
+        						else{
+        					     jAlert("失败保存！","提示"); 
+        						 }
+        					}
+        				});
+        		 });
+        		 
+        		 
+        		
+         }
+         
+         
+         function start(){
+	         $("#startModal").modal('show');
+        	 jQuery.ajax({
+					url:rootPath+"/admin/keyWord/startWord.do",
+					type:"POST",
+					dataType:"json",
+					success:function(data){
+						if(data.success){
+					   $("#startModal").modal('hide');
+						 alert("打标任务执行成功！");
+						 }
+						else{
+				         $("#startModal").modal('hide');
+					     alert("正则执行打标任务！","提示"); 
+						 }
+					}
+				}); 
+         }
+         
+         
+         function  closeRelworddiv(){
+		    $("#relworddiv").css("display","none"); 
+         }
+         
         $(document).ready(function(){
         	 initLeft();
         	 leftClick();
         	 initRight();
         	 $("#leftword").show();
         	 leftSubmit();
-        	 rightSubmit();
-        	 
+        	// rightSubmit();
+        	 initReword();
+        	 $("#relworddiv").css("display","none");
+        	 var wt=$(document).width();
+        	 if(wt>900){
+        		 var left=(wt-900)/2;
+            	 $("#relworddiv").css("left",left);
+
+        	 }
         });
         
         

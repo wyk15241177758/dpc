@@ -27,7 +27,7 @@ $(function(){
 	
 	//左侧标签点击效果
 	$("#main0 a").click(function(){
-		qaSearch($(this).text());
+		qaSearchList($(this).text());
 	})
 	//竖向tab选项卡
      var $tab_li = $(".tab_title ul li");
@@ -167,6 +167,18 @@ function qaSearch(question){
 		addAnswer(question,data);
 		scrollToBottom();
 	})	
+}
+function qaSearchList(question){
+var  url="/QASystem/qa/list.html";
+ if(url.indexOf("?")!=-1){
+	 window.open(url+"&word="+encodeURIComponent(question));
+
+//window.location.href=url+"&word="+encodeURIComponent(question);
+  }else{
+		 window.open(url+"?word="+encodeURIComponent(question));
+
+//window.location.href=url+"?word="+encodeURIComponent(question);
+ }
 }
 function scrollToBottom(){
 	$("#message").scrollTop(parseInt($("#message")[0].scrollHeight)-parseInt($("#message").css("height")));

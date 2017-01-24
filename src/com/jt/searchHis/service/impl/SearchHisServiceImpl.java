@@ -56,7 +56,7 @@ public class SearchHisServiceImpl   extends BasicServicveImpl implements SearchH
 					Thread.sleep(2000l);
 				}else{
 					timeOut=false;
-					searchHisRtService.add(searchHis.getSearchContent());
+					searchHisRtService.add(searchHis);
 					this.dao.save(searchHis);
 					break;
 				}
@@ -107,14 +107,15 @@ public class SearchHisServiceImpl   extends BasicServicveImpl implements SearchH
 		List<Param> paramList=new ArrayList<Param>();
 		paramList.add(param);
 		List<SearchHis> qList=query(0, 1, paramList, null);
-		if(qList!=null&&qList.size()>0&&qList.get(0).getId()!=searchHis.getId()){
+		if(qList!=null&&qList.size()>0&&(qList.get(0).getId().longValue()!=searchHis.getId().longValue())){
 			throw new Exception("存在重复的检索历史ID=["+qList.get(0).getId()+"] content=["+qList.get(0).getSearchContent()+"] md5=["+qList.get(0).getContentMd5()+"]"
 					+ " 准备修改的检索历史ID=["+searchHis.getId()+"] content=["+searchHis.getSearchContent()+"] md5=["+searchHis.getContentMd5()+"]，保存失败，请检查");
 		}
 		
 		if(!isSync){
 			//不需要同步到内存
-			this.dao.update(searchHis);
+			this.dao.merge(searchHis);
+//			this.dao.update(searchHis);
 		}else{
 			if(searchHisRtService==null){
 				WebApplicationContext webContext = ContextLoader.getCurrentWebApplicationContext();

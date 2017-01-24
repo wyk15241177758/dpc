@@ -16,4 +16,5 @@ public interface SearchHisRtService {
 	public void delete(String question);
 	public void update(String oldQuestion,SearchHis searchHis);
 	public String doExecute(Map paramMap);
+	public void add(SearchHis searchHis);
 }

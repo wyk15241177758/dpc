@@ -5,7 +5,7 @@ $(function(){
 		  $(this).addClass("tipLiActive").siblings("li").removeClass("tipLiActive")
 	  })
 	
-	  $(document).on("click",".tipDiv li",function(){
+	  $(document).on("click",".tipDiv li",function(e){
 	  	$("#messCon").val($(this).text());
 	  	$(".tipDiv").css("display","none")
 		stopPropagation(e) //停止dom事件层次传播
@@ -45,7 +45,7 @@ $(function(){
      })
 
     //显示滚动条
-     $("#message").niceScroll({cursorborder:"",cursorcolor:"#9e0001",cursoropacitymax:0.5,boxzoom:true});
+     $("#message").niceScroll({cursorborder:"",cursorcolor:"#9e0001",cursoropacitymax:0.5,boxzoom:false});
 
     //可输入字数
 	function checkInputCount() {

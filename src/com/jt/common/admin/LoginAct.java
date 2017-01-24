@@ -65,17 +65,17 @@ public class LoginAct {
 	     if(!syspwd.equals(oldpwd)){
 	    	 model.addAttribute("msg", "原始密码错误！");
 		     model.addAttribute("success", false);
-			return "admin/repwd";
+			return "redirect:/gateway/repwd.html";
 	     }
 	     if(StringUtils.isBlank(newpwd)||StringUtils.isBlank(anewpwd)){
 	    	 model.addAttribute("msg", "修改密码为空！");
 		     model.addAttribute("success", false);
-			return "admin/repwd";
+			return "redirect:/gateway/repwd.html";
 	     }
 	     if(!newpwd.equals(anewpwd)){
 	    	 model.addAttribute("msg", "两次密码不一致！");
 		     model.addAttribute("success", false);
-			return "admin/repwd";
+			return "redirect:/gateway/repwd.html";
 	     }
 
 	     
@@ -83,7 +83,7 @@ public class LoginAct {
 	     
 	     model.addAttribute("msg", "重新登录！");
 	     model.addAttribute("success", true);
-		 return "admin/login";
+		 return "redirect:/gateway/login.html";
 	}
 	
 	@RequestMapping(value={"/vrepwd.act"})
@@ -93,7 +93,7 @@ public class LoginAct {
 		 model.addAttribute("msg", "请输入原密码！");
 	     model.addAttribute("success", false);
 		
-				return "admin/repwd";
+				return "redirect:/gateway/repwd.html";
 	}
 	
 	

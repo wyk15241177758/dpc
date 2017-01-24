@@ -27,7 +27,10 @@
     <url-pattern>/gateway/task.html</url-pattern>
     <url-pattern>/keyword/keywords.html</url-pattern>
     <url-pattern>/gateway/scene.html</url-pattern>
-    <dispatcher>REQUEST</dispatcher>
+    <url-pattern>/admin/repwd.act</url-pattern>
+    <url-pattern>/admin/vrepwd.act</url-pattern>
+    
+        <dispatcher>REQUEST</dispatcher>
     <dispatcher>FORWARD</dispatcher>
   </filter-mapping>
 	

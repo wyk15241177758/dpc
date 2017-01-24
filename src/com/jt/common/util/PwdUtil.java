@@ -32,10 +32,12 @@ public class PwdUtil {
 		String fl=getPwdFilePath();
 		    PrintWriter pwriter = null;	
 	 		File saveFile =new File(fl);
+	 		
 			pwriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(saveFile), "UTF-8")));
 			pwriter.println(pwdjm);	
 			pwriter.close();
 		} catch (IOException e) {
+			e.printStackTrace();
 		}  
 	}
 	

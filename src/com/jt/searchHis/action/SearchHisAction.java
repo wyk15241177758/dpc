@@ -139,6 +139,65 @@ public class SearchHisAction {
 		}
 	}
 
+	// 批量删除
+	@RequestMapping(value = "delSearchHises.do")
+	public void delSearchHises(HttpServletRequest request, HttpServletResponse response) {
+		msg = new PageMsg();
+		response.setCharacterEncoding("utf-8");
+		PrintWriter pw = null;
+		try {
+			pw = response.getWriter();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+			return;
+		}
+
+		String searchHisIds=request.getParameter("searchHisIds");
+		if(searchHisIds==null||searchHisIds.length()==0){
+			msg.setMsg("参数searchHisIds为空");
+			msg.setSig(false);
+			pw.print(gson.toJson(msg));
+			return;
+		}else{
+			String[] ids=searchHisIds.split(",");
+			String sMsg="";
+			String successMsg="";
+			String failMsg="";
+			for(String id:ids){
+				Long searchHisId = 0l;
+				try {
+					searchHisId = Long.parseLong(id);
+				} catch (Exception e) {
+					e.printStackTrace();
+					failMsg+="删除检索历史id=[" + id + "]失败,错误信息为[转换Long类型失败]<br>";
+					continue;
+				}
+				SearchHis searchHis = searchHisService.getSearchHisById(searchHisId);
+				if (searchHisId != 0 && searchHis != null) {
+					try {
+						searchHisService.deleteSearchHis(searchHis,true);
+					} catch (Exception e) {
+						failMsg+="删除[" + searchHis.getSearchContent() + "]失败，错误信息:[" + e.getMessage() + "]<br>";
+						continue;
+					}
+					if(successMsg.length()==0){
+						successMsg=searchHis.getSearchContent();
+					}else{
+						successMsg+=","+searchHis.getSearchContent();
+					}
+				} else {
+					failMsg+="删除id=[" + searchHisId + "]失败,错误信息为[未获得ID或不存在指定的检索历史]<br>";
+				}
+			}
+			sMsg="成功记录:"+successMsg+"<br>------失败记录:<br>"+failMsg;
+			msg.setSig(true);
+			msg.setMsg(sMsg);
+			pw.print(gson.toJson(msg));
+			return;
+		}
+	}
+	
+	
 	@RequestMapping(value = "updateSearchHis.do")
 	public void updateSearchHis(HttpServletRequest request, HttpServletResponse response) {
 		msg = new PageMsg();
@@ -278,11 +337,12 @@ public class SearchHisAction {
 		String[][] arr=new String[list.size()][];
 		for(int i=0;i<list.size();i++){
 			SearchHis curHis=list.get(i);
-			arr[i]=new String[4];
+			arr[i]=new String[5];
 			arr[i][0]=curHis.getId()+"";
-			arr[i][1]=curHis.getSearchContent()+"";
-			arr[i][2]=curHis.getSearchTimes()+"";
-			arr[i][3]=curHis.getCreateTime()+"";
+			arr[i][1]=curHis.getId()+"";
+			arr[i][2]=curHis.getSearchContent()+"";
+			arr[i][3]=curHis.getSearchTimes()+"";
+			arr[i][4]=curHis.getCreateTime()+"";
 		}
 		HashMap map=new HashMap();
 		map.put("recordsTotal", searchHisService.getTotalCount());

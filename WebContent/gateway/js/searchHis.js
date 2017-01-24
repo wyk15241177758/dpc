@@ -24,29 +24,33 @@ $(document).ready(function() {
 	//修改按钮
 	$(document).on("click","[action='edit']",function(){
 		//给弹出层赋值
-		var curId=table.row( $(this).parent("td").parent("tr") ).data()[0]
-		setSearchHisValue(curId);
+		if($("table :checkbox:checked").length==0||$("table :checkbox:checked").length>1){
+			alert("请勾选一条记录");
+		}else{
+			var curId=table.row($("table :checkbox:checked").parent("td").parent("tr") ).data()[0]
+			setSearchHisValue(curId);
+		}
 	})
 	
 	//删除按钮
 	$(document).on("click","[action='del']",function(){
-		var curSearchHisId=table.row( $(this).parent("td").parent("tr") ).data()[0]
-		var curSearchHisVal=table.row( $(this).parent("td").parent("tr") ).data()[1]
-		$("#warnModal-del").find("[name='searchHisId']").val(curSearchHisId);
-		$("#warnmsg-sceneWord-del").html("确定要删除检索历史["+curSearchHisVal+"]吗？删除后无法恢复")
+		$("#warnmsg-sceneWord-del").html("确定要删除这些检索历史吗？删除后无法恢复")
 		$("#warnModal-del").modal('show')
 	})
 	//删除提示浮层按钮绑定事件
     $("#delConfirm").click(function(){
-    	var curSearchHisId=$("#warnModal-del").find("[name='searchHisId']").val();
-    	$("#warnModal-del").show("hidden");
-    	deleteSearchHis(curSearchHisId);
+   		console.log(table.row(0))
+//    	console.log(table.rows($("table :checkbox:checked").parent("td").parent("tr")))
+//    	var curSearchHisId=$("#warnModal-del").find("[name='searchHisId']").val();
+//    	$("#warnModal-del").show("hidden");
+//    	deleteSearchHis(curSearchHisId);
     })
     //设置列宽，排序等
 	$(".table-bordered").DataTable( {
-		"searching":false,
-		"order":[[3,"desc"]],
+		"searching":true,
+		"order":[[4,"desc"]],
 		  "columns": [
+		              { "orderable": false },
 		     { "orderable": false },
 		     { "orderable": false },
 		     { "orderable": true },
@@ -59,20 +63,31 @@ $(document).ready(function() {
 		    "columnDefs": [
 		                   {
 		                     "data": null,
-		                     "defaultContent": "<a class='btn btn-info btn-sm btn-setting' href='#' action='edit'> <i class='glyphicon glyphicon-edit icon-white'></i> 编辑 </a>  <a class='btn btn-danger btn-sm btn-warn' href='#'  action='del'>     <i class='glyphicon glyphicon-trash icon-white'></i> 删除 </a>",
-		                     "targets": 4
+		                     "defaultContent": "<a class='btn btn-info btn-sm btn-setting' href='#'> <i class='glyphicon glyphicon-edit icon-white'></i> 编辑 </a>  <a class='btn btn-danger btn-sm btn-warn' href='#' >     <i class='glyphicon glyphicon-trash icon-white'></i> 删除 </a>",
+		                     "targets": 5
 		                   },
 		                   {
 		                	   "targets": 0,
 		                	   "visible":false
-		                   }
+		                   },
+		                   {
+			                     "data": null,
+			                     "defaultContent": "<input type='checkbox'>",
+			                     "targets": 1
+			                   }
 		                 ]
 		}
 	);
 	
 	table = $('.table-bordered').DataTable();
+		
 
-	 
+    //全选/反选
+	$("table :checkbox:first").change(function(){
+	    $(this).closest("table")
+	           .find(":checkbox:not(:first)")
+	           .prop("checked", this.checked);
+	});
 //	$('.table-bordered').on( 'click', 'tr', function () {
 //	    console.log( table.row( this ).data() );
 //	} );
@@ -80,23 +95,25 @@ $(document).ready(function() {
 
 
 //删除
-function deleteSearchHis(searchHisId){
-	var param={"searchHisId":searchHisId};
+function deleteSearchHis(searchHisIds){
+	var param={"searchHisIds":searchHisIds};
 	if(searchHisId!=undefined){
-		  $.getJSON("/QASystem/admin/searchHis/delSearchHis.do",param,function(data){
-				if (data.sig == false) {
-					$('#warnmsg').html(data.msg);
-					$('#warnModal').modal('show');
-				} else {
-					// 成功新建任务，自动关闭浮层
-					$('#warnmsg').html(data.msg);
-					$('#warnModal').modal('show');
-					window.setTimeout(function() {
-						$('#warnModal').modal('hide');
-						// 刷新列表
-						refreshList();
-					}, 2000)
-				}
+		  $.getJSON("/QASystem/admin/searchHis/delSearchHises.do",param,function(data){
+			  $('#warnmsg').html(data.msg);
+			 $('#warnModal').modal('show');
+//				if (data.sig == false) {
+//					$('#warnmsg').html(data.msg);
+//					$('#warnModal').modal('show');
+//				} else {
+//					// 成功新建任务，自动关闭浮层
+//					$('#warnmsg').html(data.msg);
+//					$('#warnModal').modal('show');
+//					window.setTimeout(function() {
+//						$('#warnModal').modal('hide');
+//						// 刷新列表
+//						refreshList();
+//					}, 2000)
+//				}
 		  })
 	}
 }

@@ -6,7 +6,10 @@ $(document).ready(function() {
 		$(this).attr("href", $(this).attr("href") + "?rand=" + Math.random());
 	})
 
-	
+	//点击提示浮层的关闭按钮时刷新列表
+	$("#warnModal").find(".btn-default").click(function(){
+		refreshList();
+	})
 	//新建按钮
     $("#a_add").click(function(){
     	$("#editModal").modal("show");
@@ -39,33 +42,33 @@ $(document).ready(function() {
 	})
 	//删除提示浮层按钮绑定事件
     $("#delConfirm").click(function(){
-   		console.log(table.row(0))
-//    	console.log(table.rows($("table :checkbox:checked").parent("td").parent("tr")))
-//    	var curSearchHisId=$("#warnModal-del").find("[name='searchHisId']").val();
-//    	$("#warnModal-del").show("hidden");
-//    	deleteSearchHis(curSearchHisId);
+    	var paramIds="";
+    	var selectedRows=table.rows($("table :checkbox:checked").parent("td").parent("tr")).data();
+    	
+    	for(var i=0;i<selectedRows.length;i++){
+    		if(paramIds.length==0){
+    			paramIds=selectedRows[i][0];
+    		}else{
+    			paramIds+=","+selectedRows[i][0];
+    		}
+    	}
+    	deleteSearchHis(paramIds);
     })
     //设置列宽，排序等
 	$(".table-bordered").DataTable( {
 		"searching":true,
 		"order":[[4,"desc"]],
 		  "columns": [
-		              { "orderable": false },
 		     { "orderable": false },
 		     { "orderable": false },
+		     { "orderable": false,"width": "50%" },
 		     { "orderable": true },
-		     { "orderable": true },
-		    { "width": "22%" ,"orderable": false }
+		     { "orderable": true }
 		  ],
 		    "processing": true,
 		    "serverSide": true,
 		    "ajax": "/QASystem/admin/searchHis/listSearchHis.do",
 		    "columnDefs": [
-		                   {
-		                     "data": null,
-		                     "defaultContent": "<a class='btn btn-info btn-sm btn-setting' href='#'> <i class='glyphicon glyphicon-edit icon-white'></i> 编辑 </a>  <a class='btn btn-danger btn-sm btn-warn' href='#' >     <i class='glyphicon glyphicon-trash icon-white'></i> 删除 </a>",
-		                     "targets": 5
-		                   },
 		                   {
 		                	   "targets": 0,
 		                	   "visible":false
@@ -75,7 +78,20 @@ $(document).ready(function() {
 			                     "defaultContent": "<input type='checkbox'>",
 			                     "targets": 1
 			                   }
-		                 ]
+		                 ],
+             "language": {
+            	 "loadingRecords":"正在初始化...",
+            	 "processing":"正在搜索...",
+            	 "paginate": {
+            		 "previous":"上一页",
+            		 "next": "下一页"
+            	 },
+            	 "info": " _PAGE_/_PAGES_页，共_TOTAL_条 ",
+            	 "infoFiltered": " - 在 _MAX_ 条记录中检索",
+            	 "infoEmpty": "没有找到相关记录",
+            	 "search": "搜索",
+            	 "zeroRecords": "没有搜索到相关内容"
+             }		                 
 		}
 	);
 	
@@ -97,9 +113,9 @@ $(document).ready(function() {
 //删除
 function deleteSearchHis(searchHisIds){
 	var param={"searchHisIds":searchHisIds};
-	if(searchHisId!=undefined){
+	if(searchHisIds!=undefined){
 		  $.getJSON("/QASystem/admin/searchHis/delSearchHises.do",param,function(data){
-			  $('#warnmsg').html(data.msg);
+			 $('#warnmsg').html(data.msg);
 			 $('#warnModal').modal('show');
 //				if (data.sig == false) {
 //					$('#warnmsg').html(data.msg);

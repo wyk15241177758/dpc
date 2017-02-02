@@ -189,7 +189,7 @@ public class SearchHisAction {
 					failMsg+="删除id=[" + searchHisId + "]失败,错误信息为[未获得ID或不存在指定的检索历史]<br>";
 				}
 			}
-			sMsg="成功记录:"+successMsg+"<br>------失败记录:<br>"+failMsg;
+			sMsg="删除记录成功:"+successMsg+"<br>------<br>删除记录失败:"+failMsg;
 			msg.setSig(true);
 			msg.setMsg(sMsg);
 			pw.print(gson.toJson(msg));
@@ -290,7 +290,7 @@ public class SearchHisAction {
 			e1.printStackTrace();
 			return;
 		}
-		pw.print(searchHisService.getTotalCount());
+		pw.print(searchHisService.getCount(null));
 	}
 	
 	
@@ -314,6 +314,9 @@ public class SearchHisAction {
 		String order=null;
 		int pageSize=0;
 		int pageIndex=0;
+		Param param=null;
+		List<Param> paramList=new ArrayList<Param>();
+
 		try {
 			pageSize=Integer.parseInt(sPageSize);
 			pageIndex=Integer.parseInt(sPageIndex)/pageSize;
@@ -323,17 +326,24 @@ public class SearchHisAction {
 			pageIndex=0;
 		}
 		//映射排序字段
-		if(sOrder.equals("2")){
-			order="searchTimes";
+		//第3列：搜索次数
+		if(sOrder.equals("3")){
+			order="searchTimes"+" "+sOrderDir;
 		}else{
-			order="createTime";
+			//否则按照创建时间排序
+			order="createTime "+sOrderDir;
 		}
-		List<Param> paramList=new ArrayList<Param>();
-		//先暂时不提供检索功能
-//		if(sSearch!=null&&sSearch.length()>0){
-//			paramList.add(new Param(Types.VARCHAR, sSearch));
-//		}
-		List<SearchHis> list=searchHisService.queryByPage(pageIndex, pageSize,paramList, order+" "+sOrderDir);
+		//检索功能
+		if(sSearch!=null&&sSearch.trim().length()>0){
+			sSearch=sSearch.trim();
+			param=new Param();
+			param.setLike(true);
+			param.setParamName("searchContent");
+			param.setType(Types.VARCHAR);
+			param.setValue("%"+sSearch+"%");
+			paramList.add(param);
+		}
+		List<SearchHis> list=searchHisService.queryByPage(pageIndex, pageSize,paramList,order);
 		String[][] arr=new String[list.size()][];
 		for(int i=0;i<list.size();i++){
 			SearchHis curHis=list.get(i);
@@ -345,8 +355,8 @@ public class SearchHisAction {
 			arr[i][4]=curHis.getCreateTime()+"";
 		}
 		HashMap map=new HashMap();
-		map.put("recordsTotal", searchHisService.getTotalCount());
-		map.put("recordsFiltered", searchHisService.getTotalCount());
+		map.put("recordsTotal", searchHisService.getCount(null));
+		map.put("recordsFiltered", searchHisService.getCount(paramList));
 		map.put("data", arr);
 		map.put("draw",sDraw);
 		pw.print(gson.toJson(map));

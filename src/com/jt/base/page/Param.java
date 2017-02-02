@@ -7,8 +7,8 @@ public class Param {
 
 	private int type ; 
 	private Object value;
-	
-	
+	private String paramName;
+	private boolean isLike;
 	
 	public Param() {
 		
@@ -16,6 +16,14 @@ public class Param {
 	public Param(int type, Object value) {
 		this.type = type;
 		this.value = value;
+	}
+	
+	public Param(int type, Object value, String paramName, boolean isLike) {
+		super();
+		this.type = type;
+		this.value = value;
+		this.paramName = paramName;
+		this.isLike = isLike;
 	}
 	public int getType() {
 		return type;
@@ -29,9 +37,23 @@ public class Param {
 	public void setValue(Object value) {
 		this.value = value;
 	}
+	
+	
+	public String getParamName() {
+		return paramName;
+	}
+	public void setParamName(String paramName) {
+		this.paramName = paramName;
+	}
+	public boolean isLike() {
+		return isLike;
+	}
+	public void setLike(boolean isLike) {
+		this.isLike = isLike;
+	}
 	@Override
 	public String toString() {
-		return "Param [type=" + type + ", value=" + value.toString() + "]";
+		return "Param [type=" + type + ", value=" + value + ", paramName=" + paramName + ", isLike=" + isLike + "]";
 	}
 	
 	

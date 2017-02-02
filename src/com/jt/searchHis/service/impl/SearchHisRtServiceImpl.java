@@ -62,7 +62,7 @@ public class SearchHisRtServiceImpl implements SearchHisRtService,Job{
 		logger.info("开始将检索历史读入内存");
 	    long m1 = Runtime.getRuntime().freeMemory();//byte
 		long begin=System.currentTimeMillis();
-		List<SearchHis> list=searchHisService.query(0, (int)searchHisService.getTotalCount());
+		List<SearchHis> list=searchHisService.query(0, (int)searchHisService.getCount(null));
 		for(SearchHis search:list){
 			//没有md5则加入此字段value
 			String curMd5=search.getContentMd5();

@@ -35,7 +35,7 @@ public class SearchHisServiceImpl   extends BasicServicveImpl implements SearchH
 		Param param=new Param(Types.VARCHAR, searchHis.getContentMd5());
 		List<Param> paramList=new ArrayList<Param>();
 		paramList.add(param);
-		List<SearchHis> qList=query(0, 1, paramList, null);
+		List<SearchHis> qList=query(0, 1, paramList,null);
 		if(qList!=null&&qList.size()>0){
 			throw new Exception("存在重复的检索历史ID=["+qList.get(0).getId()+"] content=["+qList.get(0).getSearchContent()+"] md5=["+qList.get(0).getContentMd5()+"]"
 					+ " 准备新增的检索历史ID=["+searchHis.getId()+"] content=["+searchHis.getSearchContent()+"] md5=["+searchHis.getContentMd5()+"]，保存失败，请检查");
@@ -106,7 +106,7 @@ public class SearchHisServiceImpl   extends BasicServicveImpl implements SearchH
 		Param param=new Param(Types.VARCHAR, searchHis.getContentMd5());
 		List<Param> paramList=new ArrayList<Param>();
 		paramList.add(param);
-		List<SearchHis> qList=query(0, 1, paramList, null);
+		List<SearchHis> qList=query(0, 1, paramList,null);
 		if(qList!=null&&qList.size()>0&&(qList.get(0).getId().longValue()!=searchHis.getId().longValue())){
 			throw new Exception("存在重复的检索历史ID=["+qList.get(0).getId()+"] content=["+qList.get(0).getSearchContent()+"] md5=["+qList.get(0).getContentMd5()+"]"
 					+ " 准备修改的检索历史ID=["+searchHis.getId()+"] content=["+searchHis.getSearchContent()+"] md5=["+searchHis.getContentMd5()+"]，保存失败，请检查");
@@ -144,15 +144,22 @@ public class SearchHisServiceImpl   extends BasicServicveImpl implements SearchH
 		return (SearchHis)(this.dao.getById(SearchHis.class, id));
 	}
 	
-	public List<SearchHis> query(final int firstResult,	final int maxResults,List paramList,String order){
+	public List<SearchHis> query(final int firstResult,	final int maxResults,List<Param> paramList,String order){
 		List<SearchHis> list=null;
 		String hql="from com.jt.searchHis.bean.SearchHis where 1=1";
-		if(paramList!=null&&paramList.size()==1){
-			hql+=" and contentMd5=? ";
-		}
-		
-		if(order!=null){
-			hql+=" order by "+order;
+		if(paramList!=null){
+			for(Param param:paramList){
+				if(param.getValue()!=null&&param.getValue().toString().length()!=0){
+					if(param.isLike()){
+						hql+=" and "+param.getParamName()+" like ? ";
+					}else{
+						hql+=" and "+param.getParamName()+" =? ";
+					}
+				}
+			}
+			if(order!=null&&order.length()!=0){
+				hql+=" order by "+order;
+			}
 		}
 		
 		list=this.dao.query(hql, paramList, firstResult, maxResults);
@@ -163,18 +170,28 @@ public class SearchHisServiceImpl   extends BasicServicveImpl implements SearchH
 		return query(firstResult,maxResults,null,null);
 	}
 	//分页查询，从0开始
-	public List<SearchHis> queryByPage(int pageIndex,int pageSize,List paramList,String order){
+	public List<SearchHis> queryByPage(int pageIndex,int pageSize,List<Param> paramList,String order){
 		int firstResult=pageIndex*pageSize;
 		int maxResults=pageSize;
-		return query(firstResult,maxResults,null,order);
+		return query(firstResult,maxResults,paramList,order);
 	}
 	
-	public long getTotalCount(){
+	public long getCount(List<Param> paramList){
 		long count=-1l;
 		List<SearchHis> list=null;
-		String hql="select count(*) from com.jt.searchHis.bean.SearchHis";
-		list=this.dao.query(hql);
-		
+		String hql="select count(*) from com.jt.searchHis.bean.SearchHis where 1=1";
+		if(paramList!=null){
+			for(Param param:paramList){
+				if(param.getValue()!=null&&param.getValue().toString().length()!=0){
+					if(param.isLike()){
+						hql+=" and "+param.getParamName()+" like ? ";
+					}else{
+						hql+=" and "+param.getParamName()+" =? ";
+					}
+				}
+			}
+		}
+		list=this.dao.query(hql, paramList, 0, 1);
 		if(list!=null){
 			try {
 				count=Long.parseLong(list.get(0)+"");

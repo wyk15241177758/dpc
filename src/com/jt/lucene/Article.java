@@ -17,8 +17,12 @@ public class Article {
 				+ ", category=" + category + ", date=" + date + "]";
 	}
 	private Long id;
+	//标题
 	private String title;
+	//预设页面的地址
 	private String url;
+	//预设页面的html
+	private String html;
 	private String channel;
 	private String site;
 	private String category;//分类
@@ -89,6 +93,12 @@ public class Article {
 	}
 	public void setDate(Date date) {
 		this.date = date;
+	}
+	public String getHtml() {
+		return html;
+	}
+	public void setHtml(String html) {
+		this.html = html;
 	}
 	
 }

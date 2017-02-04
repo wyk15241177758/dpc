@@ -30,6 +30,20 @@
 .ui-front {
 	z-index: 9999
 }
+.tooltip-my{
+	font-size:12px;
+	position:absolute;
+	background-color: black;
+    color: white;
+    border-radius: 10px;
+    width: 180px;
+    padding: 9px 10px;
+    opacity:0.8;
+    top:-15px;
+    left:-70px;
+    display:none;
+    
+}
 </style>
 </head>
 <body>
@@ -126,7 +140,7 @@
 									<i class="glyphicon glyphicon-list"></i>场景操作
 								</h2>
 								<div style="padding-left: 30px; float: left;">
-									<a class="btn btn-success btn-sm" href="#" id="a_addScene">
+									<a class="btn btn-success btn-sm" href="#" id="a_addScene" title="">
 										<i class="glyphicon glyphicon-plus icon-white"></i>添加
 									</a> <a class="btn btn-info btn-sm btn-setting" href="#"
 										id="a_editScene"> <i
@@ -259,6 +273,7 @@
 						<input type="hidden" name="sjfl" />
 						<input type="hidden" name="pageTitles" />
 						<input type="hidden" name="pageLinks" />
+						<input type="hidden" name="pageHtmls" />
 						<input type="hidden" name="pageIds" />
 						<input type="hidden" name="pageSjfls" />
 						<div class="form-inline">

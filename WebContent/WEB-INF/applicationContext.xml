@@ -256,6 +256,12 @@
                 <entry key="interval" value="1800000" />
                 <entry key="className" value="com.jt.searchHis.service.impl.SearchHisRtServiceImpl" />
             </map>
+            <map>
+                <entry key="jobName" value="定时清理检索历史" />
+				<!-- 每天凌晨1点触发 -->
+           		<entry key="cronExpression" value="${searchHis.cleanCronExpression}"/>
+                <entry key="className" value="com.jt.searchHis.service.impl.SearchHisCleanJob" />
+            </map>
             </list>
         </property>
 	</bean>

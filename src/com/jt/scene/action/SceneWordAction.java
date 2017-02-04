@@ -39,7 +39,7 @@ public class SceneWordAction {
 	private Gson gson;
 	public SceneWordAction() {
 		msg = new PageMsg();
-		gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
+		gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").serializeNulls().create();
 	}
 	public SceneWordService getSceneWordService() {
 		return sceneWordService;
@@ -80,8 +80,10 @@ public class SceneWordAction {
 		String pageLinks=CMyString.getStrNotNullor0(request.getParameter("pageLinks"),"");
 		String pageIds=CMyString.getStrNotNullor0(request.getParameter("pageIds"),"");
 		String pageSjfls=CMyString.getStrNotNullor0(request.getParameter("pageSjfls"),"");
+		String pageHtmls=CMyString.getStrNotNullor0(request.getParameter("pageHtmls"),"");
 		String[] pageTitleArr=pageTitles.split(";");
 		String[] pageLinkArr=pageLinks.split(";");
+		String[] pageHtmlArr=pageHtmls.split(";");
 		String[] sPageIdArr=pageIds.split(";");
 		Integer[] pageIdArr=new Integer[sPageIdArr.length];
 		
@@ -122,6 +124,7 @@ public class SceneWordAction {
 						sceneWord = new SceneWord(null,sceneId ,sceneName, enterWords, outWords, date,date, sjfl,null);
 						sceneWordService.addSceneWord(sceneWord);
 						//是否存在预设页面，且预设页面的title和link数量一致
+						
 						if(pageTitles.length()>0&&pageLinks.length()>0&&pageIds.length()>0
 								&&(pageTitleArr.length==pageLinkArr.length
 								&&(pageTitleArr.length==pageIdArr.length)
@@ -137,8 +140,15 @@ public class SceneWordAction {
 								if(pageSjflArr[i]!=null){
 									pageSjflArr[i]=pageSjflArr[i].replace(",", ";");
 								}
-								ScenePage curScenePage=new ScenePage(pageIdArr[i],sceneWord.getSceneWordId(),pageTitleArr[i],pageLinkArr[i],
-										pageSjflArr[i],date,date);
+								ScenePage curScenePage=null;
+								if(pageHtmlArr.length<=i){
+									curScenePage=new ScenePage(pageIdArr[i],sceneWord.getSceneWordId(),pageTitleArr[i],pageLinkArr[i],
+											pageSjflArr[i],null,date,date);
+								}else{
+									curScenePage=new ScenePage(pageIdArr[i],sceneWord.getSceneWordId(),pageTitleArr[i],pageLinkArr[i],
+											pageSjflArr[i],pageHtmlArr[i],date,date);
+								}
+								
 								scenePageList.add(curScenePage);
 							}
 							sceneWord.setScenePageList(scenePageList);
@@ -242,10 +252,12 @@ public class SceneWordAction {
 		String pageTitles=CMyString.getStrNotNullor0(request.getParameter("pageTitles"), "");
 		String pageLinks=CMyString.getStrNotNullor0(request.getParameter("pageLinks"),"");
 		String pageIds=CMyString.getStrNotNullor0(request.getParameter("pageIds"),"");
+		String pageHtmls=CMyString.getStrNotNullor0(request.getParameter("pageHtmls"),"");
 		//需要考虑关联分类为空的情况
 		String pageSjfls=CMyString.getStrNotNullor0(request.getParameter("pageSjfls"),"");
 		String[] pageTitleArr=pageTitles.split(";");
 		String[] pageLinkArr=pageLinks.split(";");
+		String[] pageHtmlArr=pageHtmls.split(";");
 		String[] sPageIdArr=pageIds.split(";");
 		Integer[] pageIdArr=new Integer[sPageIdArr.length];
 		Integer sceneId = 0;
@@ -310,12 +322,24 @@ public class SceneWordAction {
 								}
 								ScenePage curScenePage= sceneWordService.getScenePageService().getScenePageById(pageIdArr[i]);
 								if(curScenePage==null){
-									curScenePage = new ScenePage(pageIdArr[i],sceneWord.getSceneWordId(),
-											pageTitleArr[i],pageLinkArr[i],pageSjflArr[i],date,date);
+									if(pageHtmlArr.length<=i){
+										curScenePage = new ScenePage(pageIdArr[i],sceneWord.getSceneWordId(),
+												pageTitleArr[i],pageLinkArr[i],pageSjflArr[i],null,date,date);
+									}else{
+										curScenePage = new ScenePage(pageIdArr[i],sceneWord.getSceneWordId(),
+												pageTitleArr[i],pageLinkArr[i],pageSjflArr[i],pageHtmlArr[i],date,date);
+									}
+									
 								}else{
+									if(pageHtmlArr.length<=i){
+										curScenePage.setHtml(null);
+									}else{
+										curScenePage.setHtml(pageHtmlArr[i]);
+									}
 									curScenePage.setPageTitle(pageTitleArr[i]);
 									curScenePage.setPageLink(pageLinkArr[i]);
 									curScenePage.setSjfl(pageSjflArr[i]);
+									
 									curScenePage.setUpdateTime(date);
 								}
 								scenePageList.add(curScenePage);

@@ -1,3 +1,7 @@
+//没有结果时显示内容
+var noResult="未找到您要的信息，建议您进入“<a href='http://www.bing.com' target='_blank' style='text-decoration: underline;color: #d40a06; font-weight: bold;'>市长信箱</a>”栏目提交您要咨询的问题。"
+
+
 
 $(function(){
 	
@@ -155,7 +159,6 @@ function qaSearch(question){
 	
 	var searchHisId=getSimTip(question)+"";
 	searchHisId=searchHisId.length==0?"0":searchHisId;
-	//发起N次请求，N为config.js中分类的个数
 	var qaData={"msg":new Array()};
 	var param={
 			"question":encodeURIComponent(question),
@@ -196,75 +199,52 @@ function addAnswer(question,qaMsg){
 	var template="<div class='dialog_tab'><div><img src='images/robot.png' class='answer_man' width='40' height='40'/><img src='images/right_arrow.gif' class='right_arrow'/><div class='right_arrow'></div><p>您的问题是：<span>{question}</span>,我为您找到了以下答案:</p><div class='tab2_title'><ul>{categoryLi}</ul></div><div class='tab2_content'>{qaDiv}</div></div></div>";
 	
 	template=template.replace(/\{question\}/g,question);
-	
-//	var answerArray=new Array();
-//	//遍历分类，将答案放入对应分类的answerArray中
-//	for(i=0;i<categoryArray.length;i++){
-//		var curCategory={"name":categoryArray[i],"qa":new Array()};
-//		for(j in qalist.msg){
-//			if(categoryArray[i]==qalist.msg[j].category){
-//				curCategory.qa.push(qalist.msg[j]);
-//			}
-//		}
-//		if(curCategory.qa.length!=0){
-//			answerArray.push(curCategory);
-//		}
-//	}
-	//遍历归类好的答案并显示
 	var categoryLi="";
 	var qaDiv="";
 	
-//	for(i=0;i<answerArray.length;i++){
-//		var curQa=""
-//		//遍历这个分类下的答案
-//		for(j=0;j<answerArray[i].qa.length;j++){
-//			if(answerArray[i].qa[j].url.indexOf("http")==-1){
-//				curQa+="<li><a href='http://"+answerArray[i].qa[j].url+"' target='_blank'>"+answerArray[i].qa[j].title+"</a></li>"
-//			}else{
-//				curQa+="<li><a href='"+answerArray[i].qa[j].url+"' target='_blank'>"+answerArray[i].qa[j].title+"</a></li>"
-//			}
-//		}
-//		
-//		//遍历分类
-//		if(i==0){
-//			categoryLi="<li class='slected2'>"+answerArray[i].name+"</li>"
-//			qaDiv="<div class='container'> <ul class='news'> "+curQa+" </ul> </div>";
-//		}else{
-//			categoryLi+="<li>"+answerArray[i].name+"</li>"
-//			qaDiv+="<div class='container hide'> <ul class='news'> "+curQa+" </ul> </div>";
-//		}
-//	}
-	
 	var msg=qaMsg.msg;
 	var index=0;
-	for(i in msg){
-		var curQa=""
-		//遍历分类
-		if(index==0){
-			categoryLi="<li class='slected2'>"+i+"</li>"
-			for(var j=0;j<msg[i].length;j++){
-				if(msg[i][j].url.indexOf("http")==-1){
-					curQa+="<li><a href='http://"+msg[i][j].url+"' target='_blank'>"+msg[i][j].title+"</a></li>"
-				}else{
-					curQa+="<li><a href='"+msg[i][j].url+"' target='_blank'>"+msg[i][j].title+"</a></li>"
+	if(qaMsg.sig){
+		for(i in msg){
+			var curQaLi="";
+			var curQaDiv="";
+			//遍历分类
+			if(index==0){
+				categoryLi="<li class='slected2'>"+i+"</li>"
+				for(var j=0;j<msg[i].length;j++){
+					//如果有预设页面html则优先展示
+					if(msg[i][j].html!=undefined&&msg[i][j].html!=null&&msg[i][j].html.length>0){
+						curQaDiv+=msg[i][j].html;
+					}else{
+						if(msg[i][j].url.indexOf("http")==-1){
+							curQaLi+="<li><a href='http://"+msg[i][j].url+"' target='_blank'>"+msg[i][j].title+"</a></li>"
+						}else{
+							curQaLi+="<li><a href='"+msg[i][j].url+"' target='_blank'>"+msg[i][j].title+"</a></li>"
+						}
+					}
 				}
-			}
-			qaDiv="<div class='container'> <ul class='news'> "+curQa+" </ul> </div>";
-		}else{
-			categoryLi+="<li>"+i+"</li>"
-			for(var j=0;j<msg[i].length;j++){
-				if(msg[i][j].url.indexOf("http")==-1){
-					curQa+="<li><a href='http://"+msg[i][j].url+"' target='_blank'>"+msg[i][j].title+"</a></li>"
-				}else{
-					curQa+="<li><a href='"+msg[i][j].url+"' target='_blank'>"+msg[i][j].title+"</a></li>"
+				qaDiv="<div class='container'> "+curQaDiv+"<ul class='news'> "+curQaLi+" </ul> </div>";
+			}else{
+				categoryLi+="<li>"+i+"</li>"
+				for(var j=0;j<msg[i].length;j++){
+					//如果有预设页面html则优先展示
+					if(msg[i][j].html!=undefined&&msg[i][j].html!=null&&msg[i][j].html.length>0){
+						curQaDiv+=msg[i][j].html;
+					}else{
+						if(msg[i][j].url.indexOf("http")==-1){
+							curQaLi+="<li><a href='http://"+msg[i][j].url+"' target='_blank'>"+msg[i][j].title+"</a></li>"
+						}else{
+							curQaLi+="<li><a href='"+msg[i][j].url+"' target='_blank'>"+msg[i][j].title+"</a></li>"
+						}
+					}
 				}
+				qaDiv+="<div class='container hide'>"+curQaDiv+" <ul class='news'> "+curQaLi+" </ul> </div>";
 			}
-			qaDiv+="<div class='container hide'> <ul class='news'> "+curQa+" </ul> </div>";
+			index++;
 		}
-		index++;
+	}else{
+		qaDiv=noResult;
 	}
-	
-	
 	
 	template=template.replace(/\{categoryLi\}/g,categoryLi);
 	template=template.replace(/\{qaDiv\}/g,qaDiv);
@@ -280,11 +260,23 @@ function setTab(m,n){
 	   tli[i].className=i==n?"hover":"";
 	   mli[i].style.display=i==n?"block":"none";
 	}
-	
-    //获取url中的参数
-    function getUrlParam(name) {
-        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
-        var r = window.location.search.substr(1).match(reg);  //匹配目标参数
-        if (r != null) return unescape(r[2]); return null; //返回参数值
-    }
 }  
+
+
+//获取url中的参数
+function getUrlParam(name) {
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+    var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+    if (r != null) return unescape(r[2]); return null; //返回参数值
+}
+
+var decToHex = function(str) {
+    var res=[];
+    for(var i=0;i < str.length;i++)
+        res[i]=("00"+str.charCodeAt(i).toString(16)).slice(-4);
+    return "\\u"+res.join("\\u");
+}
+var hexToDec = function(str) {
+    str=str.replace(/\\/g,"%");
+    return unescape(str);
+}

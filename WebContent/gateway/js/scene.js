@@ -9,19 +9,49 @@ $(document).ready(function() {
 		$(this).attr("href", $(this).attr("href") + "?rand=" + Math.random());
 	})
 
+	
 	// 显示左侧的场景
 	leftScene();
 	//显示关联分类
 	getAllSjfl("scene",function(data){
 		$("#sceneSjfl").empty().append(data);
 	})
+	
+//	$("#a_addScene")
+	//预设html的提示，这个字段有值时，自动将页面标题和页面地址的值置为“空”
+	$(document).on("mouseenter",".pageHtml_label",function(){
+		$(this).siblings(".tooltip-my").css("display","block");
+	})
+	$(document).on("mouseout",".pageHtml_label",function(){
+		$(this).siblings(".tooltip-my").css("display","none");
+	})
+	$(document).on("focusout","textarea",function(){
+		var textVal=$.trim($(this).val())
+		if(textVal.length>0){
+			$(this).parents(".form-inline").siblings().find("input[type='text']").each(function(){
+				if($.trim($(this).val()).length!=0){
+					$(this).prop("disabled",true)
+				}else{
+					$(this).val("空").prop("disabled",true)
+				}
+			})
+			
+		}else{
+			if($(this).parents(".form-inline").siblings().find("input[type='text']").val()=="空"){
+				$(this).parents(".form-inline").siblings().find("input[type='text']").val("").prop("disabled",false)
+			}else{
+				$(this).parents(".form-inline").siblings().find("input[type='text']").prop("disabled",false)
+			}
+		}
+	})
 	//绑定增加预设页面的增加按钮
 	$(".title-right button").click(function(){
-		addPage(0,"","","")
+		addUpdatePage(0,"","","","")
 	})
 	
 	//绑定删除预设页面按钮
 	$(document).on("click","[action='a_delPage']",function(){
+		$(this).parents(".pageEleDiv").next("hr").remove();
 		$(this).parents(".pageEleDiv").remove()
 	})
 	
@@ -108,13 +138,28 @@ $(document).ready(function() {
     })
     //设置列宽
 	$(".table-bordered").dataTable( {
+		"stateSave": true,
+		"bStateSave":true,
 		  "columns": [
 		    null,
 		    null,
 		    null,
 		    { "width": "22%" ,"orderable": false }
 		  ],
-		  "order": [[ 2, 'desc' ]]
+		  "order": [[ 2, 'desc' ]],
+          "language": {
+         	 "loadingRecords":"正在初始化...",
+         	 "processing":"正在搜索...",
+         	 "paginate": {
+         		 "previous":"上一页",
+         		 "next": "下一页"
+         	 },
+         	 "info": " _PAGE_/_PAGES_页，共_TOTAL_条 ",
+         	 "infoFiltered": " - 在 _MAX_ 条记录中检索",
+         	 "infoEmpty": "没有找到相关记录",
+         	 "search": "搜索",
+         	 "zeroRecords": "没有搜索到相关内容"
+          }
 		} );
 //		window.setTimeout(function(){
 //			$($("[action='sceneWordEdit']")[0]).click();
@@ -170,18 +215,25 @@ function showSearchPreview(curOutWords){
 }
 
 //预设页面
-function addPage(pageId,pageTitle,pageLink,sjfl){
+function addUpdatePage(pageId,pageTitle,pageLink,pageHtml,sjfl){
 	var curPageIndex=$(".pageEleDiv").length;
-	var template="<div class='pageEleDiv'><input type='hidden' name='pageId' value='{pageId}'/><div class='form-inline'><div><a href='#' action='a_delPage'>删除此页面</a></div><div class='form-group'><label class='control-label'>页面标题</label> <input type='text'	class='form-control' required='true' desc='页面标题'	name='pageTitle' value='{pageTitle}'></div>	</div><div class='form-inline'><div class='form-group'><label class='control-label'>页面地址</label> <input type='text'	class='form-control' required='true' desc='页面地址'	name='pageLink' value='{pageLink}'></div><div class='form-inline' style='height:55px'><label class='control-label'>关联分类</label> <div style='width:77%;float:right' id='{sjflId}'></div>	</div></div>"
+	
+	var template="<div class='pageEleDiv'><input type='hidden' name='pageId' value='{pageId}' /><div class='form-inline'><div><a href='#' action='a_delPage'>删除此页面</a></div><div class='form-group'><label class='control-label'>页面标题</label> <input {disabled} type='text' class='form-control' required='true' desc='页面标题' name='pageTitle' value='{pageTitle}'></div></div><div class='form-inline'><div class='form-group'><label class='control-label'>页面地址</label> <input {disabled} type='text' class='form-control' required='true' desc='页面地址' name='pageLink' value='{pageLink}'></div></div><div class='form-inline' style='height:55px'><label class='control-label'>关联分类</label><div style='width:77%;float:right' id='{sjflId}'></div></div><div class='form-inline'><div class='form-group' style='position: relative'><div class='tooltip-my'>此字段有值会自动屏蔽页面标题和页面地址</div><label class='control-label pageHtml_label' >页面html&nbsp;<i class='glyphicon glyphicon-exclamation-sign'></i></label> <textarea class='form-control' style='width: 315px;height: 100px;overflow-y: scroll' required='false' desc='页面html' name='pageHtml'>{pageHtml}</textarea></div></div></div>"
+	
 	if(curPageIndex>0){
 		template="<hr>"+template;
 	}
 	var obj=[
 				{"name":"pageTitle","value":pageTitle},
 				{"name":"pageLink","value":pageLink},
+				{"name":"pageHtml","value":(pageHtml==null?"":pageHtml)},
 				{"name":"pageId","value":pageId},
-				{"name":"sjflId","value":"sjflId_"+curPageIndex}
+				{"name":"sjflId","value":"sjflId_"+curPageIndex},
+				{"name":"disabled","value":""}
 			];
+	if(pageHtml!=null&&pageHtml.length>0){
+		obj[5].value="disabled"
+	}
 	template=replaceTemplate(template,obj);
 	$("#pageDiv").append(template);
 	getAllSjfl("pageSjfl_"+curPageIndex,function(data){
@@ -364,23 +416,27 @@ function addSceneWord(){
 			//处理预设页面
 			var pageTitles="";
 			var pageLinks="";
+			var pageHtmls="";
 			var pageIds="";
 			var pageSjfls="";
 			$(".pageEleDiv").each(function(){
 				if(pageTitles.length==0){
 					pageTitles=$(this).find("[name='pageTitle']").val();
 					pageLinks=$(this).find("[name='pageLink']").val();
+					pageHtmls=$(this).find("[name='pageHtml']").val();
 					pageIds=$(this).find("[name='pageId']").val();
 					pageSjfls=generateSjflParam($(this),",")
 				}else{
 					pageTitles+=";"+$(this).find("[name='pageTitle']").val();
 					pageLinks+=";"+$(this).find("[name='pageLink']").val();
+					pageHtmls+=";"+$(this).find("[name='pageHtml']").val();
 					pageIds+=";"+$(this).find("[name='pageId']").val();
 					pageSjfls+=";"+generateSjflParam($(this),",")					
 				}
 			})
 			$("#sceneWordModal").find("input[name='pageTitles']").val(pageTitles);
 			$("#sceneWordModal").find("input[name='pageLinks']").val(pageLinks);
+			$("#sceneWordModal").find("input[name='pageHtmls']").val(pageHtmls);
 			$("#sceneWordModal").find("input[name='pageIds']").val(pageIds);
 			$("#sceneWordModal").find("input[name='pageSjfls']").val(pageSjfls);
 			
@@ -408,6 +464,7 @@ function addSceneWord(){
 						$('#sceneWordModal').modal('hide');
 						//清空浮层中的数据
 						$("#sceneWordModal").find("input").val("");
+						$("#sceneWordModal").find("textarea").val("");
 						// 刷新场景映射词列表
 						sceneClick(curSceneId)
 						
@@ -436,11 +493,11 @@ function generateSjflParam(obj,splitBy){
 //修改场景映射词给弹出浮层赋值
 function setSceneWordValue(sceneWordId){
 	//先清空原先的值
+	$("#sceneWordModal").find("textarea").val("");
 	$("#sceneWordModal").find("input").each(function(){
 		var name=$(this).attr("name")
 		if($(this).attr("type")=='checkbox'){
 			$(this).prop("checked",false)
-			console.log($(this).attr("name"))
 		}
 		else{
 			$(this).val("")
@@ -473,7 +530,7 @@ function setSceneWordValue(sceneWordId){
 			//预设页面
 			var pageArr=msg.scenePageList;
 			for(var i=0;i<pageArr.length;i++){
-				addPage(pageArr[i].scenePageId,pageArr[i].pageTitle,pageArr[i].pageLink,pageArr[i].sjfl)
+				addUpdatePage(pageArr[i].scenePageId,pageArr[i].pageTitle,pageArr[i].pageLink,pageArr[i].html,pageArr[i].sjfl)
 			}
   			//显示设置浮层
   			 $('#sceneWordModal').modal('show');

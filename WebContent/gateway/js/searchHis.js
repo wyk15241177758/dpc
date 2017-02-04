@@ -56,6 +56,8 @@ $(document).ready(function() {
     })
     //设置列宽，排序等
 	$(".table-bordered").DataTable( {
+		"stateSave": true,
+		"bStateSave":true,
 		"searching":true,
 		"order":[[4,"desc"]],
 		  "columns": [
@@ -172,50 +174,19 @@ function addSearchHis(){
 						//清空浮层中的数据
 						$("#editModal").find("input").val("");
 						// 刷新场景列表
-						refreshList();
+						refreshList(true);
 					}, 2000)
 				}
 			})
 		}
 }
 // 刷新
-function refreshList() {
-	$('.table-bordered').dataTable().fnDraw();
-//	var pageSize=1000;
-//	var pageIndex=0
-//	// 清空右侧数据
-//	var table=$(".table-bordered").DataTable();
-//	table.clear().draw();
-//	var param = {
-//		"pageSize" : pageSize,
-//		"pageIndex":pageIndex,
-//		"random" : Math.random()
-//	};
-
-//	$.getJSON("/QASystem/admin/searchHis/listSearchHis.do", param, function(data) {
-//
-//		
-//		for (i in data) {
-//			var curRowNode=table.row.add([data[i].searchContent,data[i].searchTimes,data[i].createTime," <a class=\"btn btn-info btn-sm btn-setting\" href=\"#\" action='edit'> 	" +
-//			        					"<i class=\"glyphicon glyphicon-edit icon-white\"></i> 编辑 </a>" +
-//			        					" <a class=\"btn btn-danger btn-sm btn-warn\" href=\"#\"  action='del'>" +
-//			        					"<i class=\"glyphicon glyphicon-trash icon-white\"></i> 删除 </a> "])
-//			.draw()
-//		    .node();
-//			//新增行变色突出
-//			$( curRowNode )
-//		    .css( 'color', 'black' )
-//		    .animate( { color: 'black' },500 );
-//			//新增行增加属性
-//			$( curRowNode ).attr("searchHisId",data[i].id);
-//			$( curRowNode ).attr("searchContent", data[i].searchContent);
-//			//增加操作按钮
-//			
-//		}
-//		
-////		$('.table-bordered').DataTable();
-//	})
-
+function refreshList(reset) {
+	if(reset){
+		table.ajax.reload(null,true);
+	}else{
+		table.ajax.reload(null,false);
+	}
 }
 
 //给弹出浮层赋值

@@ -19,6 +19,9 @@
 		<property name="sjfl" type="java.lang.String">
 			<column name="SJFL" length="500" not-null="false" />
 		</property>
+		<property name="html" type="java.lang.String">
+			<column name="HTML" length="20000" not-null="false" />
+		</property>
 		<property name="createTime" type="java.sql.Timestamp" >
 			<column name="CREATETIME" length="19" not-null="false" />
 		</property>

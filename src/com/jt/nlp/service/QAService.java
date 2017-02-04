@@ -136,6 +136,7 @@ public class QAService {
 			Article article=new Article();
 			article.setTitle(page.getPageTitle());
 			article.setUrl(page.getPageLink());
+			article.setHtml(page.getHtml());
 			articleList.add(article);
 			map.put(pageSjfl[i], articleList);
 		}

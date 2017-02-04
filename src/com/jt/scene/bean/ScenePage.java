@@ -15,6 +15,7 @@ public class ScenePage {
 	private String pageTitle;
 	private String pageLink;
 	private String sjfl;
+	private String html;
 	private Date createTime;
 	private Date updateTime;
 	public ScenePage(){
@@ -66,7 +67,15 @@ public class ScenePage {
 		this.pageLink = pageLink;
 	}
 
-	public ScenePage(Integer scenePageId, Integer sceneWordId, String pageTitle, String pageLink, String sjfl,
+	public String getHtml() {
+		return html;
+	}
+
+	public void setHtml(String html) {
+		this.html = html;
+	}
+
+	public ScenePage(Integer scenePageId, Integer sceneWordId, String pageTitle, String pageLink, String sjfl,String html,
 			Date createTime, Date updateTime) {
 		super();
 		this.scenePageId = scenePageId;
@@ -74,6 +83,7 @@ public class ScenePage {
 		this.pageTitle = pageTitle;
 		this.pageLink = pageLink;
 		this.sjfl = sjfl;
+		this.html=html;
 		this.createTime = createTime;
 		this.updateTime = updateTime;
 	}

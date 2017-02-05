@@ -166,6 +166,12 @@ public class SearchHisServiceImpl   extends BasicServicveImpl implements SearchH
 		return list;
 	}
 	
+	public List<SearchHis> queryByHql(List<Param> paramList,String hql){
+		List<SearchHis> list=null;
+		list=this.dao.query(hql, paramList);
+		return list;
+	}
+	
 	public List<SearchHis> query(final int firstResult,	final int maxResults){
 		return query(firstResult,maxResults,null,null);
 	}

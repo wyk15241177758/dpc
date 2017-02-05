@@ -246,6 +246,12 @@
 		init-method="loadSearchHis">
 		<property name="searchHisService" ref="searchHisServiceImpl"></property>
 	</bean>
+	<bean id="searchHisCleanJob" class="com.jt.searchHis.service.impl.SearchHisCleanJob" lazy-init="false">
+		<property name="searchHisService" ref="searchHisServiceImpl"></property>
+		<property name="expiration" value="${searchHis.expiration}"></property>
+	</bean>
+	
+	
 	
 	<bean id="quartzCenter" class="com.jt.quartz.QuartzCenter"
 		init-method="registerToQuartz">
@@ -296,7 +302,7 @@
 		</property>
 		<property name="cronExpression">
 			<!-- 每天凌晨1点触发 -->
-			<value>0 31 13 * * ?</value>
+			<value>0 0 1 * * ?</value>
 
 		</property>
 	</bean>

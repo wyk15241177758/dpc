@@ -44,13 +44,13 @@ public class QuartzCenter {
 			try {
 				logger.info("开始注册["+jobName+"]");
 				String className=map.get("className");
-				Date start = new Date(new Date().getTime()+interval);
 				
 				SimpleTrigger trigger = null;
 				CronTrigger cronTrigger=null;
 				//同时支持间隔时间和时间表达式两种定时器，优先间隔时间方式
 				if(sInterval!=null&&sInterval.length()!=0){
 					interval=Long.parseLong(sInterval);
+					Date start = new Date(new Date().getTime()+interval);
 					trigger=new SimpleTrigger(jobName, jobName, start, null, -1, interval);
 				}else{
 					cronTrigger=new CronTrigger(jobName, jobName);

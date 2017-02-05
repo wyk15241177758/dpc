@@ -14,4 +14,5 @@ public interface SearchHisService {
 	public List<SearchHis> queryByPage(int pageIndex,int pageSize,List<Param> paramList,String order);
 	public List<SearchHis> query(final int firstResult,	final int maxResults);
 	public List<SearchHis> query(final int firstResult,	final int maxResults,List<Param> paramList,String order);
+	public List<SearchHis> queryByHql(List<Param> paramList,String hql);
 }

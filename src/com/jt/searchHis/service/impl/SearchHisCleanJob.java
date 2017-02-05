@@ -1,6 +1,8 @@
 package com.jt.searchHis.service.impl;
+import java.sql.Types;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,7 +13,7 @@ import org.quartz.JobExecutionException;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.jt.common.util.EncryptUtils;
+import com.jt.base.page.Param;
 import com.jt.searchHis.bean.SearchHis;
 import com.jt.searchHis.service.SearchHisService;
 
@@ -53,52 +55,40 @@ public class SearchHisCleanJob implements Job{
 	
 	public String doExecute(Map paramMap){
 		String executeRs="";
+		int successNum=0;
+		int total=0;
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
 		if(paramMap!=null){
 			logger.info("++++++++开始执行任务["+paramMap.get("jobName")+"]");
 		}else{
 			logger.error("获得任务名称失败，继续执行");
 		}
 		init4Quartz();
+		Date expirationDate=null;
+		Long lExpiration=null;
 		try {
-			searchHisService.deleteSearchHis(searchHis, isSync);
-			for(Map.Entry<String, SearchHis> curEntry:questionMap.entrySet()){
-					SearchHis search=curEntry.getValue();
-					//新增
-					if(search.getId()==null||search.getId()==0){
-						try {
-							searchHisService.addSearchHis(search,false);
-							successNum++;
-						} catch (Exception e) {
-							failNum++;
-							logger.error("同步新增检索历史["+search.getSearchContent()+"]到数据库失败，错误信息为");
-							e.printStackTrace();
-						}
-					}else{
-						//更新，只更新有修改标记的检索历史，更新之后将修改标记置为false
-						if(search.isChanged()){
-							try {
-								searchHisService.updateSearchHis(search,search.getSearchContent(),false);
-								search.setChanged(false);
-								successNum++;
-							} catch (Exception e) {
-								failNum++;
-								logger.error("修改检索历史Id=["+search.getId()+"]失败 错误信息为：");
-								e.printStackTrace();
-							}
-							
-						}else{
-							unChangeNum++;
-						}
-					}
+			lExpiration=Long.parseLong(expiration)*24*60*60*1000;
+		} catch (Exception e) {
+			logger.error("转换超时时间expiration=["+expiration+"]错误，改为默认30天");
+			lExpiration=30*24*60*60*1000l;
+		}
+		expirationDate=new Date(System.currentTimeMillis()-lExpiration);
+		
+		try {
+			String hql="from com.jt.searchHis.bean.SearchHis where updateTime<?";
+			List<Param> paramList=new ArrayList<Param>();
+			paramList.add(new Param(Types.DATE, expirationDate, null, false));
+			List<SearchHis> list=searchHisService.queryByHql(paramList, hql);
+			total=list.size();
+			for(SearchHis curHis:list){
+				searchHisService.deleteSearchHis(curHis, true);
+				successNum++;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		}finally {
-			//无论是否成功都解锁
-			isLocked=false;
 		}
 			
-			executeRs="本次共同步检索历史成功["+successNum+"]条，失败["+failNum+"]条,未修改记录["+unChangeNum+"]条,内存中检索历史共["+questionMap.size()+"]条";
+		executeRs="本次清理updatetime早于["+sdf.format(expirationDate)+"]的数据，共查询数据["+total+"]条，成功删除["+successNum+"]条";
 		logger.info(executeRs);
 		if(paramMap==null){
 			logger.info("++++++++结束执行任务");
@@ -115,8 +105,4 @@ public class SearchHisCleanJob implements Job{
 		doExecute(paramMap);
 	}
 	
-	//调试使用
-	public Map<String ,SearchHis> tempList(){
-		return this.questionMap;
-	}
 }

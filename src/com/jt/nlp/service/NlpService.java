@@ -17,8 +17,11 @@ import org.apdplat.qa.questiontypeanalysis.patternbased.QuestionStructure;
 import org.apdplat.word.segmentation.Word;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.context.ContextLoader;
+import org.springframework.web.context.WebApplicationContext;
 
 import com.jt.nlp.util.NlpUtil;
+import com.jt.searchHis.service.impl.SearchHisCleanJob;
 
 import edu.stanford.nlp.ling.LabeledWord;
 
@@ -27,7 +30,8 @@ public class NlpService {
 
 	private MainPartExtracter mainPartExtracter;
 	private Set<String> remainPartOfSpeech;
-
+	//不分词词典
+	private List<String> noParticipleWordList;
 	public NlpService() {
 		mainPartExtracter = new MainPartExtracter();
 		// 默认丢弃词组和地名类型
@@ -70,7 +74,23 @@ public class NlpService {
 			}else{
 				set.addAll(doFilterWord(mainPartWords));
 			}
-		}
+			if(noParticipleWordList==null){
+				WebApplicationContext webContext = ContextLoader.getCurrentWebApplicationContext();
+				if(webContext!=null){
+					QAService qaService = (QAService) webContext.getBean("qaService");
+					this.noParticipleWordList=qaService.getNoParticipleWordList();
+				}
+			}
+			//如果属于不分词词典，直接加入set
+			if(noParticipleWordList!=null){
+					for(String noParticipleWord:noParticipleWordList){
+						if(str.indexOf(noParticipleWord)!=-1){
+							//问题中有不分词词汇，hashset自动 保证不重复
+							set.add(noParticipleWord);
+						}
+					}
+				}
+			}
 		return set;
 	}
 
@@ -94,6 +114,8 @@ public class NlpService {
 
 	// 处理过滤检索词
 	private Set<String> doFilterWord(List<LabeledWord> mainPartWords) {
+		
+
 		Set<String> set = new HashSet<String>();
 		Map<String,LabeledWord> map = new HashMap<String,LabeledWord>();
 

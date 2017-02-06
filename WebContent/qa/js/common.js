@@ -1,6 +1,7 @@
 //没有结果时显示内容
 var noResult="未找到您要的信息，建议您进入“<a href='http://www.bing.com' target='_blank' style='text-decoration: underline;color: #d40a06; font-weight: bold;'>市长信箱</a>”栏目提交您要咨询的问题。"
-
+//控制默认提示内容
+var dvalue = "简单输入，精准信息即刻展现~";
 
 
 $(function(){
@@ -61,8 +62,7 @@ $(function(){
 			$("#number strong").html(maxLen - this.value.length);
 		}
 	}
-	//控制默认提示内容
-	var dvalue = "简单输入，精准信息即刻展现~";
+	
 	function controlInput_clear() {
 		if (this.value && this.value == dvalue) {
 			this.value = '';
@@ -110,6 +110,7 @@ var tipArr=new Array();
 function showTip(){
 	var url="/QASystem/admin/luceneSearch_searchHis.do"
 	var param={"question":$("#messCon").val(),"isParticle":"true","isShould":"true"}
+	if(param.question==dvalue)return;
 	if($.trim($("#messCon").val()).length>0){
 		$.getJSON(url,param,function(data){
 			tipArr=new Array()
@@ -206,6 +207,9 @@ function addAnswer(question,qaMsg){
 	var index=0;
 	if(qaMsg.sig){
 		for(i in msg){
+			if(msg[i].length==0){
+				continue;
+			}
 			var curQaLi="";
 			var curQaDiv="";
 			//遍历分类

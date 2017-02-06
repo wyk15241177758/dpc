@@ -3,9 +3,12 @@
  */
 package com.jt.nlp.service;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,6 +22,7 @@ import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.SortField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import com.jt.lucene.Article;
@@ -35,6 +39,8 @@ public class QAService {
 	private NlpService nlpService;
 	private LuceneSearchService searchService;
 	private SceneWordService sceneWordService;
+	private List<String> noParticipleWordList;
+	private Resource noParticipleWordDict;
 	//存储场景的关联分类
 //	private Set<String> sceneSjflSet;
 //	private Map<String,List<Article>> qaResultMap;
@@ -50,13 +56,60 @@ public class QAService {
 	}
 
 	public QAService() {
+		noParticipleWordList=new ArrayList<String>();
 	}
 
 	// nlp第一次分析初始化很慢，不知道怎么初始化，直接触发一次检索
 	public void initNlp() {
+		//读取不分词的配置文件
+		BufferedReader br=null;
+		 try {
+			File file = noParticipleWordDict.getFile();
+			br=new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
+			String dict=br.readLine();
+			while(dict!=null){
+				if(dict.startsWith("#")){
+					dict=br.readLine();
+					continue;
+				}
+				noParticipleWordList.add(dict);
+				dict=br.readLine();
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			if(br!=null){
+				try {
+					br.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		LOG.info("不分词词典内容为："+noParticipleWordList+"");
 		QASearch("初始化", 0,1);
 		// System.out.println("######"+(searchService==null));
 		LOG.info("正在初始化NLP");
+	}
+
+	public List<String> getNoParticipleWordList() {
+		return noParticipleWordList;
+	}
+
+	public void setNoParticipleWordList(List<String> noParticipleWordList) {
+		this.noParticipleWordList = noParticipleWordList;
+	}
+
+	public Resource getNoParticipleWordDict() {
+		return noParticipleWordDict;
+	}
+
+	public void setNoParticipleWordDict(Resource noParticipleWordDict) {
+		this.noParticipleWordDict = noParticipleWordDict;
 	}
 
 	public String getsPageContinue() {
@@ -174,6 +227,12 @@ public class QAService {
 		String questionStr = "";
 		// 用空格分隔，lucene自动分词，实现or效果
 		for (String str : questionSet) {
+			//是否有不分词内容，如果有自动增加双引号
+			for(String noParticiple:noParticipleWordList){
+				if(str.indexOf(noParticiple)!=-1){
+					str=str.replaceAll(noParticiple, "\""+noParticiple+"\"");
+				}
+			}
 			questionStr += str + " ";
 		}
 		// 分类作为必须包含的字段进行检索

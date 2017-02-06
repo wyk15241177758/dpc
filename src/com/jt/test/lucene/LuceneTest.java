@@ -1,6 +1,7 @@
 package com.jt.test.lucene;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -8,6 +9,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.document.LongPoint;
+import org.apache.lucene.document.NumericDocValuesField;
+import org.apache.lucene.document.StoredField;
+import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
@@ -29,60 +35,50 @@ import com.jt.lucene.IndexDao;
 import com.jt.lucene.LuceneUtilsGw;
 
 public class LuceneTest {
-    private static String indexPath = "D:\\indexpath";    // 索引保存目录
+    private static String indexPath = "D:\\indexpath_test";    // 索引保存目录
     private static LuceneUtilsGw util=null;
+    
+	public static void addLongPoint(Document document, String name, long value) {
+	    Field field = new LongPoint(name, value);
+	    document.add(field);
+	    //要排序，必须添加一个同名的NumericDocValuesField
+	    field = new NumericDocValuesField(name, value);
+	    document.add(field);
+	    //要存储值，必须添加一个同名的StoredField
+	    field = new StoredField(name, value);
+	    document.add(field);
+	}
+    
+    
     public static void createIndex(){    // 建立索引
        IndexWriter writer;
        try {
     	   util=new LuceneUtilsGw(indexPath);
     	   IndexWriterConfig config = new IndexWriterConfig(util.getAnalyzer());
+    	   Document doc = new Document();
             writer = new IndexWriter(util.getDirectory(),config);
-            Article article=new Article();
-            article.setId(1l);
-            article.setTitle("我们为电影《晚上》是一部不错的影片");
-            article.setCategory("政务知识");
-            article.setChannel("新闻");
-            article.setDate(new Date());
-            article.setSite("岳阳市政府");
-            article.setUrl("http://yueyang.gov.cn/gggs/shts/9546/content_601504.html");
-            writer.addDocument(DocumentUtils.article2Document(article));
-            article=new Article();
-            article.setId(2l);
-            article.setTitle("我们今天晚上没有事");
-            article.setCategory("政务消息");
-            article.setChannel("互动交流");
-            article.setDate(new Date());
-            article.setSite("岳阳市检察院");
-            article.setUrl("http://www.yueyang.gov.cn/webapp/yueyang/email/viewPublic.jsp?id=76276");
-            writer.addDocument(DocumentUtils.article2Document(article));
-            article=new Article();
-            article.setId(3l);
-            article.setTitle("今天晚上看电影");
-            article.setCategory("政务知识");
-            article.setChannel("新闻");
-            article.setDate(new Date());
-            article.setSite("岳阳市政府");
-            article.setUrl("http://yueyang.gov.cn/gggs/shts/9546/content_601504.html");
-            writer.addDocument(DocumentUtils.article2Document(article));
-            article=new Article();
-            article.setId(4l);
-            article.setTitle("我们认为电影不错电视也不错");
-            article.setCategory("社会常识");
-            article.setChannel("新闻");
-            article.setDate(new Date());
-            article.setSite("岳阳市政府");
-            article.setUrl("http://yueyang.gov.cn/gggs/shts/9546/content_601504.html");
-            writer.addDocument(DocumentUtils.article2Document(article));
-            article=new Article();
-            article.setId(5l);
-            article.setTitle("政府政策亚克西");
-            article.setCategory("市场要闻");
-            article.setChannel("新闻");
-            article.setDate(new Date());
-            article.setSite("岳阳市政府");
-            article.setUrl("http://yueyang.gov.cn/gggs/shts/9546/content_601504.html");
-            writer.addDocument(DocumentUtils.article2Document(article));
+            doc = new Document();
+            doc.add(new Field("XQ_ID", "1",TextField.TYPE_STORED));
+            doc.add(new Field("XQ_TITLE", "刘和生参与了新的大会",TextField.TYPE_STORED));
+            doc.add(new Field("SEARCHALL", "1",TextField.TYPE_STORED));
+			addLongPoint(doc, "LOAD_TIME",System.currentTimeMillis());
+            writer.addDocument(doc);
             
+            
+            doc = new Document();
+            doc.add(new Field("XQ_ID", "2",TextField.TYPE_STORED));
+            doc.add(new Field("XQ_TITLE", "解放军和生产办公室开会",TextField.TYPE_STORED));
+            doc.add(new Field("SEARCHALL", "1",TextField.TYPE_STORED));
+			addLongPoint(doc,  "LOAD_TIME",System.currentTimeMillis());
+            writer.addDocument(doc);
+            
+            
+            doc = new Document();
+            doc.add(new Field("XQ_ID", "3",TextField.TYPE_STORED));
+            doc.add(new Field("XQ_TITLE", "今天晚上看电影",TextField.TYPE_STORED));
+            doc.add(new Field("SEARCHALL", "1",TextField.TYPE_STORED));
+			addLongPoint(doc,  "LOAD_TIME",System.currentTimeMillis());
+            writer.addDocument(doc);
 //            
 //            List<Field> fieldList=new ArrayList<Field>();
 //            fieldList.add(new Field("xq_title","我们为电影《晚上》是一部不错的影片。",TextField.TYPE_STORED));
@@ -117,14 +113,14 @@ public class LuceneTest {
 		// 生成检索器
 
 		// 构造一个TermQuery对象
-		query = new TermQuery(new Term("xq_title", searchWord));
+		query = new TermQuery(new Term("XQ_TITLE", searchWord));
 		// 开始检索，并返回检索结果到hits中
 		
 		 ScoreDoc[] docs=searcher.search(query,12).scoreDocs;
 			
          for(int i=0;i<docs.length;i++){     
         	    
-             String querycontent=searcher.doc(docs[i].doc).get("xq_title");
+             String querycontent=searcher.doc(docs[i].doc).get("XQ_TITLE");
              System.out.println("查询内容: "+querycontent);
              System.out.println(docs[i].score);
               
@@ -155,7 +151,7 @@ public class LuceneTest {
    		boolean[] reverse={true};
    		boolean isRelevancy = true;
    		
-   		List<Document> list=dao.search(queryStr, occurs, searchField, sortField, sortFieldType, reverse, isRelevancy, 0,100);
+   		List<Document> list=dao.search(queryStr, occurs, searchField, null, null, reverse, isRelevancy, 0,100);
    		for(Document a:list){
    			System.out.println(a);
    		}
@@ -174,7 +170,7 @@ public class LuceneTest {
           
           try {
    		IndexDao dao=new IndexDao(indexPath);
-   		String[] queryStr={"拱墅"};
+   		String[] queryStr={"\"刘和生\""};
 //   		List<Document> list=dao.search(queryStr, Occur.SHOULD, "xq_title",null,null, false, 0, -1);
 //   		for(Document doc:list){
 //   			System.out.println(doc.getValues("xq_title")[0]);
@@ -194,7 +190,7 @@ public class LuceneTest {
    		boolean[] reverse={true};
    		boolean isRelevancy = true;
    		
-   		List<Document> list=dao.search(queryStr, occurs, searchField, sortField, sortFieldType, reverse, isRelevancy, 0,100);
+   		List<Document> list=dao.search(queryStr, occurs, searchField, null, sortFieldType, reverse, isRelevancy, 0,100);
    		for(Document a:list){
    			System.out.println(a);
    		}
@@ -264,6 +260,8 @@ public class LuceneTest {
 //		} catch (IOException e) {
 //			e.printStackTrace();
 //		}
-    	SearchAllTest();
+//    	createIndex();
+//    	SearchAllTest();
+    	SearchTest();
     }
 }

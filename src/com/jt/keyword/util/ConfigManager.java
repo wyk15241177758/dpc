@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
  * @date 2016-4-1 下午1:26:12
  */
 public class ConfigManager {
-	public static String   configName="conf.properties";
+	public static String   configName="jdbc.properties";
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConfigManager.class);
 
 	 //存储配置值

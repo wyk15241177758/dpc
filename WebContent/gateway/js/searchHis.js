@@ -1,6 +1,7 @@
 var table =null;
 $(document).ready(function() {
-
+	//登录判断，防止缓存
+	isLogin();
 	// 头部的入口链接地址增加random，避免缓存
 	$(".top-menu a").each(function() {
 		$(this).attr("href", $(this).attr("href") + "?rand=" + Math.random());
@@ -255,4 +256,13 @@ function paramCheck(obj) {
 	}
 
 	return flag;
+}
+//登录判断，未登录跳转到登录页。防止缓存
+function isLogin(){
+	var param={"ran":Math.random()};
+	$.getJSON("/QASystem/admin/loginStatus.act",param,function(data){
+		if(!data.sig){
+			window.location="/QASystem/gateway/login.html"
+		}
+	})
 }

@@ -2,8 +2,8 @@ var curSceneId = 0;
 var curSceneName="";
 var sjfl=""
 $(document).ready(function() {
-
-	
+	//登录判断，防止缓存
+	isLogin();
 	// 头部的入口链接地址增加random，避免缓存
 	$(".top-menu a").each(function() {
 		$(this).attr("href", $(this).attr("href") + "?rand=" + Math.random());
@@ -199,18 +199,48 @@ function showSearchPreview(curOutWords){
 			"isSplit":"true"
 	}
 	$("#log").html("");
-	 $.getJSON("/QASystem/admin/luceneSearch.do",param,function(data){
-		var msgArray=data.msg;
-		if(data.sig==true){
-			if(msgArray.length==0){
-				$("#log").html("检索词["+param.question+"]无命中信息");
+	$.getJSON("/QASystem/admin/qaSearch.do",param,function(data){
+		var template="<div id='previewDiv'><ul>{categoryLi}</ul>{qaDiv}</div>";
+		var categoryLi="";
+		var qaDiv="";
+		
+		var msg=data.msg;
+		var index=0;
+		if(data.sig){
+			for(i in msg){
+				if(msg[i].length==0){
+					continue;
+				}
+				index++;
+				var curQaLi="";
+				var curQaDiv="";
+				//遍历分类
+					categoryLi+="<li><a href='#previewTab_"+index+"'>"+i+"</a></li>"
+					for(var j=0;j<msg[i].length;j++){
+						//如果有预设页面html则优先展示
+						if(msg[i][j].html!=undefined&&msg[i][j].html!=null&&msg[i][j].html.length>0){
+							curQaDiv+=msg[i][j].html;
+						}else{
+							if(msg[i][j].url.indexOf("http")==-1){
+								curQaLi+="<li><a href='http://"+msg[i][j].url+"' target='_blank'>"+msg[i][j].title+"</a></li>"
+							}else{
+								curQaLi+="<li><a href='"+msg[i][j].url+"' target='_blank'>"+msg[i][j].title+"</a></li>"
+							}
+						}
+					}
+					qaDiv+="<div id='previewTab_"+index+"'>"+curQaDiv+"<ul> "+curQaLi+" </ul> </div>";
 			}
-			 for(i in msgArray){
-				 $("#log").append((parseInt(i)+1)+". <a href='"+msgArray[i].url+"' target='_blank'>"+data.msg[i].title+"</a><br/>")
-			 }
 		}else{
-			$("#log").html("检索["+param.question+"]失败，错误信息为"+msgArray);
+			qaDiv="无结果";
 		}
+		
+		template=template.replace(/\{categoryLi\}/g,categoryLi);
+		template=template.replace(/\{qaDiv\}/g,qaDiv);
+		 	
+		$("#log").html(template); 	
+		$("#previewDiv").tabs({
+      		event: "mouseover"
+   		});
 	  })
 }
 
@@ -625,3 +655,15 @@ function replaceTemplate(template,obj){
 	out=template;
 	return out;
 }
+
+//登录判断，未登录跳转到登录页。防止缓存
+function isLogin(){
+	var param={"ran":Math.random()};
+	$.getJSON("/QASystem/admin/loginStatus.act",param,function(data){
+		if(!data.sig){
+			window.location="/QASystem/gateway/login.html"
+		}
+	})
+}
+
+

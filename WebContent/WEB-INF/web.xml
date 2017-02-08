@@ -17,6 +17,22 @@
 <!--  <listener> -->
 <!-- 		<listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class> -->
 <!-- 	</listener> -->
+
+	<filter>
+    <filter-name>accessControl</filter-name>
+    <filter-class>com.jt.common.interceptor.AccessControl</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>accessControl</filter-name>
+    <url-pattern>/admin/qaSearch.do</url-pattern>
+    <url-pattern>/admin/luceneSearch_searchHis.do</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+    <dispatcher>FORWARD</dispatcher>
+  </filter-mapping>
+		
+	
+	
+	
 	
 	<filter>
     <filter-name>userYorNfilter</filter-name>
@@ -25,12 +41,14 @@
   <filter-mapping>
     <filter-name>userYorNfilter</filter-name>
     <url-pattern>/gateway/task.html</url-pattern>
+     <url-pattern>/gateway/repwd.html</url-pattern>
     <url-pattern>/keyword/keywords.html</url-pattern>
     <url-pattern>/gateway/scene.html</url-pattern>
+    <url-pattern>/gateway/sceneHis.html</url-pattern>
     <url-pattern>/admin/repwd.act</url-pattern>
     <url-pattern>/admin/vrepwd.act</url-pattern>
     
-        <dispatcher>REQUEST</dispatcher>
+    <dispatcher>REQUEST</dispatcher>
     <dispatcher>FORWARD</dispatcher>
   </filter-mapping>
 	

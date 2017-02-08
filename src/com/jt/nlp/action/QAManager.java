@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -95,7 +96,6 @@ public class QAManager {
 		String question=request.getParameter("question");
 		String sBegin=request.getParameter("begin");
 		String sEnd=request.getParameter("end");
-
 		
 		//增加解码
 		try {
@@ -118,30 +118,14 @@ public class QAManager {
 			iEnd=5;
 		}
 		if(question==null){
-			question="";
+			msg.setSig(false);
+			msg.setMsg("问题为空");
+			pw.print(gson.toJson(msg));
+			return;
 		}
-		String[] arrQuestion=question.split(" ");;
-				
-		LuceneSearchService luceneService=qaService.getSearchService();
-		
-		//检索参数
-		String [] searchField=new String[arrQuestion.length];
-		Occur[] occurs = new Occur[arrQuestion.length]; 
-		for(int i=0;i<searchField.length;i++){
-			searchField[i]=Article.getMapedFieldName("title");
-			occurs[i]=Occur.MUST;
-		}
-			
-		//排序参数
-		String[] sortField={Article.getMapedFieldName("date")};
-		SortField.Type[] sortFieldType={SortField.Type.LONG};
-		boolean[] reverse={true};
-		boolean isRelevancy = true;
-		
-		
-		List<Article> list=luceneService.searchArticle(arrQuestion, occurs, searchField, sortField, sortFieldType, reverse, isRelevancy, iBegin, iEnd);
-		if(list!=null){
-			msg.setMsg(list);
+		Map<String,List<Article>> map=qaService.QASearch(question, iBegin, iEnd);
+		if(map!=null){
+			msg.setMsg(map);
 		}else{
 			msg.setSig(false);
 			msg.setMsg("没有检索到结果");
@@ -261,7 +245,8 @@ public class QAManager {
 	public void qaSearch(HttpServletRequest request, HttpServletResponse response) {
 		response.setCharacterEncoding("utf-8");
 		msg=new PageMsg();
-		msg.setSig(true);
+		msg.setSig(false);
+		msg.setMsg("没有检索的结果");
 		PrintWriter pw=null;
 		try {
 			pw=response.getWriter();
@@ -297,11 +282,17 @@ public class QAManager {
 		}
 		Map<String,List<Article>> map=null;
 			map=qaService.QASearch(question, iBegin,iEnd);
-		if(map!=null){
-			msg.setMsg(map);
-		}else{
-			msg.setSig(false);
-			msg.setMsg("没有检索的结果");
+		if(map!=null&&map.size()!=0){
+			//map中key值对应的value为空也算没有结果
+			for(Entry<String, List<Article>> entry:map.entrySet()){
+				if(entry!=null&&entry.getValue()!=null&&entry.getValue().size()!=0){
+					msg.setSig(true);
+					break;
+				}
+			}
+			if(msg.isSig()){
+				msg.setMsg(map);
+			}
 		}
 		pw.print(gson.toJson(msg));
 		

@@ -39,8 +39,12 @@ public class QAService {
 	private NlpService nlpService;
 	private LuceneSearchService searchService;
 	private SceneWordService sceneWordService;
+	//不分词词典
+	private Resource noParticipleWordResource;
 	private List<String> noParticipleWordList;
-	private Resource noParticipleWordDict;
+	//停用词词典
+	private Resource stopWordResource;
+	private List<String> stopWordList;
 	//存储场景的关联分类
 //	private Set<String> sceneSjflSet;
 //	private Map<String,List<Article>> qaResultMap;
@@ -56,15 +60,26 @@ public class QAService {
 	}
 
 	public QAService() {
-		noParticipleWordList=new ArrayList<String>();
 	}
 
 	// nlp第一次分析初始化很慢，不知道怎么初始化，直接触发一次检索
 	public void initNlp() {
-		//读取不分词的配置文件
+		//读取不分词的配置文件，替换问题时自动添加双引号
+		noParticipleWordList=getDict(noParticipleWordResource,false);
+		//读取停用词词典，为了防止分词增加双引号
+		stopWordList=getDict(stopWordResource,true);
+		LOG.info("不分词词典内容为："+noParticipleWordList+"");
+		LOG.info("停用词词典内容为："+stopWordList+"");
+		QASearch("初始化", 0,1);
+		// System.out.println("######"+(searchService==null));
+		LOG.info("正在初始化NLP");
+	}
+
+	private List<String> getDict(Resource resource,boolean addQuote){
+		List<String> list=new ArrayList<String>();
 		BufferedReader br=null;
 		 try {
-			File file = noParticipleWordDict.getFile();
+			File file = resource.getFile();
 			br=new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
 			String dict=br.readLine();
 			while(dict!=null){
@@ -72,7 +87,11 @@ public class QAService {
 					dict=br.readLine();
 					continue;
 				}
-				noParticipleWordList.add(dict);
+				if(addQuote){
+					list.add("\""+dict+"\"");
+				}else{
+					list.add(dict);
+				}
 				dict=br.readLine();
 			}
 		} catch (FileNotFoundException e) {
@@ -90,10 +109,16 @@ public class QAService {
 				}
 			}
 		}
-		LOG.info("不分词词典内容为："+noParticipleWordList+"");
-		QASearch("初始化", 0,1);
-		// System.out.println("######"+(searchService==null));
-		LOG.info("正在初始化NLP");
+		 return list;
+	}
+	
+	
+	public List<String> getStopWordList() {
+		return stopWordList;
+	}
+
+	public void setStopWordList(List<String> stopWordList) {
+		this.stopWordList = stopWordList;
 	}
 
 	public List<String> getNoParticipleWordList() {
@@ -104,12 +129,22 @@ public class QAService {
 		this.noParticipleWordList = noParticipleWordList;
 	}
 
-	public Resource getNoParticipleWordDict() {
-		return noParticipleWordDict;
+
+
+	public Resource getNoParticipleWordResource() {
+		return noParticipleWordResource;
 	}
 
-	public void setNoParticipleWordDict(Resource noParticipleWordDict) {
-		this.noParticipleWordDict = noParticipleWordDict;
+	public void setNoParticipleWordResource(Resource noParticipleWordResource) {
+		this.noParticipleWordResource = noParticipleWordResource;
+	}
+
+	public Resource getStopWordResource() {
+		return stopWordResource;
+	}
+
+	public void setStopWordResource(Resource stopWordResource) {
+		this.stopWordResource = stopWordResource;
 	}
 
 	public String getsPageContinue() {
@@ -235,11 +270,24 @@ public class QAService {
 			}
 			questionStr += str + " ";
 		}
-		// 分类作为必须包含的字段进行检索
+		// 分类作为必须包含的字段进行检索，如下三个变量长度必须相同
 
-		String[] searchWord = { questionStr, "" };
-		Occur[] occurs = { Occur.MUST, Occur.MUST };
-		String[] fields = { Article.getMapedFieldName("title"), Article.getMapedFieldName("category") };
+		String[] searchWord = new String[stopWordList.size()+2];
+		//{ questionStr, "" };
+		Occur[] occurs = new Occur[searchWord.length];
+		//{ Occur.MUST, Occur.MUST };
+		String[] fields = new String[searchWord.length];
+		//{ Article.getMapedFieldName("title"), Article.getMapedFieldName("category") };
+		searchWord[0]=questionStr;
+		occurs[0]=Occur.MUST;
+		occurs[1]=Occur.MUST;
+		fields[0]=Article.getMapedFieldName("title");
+		fields[1]=Article.getMapedFieldName("category");
+		for(int i=0;i<stopWordList.size();i++){
+			searchWord[i+2]=stopWordList.get(i);
+			occurs[i+2]=Occur.MUST_NOT;
+			fields[i+2]=Article.getMapedFieldName("title");
+		}
 		
 		
 		//排序参数

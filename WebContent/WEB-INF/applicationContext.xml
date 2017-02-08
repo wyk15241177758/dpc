@@ -213,7 +213,8 @@
 		<property name="nlpService" ref="nlpService">
 		</property>
 		<property name="sPageContinue" value="${qa.isPageContinue}"></property>
-		<property name="noParticipleWordDict" value="classpath:/noParticiple.dict"></property>
+		<property name="noParticipleWordResource" value="classpath:/noParticiple.dict"></property>
+		<property name="stopWordResource" value="classpath:/stopWord.dict"></property>
 	</bean>
 
 

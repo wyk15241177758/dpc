@@ -1,197 +1,7 @@
-//全局变量，当前选择的任务ID
-var curJobId=0;
-//list的template
-var list_template="<tr jobid='{jobid}' jobname='{jobname}' jobstatus='{jobstatus}' ><td>{jobname}</td>" +
-"<td class='center'><span class='label {status_class}'>{jobstatus}</span></td>" +
-"<td  class='center'>--</td><td  class='center'>--</td><td  class='center'>--条</td><td  class='center'>--秒</td>" +
-"<td class='center font-right'>" +
-"<a class='btn btn-success btn-sm' href='javascript:void(0)' action='startImmediate'>" +
-"<i class='glyphicon glyphicon-zoom-in icon-white'></i>立即启动</a>  " +
-"<a class='btn btn-success btn-sm' href='javascript:void(0)' action='joblog_a'>" +
-"<i class='glyphicon glyphicon-zoom-in icon-white'></i>查看日志</a>  " +
-"<a class='btn btn-info btn-sm btn-setting' href='javascript:void(0)'  action='edit_a'>" +
-"<i class='glyphicon glyphicon-edit icon-white'></i>编辑</a>  " +
-"<a class='btn btn-danger btn-sm btn-warn' href='javascript:void(0)'  action='delete_a'>" +
-"<i class='glyphicon glyphicon-trash icon-white'></i>删除</a></td></tr>";
-function paramCheck(){
-	var flag=true;
-	//非空校验
-	$("[required='true']").each(function(){
-		if($(this).val().length==0){
-			alert($(this).attr("desc")+"不能为空");
-			$(this).focus();
-			flag=false;
-			return false;
-		}
-	})
-	if(flag){
-		//数字校验
-		$("[num='true']").each(function(){
-			$(this).val(parseInt($(this).val()));
-			if($(this).attr("max")!=undefined){
-				if($(this).val()>$(this).attr("max")){
-					alert($(this).attr("desc")+"不能大于"+$(this).attr("max"));
-					$(this).focus();
-					flag=false;
-					return false;
-				}
-			}
-			if($(this).attr("min")!=undefined){
-				if($(this).val()<$(this).attr("min")){
-					alert($(this).attr("desc")+"不能小于"+$(this).attr("min"));
-					$(this).focus();
-					flag=false;
-					return false;
-				}
-			}
-		})
-	}
-	return flag;
-}
-
-function parseFields(){
-	var datafield={tableKey:false,type:1,name:1}
-	var array=new Array();
-
-	$("#data-syn").children(".form-inline").each(function(){
-		
-		var name=$(this).find("[type='text']").val();
-		var type=$(this).find("select").val();
-		var tableKey=$(this).find("[type='checkbox']").prop("checked")?true:false;
-		if((name+"").length==0){
-			return;
-		}
-		var datafield={tableKey:tableKey,type:type,name:name}
-		array.push(datafield);
-	})
-	//console.log(array);
-	if(array.length!=0){
-		$("#fields_mysql").attr("value",JSON.stringify(array));
-	}
-}
-//刷新所有任务的状态、执行情况、执行时间、推送数据量
-function refreshJobLog(){
-	//开始刷新，更换图片
-	$("#refresh_a").children("img").attr("src","img/refreshing.gif");
-	//任务数量
-	var jobNum=$("#tbody_joblist").children("tr").length;
-	//已刷新日志个数，用于所有任务执行完成后更换图片的功能
-	var jobRefreshNum=0;
-	$("#tbody_joblist").children("tr").each(function(){
-		//没有任务则结束循环
-		if($(this).html()=="<td colspan='6'>暂无任务</td>"){
-			return false;
-		}
-		var param={"jobid":$(this).attr("jobid")};
-		 $.getJSON("/QASystem/admin/getRunningLog.do",param,function(data){
-			 if(data.sig==true){
-				 if(typeof(data.msg)!='undefined'){
-					 var msgArray=data.msg;
-					 if((data.msg+"").indexOf("结束执行任务")==-1){
-						$("#tbody_joblist").children("tr[jobid='"+param.jobid+"']").children("td:nth-child(2)").html("<span class='label-success label'>正在执行</span>")
-					 }else{
-						$("#tbody_joblist").children("tr[jobid='"+param.jobid+"']").children("td:nth-child(2)").html("<span class='label label-warning'>未执行</span>")
-					 }
-					 //未选择查看日志，则默认显示第一个任务的日志
-					 var curTR=$("#tbody_joblist").children("tr[jobid='"+param.jobid+"']")
-					 var curTRJobName=curTR.attr("jobname")
-					 var curTRJobId=curTR.attr("jobid")
-					 if(curJobId==0){
-						 //第一个TR
-						 if($("#tbody_joblist").children("tr").index(curTR)==0){
-							 $("ul[role='tablist']").find("strong").text("任务日志["+curTRJobName+"]");
-							 //先清空日志，再输出
-							 $("#log").html("");
-							 for(i in msgArray){
-								 $("#log").append((parseInt(i)+1)+"."+msgArray[i]+"<br/>")
-							 }
-						 }
-					 }else{
-						 //显示指定的任务日志
-						 if(curJobId==curTRJobId){
-							 $("ul[role='tablist']").find("strong").text("任务日志["+curTRJobName+"]");
-							 //先清空日志，再输出
-							 $("#log").html("");
-							 for(i in msgArray){
-								 $("#log").append((parseInt(i)+1)+"."+msgArray[i]+"<br/>")
-							 }
-						 }
-						 
-					 }
-				 }
-			 }
-			  
-		  })
-		
-		$.getJSON("/QASystem/admin/getJobLog.do",param,function(data){
-			if(data.sig==true){
-				if(typeof(data.msg)!='undefined'){
-					//上次执行情况
-					if(data.msg.status==1){
-						$("#tbody_joblist").children("tr[jobid='"+param.jobid+"']").children("td:nth-child(3)").text("成功")
-					}else{
-						$("#tbody_joblist").children("tr[jobid='"+param.jobid+"']").children("td:nth-child(3)").text("失败")
-					}
-					//上次执行开始时间
-					$("#tbody_joblist").children("tr[jobid='"+param.jobid+"']").children("td:nth-child(4)").text(data.msg.start)
-					//上次推送数据量
-					$("#tbody_joblist").children("tr[jobid='"+param.jobid+"']").children("td:nth-child(5)").text(data.msg.indexSize+"条")
-					//上次耗时
-					var exeTime=parseInt(data.msg.exeTime);
-					$("#tbody_joblist").children("tr[jobid='"+param.jobid+"']").children("td:nth-child(6)").text(parseInt(exeTime/1000)+"秒")
-				}
-			}
-			//所有刷新都结束，更换图片
-			jobRefreshNum++;
-			if(jobRefreshNum==jobNum){
-				$("#refresh_a").children("img").attr("src","img/endRefresh.png");
-			}
-		})
-	 })
-}
-
-//获得任务列表
-function getJobList(){
-    $.getJSON("/QASystem/admin/listJobs.do",null,function(data){
-    	$("#tbody_joblist").html("");
-    	if(data.length==0){
-    		$("#tbody_joblist").append("<tr><td colspan='6'>暂无任务</td></tr>");
-    	}
-    	
-    	for(job in data){
-    		var cur_td="";
-    		cur_td=list_template.replace(/\{jobname\}/g,data[job].jobName);
-    		cur_td=cur_td.replace(/\{jobid\}/g,data[job].jobId);
-    		if(data[job].jobStatus==1){
-    			cur_td=cur_td.replace(/\{jobstatus\}/g,"未执行");
-    			cur_td=cur_td.replace(/\{status_class\}/g,"label-warning");
-    		}else{
-    			cur_td=cur_td.replace(/\{jobstatus\}/g,"正在执行");
-    			cur_td=cur_td.replace(/\{status_class\}/g,"label-success");
-    		}
-    		$("#tbody_joblist").append(cur_td);
-    	}
-    })
-}
-//删除任务
-function deleteJob(curTrJobId){
-	var param={"jobid":curTrJobId};
-	if(curTrJobId!=undefined){
-		  $.getJSON("/QASystem/admin/delJob.do",param,function(data){
-			  if(data==null||typeof(data.sig)=='undefined'
-				  ||typeof(data.msg)=='undefined'){
-					$('#warnmsg').html("删除jobid=["+param.jobid+"]的任务信息失败");
-          		$('#warnModal').modal('show');
-			  }else{
-				$('#warnmsg').html(data.msg);
-        		$('#warnModal').modal('show');
-			  }
-			  getJobList();
-		  })
-	}
-}
 
 $(document).ready(function () {
+	//登录判断，防止缓存
+	isLogin();
 	//头部的入口链接地址增加random，避免缓存
 	$(".top-menu a").each(function(){
 		$(this).attr("href",$(this).attr("href")+"?rand="+Math.random());
@@ -425,9 +235,214 @@ $(document).ready(function () {
     
 });
 
+
+//全局变量，当前选择的任务ID
+var curJobId=0;
+//list的template
+var list_template="<tr jobid='{jobid}' jobname='{jobname}' jobstatus='{jobstatus}' ><td>{jobname}</td>" +
+"<td class='center'><span class='label {status_class}'>{jobstatus}</span></td>" +
+"<td  class='center'>--</td><td  class='center'>--</td><td  class='center'>--条</td><td  class='center'>--秒</td>" +
+"<td class='center font-right'>" +
+"<a class='btn btn-success btn-sm' href='javascript:void(0)' action='startImmediate'>" +
+"<i class='glyphicon glyphicon-zoom-in icon-white'></i>立即启动</a>  " +
+"<a class='btn btn-success btn-sm' href='javascript:void(0)' action='joblog_a'>" +
+"<i class='glyphicon glyphicon-zoom-in icon-white'></i>查看日志</a>  " +
+"<a class='btn btn-info btn-sm btn-setting' href='javascript:void(0)'  action='edit_a'>" +
+"<i class='glyphicon glyphicon-edit icon-white'></i>编辑</a>  " +
+"<a class='btn btn-danger btn-sm btn-warn' href='javascript:void(0)'  action='delete_a'>" +
+"<i class='glyphicon glyphicon-trash icon-white'></i>删除</a></td></tr>";
+function paramCheck(){
+	var flag=true;
+	//非空校验
+	$("[required='true']").each(function(){
+		if($(this).val().length==0){
+			alert($(this).attr("desc")+"不能为空");
+			$(this).focus();
+			flag=false;
+			return false;
+		}
+	})
+	if(flag){
+		//数字校验
+		$("[num='true']").each(function(){
+			$(this).val(parseInt($(this).val()));
+			if($(this).attr("max")!=undefined){
+				if($(this).val()>$(this).attr("max")){
+					alert($(this).attr("desc")+"不能大于"+$(this).attr("max"));
+					$(this).focus();
+					flag=false;
+					return false;
+				}
+			}
+			if($(this).attr("min")!=undefined){
+				if($(this).val()<$(this).attr("min")){
+					alert($(this).attr("desc")+"不能小于"+$(this).attr("min"));
+					$(this).focus();
+					flag=false;
+					return false;
+				}
+			}
+		})
+	}
+	return flag;
+}
+
+function parseFields(){
+	var datafield={tableKey:false,type:1,name:1}
+	var array=new Array();
+
+	$("#data-syn").children(".form-inline").each(function(){
+		
+		var name=$(this).find("[type='text']").val();
+		var type=$(this).find("select").val();
+		var tableKey=$(this).find("[type='checkbox']").prop("checked")?true:false;
+		if((name+"").length==0){
+			return;
+		}
+		var datafield={tableKey:tableKey,type:type,name:name}
+		array.push(datafield);
+	})
+	//console.log(array);
+	if(array.length!=0){
+		$("#fields_mysql").attr("value",JSON.stringify(array));
+	}
+}
+//刷新所有任务的状态、执行情况、执行时间、推送数据量
+function refreshJobLog(){
+	//开始刷新，更换图片
+	$("#refresh_a").children("img").attr("src","img/refreshing.gif");
+	//任务数量
+	var jobNum=$("#tbody_joblist").children("tr").length;
+	//已刷新日志个数，用于所有任务执行完成后更换图片的功能
+	var jobRefreshNum=0;
+	$("#tbody_joblist").children("tr").each(function(){
+		//没有任务则结束循环
+		if($(this).html()=="<td colspan='6'>暂无任务</td>"){
+			return false;
+		}
+		var param={"jobid":$(this).attr("jobid")};
+		 $.getJSON("/QASystem/admin/getRunningLog.do",param,function(data){
+			 if(data.sig==true){
+				 if(typeof(data.msg)!='undefined'){
+					 var msgArray=data.msg;
+					 if((data.msg+"").indexOf("结束执行任务")==-1){
+						$("#tbody_joblist").children("tr[jobid='"+param.jobid+"']").children("td:nth-child(2)").html("<span class='label-success label'>正在执行</span>")
+					 }else{
+						$("#tbody_joblist").children("tr[jobid='"+param.jobid+"']").children("td:nth-child(2)").html("<span class='label label-warning'>未执行</span>")
+					 }
+					 //未选择查看日志，则默认显示第一个任务的日志
+					 var curTR=$("#tbody_joblist").children("tr[jobid='"+param.jobid+"']")
+					 var curTRJobName=curTR.attr("jobname")
+					 var curTRJobId=curTR.attr("jobid")
+					 if(curJobId==0){
+						 //第一个TR
+						 if($("#tbody_joblist").children("tr").index(curTR)==0){
+							 $("ul[role='tablist']").find("strong").text("任务日志["+curTRJobName+"]");
+							 //先清空日志，再输出
+							 $("#log").html("");
+							 for(i in msgArray){
+								 $("#log").append((parseInt(i)+1)+"."+msgArray[i]+"<br/>")
+							 }
+						 }
+					 }else{
+						 //显示指定的任务日志
+						 if(curJobId==curTRJobId){
+							 $("ul[role='tablist']").find("strong").text("任务日志["+curTRJobName+"]");
+							 //先清空日志，再输出
+							 $("#log").html("");
+							 for(i in msgArray){
+								 $("#log").append((parseInt(i)+1)+"."+msgArray[i]+"<br/>")
+							 }
+						 }
+						 
+					 }
+				 }
+			 }
+			  
+		  })
+		
+		$.getJSON("/QASystem/admin/getJobLog.do",param,function(data){
+			if(data.sig==true){
+				if(typeof(data.msg)!='undefined'){
+					//上次执行情况
+					if(data.msg.status==1){
+						$("#tbody_joblist").children("tr[jobid='"+param.jobid+"']").children("td:nth-child(3)").text("成功")
+					}else{
+						$("#tbody_joblist").children("tr[jobid='"+param.jobid+"']").children("td:nth-child(3)").text("失败")
+					}
+					//上次执行开始时间
+					$("#tbody_joblist").children("tr[jobid='"+param.jobid+"']").children("td:nth-child(4)").text(data.msg.start)
+					//上次推送数据量
+					$("#tbody_joblist").children("tr[jobid='"+param.jobid+"']").children("td:nth-child(5)").text(data.msg.indexSize+"条")
+					//上次耗时
+					var exeTime=parseInt(data.msg.exeTime);
+					$("#tbody_joblist").children("tr[jobid='"+param.jobid+"']").children("td:nth-child(6)").text(parseInt(exeTime/1000)+"秒")
+				}
+			}
+			//所有刷新都结束，更换图片
+			jobRefreshNum++;
+			if(jobRefreshNum==jobNum){
+				$("#refresh_a").children("img").attr("src","img/endRefresh.png");
+			}
+		})
+	 })
+}
+
+//获得任务列表
+function getJobList(){
+    $.getJSON("/QASystem/admin/listJobs.do",null,function(data){
+    	$("#tbody_joblist").html("");
+    	if(data.length==0){
+    		$("#tbody_joblist").append("<tr><td colspan='6'>暂无任务</td></tr>");
+    	}
+    	
+    	for(job in data){
+    		var cur_td="";
+    		cur_td=list_template.replace(/\{jobname\}/g,data[job].jobName);
+    		cur_td=cur_td.replace(/\{jobid\}/g,data[job].jobId);
+    		if(data[job].jobStatus==1){
+    			cur_td=cur_td.replace(/\{jobstatus\}/g,"未执行");
+    			cur_td=cur_td.replace(/\{status_class\}/g,"label-warning");
+    		}else{
+    			cur_td=cur_td.replace(/\{jobstatus\}/g,"正在执行");
+    			cur_td=cur_td.replace(/\{status_class\}/g,"label-success");
+    		}
+    		$("#tbody_joblist").append(cur_td);
+    	}
+    })
+}
+//删除任务
+function deleteJob(curTrJobId){
+	var param={"jobid":curTrJobId};
+	if(curTrJobId!=undefined){
+		  $.getJSON("/QASystem/admin/delJob.do",param,function(data){
+			  if(data==null||typeof(data.sig)=='undefined'
+				  ||typeof(data.msg)=='undefined'){
+					$('#warnmsg').html("删除jobid=["+param.jobid+"]的任务信息失败");
+          		$('#warnModal').modal('show');
+			  }else{
+				$('#warnmsg').html(data.msg);
+        		$('#warnModal').modal('show');
+			  }
+			  getJobList();
+		  })
+	}
+}
+
+
 //获取url中的参数
 function getUrlParam(name) {
     var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
     var r = window.location.search.substr(1).match(reg);  //匹配目标参数
     if (r != null) return unescape(r[2]); return null; //返回参数值
+}
+
+//登录判断，未登录跳转到登录页。防止缓存
+function isLogin(){
+	var param={"ran":Math.random()};
+	$.getJSON("/QASystem/admin/loginStatus.act",param,function(data){
+		if(!data.sig){
+			window.location="/QASystem/gateway/login.html"
+		}
+	})
 }

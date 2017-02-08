@@ -262,13 +262,13 @@ public class QAService {
 		String questionStr = "";
 		// 用空格分隔，lucene自动分词，实现or效果
 		for (String str : questionSet) {
-			//是否有不分词内容，如果有自动增加双引号
-			for(String noParticiple:noParticipleWordList){
-				if(str.indexOf(noParticiple)!=-1){
-					str=str.replaceAll(noParticiple, "\""+noParticiple+"\"");
-				}
-			}
-			questionStr += str + " ";
+			//增加双引号，不再分词
+//			for(String noParticiple:noParticipleWordList){
+//				if(str.indexOf(noParticiple)!=-1){
+//					str=str.replaceAll(noParticiple, "\""+noParticiple+"\"");
+//				}
+//			}
+			questionStr += "\""+str + "\" ";
 		}
 		// 分类作为必须包含的字段进行检索，如下三个变量长度必须相同
 

@@ -337,7 +337,31 @@ public class MainPartExtracter {
      * @throws java.lang.Exception
      */
     public static void main(String[] args) throws Exception {
-//        MainPartExtracter mainPartExtracter = new MainPartExtracter();
+        MainPartExtracter mainPartExtracter = new MainPartExtracter();
+        String [] arr={"如何办理居住证"};
+      for(String str:arr){
+      	QuestionStructure qs=mainPartExtracter.getMainPart(str);
+      	System.out.println("主谓宾:"+qs.getMainPart());
+      	System.out.println("新句法树 begin");
+      	mainPartExtracter.getPortOfSpeech(qs.getMainPart());
+      	System.out.println("新句法树 end");
+//      	System.out.println(str+"-------------------------begin");
+//      	QuestionStructure qs = mainPartExtracter.getMainPart(str);
+//      	System.out.println("111111");
+////      	System.out.println(mainPartExtracter.getQuestionMainPartPattern(str,qs.getMainPart()));;
+////      LOG.info(qs.getQuestion());
+//      	List<Word> list=WordParser.parse(qs.getMainPart());
+//      	for(Word word:list){
+//      		System.out.println(word.getPartOfSpeech().getPos());
+//      		System.out.println(word.getText());
+//      	}
+//      	System.out.println("22222");
+////      	for (String d : qs.getDependencies()) {
+////      		LOG.info("\t" + d);
+////      	}
+//      	System.out.println("-------------------------end");
+      }
+        
 //        String [] arr={"杨浦有什么地方好玩？","孩子转学需要什么手续？","我想自主创业，政府有什么政策？","噪音扰民怎么办?","上海怎么办理居住证 "};
 //        for(String str:arr){
 //        	QuestionStructure qs=mainPartExtracter.getMainPart(str);

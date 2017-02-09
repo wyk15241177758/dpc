@@ -14,6 +14,7 @@ import java.util.Set;
 import org.apdplat.qa.parser.WordParser;
 import org.apdplat.qa.questiontypeanalysis.patternbased.MainPartExtracter;
 import org.apdplat.qa.questiontypeanalysis.patternbased.QuestionStructure;
+import org.apdplat.word.WordSegmenter;
 import org.apdplat.word.segmentation.Word;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,9 +22,7 @@ import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.jt.nlp.util.NlpUtil;
-import com.jt.searchHis.service.impl.SearchHisCleanJob;
 
-import edu.stanford.nlp.ling.LabeledWord;
 
 public class NlpService {
 	private static final Logger LOG = LoggerFactory.getLogger(NlpService.class);
@@ -41,19 +40,20 @@ public class NlpService {
 	}
 
 	/**
-	 * 获得标注词性的主谓宾
+	 * 获得主谓宾，不再标注词性。
+	 * 增加stopword的过滤
 	 * 
 	 * @param question
 	 * @return
 	 */
-	public List<LabeledWord> getMainPartWords(String question) {
+	public List<Word> getMainPartWords(String question) {
 		QuestionStructure qs = mainPartExtracter.getMainPart(question);
 		String mainPart = qs.getMainPart();
 		if(mainPart==null){
 			return null;
 		}
-		List<LabeledWord> list = mainPartExtracter.getPortOfSpeech(mainPart);
-		LOG.info("question=[" + question + "] 标注词性的主谓宾=[" + list + "]");
+		List<Word> list=WordSegmenter.seg(mainPart);
+		LOG.info("question=[" + question + "] 排除停用词之后性的主谓宾=[" + list + "]");
 		return list;
 	}
 
@@ -68,7 +68,7 @@ public class NlpService {
 		// 将问题根据标点符合切分为几个问题
 		List<String> splitedQ = NlpUtil.splitQuestion(question);
 		for (String str : splitedQ) {
-			List<LabeledWord> mainPartWords = getMainPartWords(str);
+			List<Word> mainPartWords = getMainPartWords(str);
 			if(mainPartWords==null){
 				set.add(str);
 			}else{
@@ -100,10 +100,10 @@ public class NlpService {
 	 * @param word
 	 * @return
 	 */
-	private LabeledWord baseFilterWord(LabeledWord word) {
+	private Word baseFilterWord(Word word) {
 		if(word==null)return null;
 		// 词
-		String text = word.value();
+		String text = word.getText();
 		// 过滤只有一个字的词，返回null
 		if (text.length() < 2) {
 			return null;
@@ -113,11 +113,11 @@ public class NlpService {
 	}
 
 	// 处理过滤检索词
-	private Set<String> doFilterWord(List<LabeledWord> mainPartWords) {
+	private Set<String> doFilterWord(List<Word> mainPartWords) {
 		
 
 		Set<String> set = new HashSet<String>();
-		Map<String,LabeledWord> map = new HashMap<String,LabeledWord>();
+		Map<String,Word> map = new HashMap<String,Word>();
 
 		for (int i = 0; i < mainPartWords.size(); i++) {
 			switch (i) {
@@ -130,27 +130,31 @@ public class NlpService {
 			case 2:
 				map.put("O",mainPartWords.get(i));
 				break;
+			default:
+				map.put("other",mainPartWords.get(i));
+				break;
 			}
 		}
 		
-		for (Entry<String,LabeledWord> entry : map.entrySet()) {
+		for (Entry<String,Word> entry : map.entrySet()) {
 			// 必须符合baseFilterWord
-			if (baseFilterWord(entry.getValue()) != null
-					&& remainPartOfSpeech.contains(entry.getValue().tag().value())) {
-				set.add(entry.getValue().word());
+			//&& remainPartOfSpeech.contains(entry.getValue().tag().value())
+			//不再做词性过滤，主谓宾都作为搜索词提交
+			if (baseFilterWord(entry.getValue()) != null) {
+				set.add(entry.getValue().getText());
 			}
 		}
 
-		// 不属于remainPartOfSpeech，则将符合baseFilterWord的宾语放入set，如果宾语不符合baseFilterWord，则将
-		// 符合baseFilterWord的主语放入set，总之谓语不太可能是搜索词。如果都不符合则返回长度为0的set
-		if (set.size() == 0) {
-			// 必须符合baseFilterWord
-			if (baseFilterWord(map.get("O")) != null) {
-				set.add(map.get("O").word());
-			}else if (baseFilterWord(map.get("S")) != null){
-				set.add(map.get("S").word());
-			}
-		}
+//		// 不属于remainPartOfSpeech，则将符合baseFilterWord的宾语放入set，如果宾语不符合baseFilterWord，则将
+//		// 符合baseFilterWord的主语放入set，总之谓语不太可能是搜索词。如果都不符合则返回长度为0的set
+//		if (set.size() == 0) {
+//			// 必须符合baseFilterWord
+//			if (baseFilterWord(map.get("O")) != null) {
+//				set.add(map.get("O").word());
+//			}else if (baseFilterWord(map.get("S")) != null){
+//				set.add(map.get("S").word());
+//			}
+//		}
 		return set;
 	}
 	/**

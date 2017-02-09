@@ -54,6 +54,14 @@ public class KeyWordAct {
 		renderJson(response, json.toString());
 
 	}
+	@RequestMapping("/ajaxState.do")
+	public  void  ajaxState(HttpServletRequest request,
+			HttpServletResponse response) throws JSONException{
+		JSONObject json = new JSONObject();
+        json.put("isWordRun", ParamUtil.isWordRun);
+        
+		renderJson(response, json.toString());
+	}
 	
 	/**
 	 * 左侧单击事件

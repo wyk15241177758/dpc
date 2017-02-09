@@ -141,7 +141,10 @@
 									<a class="btn btn-info btn-sm btn-warn" onclick="start()" href="#">
 										<i class="glyphicon glyphicon-play icon-white" ></i>手工启动打标任务
 									</a>
-									
+									&nbsp;&nbsp;&nbsp;&nbsp;
+									<a class="btn btn-info btn-sm" id="taskStatus"  href="#">
+										<i class="glyphicon glyphicon-remove-circle icon-white" ></i>打标任务状态：停止
+									</a>
 									
 							     </div>
 							</div>
@@ -468,6 +471,8 @@
         <script src='js/jquery.dataTables.min.js'></script>
 		<script src="js/common.js"></script>
         <script type="text/javascript">
+        var timerID = null;
+    	var timerRunning = false;
         var  rootPath="/QASystem"
         function   initLeft(){
        	 $.ajax({
@@ -1250,9 +1255,40 @@
 				         $("#startModal").modal('hide');
 					     alert("正则执行打标任务！","提示"); 
 						 }
+						
+					}
+				});
+        	 startclock();
+         }
+         
+         function ajaxState(){
+        	 jQuery.ajax({
+					url:rootPath+"/admin/keyWord/ajaxState.do",
+					type:"POST",
+					dataType:"json",
+					success:function(data){
+						if(data.isWordRun){
+						   $("#taskStatus").html("<i class=\"glyphicon glyphicon-record icon-white\" ></i>打标任务状态：运行")
+						 }
+						else{
+						  $("#taskStatus").html("<i class=\"glyphicon glyphicon-remove-circle icon-white\" ></i>打标任务状态：停止")
+
+						 }
+						timerID = setTimeout("ajaxState()",10000);
+						timerRunning = true;
 					}
 				}); 
          }
+         function startclock () {
+     		stopclock();
+     		ajaxState();
+     	}
+         function stopclock (){
+     		if(timerRunning){
+     			clearTimeout(timerID);
+     		}
+     		timerRunning = false;
+     	}
          
          
          function  closeRelworddiv(){
@@ -1267,12 +1303,13 @@
         	 leftSubmit();
         	// rightSubmit();
         	 initReword();
+        	 startclock ();
         	 $("#relworddiv").css("display","none");
         	 var wt=$(document).width();
         	 if(wt>900){
         		 var left=(wt-900)/2;
             	 $("#relworddiv").css("left",left);
-
+                
         	 }
         });
         

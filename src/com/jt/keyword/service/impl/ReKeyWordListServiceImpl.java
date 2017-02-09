@@ -534,9 +534,9 @@ public class ReKeyWordListServiceImpl implements  RekeyWordListService{
 	}
 	public String  parseDate(String dateStr){
 		if(dateStr==null)
-			return "2017-01-01";
+			return "2017-01-01 01:00:00";
 		long  dataLong=Long.valueOf(dateStr.trim());
-		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date  date=new Date(dataLong);
 
 		return  df.format(date);

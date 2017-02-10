@@ -46,11 +46,12 @@ $(function(){
      $(document).on("mouseover",".tab2_title ul li",function(){
  	    $(this).addClass("slected2").siblings().removeClass("slected2");
  	    var index = $(this).parent().children().index(this)+1;
- 	    $(this).parents(".tab2_title").siblings().children().eq(index).show().siblings().hide(); 
+ 	    $(this).parents(".tab2_title").siblings().children().eq(index).show().siblings().hide();
+ 	   $("#message").getNiceScroll().resize();
      })
 
     //显示滚动条
-     $("#message").niceScroll({cursorborder:"",cursorcolor:"#9e0001",cursoropacitymax:0.5,boxzoom:false});
+     $("#message").niceScroll({cursorborder:"",cursorcolor:"#9e0001",cursoropacitymax:0.5,boxzoom:false,autohidemode:"leave"});
 
     //可输入字数
 	function checkInputCount() {
@@ -186,6 +187,7 @@ var  url="/QASystem/qa/list.html";
 }
 function scrollToBottom(){
 	$("#message").scrollTop(parseInt($("#message")[0].scrollHeight)-parseInt($("#message").css("height")));
+	  $("#message").getNiceScroll().resize();
 }
 
 //追加问题

@@ -27,6 +27,7 @@ public class Article {
 	private String site;
 	private String category;//分类
 	private Date date;
+	private String keyWord;//标签
 	//返回与jtcrawler表的字段对应关系，必须小写
 	public static String getMapedFieldName(String articleField) {
 		if(articleField.equalsIgnoreCase("id")){
@@ -50,8 +51,20 @@ public class Article {
 		if(articleField.equalsIgnoreCase("date")){
 			return "LOAD_TIME";
 		}
+		if(articleField.equalsIgnoreCase("keyWord")){
+			return "KEY_WORD";
+		}
 		return null;
 	}
+	
+	public String getKeyWord() {
+		return keyWord;
+	}
+
+	public void setKeyWord(String keyWord) {
+		this.keyWord = keyWord;
+	}
+
 	public String getChannel() {
 		return channel;
 	}

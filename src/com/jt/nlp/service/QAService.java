@@ -12,8 +12,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -166,7 +166,7 @@ public class QAService {
 	 * @param word
 	 * @return 查询问题是否包含预设场景的词汇，此方法应该在lucene检索和NLP分析之前
 	 */
-	private Set<String> presentScene(String question,Set<String> sceneSjflSet,Map<String,List<Article>> qaResultMap) {
+	private Set<String> presentScene(String question,List<String> sceneSjflList,Map<String,List<Article>> qaResultMap) {
 		Set<String> sceneWordSet = new HashSet<String>();
 		List<String> questionParticleList = nlpService.getParticle(question);
 		List<SceneWord> sceneWordList = sceneWordService.getAllSceneWords();
@@ -180,7 +180,7 @@ public class QAService {
 					//将场景关联的分类放入list，此后的检索只遍历此list（如果有值）
 					String sceneSjfl=sceneWord.getSjfl();
 					if(sceneSjfl!=null&&sceneSjfl.length()>0){
-						sceneSjflSet.addAll(Arrays.asList(sceneSjfl.split(";")));
+						sceneSjflList.addAll(Arrays.asList(sceneSjfl.split(";")));
 					}
 					//是否有关联页面，如果有则按照当前场景的关联分类筛选，不属于当前场景关联页面子类的过滤掉
 					List<ScenePage> pageList=sceneWord.getScenePageList();
@@ -247,9 +247,9 @@ public class QAService {
 		// 预设场景
 		Set<String> sceneWordSet = null;
 		
-		Set<String> sceneSjflSet = new HashSet<String>();
-		Map<String,List<Article>> qaResultMap= new HashMap<String,List<Article>>();
-		sceneWordSet = presentScene(question,sceneSjflSet,qaResultMap);
+		List<String> sceneSjflList = new ArrayList<String>();
+		Map<String,List<Article>> qaResultMap= new LinkedHashMap<String,List<Article>>();
+		sceneWordSet = presentScene(question,sceneSjflList,qaResultMap);
 		questionSet = nlpService.getSearchWords(question);
 		// 未进入预设场景
 		if (sceneWordSet != null && sceneWordSet.size() > 0) {
@@ -297,10 +297,10 @@ public class QAService {
 		boolean isRelevancy = true;
 
 		//存在预设场景关联分类，则遍历指定的分类，否则遍历系统配置的默认分类
-		if(sceneSjflSet.size()>0){
-			for(String str:sceneSjflSet){
-				//赋值分类value
-				searchWord[1]=str;
+		if(sceneSjflList.size()>0){
+			for(String str:sceneSjflList){
+				//赋值分类value，分类也不再分词
+				searchWord[1]="\""+str+"\"";
 				List<Article> rsList=qaResultMap.get(str);
 				if(rsList==null){
 					rsList=new ArrayList<Article>();

@@ -26,6 +26,7 @@ import com.google.gson.GsonBuilder;
 import com.jt.bean.gateway.PageMsg;
 import com.jt.gateway.util.CMyString;
 import com.jt.lucene.Article;
+import com.jt.lucene.DocumentUtils;
 import com.jt.nlp.service.LuceneSearchService;
 import com.jt.nlp.service.NlpService;
 import com.jt.nlp.service.QAService;
@@ -307,4 +308,95 @@ public class QAManager {
 
 		
 	}
+	
+
+	/**
+	 * 智能提示：标签相似检索
+	 * @param request
+	 * @param response
+	 */
+	@RequestMapping(value="simSearch.do")
+	public void simSearch(HttpServletRequest request, HttpServletResponse response) {
+		response.setCharacterEncoding("utf-8");
+		msg=new PageMsg();
+		msg.setSig(false);
+		msg.setMsg("没有检索的结果");
+		PrintWriter pw=null;
+		try {
+			pw=response.getWriter();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+			return;
+		}
+		String title=request.getParameter("title");
+		String sBegin=request.getParameter("begin");
+		String sEnd=request.getParameter("end");
+		
+		
+		List<Document> list_keyWord=null;
+		List<Document> list=null;
+		
+		
+		int iBegin=0;
+		int iEnd=0;
+		try {
+			iBegin=Integer.parseInt(sBegin);
+		}catch(Exception e){
+			iBegin=0;
+		}
+		try {
+			iEnd=Integer.parseInt(sEnd);
+		}catch(Exception e){
+			iEnd=5;
+		}
+		if(title==null||title.trim().length()==0){
+			pw.print(gson.toJson(msg));
+			return;
+		}
+		
+		String[] arrTitle=new String[1];
+		arrTitle[0]=title;
+		Occur[] occurs ={Occur.MUST};
+		//根据标题搜索，获得相关度最高的一篇文档，再根据其标签相似性搜索
+		String [] searchField={Article.getMapedFieldName("title")};
+		String[] sortField=null;
+		SortField.Type[] sortFieldType=null;
+		boolean[] reverse={false};
+		boolean isRelevancy = true;
+		
+		
+		list=qaService.getSearchService().search(arrTitle, occurs, searchField, sortField, sortFieldType, reverse, isRelevancy, iBegin, iEnd);
+		
+		if(list==null||list.size()==0||list.get(0)==null){
+			pw.print(gson.toJson(msg));
+			return;
+		}else{
+			//获得相关度最高的一篇文档，获得其标签
+			String keyWord=DocumentUtils.document2Ariticle(list.get(0)).getKeyWord();
+			if(keyWord==null||keyWord.trim().length()==0){
+				pw.print(gson.toJson(msg));
+				return;
+			}
+			//根据其标签相似性搜索
+			String[] arrKeyWord=keyWord.split(";");
+			occurs =new Occur[arrKeyWord.length];
+			searchField=new String[arrKeyWord.length];
+			for(int i=0;i<arrKeyWord.length;i++){
+				occurs[i]=Occur.SHOULD;
+				searchField[i]=Article.getMapedFieldName("keyWord");
+			}
+			list_keyWord=qaService.getSearchService().search(arrTitle, occurs, searchField, sortField, sortFieldType, reverse, isRelevancy, iBegin, iEnd);
+		}
+		
+		msg.setSig(true);
+
+		if(list_keyWord!=null){
+			msg.setMsg(list_keyWord);
+		}else{
+			msg.setMsg(list);
+		}
+		pw.print(gson.toJson(msg));
+		
+	}
+	
 }

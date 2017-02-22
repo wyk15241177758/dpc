@@ -58,6 +58,7 @@ public class DocumentUtils {
 		article.setCategory(getColumnIgnoreCase(doc, article.getMapedFieldName("category")));
 		article.setChannel(getColumnIgnoreCase(doc, article.getMapedFieldName("channel")));
 		article.setSite(getColumnIgnoreCase(doc, article.getMapedFieldName("site")));
+		article.setKeyWord(getColumnIgnoreCase(doc,article.getMapedFieldName("keyWord")));
 		return article;
 	}
 	public static Document article2Document(Article article){

@@ -33,6 +33,7 @@ import com.jt.nlp.service.QAService;
 import com.jt.searchHis.service.SearchHisRtService;
 
 @Controller
+@RequestMapping("/web")
 
 public class QAManager {
 	private static Logger logger = Logger.getLogger(QAManager.class);
@@ -247,7 +248,7 @@ public class QAManager {
 		response.setCharacterEncoding("utf-8");
 		msg=new PageMsg();
 		msg.setSig(false);
-		msg.setMsg("没有检索的结果");
+		msg.setMsg("没有检索到结果");
 		PrintWriter pw=null;
 		try {
 			pw=response.getWriter();
@@ -320,7 +321,7 @@ public class QAManager {
 		response.setCharacterEncoding("utf-8");
 		msg=new PageMsg();
 		msg.setSig(false);
-		msg.setMsg("没有检索的结果");
+		msg.setMsg("没有到检索结果");
 		PrintWriter pw=null;
 		try {
 			pw=response.getWriter();

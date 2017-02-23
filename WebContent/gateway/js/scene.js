@@ -199,7 +199,7 @@ function showSearchPreview(curOutWords){
 			"isSplit":"true"
 	}
 	$("#log").html("");
-	$.getJSON("/QASystem/admin/qaSearch.do",param,function(data){
+	$.getJSON("/QASystem/admin/web/qaSearch.do",param,function(data){
 		var template="<div id='previewDiv'><ul>{categoryLi}</ul>{qaDiv}</div>";
 		var categoryLi="";
 		var qaDiv="";

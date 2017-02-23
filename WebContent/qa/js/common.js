@@ -109,7 +109,7 @@ var tipArr=new Array();
 
 //显示提示浮层
 function showTip(){
-	var url="/QASystem/admin/luceneSearch_searchHis.do"
+	var url="/QASystem/admin/web/luceneSearch_searchHis.do"
 	var param={"question":$("#messCon").val(),"isParticle":"true","isShould":"true"}
 	if(param.question==dvalue)return;
 	if($.trim($("#messCon").val()).length>0){
@@ -168,7 +168,7 @@ function qaSearch(question){
 			"end":5,
 			"searchHisId":searchHisId,
 			"isStorgeHis":"true"};
-	$.getJSON("/QASystem/admin/qaSearch.do",param,function(data){
+	$.getJSON("/QASystem/admin/web/qaSearch.do",param,function(data){
 		addAnswer(question,data);
 		scrollToBottom();
 	})	

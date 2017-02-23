@@ -24,8 +24,7 @@
   </filter>
   <filter-mapping>
     <filter-name>accessControl</filter-name>
-    <url-pattern>/admin/qaSearch.do</url-pattern>
-    <url-pattern>/admin/luceneSearch_searchHis.do</url-pattern>
+    <url-pattern>/admin/web/*</url-pattern>
     <dispatcher>REQUEST</dispatcher>
     <dispatcher>FORWARD</dispatcher>
   </filter-mapping>

@@ -335,7 +335,7 @@ public class QAManager {
 		
 		List<Document> list_keyWord=null;
 		List<Document> list=null;
-		
+		List<Article> list_rs=new ArrayList<Article>();
 		
 		int iBegin=0;
 		int iEnd=0;
@@ -345,7 +345,8 @@ public class QAManager {
 			iBegin=0;
 		}
 		try {
-			iEnd=Integer.parseInt(sEnd);
+			//排除自己，所以多搜索一条
+			iEnd=Integer.parseInt(sEnd)+1;
 		}catch(Exception e){
 			iEnd=5;
 		}
@@ -359,13 +360,13 @@ public class QAManager {
 		Occur[] occurs ={Occur.MUST};
 		//根据标题搜索，获得相关度最高的一篇文档，再根据其标签相似性搜索
 		String [] searchField={Article.getMapedFieldName("title")};
-		String[] sortField=null;
-		SortField.Type[] sortFieldType=null;
-		boolean[] reverse={false};
+		String[] orderField={Article.getMapedFieldName("date")};
+		SortField.Type[] orderFieldType={SortField.Type.LONG};
+		boolean[] reverse={true};
 		boolean isRelevancy = true;
 		
 		
-		list=qaService.getSearchService().search(arrTitle, occurs, searchField, sortField, sortFieldType, reverse, isRelevancy, iBegin, iEnd);
+		list=qaService.getSearchService().search(arrTitle, occurs, searchField, orderField, orderFieldType, reverse, isRelevancy, iBegin, iEnd);
 		
 		if(list==null||list.size()==0||list.get(0)==null){
 			pw.print(gson.toJson(msg));
@@ -373,28 +374,35 @@ public class QAManager {
 		}else{
 			//获得相关度最高的一篇文档，获得其标签
 			String keyWord=DocumentUtils.document2Ariticle(list.get(0)).getKeyWord();
-			if(keyWord==null||keyWord.trim().length()==0){
-				pw.print(gson.toJson(msg));
-				return;
+			if(keyWord!=null&&keyWord.trim().length()>0){
+				//根据其标签相似性搜索
+				String[] arrKeyWord=keyWord.split(";");
+				occurs =new Occur[arrKeyWord.length];
+				searchField=new String[arrKeyWord.length];
+				for(int i=0;i<arrKeyWord.length;i++){
+					occurs[i]=Occur.SHOULD;
+					searchField[i]=Article.getMapedFieldName("keyWord");
+				}
+				list_keyWord=qaService.getSearchService().search(arrKeyWord, occurs, searchField, orderField, orderFieldType, reverse, isRelevancy, iBegin, iEnd);
 			}
-			//根据其标签相似性搜索
-			String[] arrKeyWord=keyWord.split(";");
-			occurs =new Occur[arrKeyWord.length];
-			searchField=new String[arrKeyWord.length];
-			for(int i=0;i<arrKeyWord.length;i++){
-				occurs[i]=Occur.SHOULD;
-				searchField[i]=Article.getMapedFieldName("keyWord");
-			}
-			list_keyWord=qaService.getSearchService().search(arrTitle, occurs, searchField, sortField, sortFieldType, reverse, isRelevancy, iBegin, iEnd);
 		}
 		
-		msg.setSig(true);
 
-		if(list_keyWord!=null){
-			msg.setMsg(list_keyWord);
+		//有标签的就显示标签 最相近且时间最新的几个数据，如果没有标签则相似性检索，也按照时间排序
+		if(list_keyWord!=null&&list_keyWord.size()!=0){
+			DocumentUtils.transCollection(list_keyWord, list_rs);
 		}else{
-			msg.setMsg(list);
+			DocumentUtils.transCollection(list, list_rs);
 		}
+		//排除自己，只删除一条
+		for(int i=0;i<list_rs.size();i++){
+			if(list_rs.get(i).getTitle().equalsIgnoreCase(title)){
+				list_rs.remove(i);
+				break;
+			}
+		}
+		msg.setSig(true);
+		msg.setMsg(list_rs);
 		pw.print(gson.toJson(msg));
 		
 	}

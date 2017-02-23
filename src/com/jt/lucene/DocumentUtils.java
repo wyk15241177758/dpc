@@ -1,6 +1,7 @@
 package com.jt.lucene;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
@@ -71,7 +72,25 @@ public class DocumentUtils {
 		doc.add(new Field(article.getMapedFieldName("category"),article.getCategory(),TextField.TYPE_STORED));
 		SimpleDateFormat sdf=new SimpleDateFormat();
 		doc.add(new Field(article.getMapedFieldName("date"),sdf.format(article.getDate()),TextField.TYPE_STORED));
+		doc.add(new Field(article.getMapedFieldName("keyWord"),article.getKeyWord(),TextField.TYPE_STORED));
 		return doc;
+	}
+
+	/**
+	 * 根据集合是否siz为空相互转化
+	 * @param docCol
+	 * @param artCol
+	 */
+	public static void transCollection(Collection<Document> docCol,Collection<Article> artCol){
+		if(docCol.size()==0){
+			for(Article art:artCol){
+				docCol.add(article2Document(art));
+			}
+		}else{
+			for(Document doc:docCol){
+				artCol.add(document2Ariticle(doc));
+			}
+		}
 	}
 	
 	//字段映射，方便后续统一修改

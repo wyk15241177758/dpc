@@ -404,9 +404,10 @@ public class QAManager {
 				break;
 			}
 		}
-		msg.setSig(true);
 		map_rs.put("keyWord", keyWord);
 		map_rs.put("list", list_rs);
+		msg.setSig(true);
+		msg.setMsg(map_rs);
 		pw.print(gson.toJson(msg));
 		
 	}

@@ -337,6 +337,8 @@ public class QAManager {
 		List<Document> list_keyWord=null;
 		List<Document> list=null;
 		List<Article> list_rs=new ArrayList<Article>();
+		Map<Object,Object> map_rs=new HashMap<Object,Object>();
+		String keyWord="";
 		
 		int iBegin=0;
 		int iEnd=0;
@@ -374,7 +376,7 @@ public class QAManager {
 			return;
 		}else{
 			//获得相关度最高的一篇文档，获得其标签
-			String keyWord=DocumentUtils.document2Ariticle(list.get(0)).getKeyWord();
+			keyWord=DocumentUtils.document2Ariticle(list.get(0)).getKeyWord();
 			if(keyWord!=null&&keyWord.trim().length()>0){
 				//根据其标签相似性搜索
 				String[] arrKeyWord=keyWord.split(";");
@@ -403,7 +405,8 @@ public class QAManager {
 			}
 		}
 		msg.setSig(true);
-		msg.setMsg(list_rs);
+		map_rs.put("keyWord", keyWord);
+		map_rs.put("list", list_rs);
 		pw.print(gson.toJson(msg));
 		
 	}

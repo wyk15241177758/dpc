@@ -35,6 +35,24 @@ public class JsoupTest {
 		}
 	}
 		
+	public void getChanged2(Element e){
+		Elements children=e.children();
+		if(children==null||children.size()==0){
+			if(e.tagName().equalsIgnoreCase("qa_loop")){
+				e.after("替换成功");
+				e.remove();
+			}
+		}else{
+			for(int i=0;i<children.size();i++){
+				if(i<children.size()){
+					Element curElement=children.get(i);
+					getChanged2(curElement);
+				}else{
+					return;
+				}
+			}
+		}
+	}
 
 	@Test
 	public void test() {
@@ -46,8 +64,8 @@ public class JsoupTest {
 			e1.printStackTrace();
 		}
 		
-		getChanged(doc);
-		System.out.println(doc.getElementsByTag("body").get(0));
+		getChanged2(doc);
+		System.out.println(doc);
 	}
 
 	// for(int i=0;i<loops.size();i++){

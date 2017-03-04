@@ -9,8 +9,8 @@
 <title>Insert title here</title>
 </head>
 <body>
-<c:out value="${keyWords}"/>
- <c:forEach var="fuwa" items="${keyWords}">
+<c:out value="${keywords}"/>
+ <c:forEach var="fuwa" items="${keywords}">
      <c:out value="${fuwa}"/><br>
      </c:forEach>
 </body>

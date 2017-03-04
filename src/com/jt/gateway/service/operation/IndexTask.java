@@ -179,10 +179,9 @@ public class IndexTask extends ApplicationObjectSupport implements Job {
 							"date".equalsIgnoreCase(columnTypeMap.get(df.getName()))||
 							"timestamp".equalsIgnoreCase(columnTypeMap.get(df.getName()))){
 						try {
-							SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:SS");
+							SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
 							indexDao.addLongPoint(doc, df.getName(),sdf.parse(map.get(df.getName()).toString()).getTime());
 						} catch (Exception e) {
-							e.printStackTrace();
 							e.printStackTrace();
 							logger.error("转换long/date类型错误 id=["+df.getName()+"]");
 						}

@@ -3,6 +3,8 @@ var noResult="未找到您要的信息，建议您进入“<a href='http://www.b
 //控制默认提示内容
 var dvalue = "简单输入，精准信息即刻展现~";
 
+//新闻类型名
+var xinwen="新闻中心"
 
 $(function(){
 	
@@ -102,7 +104,27 @@ $(function(){
   	}
   })
 
+  //获得url参数，自动检索
+  var paramQuestion=getUrlParam("question");
+  if(paramQuestion!=null&&paramQuestion.length>0){
+	  $("#messCon").val(decodeURIComponent(paramQuestion));
+	  $("#sendMess").click();
+  }
 
+  //隐藏展开答案
+  $(".onoff").click(function(){
+	  var status=$(this).attr("status");
+	  if("on"==status){
+		  $(this).attr("status","off");
+		  $(this).css("background-image","images/chat_close.png");
+		  $(this).parent("ul").siblings("div").css("dispaly","none");
+	  }else{
+		  $(this).attr("status","on");
+		  $(this).css("background-image","images/chat_open.png");
+		  $(this).parent("ul").siblings("div").css("dispaly","");
+	  }
+	  
+  })
 })
 
 var tipArr=new Array();
@@ -165,7 +187,7 @@ function qaSearch(question){
 	var param={
 			"question":encodeURIComponent(question),
 			"begin":0,
-			"end":5,
+			"end":10,
 			"searchHisId":searchHisId,
 			"isStorgeHis":"true"};
 	$.getJSON("/QASystem/admin/web/qaSearch.do",param,function(data){
@@ -192,22 +214,61 @@ function scrollToBottom(){
 
 //追加问题
 function addQuestion(question){
-	var template="  <ul class='dialog'> <img src='images/left_arrow.gif' class='left_arrow'/> <li class='center'>{question}</li>  </ul>";
+	var template="  <ul class='dialog'> <li class='center'>{question}</li>  <div class='onoff' status='on'></div></ul>";
 	template=template.replace(/\{question\}/g,question);
 	$("#message").append(template);
 	//移动滚动条
 	scrollToBottom();
 }
+//适用于$page $page[n-n:n]
+function changeChnlUrl(url){
+	return url.replace(/\$page\[(.*?)-.*?\]/,"$1").replace(/\$page/,"1");
+}
+
+function getChannels(msg){
+	var channelObj={};
+	for(i in msg){
+		for(var j=0;j<msg[i].length;j++){
+			if(typeof(msg[i][j].channel)!='undefined'&&typeof(msg[i][j].channelUrl)!='undefined'){
+				msg[i][j].channel=msg[i][j].channel.replace(/[^a-zA-Z0-9_\u4e00-\u9fa5]/ig,"");
+				if(typeof(channelObj[msg[i][j].channel])=='undefined'){
+					channelObj[msg[i][j].channel]={
+							"channel":msg[i][j].channel,
+							"channelUrl":changeChnlUrl(msg[i][j].channelUrl),
+							"num":1
+					}
+				}else{
+					channelObj[msg[i][j].channel].num++;
+				}
+			}
+			
+		}
+	}
+	return channelObj;
+}
+
 function addAnswer(question,qaMsg){
-	var template="<div class='dialog_tab'><div><img src='images/robot.png' class='answer_man' width='40' height='40'/><img src='images/right_arrow.gif' class='right_arrow'/><div class='right_arrow'></div><p>您的问题是：<span>{question}</span>,我为您找到了以下答案:</p><div class='tab2_title'><ul>{categoryLi}</ul></div><div class='tab2_content'>{qaDiv}</div></div></div>";
+	var template="<div class='dialog_tab'>{channelLi}<div><img src='images/robot.png' class='answer_man' width='40' height='40'/><img src='images/right_arrow.gif' class='right_arrow'/><div class='right_arrow'></div><p>您的问题是：<span>{question}</span>,我为您找到了以下答案:</p><div class='tab2_title'><ul>{categoryLi}</ul></div><div class='tab2_content'>{qaDiv}</div></div></div>";
 	
 	template=template.replace(/\{question\}/g,question);
 	var categoryLi="";
 	var qaDiv="";
-	
+	var channelLi="";
 	var msg=qaMsg.msg;
 	var index=0;
 	if(qaMsg.sig){
+		var channelObj=getChannels(msg);
+		for(i in channelObj){
+			if(channelLi.length==0){
+				channelLi="<a href='"+channelObj[i].channelUrl+"' target='_blank'>"+channelObj[i].channel+"("+channelObj[i].num+")</a>"
+				
+			}else{
+				channelLi+="-<a href='"+channelObj[i].channelUrl+"' target='_blank'>"+channelObj[i].channel+"("+channelObj[i].num+")</a>"
+			}
+		}
+		if(channelLi.length!=0){
+			channelLi="<p><strong>栏目导航</strong></p><ul class='news chnl'><li>"+channelLi+"</li></ul>"
+		}
 		for(i in msg){
 			if(msg[i].length==0){
 				continue;
@@ -223,9 +284,15 @@ function addAnswer(question,qaMsg){
 						curQaDiv+=msg[i][j].html;
 					}else{
 						if(msg[i][j].url.indexOf("http")==-1){
-							curQaLi+="<li><a href='http://"+msg[i][j].url+"' target='_blank'>"+msg[i][j].title+"</a></li>"
+							curQaLi+="<li><a href='http://"+msg[i][j].url+"' target='_blank'>"+msg[i][j].title+"</a>{date}</li>"
 						}else{
-							curQaLi+="<li><a href='"+msg[i][j].url+"' target='_blank'>"+msg[i][j].title+"</a></li>"
+							curQaLi+="<li><a href='"+msg[i][j].url+"' target='_blank'>"+msg[i][j].title+"</a>{date}</li>"
+						}
+						//新闻类型的显示时间
+						if(i==xinwen&&msg[i][j].date!=undefined){
+							curQaLi=curQaLi.replace(/\{date\}/g,"<span>"+msg[i][j].date+"</span>");
+						}else{
+							curQaLi=curQaLi.replace(/\{date\}/g,"");
 						}
 					}
 				}
@@ -238,9 +305,15 @@ function addAnswer(question,qaMsg){
 						curQaDiv+=msg[i][j].html;
 					}else{
 						if(msg[i][j].url.indexOf("http")==-1){
-							curQaLi+="<li><a href='http://"+msg[i][j].url+"' target='_blank'>"+msg[i][j].title+"</a></li>"
+							curQaLi+="<li><a href='http://"+msg[i][j].url+"' target='_blank'>"+msg[i][j].title+"</a>{date}</li>"
 						}else{
-							curQaLi+="<li><a href='"+msg[i][j].url+"' target='_blank'>"+msg[i][j].title+"</a></li>"
+							curQaLi+="<li><a href='"+msg[i][j].url+"' target='_blank'>"+msg[i][j].title+"</a>{date}</li>"
+						}
+						//新闻类型的显示时间
+						if(i==xinwen&&msg[i][j].date!=undefined){
+							curQaLi=curQaLi.replace(/\{date\}/g,"<span>"+msg[i][j].date+"</span>");
+						}else{
+							curQaLi=curQaLi.replace(/\{date\}/g,"");
 						}
 					}
 				}
@@ -254,6 +327,8 @@ function addAnswer(question,qaMsg){
 	
 	template=template.replace(/\{categoryLi\}/g,categoryLi);
 	template=template.replace(/\{qaDiv\}/g,qaDiv);
+	template=template.replace(/\{channelLi\}/g,channelLi);
+	
 	$("#message").append(template);
 	//移动滚动条
 	scrollToBottom();
@@ -273,7 +348,7 @@ function setTab(m,n){
 function getUrlParam(name) {
     var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
     var r = window.location.search.substr(1).match(reg);  //匹配目标参数
-    if (r != null) return unescape(r[2]); return null; //返回参数值
+    if (r != null) return r[2]; return null; //返回参数值
 }
 
 var decToHex = function(str) {

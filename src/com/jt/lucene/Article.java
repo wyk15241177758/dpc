@@ -24,6 +24,7 @@ public class Article {
 	//预设页面的html
 	private String html;
 	private String channel;
+	private String channelUrl;
 	private String site;
 	private String category;//分类
 	private Date date;
@@ -42,6 +43,9 @@ public class Article {
 		if(articleField.equalsIgnoreCase("channel")){
 			return "LM_NAME";
 		}
+		if(articleField.equalsIgnoreCase("channelUrl")){
+			return "ZDLM_URL";
+		}
 		if(articleField.equalsIgnoreCase("site")){
 			return "ZD_NAME";
 		}
@@ -49,7 +53,7 @@ public class Article {
 			return "SJFL";
 		}
 		if(articleField.equalsIgnoreCase("date")){
-			return "LOAD_TIME";
+			return "XQ_PUDATE";
 		}
 		if(articleField.equalsIgnoreCase("keyWord")){
 			return "KEY_WORD";
@@ -57,6 +61,14 @@ public class Article {
 		return null;
 	}
 	
+	public String getChannelUrl() {
+		return channelUrl;
+	}
+
+	public void setChannelUrl(String channelUrl) {
+		this.channelUrl = channelUrl;
+	}
+
 	public String getKeyWord() {
 		return keyWord;
 	}

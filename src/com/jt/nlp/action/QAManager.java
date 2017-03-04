@@ -19,6 +19,7 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.SortField;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.google.gson.Gson;
@@ -411,5 +412,22 @@ public class QAManager {
 		pw.print(gson.toJson(msg));
 		
 	}
+	
+	@RequestMapping(value={"/simSearch2.do"})
+	public  String  simSearch2(HttpServletRequest request,HttpServletResponse response, ModelMap model){
+		List<String> keyWords=new ArrayList<String>();
+		List<String> docs=new ArrayList<String>();
+		keyWords.add("标签1");
+		keyWords.add("标签2");
+		keyWords.add("标签3");
+		docs.add("标题1");
+		docs.add("标题2");
+		docs.add("标题3");
+		model.addAttribute("keywords", keyWords);
+		model.addAttribute("docs", docs);
+		model.addAttribute("success", false);
+				return "hello";
+	}
+	
 	
 }

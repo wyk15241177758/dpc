@@ -2,6 +2,8 @@ package com.jt.test.jsoup;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -54,6 +56,65 @@ public class JsoupTest {
 		}
 	}
 
+	//替换qa
+	public void changeQa(Element element){
+		String sNum=element.attr("num");
+		String sStart=element.attr("startpos");
+		int num=0;
+		int start=0;
+		try {
+			num=Integer.parseInt(sNum);
+		} catch (Exception e) {
+			System.out.println("num转换失败，使用默认值0");
+		}
+		try {
+			start=Integer.parseInt(sStart);
+		} catch (Exception e) {
+			System.out.println("startpos转换失败，使用默认值0");
+		}
+		
+		for(int i=start;i<num;i++){
+			element.after(element.html());
+		}
+		element.remove();
+	}
+	
+	
+	//获得最内侧的qa_loop
+	public List<Element> getInnerQa(Element element){
+		Elements qaLoops=element.getElementsByTag("qa_loop");
+		List<Element> innerQa=new ArrayList<Element>();
+		
+		for(int i=0;i<qaLoops.size();i++){
+			boolean flag=true;
+			Element curElement=qaLoops.get(i);
+			Elements elements=curElement.getAllElements();
+			for(Element ee:elements){
+				if(ee!=curElement){
+					if(ee.tagName().equalsIgnoreCase("qa_loop")){
+						flag=false;
+						break;
+					}
+				}
+			}
+			if(flag){
+				innerQa.add(curElement);
+			}
+		}
+		return innerQa;
+	}
+	
+	public void getChanged3(Element element){
+		while(element.getElementsByTag("qa_loop").size()>0){
+			List<Element> list=getInnerQa(element);
+			for(Element curElement:list){
+				changeQa(curElement);
+			}
+		}
+	}
+	
+	
+	
 	@Test
 	public void test() {
 		File input = new File("D://test.html");
@@ -63,16 +124,33 @@ public class JsoupTest {
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-		
-		getChanged2(doc);
+		getChanged3(doc);
 		System.out.println(doc);
+//		Elements qaLoops=doc.getElementsByTag("qa_loop");
+//		List<Element> innerQa=new ArrayList<Element>();
+//		
+//		for(int i=0;i<qaLoops.size();i++){
+//			boolean flag=true;
+//			Element curElement=qaLoops.get(i);
+//			Elements elements=curElement.getAllElements();
+//			for(Element ee:elements){
+//				if(ee!=curElement){
+//					if(ee.tagName().equalsIgnoreCase("qa_loop")){
+//						flag=false;
+//						break;
+//					}
+//				}
+//			}
+//			if(flag){
+//				innerQa.add(curElement);
+//			}
+//		}
+//		
+//		for(int i=0;i<innerQa.size();i++){
+//			System.out.println("i=["+i+"] element=["+innerQa.get(i)+"]");
+//		}
+		
 	}
-
-	// for(int i=0;i<loops.size();i++){
-	// System.out.println("i=["+i+"] \nloop=["+loops.get(i)+"]");
-	// }
-	// Element e=getInnerLoop(doc);
-	// System.out.println(e.html());
 
 	public static void main(String[] args) throws IOException {
 		File input = new File("D://test.html");

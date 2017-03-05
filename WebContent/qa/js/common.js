@@ -98,9 +98,13 @@ $(function(){
   	if(mess == ""){
   		return false;
   	}else{
-  		//$("#message").append("<div>" + mess + "</div>");
   		$("#messCon").val("");
-  		qaSearch(mess)
+  		//附加本次答案之前隐藏之前的答案
+  		$(".onoff").each(function(){
+  			toggleDialog($(this),"off")
+  		})
+  		qaSearch(mess);
+  		
   	}
   })
 
@@ -112,20 +116,69 @@ $(function(){
   }
 
   //隐藏展开答案
-  $(".onoff").click(function(){
-	  var status=$(this).attr("status");
-	  if("on"==status){
-		  $(this).attr("status","off");
-		  $(this).css("background-image","images/chat_close.png");
-		  $(this).parent("ul").siblings("div").css("dispaly","none");
-	  }else{
-		  $(this).attr("status","on");
-		  $(this).css("background-image","images/chat_open.png");
-		  $(this).parent("ul").siblings("div").css("dispaly","");
-	  }
-	  
+  $(document).on("click",".onoff",function(){
+	  toggleDialog($(this))
+  })
+  
+  
+  
+  //收藏结果
+  $(".dialog_tab").rightClick(function(e){
+	  $(".tipDiv2 ul").empty().append("<li><a href='#'>清空</a></li><li><a href='#'>收藏结果</a></li>");
+	  $(".tipDiv2").css("display","block");
+	  $(".tipDiv2").css("top",e.pageY+5);
+	  $(".tipDiv2").css("left",e.pageX+15);
+	  stopPropagation(e) //停止dom事件层次传播
+  })
+  
+  //显示清空浮层
+  $("#message").rightClick(function(e){
+	  $(".tipDiv2 ul").empty().append("<li><a href='#'>清空</a></li>");
+	  $(".tipDiv2").css("display","block");
+	  $(".tipDiv2").css("top",e.pageY+5);
+	  $(".tipDiv2").css("left",e.pageX+15);
+  })
+  
+  //隐藏清空浮层
+  $("#message").click(function(e){
+	  if (3 != e.which) {
+		  $(".tipDiv2").css("display","none");
+		}
+  })
+  //清空浮层绑定事件
+  $(".tipDiv2 a").click(function(){
+	  $(".tipDiv2").css("display","none");
+	  $("#message").empty()
   })
 })
+
+function toggleDialog(obj,paramStatus){
+	var toStatus="";
+	//未传入paramStatus参数，获得当前obj的status，toggle
+	if(typeof(paramStatus)=='undefined'||paramStatus==null){
+		  var status=obj.attr("status");
+		  if(status=="on"){
+			  toStatus="off";
+		  }else{
+			  toStatus="on";
+		  }
+	}else{
+		toStatus=paramStatus;
+	}
+	
+	if(toStatus=="off"){
+		  obj.attr("status","off");
+		  obj.css("background-image","url('images/chat_close.png')");
+		  obj.parent("ul").next("div").css("display","none");
+	  }else{
+		  obj.attr("status","on");
+		  obj.css("background-image","url('images/chat_open.png')");
+		  obj.parent("ul").next("div").css("display","");
+	  }
+	
+}
+
+
 
 var tipArr=new Array();
 

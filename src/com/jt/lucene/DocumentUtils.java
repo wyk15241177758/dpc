@@ -44,8 +44,8 @@ public class DocumentUtils {
 			try {
 				article.setDate(new Date(Long.parseLong(time)));
 			} catch (NumberFormatException e) {
-				System.out.println("转换为long型失败，time=["+time+"]尝试转为Data类型");
-				SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:SS");
+				System.out.println("转换为long型失败，time=["+time+"]尝试转为Date类型");
+				SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
 				try {
 					article.setDate(sdf.parse(time));
 				} catch (ParseException e1) {
@@ -58,6 +58,7 @@ public class DocumentUtils {
 		}
 		article.setCategory(getColumnIgnoreCase(doc, article.getMapedFieldName("category")));
 		article.setChannel(getColumnIgnoreCase(doc, article.getMapedFieldName("channel")));
+		article.setChannelUrl(getColumnIgnoreCase(doc, article.getMapedFieldName("channelUrl")));
 		article.setSite(getColumnIgnoreCase(doc, article.getMapedFieldName("site")));
 		article.setKeyWord(getColumnIgnoreCase(doc,article.getMapedFieldName("keyWord")));
 		return article;
@@ -68,6 +69,7 @@ public class DocumentUtils {
 		doc.add(new Field(article.getMapedFieldName("title"),article.getTitle(),TextField.TYPE_STORED));
 		doc.add(new Field(article.getMapedFieldName("url"),article.getUrl(),TextField.TYPE_STORED));
 		doc.add(new Field(article.getMapedFieldName("channel"),article.getChannel(),TextField.TYPE_STORED));
+		doc.add(new Field(article.getMapedFieldName("channelUrl"),article.getChannelUrl(),TextField.TYPE_STORED));
 		doc.add(new Field(article.getMapedFieldName("site"),article.getSite(),TextField.TYPE_STORED));
 		doc.add(new Field(article.getMapedFieldName("category"),article.getCategory(),TextField.TYPE_STORED));
 		SimpleDateFormat sdf=new SimpleDateFormat();

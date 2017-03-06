@@ -19,6 +19,7 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.SortField;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.google.gson.Gson;
@@ -45,7 +46,7 @@ public class QAManager {
 	private SearchHisRtService searchHisRtService;
 	private LuceneSearchService searchService_searchHis;
 	public QAManager(){
-		gson= new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
+		gson= new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
 	}
 	public SearchHisRtService getSearchHisRtService() {
 		return searchHisRtService;
@@ -316,8 +317,8 @@ public class QAManager {
 	 * @param request
 	 * @param response
 	 */
-	@RequestMapping(value="simSearch.do")
-	public void simSearch(HttpServletRequest request, HttpServletResponse response) {
+	@RequestMapping(value="simSearchJson.do")
+	public void simSearchJson(HttpServletRequest request, HttpServletResponse response) {
 		response.setCharacterEncoding("utf-8");
 		msg=new PageMsg();
 		msg.setSig(false);
@@ -411,5 +412,96 @@ public class QAManager {
 		pw.print(gson.toJson(msg));
 		
 	}
+	
+	@RequestMapping(value={"/simSearch.do"})
+	public  String  simSearch(HttpServletRequest request,HttpServletResponse response, ModelMap model){
+		
+		msg=new PageMsg();
+		msg.setSig(false);
+		msg.setMsg("没有到检索结果");
+		
+		String title=request.getParameter("title");
+		String sBegin=request.getParameter("begin");
+		String sEnd=request.getParameter("end");
+		
+		
+		List<Document> list_keyWord=null;
+		List<Document> list=null;
+		List<Article> list_rs=new ArrayList<Article>();
+		Map<Object,Object> map_rs=new HashMap<Object,Object>();
+		String keyWord="";
+		
+		int iBegin=0;
+		int iEnd=0;
+		try {
+			iBegin=Integer.parseInt(sBegin);
+		}catch(Exception e){
+			iBegin=0;
+		}
+		try {
+			//排除自己，所以多搜索一条
+			iEnd=Integer.parseInt(sEnd)+1;
+		}catch(Exception e){
+			iEnd=5;
+		}
+		if(title==null||title.trim().length()==0){
+			model.addAttribute("msg",msg);
+			return "simSearch";
+		}
+		
+		String[] arrTitle=new String[1];
+		arrTitle[0]=title;
+		Occur[] occurs ={Occur.MUST};
+		//根据标题搜索，获得相关度最高的一篇文档，再根据其标签相似性搜索
+		String [] searchField={Article.getMapedFieldName("title")};
+		String[] orderField={Article.getMapedFieldName("date")};
+		SortField.Type[] orderFieldType={SortField.Type.LONG};
+		boolean[] reverse={true};
+		boolean isRelevancy = true;
+		
+		
+		list=qaService.getSearchService().search(arrTitle, occurs, searchField, orderField, orderFieldType, reverse, isRelevancy, iBegin, iEnd);
+		
+		if(list==null||list.size()==0||list.get(0)==null){
+			model.addAttribute("msg",msg);
+			return "simSearch";
+		}else{
+			//获得相关度最高的一篇文档，获得其标签
+			keyWord=DocumentUtils.document2Ariticle(list.get(0)).getKeyWord();
+			if(keyWord!=null&&keyWord.trim().length()>0){
+				//根据其标签相似性搜索
+				String[] arrKeyWord=keyWord.split(";");
+				occurs =new Occur[arrKeyWord.length];
+				searchField=new String[arrKeyWord.length];
+				for(int i=0;i<arrKeyWord.length;i++){
+					occurs[i]=Occur.SHOULD;
+					searchField[i]=Article.getMapedFieldName("keyWord");
+				}
+				list_keyWord=qaService.getSearchService().search(arrKeyWord, occurs, searchField, orderField, orderFieldType, reverse, isRelevancy, iBegin, iEnd);
+			}
+		}
+		
+
+		//有标签的就显示标签 最相近且时间最新的几个数据，如果没有标签则相似性检索，也按照时间排序
+		if(list_keyWord!=null&&list_keyWord.size()!=0){
+			DocumentUtils.transCollection(list_keyWord, list_rs);
+		}else{
+			DocumentUtils.transCollection(list, list_rs);
+		}
+		//排除自己，只删除一条
+		for(int i=0;i<list_rs.size();i++){
+			if(list_rs.get(i).getTitle().equalsIgnoreCase(title)){
+				list_rs.remove(i);
+				break;
+			}
+		}
+		map_rs.put("keyWord", keyWord);
+		map_rs.put("list", list_rs);
+		msg.setSig(true);
+		msg.setMsg(map_rs);
+		model.addAttribute("msg",msg);
+				return "simSearch";
+	}
+	
 	
 }

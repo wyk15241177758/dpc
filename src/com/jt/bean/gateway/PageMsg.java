@@ -8,7 +8,7 @@ public class PageMsg {
 		
 	}
 	
-	public PageMsg(boolean sig, String msg) {
+	public PageMsg(boolean sig, Object msg) {
 		super();
 		this.sig = sig;
 		this.msg = msg;
@@ -19,15 +19,15 @@ public class PageMsg {
 	public void setSig(boolean sig) {
 		this.sig = sig;
 	}
-	public String getMsg() {
-		return msg.toString();
+
+	public Object getMsg() {
+		return msg;
 	}
-	public void setMsg(String msg) {
-		this.msg = msg;
-	}
+
 	public void setMsg(Object msg) {
 		this.msg = msg;
 	}
+
 	@Override
 	public String toString() {
 		return "PageMsg [sig=" + sig + ", msg=" + msg + "]";

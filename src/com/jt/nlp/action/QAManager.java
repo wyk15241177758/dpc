@@ -28,6 +28,7 @@ import com.jt.bean.gateway.PageMsg;
 import com.jt.gateway.util.CMyString;
 import com.jt.lucene.Article;
 import com.jt.lucene.DocumentUtils;
+import com.jt.lucene.LuceneUtils;
 import com.jt.nlp.service.LuceneSearchService;
 import com.jt.nlp.service.NlpService;
 import com.jt.nlp.service.QAService;
@@ -449,6 +450,8 @@ public class QAManager {
 			return "simSearch";
 		}
 		
+		//替换特殊字符
+		title=LuceneUtils.escapeQueryChars(title);		
 		String[] arrTitle=new String[1];
 		arrTitle[0]=title;
 		Occur[] occurs ={Occur.MUST};

@@ -146,7 +146,7 @@ $(function(){
 		}
   })
   //清空浮层绑定事件
-  $(".tipDiv2 a").click(function(){
+  $(document).on("click",".tipDiv2 a",function(){
 	  $(".tipDiv2").css("display","none");
 	  $("#message").empty()
   })

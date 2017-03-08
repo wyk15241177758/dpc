@@ -1,5 +1,5 @@
 /* CSS Document */
-html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, a, img, dl, dt, dd, ol, ul, li, form, table { margin:0; padding:0; list-style:none; font-family:"微软雅黑";font-size: 14px; color: #464646;}
+html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, a, img, dl, dt, dd, ol, ul, li, form, table { margin:0; padding:0; list-style:none; font-family:"寰蒋闆呴粦";font-size: 14px; color: #464646;}
 input{ vertical-align:middle; margin:0; padding:0;}
 a { text-decoration:none; color: #464646;}
 a:hover { text-decoration:underline;}
@@ -218,7 +218,7 @@ img{ border: 0;}
 	height: 283px;
 	padding-top: 8px;
 }
-/*20161108修改开始*/
+/*20161108淇敼寮�濮�*/
 .dialog{
 	overflow: hidden;
 	padding-right: 33px;
@@ -227,7 +227,7 @@ img{ border: 0;}
 	position: relative;
 	margin-bottom:10px ;
 }
-/*20161108修改结束*/
+/*20161108淇敼缁撴潫*/
 .dialog li{
 	float: right;
 }
@@ -239,7 +239,7 @@ img{ border: 0;}
 .right{
 	background: url(../images/dialog_r.gif) no-repeat left top;
 }
-/*20161108修改开始*/
+/*20161108淇敼寮�濮�*/
 .center{
 	float: right;
 	background: #FFFFFF;
@@ -247,7 +247,7 @@ img{ border: 0;}
 	padding: 6px;
 	margin-top: 6px;
 }
-/*20161108修改结束*/
+/*20161108淇敼缁撴潫*/
 .bottom{
 	width: 24px;
 	height: 11px;
@@ -267,7 +267,7 @@ img{ border: 0;}
 	position: relative;/*20161108*/
 	margin-right: 33px;/*20161108*/
 }
-/*20161108新增开始*/
+/*20161108鏂板寮�濮�*/
 .answer_man{
 	position: absolute;
 	left: -43px;
@@ -286,7 +286,7 @@ img{ border: 0;}
 .dialog_tab p span{
 	color: #fe5325;
 }
-/*20161108新增结束*/
+/*20161108鏂板缁撴潫*/
 
 .dialog_tab > p{
 	padding: 6px 0;/*20161108*/
@@ -481,7 +481,7 @@ img{ border: 0;}
 }
 
 
-/*列表页*/
+/*鍒楄〃椤�*/
 .con_classify{
 	float: left;
 	width: 213px;
@@ -642,3 +642,146 @@ p.news_tag a span{
 .page a{
 	margin-left: 13px;
 }
+
+
+
+/* 2017.03.06 begin*/
+.dialog_tab .chnl ul li{
+	height: auto !important;
+	white-space:initial !important;
+}
+.tab2_title ul{
+	height: 24px !important;
+}
+.tab2_title ul li{
+	line-height: 25px !important;
+}
+.tab2_content .news li a{
+	font-size: 14px !important;
+}
+.tab2_title ul li{
+	font-size: 14px !important;
+}
+.dialog_tab{
+	-moz-box-shadow: 2px 2px 5px #666;
+	box-shadow: 2px 2px 5px #666;
+}
+.popup{
+	position: absolute;
+	z-index: 9999;
+	width:400px;
+	height:300px;
+	left:50%;
+	top:50%;
+	margin-left: -200px;
+	margin-top: -150px;
+	background:#fff;
+	padding: 20px;
+	border-radius: 4px;
+}
+.popup p{
+	margin-bottom: 14px;
+	clear: both;
+	width: 100%;
+	float: left;
+	color: #7d7d7d !important;
+}
+.popup p span{
+	font-size: 15px;
+}
+.popup p img{
+	float: left;
+	margin-left: 13px;
+}
+.popup input{
+	width: 166px;
+	height: 28px;
+	line-height: 28px;
+	display: block;
+	border: 1px solid #ccc;
+	padding-left: 25px;
+	float: left;
+	color: #7d7d7d;
+}
+.popup_name{
+	float: left;
+	background: url(../images/pop_user.png) no-repeat 5px center;
+}
+.popup_email{
+	float: right !important;
+	background: url(../images/pop_phone.png) no-repeat 5px center;
+}
+.pop_code{
+	padding-left: 10px !important;
+	width: 111px !important;
+}
+.popup textarea{
+	width: 378px;
+	height: 80px;
+	float: left;
+	border: 1px solid #ccc;
+	padding: 10px;
+	color: #7d7d7d;
+}
+.popup_submit{
+	width: 90px;
+	height: 27px;
+	line-height: 27px;
+	background: #fe5325;
+	color: #FFFFFF;
+	font-size: 12px;
+	border: 0;
+	cursor: pointer;
+	border: 0;
+}
+.popup_cancel{
+	background: #ccc !important;
+	margin-left: 13px;
+}
+.page_ico{
+	background: url(../images/pop_page.png) no-repeat left center;
+	padding-left: 25px;
+}
+#show_menu{
+	width: 110px;
+	background: #FFFFFF;
+	text-align: center;
+	padding: 5px 0;
+	-moz-box-shadow: 2px 2px 5px #666;
+	box-shadow: 2px 2px 5px #666;
+}
+#show_menu li{
+	height: 24px;
+	line-height: 24px;
+	border-bottom: 1px solid  #f5f5f5;
+	border-left: 1px solid  #f5f5f5;
+	margin-left: 30px;
+	font-size: 12px !important;
+	position: relative;
+}
+#show_menu li:last-child{
+	border-bottom: 0;
+}
+#show_menu li:hover{
+	background: #ff6a01;
+	color: #FFFFFF;
+	cursor: default;
+}
+.menu_ico{
+	display: block;
+	position: absolute;
+	width: 16px;
+	height: 16px;
+	left: -23px;
+	top: 4px;
+}
+.add_favorite{
+	background: url(../images/pop_favorite.png) no-repeat;
+}
+.add_home{
+	background: url(../images/pop_home.png) no-repeat;
+}
+.clean_content{
+	background: url(../images/clean.png) no-repeat;
+}
+/* 2017.03.06end*/

@@ -31,14 +31,13 @@
     			background: #dadada url("images/ui-bg_glass_75_dadada_1x400.png") 50% 50% repeat-x;
 			}
 			
-			.tipDiv2{
-				display:none;
-			    color: #222;
-			    position: absolute;
-			    width: 50px;
-			    background-color: white;
-			    background: #fff url("images/ui-bg_flat_75_ffffff_40x100.png") 50% 50% repeat-x;
-			}
+
+
+ 			.tipDiv2{ 
+ 			display:none;
+ 			    position: absolute;
+ 			} 
+
 			.chnl li a{
 			color:#1c9adc
 			}
@@ -309,9 +308,11 @@
     -->
 
 	<div class="tipDiv2">
-		<ul>
-			<li><a href="#">清空</a></li>
-		</ul>
+	<ul id="show_menu">
+		<li  class='addHome'><i class="menu_ico add_home"></i>设为首页</li>
+		<li  class='addFavorite'><i class="menu_ico add_favorite"></i>加入收藏</li>
+		<li class='cleanContent'><i class="menu_ico clean_content"></i>清空屏幕</li>
+	</ul>
 	</div>
 
 	</body>

@@ -526,7 +526,7 @@ public class ReKeyWordListServiceImpl implements  RekeyWordListService{
 			xqResult.fl=document.get("SJFL");
 			xqResult.keywords=parseKeyWords(document.get("KEY_WORD"));
 			xqResult.url=document.get("XQ_URL");
-			xqResult.crdate=parseDate(document.get("LOAD_TIME"));
+			xqResult.crdate=parseDate(document.get("XQ_PUDATE"));
 			xqResults.add(xqResult);
 		}
 		
@@ -534,9 +534,9 @@ public class ReKeyWordListServiceImpl implements  RekeyWordListService{
 	}
 	public String  parseDate(String dateStr){
 		if(dateStr==null)
-			return "2017-01-01 01:00:00";
+			return "2017-01-01";
 		long  dataLong=Long.valueOf(dateStr.trim());
-		DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 		Date  date=new Date(dataLong);
 
 		return  df.format(date);

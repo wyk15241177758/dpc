@@ -1,7 +1,9 @@
 package com.jt.lucene;
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,12 +22,16 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.BooleanClause.Occur;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.BooleanQuery.Builder;
+import org.apache.lucene.search.Explanation;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.TopFieldCollector;
 import org.apache.lucene.search.highlight.Formatter;
 import org.apache.lucene.search.highlight.Highlighter;
 import org.apache.lucene.search.highlight.QueryScorer;
@@ -268,6 +274,95 @@ public class IndexDao {
 		}
 		return null;
 	}
+	/**
+	 * 测试使用
+	 * @param queryString
+	 * @param occurs
+	 * @param fields
+	 * @param sortField
+	 * @param sortFieldType
+	 * @param reverse
+	 * @param isRelevancy
+	 * @param firstResult
+	 * @param maxResult
+	 * @return
+	 */
+	
+	public List<Document> searchTest(String[] queryString,Occur[] occurs,String[] fields,String[] sortField,SortField.Type[] sortFieldType,boolean[] reverse,boolean isRelevancy ,int firstResult, int maxResult) {
+		List<Document> list = new ArrayList<Document>();
+		TopDocs topDocs =null;
+		Sort sort=null;
+		DirectoryReader ireader=null;
+		IndexSearcher isearcher=null;
+		if(maxResult==-1){
+			maxResult=1000;
+		}
+		try {
+			ireader = DirectoryReader.open(util.getDirectory());
+			// 2、第二步，创建搜索器
+			isearcher = new IndexSearcher(ireader);
+			// 3、第三步，类似SQL，进行关键字查询
+//			parser = new QueryParser(field, util.getAnalyzer());
+//			for(int i=0;i<queryString.length;i++){
+//				fields[i]=field;
+//			}
+			
+			Builder builder=new Builder();
+			
+			BooleanQuery bq= builder.build();
+			Query query =MultiFieldQueryParser.parse(queryString,fields,occurs,util.getAnalyzer());
+			logger.info("Lucene检索条件为["+query+"]");
+			if(sortField!=null&&sortFieldType!=null&&reverse!=null){
+				List<SortField> sortList=new ArrayList<SortField>();
+				if(isRelevancy){
+					sortList.add( SortField.FIELD_SCORE);
+				}
+				for(int i=0;i<sortField.length;i++){
+					SortField curSortField=new SortField(sortField[i], sortFieldType[i],reverse[i]);
+					sortList.add(curSortField);
+				}
+				SortField[] sortArr=new SortField[list.size()];
+				sortArr=sortList.toArray(sortArr);
+				sort=new Sort(sortArr);
+				sort=new Sort(SortField.FIELD_SCORE,new SortField(Article.getMapedFieldName("date"), SortField.Type.LONG, true));
+				topDocs = isearcher.search(query, firstResult + maxResult,sort);
+				for(int i=0;i<topDocs.scoreDocs.length;i++){
+					Explanation ex=isearcher.explain(query,topDocs.scoreDocs[i].doc);
+					Document tDoc= isearcher.doc(topDocs.scoreDocs[i].doc);
+					Date date=new Date(Long.parseLong(tDoc.get(Article.getMapedFieldName("date"))));
+					SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
+					
+					System.out.println("score=["+ex.getValue()+"] date=["+sdf.format(date)+"] "
+							+ "title=["+tDoc.get(Article.getMapedFieldName("title"))+"] explain=[\n"+ex.toString()
+							+"]" );
+				}
+				
+			}else{
+				topDocs = isearcher.search(query, firstResult + maxResult);
+			}
+			ScoreDoc[] hits = topDocs.scoreDocs;// 第二个参数，指定最多返回前n条结果
+			// 高亮
+//			Formatter formatter = new SimpleHTMLFormatter("<font color='red'>", "</font>");
+//			Scorer source = new QueryScorer(query);
+//			Highlighter highlighter = new Highlighter(formatter, source);
+			
+			// 处理结果
+			int endIndex = Math.min(firstResult + maxResult, hits.length);
+			
+			for (int i = firstResult; i < endIndex; i++) {
+				Document hitDoc = isearcher.doc(hits[i].doc);
+				list.add(hitDoc);
+			}
+			ireader.close();
+			return list;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	
+	
 	
 	/**
 	 * 测试

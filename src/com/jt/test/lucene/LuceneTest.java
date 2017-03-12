@@ -3,10 +3,12 @@ package com.jt.test.lucene;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -33,6 +35,7 @@ import com.jt.lucene.Article;
 import com.jt.lucene.DocumentUtils;
 import com.jt.lucene.IndexDao;
 import com.jt.lucene.LuceneUtilsGw;
+import com.jt.nlp.service.LuceneSearchService;
 
 public class LuceneTest {
     private static String indexPath = "D:\\indexpath_test";    // 索引保存目录
@@ -190,7 +193,7 @@ public class LuceneTest {
    		boolean[] reverse={true};
    		boolean isRelevancy = true;
    		
-   		List<Document> list=dao.search(queryStr, occurs, searchField, null, sortFieldType, reverse, isRelevancy, 0,100);
+   		List<Document> list=dao.search(queryStr, occurs, searchField, sortField, sortFieldType, reverse, isRelevancy, 0,100);
    		for(Document a:list){
    			System.out.println(a);
    		}
@@ -200,6 +203,70 @@ public class LuceneTest {
    		e1.printStackTrace();
    	}
     }
+    
+    public static void SearchTest2(){
+    	String questionStr="消防";
+    	
+    	List<Document> daoSearchList=null;
+    	
+    	LuceneSearchService searchService= new LuceneSearchService();
+		try {
+			searchService.setDao(new IndexDao(indexPath));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    	
+		// 检索词
+		Set<String> questionSet = null;
+		// 预设场景
+		Set<String> sceneWordSet = null;
+		
+		List<String> sceneSjflList = new ArrayList<String>();
+		Map<String,List<Article>> qaResultMap= new LinkedHashMap<String,List<Article>>();
+
+		// 分类作为必须包含的字段进行检索，如下三个变量长度必须相同
+
+		String[] searchWord = new String[2];
+		Occur[] occurs = new Occur[searchWord.length];
+		String[] fields = new String[searchWord.length];
+		searchWord[0]=questionStr;
+		occurs[0]=Occur.MUST;
+		occurs[1]=Occur.MUST;
+		fields[0]=Article.getMapedFieldName("title");
+		fields[1]=Article.getMapedFieldName("category");
+		
+		
+		//排序参数
+		String[] sortField={Article.getMapedFieldName("date")};
+		SortField.Type[] sortFieldType={SortField.Type.LONG};
+		boolean[] reverse={true};
+		boolean isRelevancy = true;
+		
+		
+		
+		String qaSjfl="公共服务;走进新郑;新闻中心;信息公开;政民互动";
+		if(qaSjfl!=null&&qaSjfl.length()>0){
+			String[] sjfl=qaSjfl.split(";");
+			for(String str:sjfl){
+				//赋值分类value
+				searchWord[1]="\""+str+"\"";
+				List<Article> rsList=qaResultMap.get(str);
+				if(rsList==null){
+					rsList=new ArrayList<Article>();
+				}
+				daoSearchList=searchService.getDao().searchTest(searchWord, occurs, fields, 
+						sortField, sortFieldType, reverse, isRelevancy, 0, 10);
+			}
+		}
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
+		for (Document doc: daoSearchList) {
+			Article article=DocumentUtils.document2Ariticle(doc);
+			System.out.println("date=["+sdf.format(article.getDate())+"] article:"+article);
+		}
+		
+		
+		
+  }
     
     public  static void searchHis() throws IOException{
     	IndexDao dao=new IndexDao(indexPath);
@@ -227,7 +294,7 @@ public class LuceneTest {
 		boolean[] reverse={true,true};
 		boolean isRelevancy = true;
 		
-		List<Document> list=dao.search(arrQuestion, occurs, searchField, sortField, sortFieldType, reverse, isRelevancy, begin, end);
+		List<Document> list=dao.searchTest(arrQuestion, occurs, searchField, sortField, sortFieldType, reverse, isRelevancy, begin, end);
 		
 		
 		
@@ -262,6 +329,6 @@ public class LuceneTest {
 //		}
 //    	createIndex();
 //    	SearchAllTest();
-    	SearchTest();
+    	SearchTest2();
     }
 }

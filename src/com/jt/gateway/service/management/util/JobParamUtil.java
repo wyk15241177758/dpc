@@ -158,7 +158,7 @@ public class JobParamUtil {
 				try {
 					int num=dao.executeQueryForCount(sql);
 					if(num!=gwFields.size()){
-						msg=new PageMsg(false,"数据库表名错误或某个字段不存在");
+						msg=new PageMsg(false,"推送任务配置字段数量为["+gwFields.size()+"] 不等于 数据库查询获得字段数量["+num+"]，请检查sql=["+sql+"]");
 						return msg;
 					}
 				} catch(Exception e){

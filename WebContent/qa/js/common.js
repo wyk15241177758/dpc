@@ -7,7 +7,22 @@ var dvalue = "简单输入，精准信息即刻展现~";
 var xinwen = "新闻中心"
 
 $(function() {
-
+	
+	//自适应高度
+	var msgMinHeight=380;
+	var msgHeight=$(window).height()-325;
+	if(msgHeight<msgMinHeight){
+		msgHeight=msgMinHeight;
+	}
+	$("#message").css('height',msgHeight+"px")
+	$(window).resize(function() {
+		msgHeight=$(window).height()-325;
+		if(msgHeight<msgMinHeight){
+			msgHeight=msgMinHeight;
+		}
+		$("#message").css('height',msgHeight+"px")
+	});
+	
 	$(document).on(
 			"mouseover",
 			".tipDiv li",

@@ -75,7 +75,7 @@ public class WordParser {
     }
 
     public static void main(String[] args) {
-        List<Word> parse = parseWithoutStopWords("如何 办理 居住证");
+        List<Word> parse = parseWithoutStopWords("我要去海南");
         System.out.println(parse.get(0).getText());
 //        parse = parse("布什是个什么样的人");
 //        System.out.println(parse);

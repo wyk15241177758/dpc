@@ -1,24 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
-  <display-name>QASystem</display-name>
-  
-    <!-- 加载spring配置文件begin -->
-	<context-param>
-		<param-name>contextConfigLocation</param-name>
-		<param-value>
+  <display-name>dpc</display-name>
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>
 			/WEB-INF/applicationContext.xml
 		</param-value>
-	</context-param>
-	<!-- spring配置文件加载监听器-->
-  
+  </context-param>
   <listener>
     <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
   </listener>
-<!--  <listener> -->
-<!-- 		<listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class> -->
-<!-- 	</listener> -->
-
-	<filter>
+  <filter>
     <filter-name>accessControl</filter-name>
     <filter-class>com.jt.common.interceptor.AccessControl</filter-class>
   </filter>
@@ -28,29 +20,22 @@
     <dispatcher>REQUEST</dispatcher>
     <dispatcher>FORWARD</dispatcher>
   </filter-mapping>
-		
-	
-	
-	
-	
-	<filter>
+  <filter>
     <filter-name>userYorNfilter</filter-name>
     <filter-class>com.jt.common.interceptor.UserYorNfilter</filter-class>
   </filter>
   <filter-mapping>
     <filter-name>userYorNfilter</filter-name>
     <url-pattern>/gateway/task.html</url-pattern>
-     <url-pattern>/gateway/repwd.html</url-pattern>
+    <url-pattern>/gateway/repwd.html</url-pattern>
     <url-pattern>/keyword/keywords.html</url-pattern>
     <url-pattern>/gateway/scene.html</url-pattern>
     <url-pattern>/gateway/sceneHis.html</url-pattern>
     <url-pattern>/admin/repwd.act</url-pattern>
     <url-pattern>/admin/vrepwd.act</url-pattern>
-    
     <dispatcher>REQUEST</dispatcher>
     <dispatcher>FORWARD</dispatcher>
   </filter-mapping>
-	
   <filter>
     <filter-name>encodingFilter</filter-name>
     <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
@@ -63,38 +48,33 @@
       <param-value>true</param-value>
     </init-param>
   </filter>
-  
   <filter-mapping>
     <filter-name>encodingFilter</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
   <filter>
-		<filter-name>sessionViewFilter</filter-name>
-		<filter-class>org.springframework.orm.hibernate3.support.OpenSessionInViewFilter</filter-class>
-	</filter>
-	<filter-mapping>
-		<filter-name>sessionViewFilter</filter-name>
-		<url-pattern>*.do</url-pattern>
-		<dispatcher>REQUEST</dispatcher>
-		<dispatcher>FORWARD</dispatcher>
-	</filter-mapping>
+    <filter-name>sessionViewFilter</filter-name>
+    <filter-class>org.springframework.orm.hibernate3.support.OpenSessionInViewFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>sessionViewFilter</filter-name>
+    <url-pattern>*.do</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+    <dispatcher>FORWARD</dispatcher>
+  </filter-mapping>
   <servlet>
-		<servlet-name>Admin</servlet-name>
-		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-		<init-param>
-			<param-name>contextConfigLocation</param-name>
-			<param-value>/WEB-INF/dispatcherFront-servlet.xml</param-value>
-		</init-param>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
+    <servlet-name>Admin</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <init-param>
+      <param-name>contextConfigLocation</param-name>
+      <param-value>/WEB-INF/dispatcherFront-servlet.xml</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
   <servlet-mapping>
-		<servlet-name>Admin</servlet-name>
-		
-		<url-pattern>/admin/*</url-pattern>
-	</servlet-mapping>
-      <!-- 加载spring配置文件end -->
-  
-  
+    <servlet-name>Admin</servlet-name>
+    <url-pattern>/admin/*</url-pattern>
+  </servlet-mapping>
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
     <welcome-file>index.htm</welcome-file>

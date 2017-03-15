@@ -1,3 +1,6 @@
+//应用上下文根
+var contextName="/dpc";
+
 //没有结果时显示内容
 var noResult = "未找到您要的信息，建议您进入“<a href='http://www.bing.com' target='_blank' style='text-decoration: underline;color: #d40a06; font-weight: bold;'>市长信箱</a>”栏目提交您要咨询的问题。"
 // 控制默认提示内容
@@ -296,9 +299,10 @@ function toggleDialog(obj, paramStatus) {
 
 var tipArr = new Array();
 
+
 // 显示提示浮层
 function showTip() {
-	var url = "/QASystem/admin/web/luceneSearch_searchHis.do"
+	var url = contextName+"/admin/web/luceneSearch_searchHis.do"
 	var param = {
 		"question" : $("#messCon").val(),
 		"isParticle" : "true",
@@ -366,13 +370,13 @@ function qaSearch(question) {
 		"searchHisId" : searchHisId,
 		"isStorgeHis" : "true"
 	};
-	$.getJSON("/QASystem/admin/web/qaSearch.do", param, function(data) {
+	$.getJSON(contextName+"/admin/web/qaSearch.do", param, function(data) {
 		addAnswer(question, data);
 		scrollToBottom();
 	})
 }
 function qaSearchList(question) {
-	var url = "/QASystem/qa/list.html";
+	var url = contextName+"/qa/list.html";
 	if (url.indexOf("?") != -1) {
 		window.open(url + "&word=" + encodeURIComponent(question));
 

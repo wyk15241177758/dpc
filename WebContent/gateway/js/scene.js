@@ -1,3 +1,6 @@
+//应用上下文根
+var contextName="/dpc";
+
 var curSceneId = 0;
 var curSceneName="";
 var sjfl=""
@@ -169,7 +172,7 @@ $(document).ready(function() {
 //获得所有的分类
 function getAllSjfl(eleIdPre,callBack){
 	var template="<label for='{eleId}'>{sjfl}<input type='checkbox' name='{eleId}' id='{eleId}' ></label>"
-	var url="/QASystem/admin/scene/getQaSjfl.do";
+	var url=contextName+"/admin/scene/getQaSjfl.do";
 	var param=null;
 	$.getJSON(url,param,function(data){
 		var out="";
@@ -199,7 +202,7 @@ function showSearchPreview(curOutWords){
 			"isSplit":"true"
 	}
 	$("#log").html("");
-	$.getJSON("/QASystem/admin/web/qaSearch.do",param,function(data){
+	$.getJSON(contextName+"/admin/web/qaSearch.do",param,function(data){
 		var template="<div id='previewDiv'><ul>{categoryLi}</ul>{qaDiv}</div>";
 		var categoryLi="";
 		var qaDiv="";
@@ -283,7 +286,7 @@ function addUpdatePage(pageId,pageTitle,pageLink,pageHtml,sjfl){
 function deleteScene(sceneId){
 	var param={"sceneId":sceneId};
 	if(sceneId!=undefined){
-		  $.getJSON("/QASystem/admin/scene/delScene.do",param,function(data){
+		  $.getJSON(contextName+"/admin/scene/delScene.do",param,function(data){
 				if (data.sig == false) {
 					$('#warnmsg').html(data.msg);
 					$('#warnModal').modal('show');
@@ -305,7 +308,7 @@ function deleteScene(sceneId){
 function deleteSceneWord(sceneWordId){
 	var param={"sceneWordId":sceneWordId};
 	if(sceneWordId!=undefined){
-		  $.getJSON("/QASystem/admin/scene/delSceneWord.do",param,function(data){
+		  $.getJSON(contextName+"/admin/scene/delSceneWord.do",param,function(data){
 				if (data.sig == false) {
 					$('#warnmsg').html(data.msg);
 					$('#warnModal').modal('show');
@@ -326,7 +329,7 @@ function deleteSceneWord(sceneWordId){
 
 //新增或修改场景
 function addScene(){
-	var operationUrl = "/QASystem/admin/scene/saveOrUpdateScene.do"
+	var operationUrl = contextName+"/admin/scene/saveOrUpdateScene.do"
 		if (!paramCheck($("#sceneModal"))) {
 			// paramCheck中处理
 		} else {
@@ -384,7 +387,7 @@ function sceneClick(sceneId) {
 		"sceneId" : curSceneId,
 		"random" : Math.random()
 	};
-	$.getJSON("/QASystem/admin/scene/listSceneWords.do", param, function(data) {
+	$.getJSON(contextName+"/admin/scene/listSceneWords.do", param, function(data) {
 		for (i in data) {
 			var curRowNode=table.row.add([data[i].enterWords,data[i].outWords,data[i].createTime,"<a class=\"btn btn-success btn-sm\" href=\"#\" action='searchPreview'>" +
 			          					"<i class=\"glyphicon glyphicon-zoom-in icon-white\"></i>检索预览</a>" +
@@ -415,7 +418,7 @@ function leftScene() {
 	// 清空场景列表
 	$("#leftScene").empty();
 	var template = "<li><a href=\"javascript:void(0)\" class=\"ajax-link\">     <i name=\"leftword\" sceneId={sceneId} sceneName={sceneName}></i>{sceneName}</a></li>"
-	$.getJSON("/QASystem/admin/scene/listScenes.do", null, function(data) {
+	$.getJSON(contextName+"/admin/scene/listScenes.do", null, function(data) {
 		var cur = "";
 		for (i in data) {
 			cur += template.replace(/\{sceneId\}/g, data[i].sceneId).replace(
@@ -434,7 +437,7 @@ function leftScene() {
 
 //新增或修改场景映射词
 function addSceneWord(){
-	var operationUrl = "/QASystem/admin/scene/saveOrUpdateSceneWord.do"
+	var operationUrl = contextName+"/admin/scene/saveOrUpdateSceneWord.do"
 		if (!paramCheck($("#sceneWordModal"))) {
 			// paramCheck中处理
 		} else {
@@ -538,7 +541,7 @@ function setSceneWordValue(sceneWordId){
 	//正在修改的sceneWordId
 	$('#sceneWordModal').find("[name='sceneWordId']").val(sceneWordId);
 	var param={"sceneWordId":sceneWordId};
-	 $.getJSON("/QASystem/admin/scene/getSceneWord.do",param,function(data){
+	 $.getJSON(contextName+"/admin/scene/getSceneWord.do",param,function(data){
 		  if(data==null||typeof(data.sig)=='undefined'
 			  ||typeof(data.msg)=='undefined'){
 				$('#warnmsg').html("获得sceneWordId=["+param.sceneWordId+"]的映射词信息失败");
@@ -591,7 +594,7 @@ function setSceneValue(sceneId){
 
 	
 	var param={"sceneId":sceneId};
-	 $.getJSON("/QASystem/admin/scene/getScene.do",param,function(data){
+	 $.getJSON(contextName+"/admin/scene/getScene.do",param,function(data){
 		  if(data==null||typeof(data.sig)=='undefined'
 			  ||typeof(data.msg)=='undefined'){
 				$('#warnmsg').html("获得sceneId=["+param.sceneId+"]的场景信息失败");
@@ -659,9 +662,9 @@ function replaceTemplate(template,obj){
 //登录判断，未登录跳转到登录页。防止缓存
 function isLogin(){
 	var param={"ran":Math.random()};
-	$.getJSON("/QASystem/admin/loginStatus.act",param,function(data){
+	$.getJSON(contextName+"/admin/loginStatus.act",param,function(data){
 		if(!data.sig){
-			window.location="/QASystem/gateway/login.html"
+			window.location=contextName+"/gateway/login.html"
 		}
 	})
 }

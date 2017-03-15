@@ -1,3 +1,6 @@
+//应用上下文根
+var contextName="/dpc";
+
 
 $(document).ready(function () {
 	//登录判断，防止缓存
@@ -48,7 +51,7 @@ $(document).ready(function () {
     $(document).on("click","a[action='startImmediate']",function(){
     	var curTrJobId=$(this).parents("tr").attr("jobid");
     	var param={"jobid":curTrJobId};
-    	$.getJSON("/QASystem/admin/startImmediate.do",param,function(data){
+    	$.getJSON(contextName+"/admin/startImmediate.do",param,function(data){
     		//nothing to do
     	});
     	if(curTrJobId!=undefined){
@@ -81,7 +84,7 @@ $(document).ready(function () {
     	var curTrJobId=$(this).parents("tr").attr("jobid");
     	var param={"jobid":curTrJobId};
     	if(curTrJobId!=undefined){
-    		  $.getJSON("/QASystem/admin/getJobAndFields.do",param,function(data){
+    		  $.getJSON(contextName+"/admin/getJobAndFields.do",param,function(data){
     			  if(data==null||typeof(data.sig)=='undefined'
     				  ||typeof(data.msg)=='undefined'||typeof(data.msg.jobinf)=='undefined'
     					  ||typeof(data.msg.config)=='undefined'){
@@ -145,20 +148,6 @@ $(document).ready(function () {
     	$('#warnmsg-del').html("确定要删除任务["+curTrJobName+"]吗？删除后无法恢复");
     	$('#warnmsg-del').attr("deljobid",curTrJobId)
     	$("#warnModal-del").modal('show');
-//    	
-//    	if(curTrJobId!=undefined){
-//    		  $.getJSON("/QASystem/admin/delJob.do",param,function(data){
-//    			  if(data==null||typeof(data.sig)=='undefined'
-//    				  ||typeof(data.msg)=='undefined'){
-//    					$('#warnmsg').html("删除jobid=["+param.jobid+"]的任务信息失败");
-//                		$('#warnModal').modal('show');
-//    			  }else{
-//    				$('#warnmsg').html(data.msg);
-//              		$('#warnModal').modal('show');
-//    			  }
-//    			  getJobList();
-//    		  })
-//    	}
     })
     //点击删除确认按钮
     $("#delconfirm").click(function(){
@@ -172,9 +161,9 @@ $(document).ready(function () {
     	//新增或修改模式为不同的url
     	var operationUrl="";
     	if($("input[name='saveOrUpdate']").val()=="update"){
-    		operationUrl="/QASystem/admin/updateJob.do";
+    		operationUrl=contextName+"/admin/updateJob.do";
     	}else{
-    		operationUrl="/QASystem/admin/addJob.do";
+    		operationUrl=contextName+"/admin/addJob.do";
     	}
     	parseFields();
     	if(!paramCheck()){
@@ -321,7 +310,7 @@ function refreshJobLog(){
 			return false;
 		}
 		var param={"jobid":$(this).attr("jobid")};
-		 $.getJSON("/QASystem/admin/getRunningLog.do",param,function(data){
+		 $.getJSON(contextName+"/admin/getRunningLog.do",param,function(data){
 			 if(data.sig==true){
 				 if(typeof(data.msg)!='undefined'){
 					 var msgArray=data.msg;
@@ -361,7 +350,7 @@ function refreshJobLog(){
 			  
 		  })
 		
-		$.getJSON("/QASystem/admin/getJobLog.do",param,function(data){
+		$.getJSON(contextName+"/admin/getJobLog.do",param,function(data){
 			if(data.sig==true){
 				if(typeof(data.msg)!='undefined'){
 					//上次执行情况
@@ -390,7 +379,7 @@ function refreshJobLog(){
 
 //获得任务列表
 function getJobList(){
-    $.getJSON("/QASystem/admin/listJobs.do",null,function(data){
+    $.getJSON(contextName+"/admin/listJobs.do",null,function(data){
     	$("#tbody_joblist").html("");
     	if(data.length==0){
     		$("#tbody_joblist").append("<tr><td colspan='6'>暂无任务</td></tr>");
@@ -415,7 +404,7 @@ function getJobList(){
 function deleteJob(curTrJobId){
 	var param={"jobid":curTrJobId};
 	if(curTrJobId!=undefined){
-		  $.getJSON("/QASystem/admin/delJob.do",param,function(data){
+		  $.getJSON(contextName+"/admin/delJob.do",param,function(data){
 			  if(data==null||typeof(data.sig)=='undefined'
 				  ||typeof(data.msg)=='undefined'){
 					$('#warnmsg').html("删除jobid=["+param.jobid+"]的任务信息失败");
@@ -440,9 +429,9 @@ function getUrlParam(name) {
 //登录判断，未登录跳转到登录页。防止缓存
 function isLogin(){
 	var param={"ran":Math.random()};
-	$.getJSON("/QASystem/admin/loginStatus.act",param,function(data){
+	$.getJSON(contextName+"/admin/loginStatus.act",param,function(data){
 		if(!data.sig){
-			window.location="/QASystem/gateway/login.html"
+			window.location=contextName+"/gateway/login.html"
 		}
 	})
 }

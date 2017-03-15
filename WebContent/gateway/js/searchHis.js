@@ -1,3 +1,6 @@
+//应用上下文根
+var contextName="/dpc";
+
 var table =null;
 $(document).ready(function() {
 	//登录判断，防止缓存
@@ -70,7 +73,7 @@ $(document).ready(function() {
 		  ],
 		    "processing": true,
 		    "serverSide": true,
-		    "ajax": "/QASystem/admin/searchHis/listSearchHis.do",
+		    "ajax": contextName+"/admin/searchHis/listSearchHis.do",
 		    "columnDefs": [
 		                   {
 		                	   "targets": 0,
@@ -117,7 +120,7 @@ $(document).ready(function() {
 function deleteSearchHis(searchHisIds){
 	var param={"searchHisIds":searchHisIds};
 	if(searchHisIds!=undefined){
-		  $.getJSON("/QASystem/admin/searchHis/delSearchHises.do",param,function(data){
+		  $.getJSON(contextName+"/admin/searchHis/delSearchHises.do",param,function(data){
 			 $('#warnmsg').html(data.msg);
 			 $('#warnModal').modal('show');
 //				if (data.sig == false) {
@@ -139,7 +142,7 @@ function deleteSearchHis(searchHisIds){
 
 //同步内存中的检索历史到数据库
 function syncSearchHis(){
-	var operationUrl = "/QASystem/admin/searchHisRt/syncToDb.do"
+	var operationUrl = contextName+"/admin/searchHisRt/syncToDb.do"
 	var param = {};
 	$.getJSON(operationUrl, param, function(data) {
 			$('#warnmsg').html(data.msg);
@@ -149,7 +152,7 @@ function syncSearchHis(){
 
 //新增或修改
 function addSearchHis(){
-	var operationUrl = "/QASystem/admin/searchHis/saveOrUpdateSearchHis.do"
+	var operationUrl = contextName+"/admin/searchHis/saveOrUpdateSearchHis.do"
 		if (!paramCheck($("#editModal"))) {
 			// paramCheck中处理
 		} else {
@@ -199,7 +202,7 @@ function setSearchHisValue(searchHisId){
 	//正在修改的ID
 	$('#editModal').find("[name='searchHisId']").val(searchHisId);
 	var param={"searchHisId":searchHisId};
-	 $.getJSON("/QASystem/admin/searchHis/getSearchHis.do",param,function(data){
+	 $.getJSON(contextName+"/admin/searchHis/getSearchHis.do",param,function(data){
 		  if(data==null||typeof(data.sig)=='undefined'
 			  ||typeof(data.msg)=='undefined'){
 				$('#warnmsg').html("获得ID=["+param.searchHisId+"]的搜索历史信息失败");
@@ -260,9 +263,9 @@ function paramCheck(obj) {
 //登录判断，未登录跳转到登录页。防止缓存
 function isLogin(){
 	var param={"ran":Math.random()};
-	$.getJSON("/QASystem/admin/loginStatus.act",param,function(data){
+	$.getJSON(contextName+"/admin/loginStatus.act",param,function(data){
 		if(!data.sig){
-			window.location="/QASystem/gateway/login.html"
+			window.location=contextName+"/gateway/login.html"
 		}
 	})
 }

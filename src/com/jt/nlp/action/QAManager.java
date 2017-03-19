@@ -79,13 +79,14 @@ public class QAManager {
 		this.searchService_searchHis = searchService_searchHis;
 	}
 	
+	
+	
 	/**
-	 * 场景映射词
-	 * 不做NLP分析，分词检索
+	 * 按照栏目搜索，按照时间倒序排序
 	 * @param request
 	 * @param response
 	 */
-	@RequestMapping(value="luceneSearch.do")
+	@RequestMapping(value="searchByChannel.do")
 	public void luceneSearch(HttpServletRequest request, HttpServletResponse response) {
 		response.setCharacterEncoding("utf-8");
 		msg=new PageMsg();
@@ -97,17 +98,13 @@ public class QAManager {
 			e1.printStackTrace();
 			return;
 		}
-		String question=request.getParameter("question");
+		
+		
+		String channel=request.getParameter("channel");
 		String sBegin=request.getParameter("begin");
 		String sEnd=request.getParameter("end");
 		
 		//增加解码
-		try {
-			question=URLDecoder.decode(question, "utf-8");
-		} catch (UnsupportedEncodingException e1) {
-			e1.printStackTrace();
-			question="";
-		}
 		
 		int iBegin=0;
 		int iEnd=0;
@@ -121,15 +118,28 @@ public class QAManager {
 		}catch(Exception e){
 			iEnd=5;
 		}
-		if(question==null){
+		if(channel==null||channel.length()==0){
 			msg.setSig(false);
-			msg.setMsg("问题为空");
+			msg.setMsg("条件为空");
 			pw.print(gson.toJson(msg));
 			return;
 		}
-		Map<String,List<Article>> map=qaService.QASearch(question, iBegin, iEnd);
-		if(map!=null){
-			msg.setMsg(map);
+		//Lucene检索条件
+		String[] queryArr={channel};
+		Occur[] occurArr={Occur.MUST};
+		String[] fieldArr={Article.getMapedFieldName("channel")};
+		
+		//排序参数，按照时间倒序排序
+		String[] sortField={Article.getMapedFieldName("date")};
+		SortField.Type[] sortFieldType={SortField.Type.LONG};
+		boolean[] reverse={true};
+		boolean isRelevancy = true;
+		
+		List<Article> list=qaService.getSearchService().searchArticle(queryArr, occurArr, fieldArr, 
+				sortField, sortFieldType, reverse, isRelevancy, iBegin, iEnd);
+		
+		if(list!=null&&list.size()>0){
+			msg.setMsg(list);
 		}else{
 			msg.setSig(false);
 			msg.setMsg("没有检索到结果");

@@ -8,8 +8,23 @@ var dvalue = "简单输入，精准信息即刻展现~";
 
 // 新闻类型名
 var xinwen = "新闻中心"
-
+	//栏目导航高度限制
+	var lmdhHeight=48
 $(function() {
+
+	//点击展开/隐藏栏目导航
+	$(document).on("click",".showOrHide",function(){
+		var ul=$(this).siblings("ul");
+		//大于两行就隐藏
+		if(parseInt(ul.css("height"))>lmdhHeight){
+			ul.css("max-height",lmdhHeight+"px");
+			$(this).find("img").attr("src","images/arrow_16px_1154534_easyicon.net.png");
+		}else{
+			ul.css("max-height","100%");
+			$(this).find("img").attr("src","images/arrow_16px_1154533_easyicon.net.png");
+		}
+	})
+	
 	
 	//自适应高度
 	var msgMinHeight=380;
@@ -372,6 +387,7 @@ function qaSearch(question) {
 	};
 	$.getJSON(contextName+"/admin/web/qaSearch.do", param, function(data) {
 		addAnswer(question, data);
+		showOrHideUl();
 		scrollToBottom();
 	})
 }
@@ -564,4 +580,17 @@ var decToHex = function(str) {
 var hexToDec = function(str) {
 	str = str.replace(/\\/g, "%");
 	return unescape(str);
+}
+
+
+function showOrHideUl(){
+	var height=parseInt($("ul.chnl:last").css("height"));
+	if(height>lmdhHeight){
+		$("ul.chnl:last").addClass("hideul");
+		$("ul.chnl:last").after("<div class='showOrHide'>" +
+	"<a href='#' title='点击显示/隐藏所有栏目导航'>" +
+	"<img src='images/arrow_16px_1154534_easyicon.net.png'/></a></div>" +
+	"<div style='clear: both;'></div>");
+	}
+	
 }

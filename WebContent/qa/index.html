@@ -10,63 +10,70 @@
 		<link rel="stylesheet" type="text/css" href="css/global.css" />
 		<link rel="stylesheet" type="text/css" href="css/main.css" />
 		<script type="text/javascript" src="js/jquery-1.11.3.min.js"></script>
-				<script type="text/javascript" src="js/rightClick.js"></script>
-		
+		<script type="text/javascript" src="js/rightClick.js"></script>
+
 		<style>
-			.tipDiv{
-			    color: #222;
-			    position: absolute;
-			    bottom: 70px;
-			    border: 1px solid #aaa;
-			    width: 95%;
-			    background-color: white;
-			    margin-left: 5px;
-			    display:none;
-			    background: #fff url("images/ui-bg_flat_75_ffffff_40x100.png") 50% 50% repeat-x;
-			}
-			.tipDiv li{
-			  padding-left: 20px;
-			}
-			.tipLiActive{
-    			background: #dadada url("images/ui-bg_glass_75_dadada_1x400.png") 50% 50% repeat-x;
+			.tipDiv {
+				color: #222;
+				position: absolute;
+				bottom: 70px;
+				border: 1px solid #aaa;
+				width: 95%;
+				background-color: white;
+				margin-left: 5px;
+				display: none;
+				background: #fff url("images/ui-bg_flat_75_ffffff_40x100.png") 50% 50% repeat-x;
 			}
 			
-
-
- 			.tipDiv2{ 
- 			display:none;
- 			    position: absolute;
- 			} 
-
-			.chnl li a{
-			color:#1c9adc
+			.tipDiv li {
+				padding-left: 20px;
 			}
-			#messCon{
-			outline:none;
-			resize:none;
+			
+			.tipLiActive {
+				background: #dadada url("images/ui-bg_glass_75_dadada_1x400.png") 50% 50% repeat-x;
 			}
-			.onoff{
-			width:20px;
-			height:25px;
-			cursor:pointer;
-			display:inline-block;
-			zoom:1;
-			float:right;
-			margin-top:6px;
-			background:url("images/chat_open.png") no-repeat 0px 2px
+			
+			.tipDiv2 {
+				display: none;
+				position: absolute;
+			}
+			
+			.chnl li a {
+				color: #1c9adc
+			}
+			
+			ul.hideul  {
+				width: 90%;float: left;
+				overflow: hidden;
+				max-height: 48px;
+			}
+			#messCon {
+				outline: none;
+				resize: none;
+			}
+			
+			.onoff {
+				width: 20px;
+				height: 25px;
+				cursor: pointer;
+				display: inline-block;
+				zoom: 1;
+				float: right;
+				margin-top: 6px;
+				background: url("images/chat_open.png") no-repeat 0px 2px
 			}
 		</style>
 	</head>
 
 	<body>
-	<!--
+		<!--
     	头部预留
     -->
 		<div class="content">
 			<div class="tab_title">
 				<ul>
 					<li class="slected">智能咨询</li>
-<!-- 					<li>使用帮助</li> -->
+					<!-- 					<li>使用帮助</li> -->
 				</ul>
 			</div>
 			<div class="tab_content">
@@ -75,168 +82,293 @@
 					<div class="container_left" style="width: 444px;">
 						<div class="border_wrap" style="width: 424px;">
 							<div class="title">智能标签</div>
-	                        <div id="tabs0">
+							<div id="tabs0">
 								<ul class="menu0" id="menu0">
-								    <li onmouseover="setTab(0,0)" class="hover">教育学习</li>
-								    <li onmouseover="setTab(0,1)">保险保障</li>
-								    <li onmouseover="setTab(0,2)">卫生计生</li>
-								   <!-- <li onmouseover="setTab(0,3)">企业经营</li>-->
+									<li onmouseover="setTab(0,0)" class="hover">教育学习</li>
+									<li onmouseover="setTab(0,1)">保险保障</li>
+									<li onmouseover="setTab(0,2)">卫生计生</li>
+									<!-- <li onmouseover="setTab(0,3)">企业经营</li>-->
 								</ul>
 								<div class="main" id="main0">
-								    <ul class="block">                                                                                                                                                                                                         								    	
-								     		<li><a href="javascript:void(0)">访谈</a></li>
-								     	<li><a href="javascript:void(0)">征集</a></li>
-								     	<li><a href="javascript:void(0)">调查</a></li>
-								     	<li><a href="javascript:void(0)">金融</a></li>
-								     	<li><a href="javascript:void(0)">招商</a></li>
-								     	<li><a href="javascript:void(0)">工程</a></li>
-								     	<li><a href="javascript:void(0)">城镇化</a></li>
-								     	<li><a href="javascript:void(0)">三农</a></li>
-								     	<li><a href="javascript:void(0)">科技</a></li>
-								     	<li><a href="javascript:void(0)">投资</a></li>
-								     	<li><a href="javascript:void(0)">税收</a></li>
-								     	<li><a href="javascript:void(0)">贸易</a></li>
-								     	<li><a href="javascript:void(0)">制造业</a></li>
-								     	<li><a href="javascript:void(0)">服务业</a></li>
-								     	<li><a href="javascript:void(0)">工业</a></li>
-								     	
-								     
-								    </ul>
-								    <ul>
-								    	<li><a href="javascript:void(0)">交通</a></li>
-										<li><a href="javascript:void(0)">社保</a></li>
-										<li><a href="javascript:void(0)">医疗</a></li>
-										<li><a href="javascript:void(0)">婚育</a></li>
-										<li><a href="javascript:void(0)">住房</a></li>
-										<li><a href="javascript:void(0)">民族</a></li>
-										<li><a href="javascript:void(0)">宗教</a></li>
-										<li><a href="javascript:void(0)">就业</a></li>
-										<li><a href="javascript:void(0)">养老</a></li>
-										<li><a href="javascript:void(0)">气象</a></li>
-										<li><a href="javascript:void(0)">环保</a></li>
-										<li><a href="javascript:void(0)">惠民</a></li>
-										<li><a href="javascript:void(0)">供水</a></li>
-										<li><a href="javascript:void(0)">教育</a></li>
-										<li><a href="javascript:void(0)">供电</a></li>
-										<li><a href="javascript:void(0)">考试</a></li>
-								    </ul>
-								    <ul>
-								    	<li><a href="javascript:void(0)">经济</a></li>
-										<li><a href="javascript:void(0)">能源</a></li>
-										<li><a href="javascript:void(0)">财政</a></li>
-										<li><a href="javascript:void(0)">金融</a></li>
-										<li><a href="javascript:void(0)">招商</a></li>
-										<li><a href="javascript:void(0)">工程</a></li>
-										<li><a href="javascript:void(0)">城镇化</a></li>
-										<li><a href="javascript:void(0)">三农</a></li>
-										<li><a href="javascript:void(0)">科技</a></li>
-										<li><a href="javascript:void(0)">投资</a></li>
-										<li><a href="javascript:void(0)">税收</a></li>
-										<li><a href="javascript:void(0)">贸易</a></li>
-										<li><a href="javascript:void(0)">制造业</a></li>
-										<li><a href="javascript:void(0)">服务业</a></li>
-										<li><a href="javascript:void(0)">工业</a></li>
-										<li><a href="javascript:void(0)">房地产</a></li>
-								    </ul>
+									<ul class="block">
+										<li>
+											<a href="javascript:void(0)">访谈</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)">征集</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)">调查</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)">金融</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)">招商</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)">工程</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)">城镇化</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)">三农</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)">科技</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)">投资</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)">税收</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)">贸易</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)">制造业</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)">服务业</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)">工业</a>
+										</li>
+
+									</ul>
+									<ul>
+										<li>
+											<a href="javascript:void(0)">交通</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)">社保</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)">医疗</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)">婚育</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)">住房</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)">民族</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)">宗教</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)">就业</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)">养老</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)">气象</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)">环保</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)">惠民</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)">供水</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)">教育</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)">供电</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)">考试</a>
+										</li>
+									</ul>
+									<ul>
+										<li>
+											<a href="javascript:void(0)">经济</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)">能源</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)">财政</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)">金融</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)">招商</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)">工程</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)">城镇化</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)">三农</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)">科技</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)">投资</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)">税收</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)">贸易</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)">制造业</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)">服务业</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)">工业</a>
+										</li>
+										<li>
+											<a href="javascript:void(0)">房地产</a>
+										</li>
+									</ul>
 								</div>
-							</div>								
+							</div>
 						</div>
 						<div class="border_wrap func_margin" style="width: 424px;">
 							<div class="title_border">
 								<div class="title">功能导航</div>
 							</div>
 							<div class="func_nav">
-								<a href="http://www.yueyang.gov.cn/cxzh/ggjy/default.htm" target="_blank"><span><img src="images/nav_ico1.gif" width="33" height="33"/></span><p>公众教育</p></a>
-								<a href="http://www.yueyang.gov.cn/cxzh/20473/default.htm" target="_blank"><span><img src="images/nav_ico2.gif" width="33" height="33"/></span><p>公用事业</p></a>
-								<a href="http://www.yueyang.gov.cn/cxzh/gjj/default.htm" target="_blank"><span><img src="images/nav_ico3.gif" width="33" height="33"/></span><p>公积金房产</p></a>
-								<a href="http://www.yueyang.gov.cn/cxzh/ylws/default.htm" target="_blank"><span><img src="images/nav_ico4.gif" width="33" height="33"/></span><p>医疗卫生</p></a>
-								<a href="http://www.yueyang.gov.cn/jlmsfw/bmxxcx/jtxxcx/default.htm" target="_blank"><span><img src="images/nav_ico5.gif" width="33" height="33"/></span><p>交通出行</p></a>
-								<a href="http://www.yueyang.gov.cn/cxzh/gasf/default.htm" target="_blank"><span><img src="images/nav_ico6.gif" width="33" height="33"/></span><p>公安司法</p></a>
-								<a href="http://www.yueyang.gov.cn/cxzh/shbx/default.htm" target="_blank"><span><img src="images/nav_ico7.gif" width="33" height="33"/></span><p>社会保险</p></a>
-								<a href="http://www.yueyang.gov.cn/cxzh/csjr/default.htm" target="_blank"><span><img src="images/nav_ico8.gif" width="33" height="33"/></span><p>财税金融</p></a>
+								<a href="http://www.yueyang.gov.cn/cxzh/ggjy/default.htm" target="_blank"><span><img src="images/nav_ico1.gif" width="33" height="33"/></span>
+									<p>公众教育</p>
+								</a>
+								<a href="http://www.yueyang.gov.cn/cxzh/20473/default.htm" target="_blank"><span><img src="images/nav_ico2.gif" width="33" height="33"/></span>
+									<p>公用事业</p>
+								</a>
+								<a href="http://www.yueyang.gov.cn/cxzh/gjj/default.htm" target="_blank"><span><img src="images/nav_ico3.gif" width="33" height="33"/></span>
+									<p>公积金房产</p>
+								</a>
+								<a href="http://www.yueyang.gov.cn/cxzh/ylws/default.htm" target="_blank"><span><img src="images/nav_ico4.gif" width="33" height="33"/></span>
+									<p>医疗卫生</p>
+								</a>
+								<a href="http://www.yueyang.gov.cn/jlmsfw/bmxxcx/jtxxcx/default.htm" target="_blank"><span><img src="images/nav_ico5.gif" width="33" height="33"/></span>
+									<p>交通出行</p>
+								</a>
+								<a href="http://www.yueyang.gov.cn/cxzh/gasf/default.htm" target="_blank"><span><img src="images/nav_ico6.gif" width="33" height="33"/></span>
+									<p>公安司法</p>
+								</a>
+								<a href="http://www.yueyang.gov.cn/cxzh/shbx/default.htm" target="_blank"><span><img src="images/nav_ico7.gif" width="33" height="33"/></span>
+									<p>社会保险</p>
+								</a>
+								<a href="http://www.yueyang.gov.cn/cxzh/csjr/default.htm" target="_blank"><span><img src="images/nav_ico8.gif" width="33" height="33"/></span>
+									<p>财税金融</p>
+								</a>
 								<!-- <a href="#"><span><img src="images/nav_ico9.gif" width="33" height="33"/></span><p>公众教育</p></a> -->
-								<a href="http://www.yueyang.gov.cn/jlmsfw/gysscx/default.htm" target="_blank"><span><img src="images/nav_ico10.gif" width="33" height="33"/></span><p>公用设施</p></a>
-								<a href="http://www.yueyang.gov.cn/jlmsfw/bmxxcx/bmwd/default.htm" target="_blank"><span><img src="images/nav_ico11.gif" width="33" height="33"/></span><p>便民问答</p></a>
-								<a href="http://www.yueyang.gov.cn/jlmsfw/syxxcx/zsxx/default.htm" target="_blank"><span><img src="images/nav_ico12.gif" width="33" height="33"/></span><p>证书信息</p></a>
-								<a href="http://www.yueyang.gov.cn/jlmsfw/syxxcx/jyxx/default.htm" target="_blank"><span><img src="images/nav_ico13.gif" width="33" height="33"/></span><p>就业信息</p></a>
+								<a href="http://www.yueyang.gov.cn/jlmsfw/gysscx/default.htm" target="_blank"><span><img src="images/nav_ico10.gif" width="33" height="33"/></span>
+									<p>公用设施</p>
+								</a>
+								<a href="http://www.yueyang.gov.cn/jlmsfw/bmxxcx/bmwd/default.htm" target="_blank"><span><img src="images/nav_ico11.gif" width="33" height="33"/></span>
+									<p>便民问答</p>
+								</a>
+								<a href="http://www.yueyang.gov.cn/jlmsfw/syxxcx/zsxx/default.htm" target="_blank"><span><img src="images/nav_ico12.gif" width="33" height="33"/></span>
+									<p>证书信息</p>
+								</a>
+								<a href="http://www.yueyang.gov.cn/jlmsfw/syxxcx/jyxx/default.htm" target="_blank"><span><img src="images/nav_ico13.gif" width="33" height="33"/></span>
+									<p>就业信息</p>
+								</a>
 								<!--  <a href="#"><span><img src="images/nav_ico14.gif" width="33" height="33"/></span><p>公众教育</p></a>-->
 								<!-- <a href="#"><span><img src="images/nav_ico15.gif" width="33" height="33"/></span><p>公众教育</p></a>-->
 							</div>
-						</div>						
+						</div>
 					</div>
 					<div class="container_right" style="width: 518px">
 						<div id="showMessage" style="width: 493px;;">
 							<div id="message" style="overflow-y: scroll	;">
-														<p class="attention">您好，欢迎使用中国 · 岳阳政府网站群智能服务平台提供的智能咨询服务，如有需要请查看使用帮助。<img src="images/question.gif" /></p>
-							
-							
+								<p class="attention">您好，欢迎使用中国 · 岳阳政府网站群智能服务平台提供的智能咨询服务，如有需要请查看使用帮助。<img src="images/question.gif" /></p>
+								<!-- 								<ul class="dialog"> -->
+								<!-- 									<li class="right" ></li> -->
+								<!-- 									<li class="center">智能咨询服务智智能咨询服务智智能咨询服务智智能咨询服务智智能咨询服务智</li> -->
+								<!-- 									<li class="left"></li> -->
+								<!-- 									<li class="bottom"></li> -->
+								<!-- 								</ul> -->
+								<!-- 								<div class="dialog_tab"> -->
+								<!--                                     <p><strong>栏目导航</strong></p> -->
+								<!--                                     <ul class="news"> -->
+								<!--                                     	<li><a href="#">2016年国际英才创业峰会国际英才创业峰会峰会国际英才创业峰会</a></li> -->
+								<!--                                     </ul> -->
+
 								<!--对话开始-->
-<!-- 								<ul class="dialog"> -->
-<!-- 									<li class="right" ></li> -->
-<!-- 									<li class="center">智能咨询服务智智能咨询服务智智能咨询服务智智能咨询服务智智能咨询服务智</li> -->
-<!-- 									<li class="left"></li> -->
-<!-- 									<li class="bottom"></li> -->
-<!-- 								</ul> -->
-<!-- 								<div class="dialog_tab"> -->
-<!--                                     <p><strong>栏目导航</strong></p> -->
-<!--                                     <ul class="news"> -->
-<!--                                     	<li><a href="#">2016年国际英才创业峰会国际英才创业峰会峰会国际英才创业峰会</a></li> -->
-<!--                                     </ul> -->
-<!-- 						            <div> -->
-<!-- 						            <div class="tab2_title"> -->
-<!-- 										<ul> -->
-<!-- 											<li class="slected2">通知公告</li> -->
-<!-- 											<li>服务</li> -->
-<!-- 											<li>公开</li> -->
-<!-- 											<li>市政府</li> -->
-<!-- 										</ul> -->
-<!-- 									</div> -->
-<!-- 									<div class="tab2_content"> -->
-<!-- 									    <div class="container"> -->
-<!-- 									    	<ul class="news"> -->
-<!-- 		                                    	<li><a href="#">通知公告2016年国际英才创业峰会国际英才创业峰会峰会国际英才创业峰会</a></li> -->
-<!-- 		                                    </ul> -->
-<!-- 									    </div> -->
-<!-- 									    <div class="container hide"> -->
-<!-- 									    	<ul class="news"> -->
-<!-- 		                                    	<li><a href="#">服务2016年国际英才创业峰会国际英才创业峰会</a></li> -->
-<!-- 		                                    	<li><a href="#">服务2016年国际英才创业峰会国际英才创业峰会</a></li> -->
-<!-- 		                                    </ul> -->
-<!-- 									    </div> -->
-<!-- 									    <div class="container hide"> -->
-<!-- 									    	<ul class="news"> -->
-<!-- 		                                    	<li><a href="#">公开2016年国际英才创业峰会国际英才创业峰会</a></li> -->
-<!-- 		                                    </ul> -->
-<!-- 									    </div> -->
-<!-- 									    <div class="container hide"> -->
-<!-- 									    	<ul class="news"> -->
-<!-- 		                                    	<li><a href="#">市政府2016年国际英才创业峰会国际英才创业峰会</a></li> -->
-<!-- 		                                    	<li><a href="#">市政府2016年国际英才创业峰会国际英才创业峰会</a></li> -->
-<!-- 		                                    </ul> -->
-<!-- 									    </div>   	 -->
-<!-- 									</div> -->
-<!-- 									</div> -->
-<!-- 									<div class="sign"> -->
-<!-- 										<div class="unuseful">无帮助</div> -->
-<!-- 										<div class="useful">有帮助</div> -->
-<!-- 									</div> -->
-<!-- 								</div> -->
+								<!-- 								<ul class="dialog"> -->
+								<!-- 									<li class="right" ></li> -->
+								<!-- 									<li class="center">智能咨询服务智智能咨询服务智智能咨询服务智智能咨询服务智智能咨询服务智</li> -->
+								<!-- 									<li class="left"></li> -->
+								<!-- 									<li class="bottom"></li> -->
+								<!-- 								</ul> -->
+								<!-- 								<div class="dialog_tab"> -->
+								<!--                                     <p><strong>栏目导航</strong></p> -->
+								<!--                                     <ul class="news"> -->
+								<!--                                     	<li><a href="#">2016年国际英才创业峰会国际英才创业峰会峰会国际英才创业峰会</a></li> -->
+								<!--                                     </ul> -->
+								<!-- 						            <div> -->
+								<!-- 						            <div class="tab2_title"> -->
+								<!-- 										<ul> -->
+								<!-- 											<li class="slected2">通知公告</li> -->
+								<!-- 											<li>服务</li> -->
+								<!-- 											<li>公开</li> -->
+								<!-- 											<li>市政府</li> -->
+								<!-- 										</ul> -->
+								<!-- 									</div> -->
+								<!-- 									<div class="tab2_content"> -->
+								<!-- 									    <div class="container"> -->
+								<!-- 									    	<ul class="news"> -->
+								<!-- 		                                    	<li><a href="#">通知公告2016年国际英才创业峰会国际英才创业峰会峰会国际英才创业峰会</a></li> -->
+								<!-- 		                                    </ul> -->
+								<!-- 									    </div> -->
+								<!-- 									    <div class="container hide"> -->
+								<!-- 									    	<ul class="news"> -->
+								<!-- 		                                    	<li><a href="#">服务2016年国际英才创业峰会国际英才创业峰会</a></li> -->
+								<!-- 		                                    	<li><a href="#">服务2016年国际英才创业峰会国际英才创业峰会</a></li> -->
+								<!-- 		                                    </ul> -->
+								<!-- 									    </div> -->
+								<!-- 									    <div class="container hide"> -->
+								<!-- 									    	<ul class="news"> -->
+								<!-- 		                                    	<li><a href="#">公开2016年国际英才创业峰会国际英才创业峰会</a></li> -->
+								<!-- 		                                    </ul> -->
+								<!-- 									    </div> -->
+								<!-- 									    <div class="container hide"> -->
+								<!-- 									    	<ul class="news"> -->
+								<!-- 		                                    	<li><a href="#">市政府2016年国际英才创业峰会国际英才创业峰会</a></li> -->
+								<!-- 		                                    	<li><a href="#">市政府2016年国际英才创业峰会国际英才创业峰会</a></li> -->
+								<!-- 		                                    </ul> -->
+								<!-- 									    </div>   	 -->
+								<!-- 									</div> -->
+								<!-- 									</div> -->
+								<!-- 									<div class="sign"> -->
+								<!-- 										<div class="unuseful">无帮助</div> -->
+								<!-- 										<div class="useful">有帮助</div> -->
+								<!-- 									</div> -->
+								<!-- 								</div> -->
 								<!--对话结束-->
-								
-								
-							
+
 							</div>
 						</div>
 						<div style="position:relative">
-						<div class="tipDiv">
-							<ul>
-							</ul>
-						</div>
-						<div class="input" style="width: 493px;">
-							<textarea type="text" id="messCon"></textarea>
-							<p id="fontNum"><i>还可以输入<span id="number"><strong>100</strong></span>字</i></p>
-							<button id="sendMess">发送 Enter</button>
-						</div>
+							<div class="tipDiv">
+								<ul>
+								</ul>
+							</div>
+							<div class="input" style="width: 493px;">
+								<textarea type="text" id="messCon"></textarea>
+								<p id="fontNum"><i>还可以输入<span id="number"><strong>100</strong></span>字</i></p>
+								<button id="sendMess">发送 Enter</button>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -270,22 +402,24 @@
 								<p>我要给市长写信？</p>
 								<p>商家乱扔垃圾怎么办？</p>
 							</div>
-							
+
 						</div>
 					</div>
 					<div class="container_right" style="width:512px">
 						<div id="slideBox" class="slideBox" style="width:500px">
 							<div class="bd">
 								<ul>
-									<li><p>开始咨询问题：使用简短，关键性词句</p><img src="images/help1.jpg" /></li>
-									<li><p>分库展示咨询结果</p><img src="images/help2.jpg" /></li>	
+									<li>
+										<p>开始咨询问题：使用简短，关键性词句</p><img src="images/help1.jpg" /></li>
+									<li>
+										<p>分库展示咨询结果</p><img src="images/help2.jpg" /></li>
 								</ul>
 							</div>
 						</div>
-						
+
 					</div>
 				</div>
-			    <!--使用帮助结束-->
+				<!--使用帮助结束-->
 			</div>
 		</div>
 
@@ -302,19 +436,20 @@
             </div>
 		</div> -->
 
-	<!--
+		<!--
     	尾部预留
     -->
-	<div class="tipDiv2">
-	<ul id="show_menu">
-		<li  class='addHome'><i class="menu_ico add_home"></i>设为首页</li>
-		<li  class='addFavorite'><i class="menu_ico add_favorite"></i>加入收藏</li>
-		<li class='cleanContent'><i class="menu_ico clean_content"></i>清空屏幕</li>
-	</ul>
-	</div>
+		<div class="tipDiv2">
+			<ul id="show_menu">
+				<li class='addHome'><i class="menu_ico add_home"></i>设为首页</li>
+				<li class='addFavorite'><i class="menu_ico add_favorite"></i>加入收藏</li>
+				<li class='cleanContent'><i class="menu_ico clean_content"></i>清空屏幕</li>
+			</ul>
+		</div>
 
 	</body>
-	<script type="text/javascript" src="js/jquery.nicescroll.min.js" ></script>
-	<script type="text/javascript" src="js/jquery.SuperSlide.js" ></script>
+	<script type="text/javascript" src="js/jquery.nicescroll.min.js"></script>
+	<script type="text/javascript" src="js/jquery.SuperSlide.js"></script>
 	<script type="text/javascript" src="js/common.js"></script>
+
 </html>

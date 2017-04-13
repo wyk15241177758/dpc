@@ -10,6 +10,11 @@ var dvalue = "简单输入，精准信息即刻展现~";
 var xinwen = "新闻中心"
 	//栏目导航高度限制
 	var lmdhHeight=48
+//qa新闻回复字数限制
+var qaNumLimitNews=18;
+//qa非新闻回复字数限制
+var qaNumLimit=24;
+
 $(function() {
 
 	//点击展开/隐藏栏目导航
@@ -484,18 +489,28 @@ function addAnswer(question, qaMsg) {
 			if (index == 0) {
 				categoryLi = "<li class='slected2'>" + i + "</li>"
 				for (var j = 0; j < msg[i].length; j++) {
+					//qa回复字数限制
+					var title=msg[i][j].title;
+					var fullTitle=msg[i][j].title;
+					var qaNumLimitTrue=qaNumLimit;
+					if(i == xinwen){
+						qaNumLimitTrue=qaNumLimitNews;
+					}
+					if(title.length>qaNumLimitTrue){
+						title=title.substring(0,qaNumLimitTrue)+"...";
+					}
 					// 如果有预设页面html则优先展示
 					if (msg[i][j].html != undefined && msg[i][j].html != null
 							&& msg[i][j].html.length > 0) {
 						curQaDiv += msg[i][j].html;
 					} else {
 						if (msg[i][j].url.indexOf("http") == -1) {
-							curQaLi += "<li><a href='http://" + msg[i][j].url
-									+ "' target='_blank'>" + msg[i][j].title
+							curQaLi += "<li><a title='"+fullTitle+"' href='http://" + msg[i][j].url
+									+ "' target='_blank'>" + title
 									+ "</a>{date}</li>"
 						} else {
-							curQaLi += "<li><a href='" + msg[i][j].url
-									+ "' target='_blank'>" + msg[i][j].title
+							curQaLi += "<li><a title='"+fullTitle+"' href='" + msg[i][j].url
+									+ "' target='_blank'>" + title
 									+ "</a>{date}</li>"
 						}
 						// 新闻类型的显示时间
@@ -512,18 +527,29 @@ function addAnswer(question, qaMsg) {
 			} else {
 				categoryLi += "<li>" + i + "</li>"
 				for (var j = 0; j < msg[i].length; j++) {
+					//qa回复字数限制
+					var title=msg[i][j].title;
+					var fullTitle=msg[i][j].title;
+					var qaNumLimitTrue=qaNumLimit;
+					if(i == xinwen){
+						qaNumLimitTrue=qaNumLimitNews;
+					}
+					if(title.length>qaNumLimitTrue){
+						title=title.substring(0,qaNumLimitTrue)+"...";
+					}
+					
 					// 如果有预设页面html则优先展示
 					if (msg[i][j].html != undefined && msg[i][j].html != null
 							&& msg[i][j].html.length > 0) {
 						curQaDiv += msg[i][j].html;
 					} else {
 						if (msg[i][j].url.indexOf("http") == -1) {
-							curQaLi += "<li><a href='http://" + msg[i][j].url
-									+ "' target='_blank'>" + msg[i][j].title
+							curQaLi += "<li><a title='"+fullTitle+"' href='http://" + msg[i][j].url
+									+ "' target='_blank'>" +title
 									+ "</a>{date}</li>"
 						} else {
-							curQaLi += "<li><a href='" + msg[i][j].url
-									+ "' target='_blank'>" + msg[i][j].title
+							curQaLi += "<li><a title='"+fullTitle+"' href='" + msg[i][j].url
+									+ "' target='_blank'>" + title
 									+ "</a>{date}</li>"
 						}
 						// 新闻类型的显示时间

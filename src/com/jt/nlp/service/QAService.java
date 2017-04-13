@@ -347,6 +347,45 @@ public class QAService {
 		return qaResultMap;
 	}
 	
+	
+	//先按照相似度查询，返回评分大于指定分数的检索结果
+	private List<Article> luceneSearchTop(Set<String> questionSet,String category,int score){
+		List<Article> rsList=new ArrayList<Article>();
+		String questionStr="";
+		//相似性检索还是需要lucene自动分词
+		for (String str : questionSet) {
+			questionStr += str + " ";
+		}
+		
+		String[] questionArr=new String[questionSet.size()];
+		questionSet.toArray(questionArr);
+		
+		// 分类作为必须包含的字段进行检索，如下三个变量长度必须相同
+
+		String[] searchWord = new String[stopWordList.size()+2];
+		Occur[] occurs = new Occur[searchWord.length];
+		String[] fields = new String[searchWord.length];
+		searchWord[0]=questionStr;
+		occurs[0]=Occur.MUST;
+		occurs[1]=Occur.MUST;
+		fields[0]=Article.getMapedFieldName("title");
+		fields[1]=Article.getMapedFieldName("category");
+		for(int i=0;i<stopWordList.size();i++){
+			searchWord[i+2]=stopWordList.get(i);
+			occurs[i+2]=Occur.MUST_NOT;
+			fields[i+2]=Article.getMapedFieldName("title");
+		}
+		
+		
+		//排序参数
+		String[] sortField={Article.getMapedFieldName("date")};
+		SortField.Type[] sortFieldType={SortField.Type.LONG};
+		boolean[] reverse={true};
+		boolean isRelevancy = true;
+		
+		
+		return rsList;
+	}
 
 
 	public void setNlpService(NlpService nlpService) {

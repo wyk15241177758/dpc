@@ -38,7 +38,7 @@ import com.jt.lucene.LuceneUtilsGw;
 import com.jt.nlp.service.LuceneSearchService;
 
 public class LuceneTest {
-    private static String indexPath = "D:\\indexpath_test";    // 索引保存目录
+    private static String indexPath = "D:\\indexpath";    // 索引保存目录
     private static LuceneUtilsGw util=null;
     
 	public static void addLongPoint(Document document, String name, long value) {
@@ -205,7 +205,7 @@ public class LuceneTest {
     }
     
     public static void SearchTest2(){
-    	String questionStr="消防";
+    	String questionStr="请问怎么办理社保";
     	
     	List<Document> daoSearchList=null;
     	
@@ -244,7 +244,7 @@ public class LuceneTest {
 		
 		
 		
-		String qaSjfl="公共服务;走进新郑;新闻中心;信息公开;政民互动";
+		String qaSjfl="政策文件";
 		if(qaSjfl!=null&&qaSjfl.length()>0){
 			String[] sjfl=qaSjfl.split(";");
 			for(String str:sjfl){
@@ -255,7 +255,7 @@ public class LuceneTest {
 					rsList=new ArrayList<Article>();
 				}
 				daoSearchList=searchService.getDao().searchTest(searchWord, occurs, fields, 
-						sortField, sortFieldType, reverse, isRelevancy, 0, 10);
+						sortField, sortFieldType, reverse, isRelevancy, 0, 5);
 			}
 		}
 		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");

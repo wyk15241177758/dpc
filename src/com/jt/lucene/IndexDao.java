@@ -332,9 +332,11 @@ public class IndexDao {
 					Date date=new Date(Long.parseLong(tDoc.get(Article.getMapedFieldName("date"))));
 					SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
 					
+//					System.out.println("score=["+ex.getValue()+"] date=["+sdf.format(date)+"] "
+//							+ "title=["+tDoc.get(Article.getMapedFieldName("title"))+"] explain=[\n"+ex.toString()
+//							+"]" );
 					System.out.println("score=["+ex.getValue()+"] date=["+sdf.format(date)+"] "
-							+ "title=["+tDoc.get(Article.getMapedFieldName("title"))+"] explain=[\n"+ex.toString()
-							+"]" );
+							+ "title=["+tDoc.get(Article.getMapedFieldName("title"))+"]" );
 				}
 				
 			}else{
@@ -503,7 +505,7 @@ public class IndexDao {
  * 结果到第几个结束，可以传入-1，则限制为1000条
  * @return
  */
-	public List<Document> search(String[] queryString,Occur[] occurs,String[] fields,String[] sortField,SortField.Type[] sortFieldType,boolean[] reverse,boolean isRelevancy ,int firstResult, int maxResult) {
+	public List<Document> search(String[] queryString,Occur[] occurs,String[] fields,String[] sortField,SortField.Type[] sortFieldType,boolean[] reverse,boolean isRelevancy ,int firstResult, int maxResult,float minScore) {
 		List<Document> list = new ArrayList<Document>();
 		TopDocs topDocs =null;
 		Sort sort=null;
@@ -547,12 +549,25 @@ public class IndexDao {
 //			Scorer source = new QueryScorer(query);
 //			Highlighter highlighter = new Highlighter(formatter, source);
 			
+			
 			// 处理结果
 			int endIndex = Math.min(firstResult + maxResult, hits.length);
 			
-			for (int i = firstResult; i < endIndex; i++) {
+			//必须在评分小于指定分数时直接break
+			for (int i = firstResult; list.size() < endIndex&&i<hits.length; i++) {
 				Document hitDoc = isearcher.doc(hits[i].doc);
-				list.add(hitDoc);
+				//是否大于指定分数才加入检索结果，minScore为0不判断
+				if(minScore>0){
+					Explanation ex=isearcher.explain(query,topDocs.scoreDocs[i].doc);
+					//得分大于最小得分才返回
+					if(ex.getValue()>minScore){
+						list.add(hitDoc);
+					}else{
+						break;
+					}
+				}else{
+					list.add(hitDoc);
+				}
 			}
 			ireader.close();
 			return list;
@@ -747,13 +762,45 @@ public class IndexDao {
 		public List<Article> searchArticle(String[] queryString,Occur[] occurs,String[] fields,String[] sortField,SortField.Type[] sortFieldType,boolean[] reverse,boolean isRelevancy ,int firstResult, int maxResult) {
 			List<Article> list = new ArrayList<Article>();
 			List<Document> list_doc = new ArrayList<Document>();
-			list_doc=search(queryString, occurs, fields, sortField, sortFieldType, reverse, isRelevancy, firstResult, maxResult);
+			list_doc=search(queryString, occurs, fields, sortField, sortFieldType, reverse, isRelevancy, firstResult, maxResult,0);
 			for(Document doc:list_doc){
 				list.add(DocumentUtils.document2Ariticle(doc));
 			}
 			return list;
 		}
-		
+		/**
+		 * 支持定义每个检索词的与、或关系，支持检索指定字段
+		 * @param queryString
+		 * 支持传入多个检索词
+		 * @param occurs
+		 * 多个检索词之间的关系，Occur.MUST(结果“与”)， Occur.MUST_NOT(结果“不包含”)，Occur.SHOULD(结果“或”)
+		 * @param field
+		 * 当前应用使用title
+		 * @param sortField
+		 * 排序字段，支持多个字段
+		 * @param sortFieldType
+		 * 排序字段的类型，如long、int等
+		 * @param reverse
+		 * 排序方式，顺序(false)还是倒序(true)
+		 * @param isRelevancy
+		 * 是否按照相关性排序
+		 * @param firstResult
+		 * 结果从第几个开始
+		 * @param maxResult
+		 * 结果到第几个结束，可以传入-1，则限制为1000条
+		 * @param minScore
+		 *返回评分大于指定分数的数据
+		 * @return
+		 */
+			public List<Article> searchArticle(String[] queryString,Occur[] occurs,String[] fields,String[] sortField,SortField.Type[] sortFieldType,boolean[] reverse,boolean isRelevancy ,int firstResult, int maxResult,float minScore) {
+				List<Article> list = new ArrayList<Article>();
+				List<Document> list_doc = new ArrayList<Document>();
+				list_doc=search(queryString, occurs, fields, sortField, sortFieldType, reverse, isRelevancy, firstResult, maxResult,minScore);
+				for(Document doc:list_doc){
+					list.add(DocumentUtils.document2Ariticle(doc));
+				}
+				return list;
+			}		
 	
 	public void addLongPoint(Document document, String name, long value) {
 	    Field field = new LongPoint(name, value);

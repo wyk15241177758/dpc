@@ -7,7 +7,7 @@ var noResult = "未找到您要的信息，建议您进入“<a href='http://www
 var dvalue = "简单输入，精准信息即刻展现~";
 
 // 新闻类型名
-var xinwen = "新闻中心"
+var xinwen = "新闻中心,公共服务,信息公开"
 	//栏目导航高度限制
 	var lmdhHeight=48
 //qa新闻回复字数限制
@@ -493,7 +493,7 @@ function addAnswer(question, qaMsg) {
 					var title=msg[i][j].title;
 					var fullTitle=msg[i][j].title;
 					var qaNumLimitTrue=qaNumLimit;
-					if(i == xinwen){
+					if(isInclude(xinwen,i)){
 						qaNumLimitTrue=qaNumLimitNews;
 					}
 					if(title.length>qaNumLimitTrue){
@@ -514,7 +514,7 @@ function addAnswer(question, qaMsg) {
 									+ "</a>{date}</li>"
 						}
 						// 新闻类型的显示时间
-						if (i == xinwen && msg[i][j].date != undefined) {
+						if (isInclude(xinwen,i) && msg[i][j].date != undefined) {
 							curQaLi = curQaLi.replace(/\{date\}/g, "<span>"
 									+ msg[i][j].date + "</span>");
 						} else {
@@ -531,7 +531,7 @@ function addAnswer(question, qaMsg) {
 					var title=msg[i][j].title;
 					var fullTitle=msg[i][j].title;
 					var qaNumLimitTrue=qaNumLimit;
-					if(i == xinwen){
+					if(isInclude(xinwen,i)){
 						qaNumLimitTrue=qaNumLimitNews;
 					}
 					if(title.length>qaNumLimitTrue){
@@ -553,7 +553,7 @@ function addAnswer(question, qaMsg) {
 									+ "</a>{date}</li>"
 						}
 						// 新闻类型的显示时间
-						if (i == xinwen && msg[i][j].date != undefined) {
+						if (isInclude(xinwen,i) && msg[i][j].date != undefined) {
 							curQaLi = curQaLi.replace(/\{date\}/g, "<span>"
 									+ msg[i][j].date + "</span>");
 						} else {
@@ -619,4 +619,15 @@ function showOrHideUl(){
 	"<div style='clear: both;'></div>");
 	}
 	
+}
+
+//当前栏目是否在栏目列表，栏目列表使用逗号分隔
+function isInclude(chnls,curChnl){
+	var arrChnls=chnls.split(",");
+	for(var i=0;i<arrChnls.length;i++){
+		if(curChnl==arrChnls[i]){
+			return true;
+		}
+	}
+	return false;
 }

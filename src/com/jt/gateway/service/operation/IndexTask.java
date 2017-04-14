@@ -30,6 +30,7 @@ import com.jt.gateway.service.job.JobInfService;
 import com.jt.gateway.service.job.JobLogService;
 import com.jt.gateway.service.job.JobRunningLogService;
 import com.jt.gateway.util.FileUtil;
+import com.jt.lucene.Article;
 import com.jt.lucene.IndexDao;
 
 /**
@@ -166,9 +167,9 @@ public class IndexTask extends ApplicationObjectSupport implements Job {
 					}
 					logger.debug("value=[" + map.get(df.getName()).toString() + "]" + " type= ["
 							+ df.getType() + "]");
-					//判断字段类型，如果是long类型则调用特殊的field，便于后续检索和排序
-					if("bigint".equalsIgnoreCase(columnTypeMap.get(df.getName()))||
-							"int".equalsIgnoreCase(columnTypeMap.get(df.getName()))){
+					//判断字段类型，如果是long类型则调用特殊的field，便于后续检索和排序，排除ID字段
+					if(("bigint".equalsIgnoreCase(columnTypeMap.get(df.getName()))||
+							"int".equalsIgnoreCase(columnTypeMap.get(df.getName())))&&(!Article.getMapedFieldName("id").equalsIgnoreCase(df.getName()))){
 						try {
 							indexDao.addLongPoint(doc, df.getName(),Long.parseLong( map.get(df.getName()).toString()));
 						} catch (Exception e) {

@@ -42,9 +42,6 @@ public class QAService {
 	//不分词词典
 	private Resource noParticipleWordResource;
 	private List<String> noParticipleWordList;
-	//停用词词典
-	private Resource stopWordResource;
-	private List<String> stopWordList;
 	//NLP之前相似性检索，返回大于指定分数的数据
 	private float minScore;
 	//存储场景的关联分类
@@ -68,12 +65,8 @@ public class QAService {
 	public void initNlp() {
 		//读取不分词的配置文件，替换问题时自动添加双引号
 		noParticipleWordList=getDict(noParticipleWordResource,false);
-		//读取停用词词典，为了防止分词增加双引号
-		stopWordList=getDict(stopWordResource,true);
 		LOG.info("不分词词典内容为："+noParticipleWordList+"");
-		LOG.info("停用词词典内容为："+stopWordList+"");
 		QASearch("初始化", 0,1);
-		// System.out.println("######"+(searchService==null));
 		LOG.info("正在初始化NLP");
 	}
 
@@ -115,14 +108,6 @@ public class QAService {
 	}
 	
 	
-	public List<String> getStopWordList() {
-		return stopWordList;
-	}
-
-	public void setStopWordList(List<String> stopWordList) {
-		this.stopWordList = stopWordList;
-	}
-
 	public List<String> getNoParticipleWordList() {
 		return noParticipleWordList;
 	}
@@ -141,13 +126,6 @@ public class QAService {
 		this.noParticipleWordResource = noParticipleWordResource;
 	}
 
-	public Resource getStopWordResource() {
-		return stopWordResource;
-	}
-
-	public void setStopWordResource(Resource stopWordResource) {
-		this.stopWordResource = stopWordResource;
-	}
 
 	public String getsPageContinue() {
 		return sPageContinue;
@@ -273,24 +251,18 @@ public class QAService {
 			questionStr += "\""+str + "\" ";
 		}
 		// 分类作为必须包含的字段进行检索，如下三个变量长度必须相同
-
-		String[] searchWord = new String[stopWordList.size()+2];
-		//{ questionStr, "" };
-		Occur[] occurs = new Occur[searchWord.length];
-		//{ Occur.MUST, Occur.MUST };
-		String[] fields = new String[searchWord.length];
-		//{ Article.getMapedFieldName("title"), Article.getMapedFieldName("category") };
-		searchWord[0]=questionStr;
-		occurs[0]=Occur.MUST;
-		occurs[1]=Occur.MUST;
-		fields[0]=Article.getMapedFieldName("title");
-		fields[1]=Article.getMapedFieldName("category");
-		for(int i=0;i<stopWordList.size();i++){
-			searchWord[i+2]=stopWordList.get(i);
-			occurs[i+2]=Occur.MUST_NOT;
-			fields[i+2]=Article.getMapedFieldName("title");
-		}
+		List<String> searchWordList=new ArrayList<String>();
+		List<Occur> occurList=new ArrayList<Occur>();
+		List<String> fieldList=new ArrayList<String>();
 		
+		//标题检索
+		searchWordList.add(questionStr);
+		occurList.add(Occur.MUST);
+		fieldList.add(Article.getMapedFieldName("title"));
+		//分类检索
+		//searchWord部分在for循环中插入
+		occurList.add(Occur.MUST);
+		fieldList.add(Article.getMapedFieldName("category"));
 		
 		//排序参数
 		String[] sortField={Article.getMapedFieldName("date")};
@@ -302,7 +274,11 @@ public class QAService {
 		if(sceneSjflList.size()>0){
 			for(String str:sceneSjflList){
 				//赋值分类value，分类也不再分词
-				searchWord[1]="\""+str+"\"";
+				if(searchWordList.size()>1){
+					searchWordList.set(1, "\""+str+"\"");
+				}else{
+					searchWordList.add("\""+str+"\"");
+				}
 				List<Article> rsList=qaResultMap.get(str);
 				if(rsList==null){
 					rsList=new ArrayList<Article>();
@@ -311,19 +287,54 @@ public class QAService {
 				if(isPageContinue){
 					//rsList没有达到结果上限则继续检索
 					if(rsList.size()<end){
-						//相关度大于30的加入rsList
-						rsList.addAll(luceneSearchTop(question, searchWord[1], end-rsList.size(), 30));
+						//相关度大于minScore的加入rsList
+						rsList.addAll(luceneSearchTop(question,searchWordList.get(1), end-rsList.size(), minScore));
 						if(rsList.size()<end){
-							rsList.addAll(searchService.searchArticle(searchWord, occurs, fields, sortField, sortFieldType, reverse, isRelevancy, begin, end-rsList.size()));
+							//排除重复数据
+							String[] searchWord = new String[rsList.size()+2];
+							Occur[] occurs = new Occur[searchWord.length];
+							String[] fields = new String[searchWord.length];
+							for(int i=0;i<(rsList.size()+2);i++){
+								//前两个分别是检索词和分类，后边的是排除的标题
+								if(i<2){
+									searchWord[i]=searchWordList.get(i);
+									occurs[i]=occurList.get(i);
+									fields[i]=fieldList.get(i);
+								}else{
+									searchWord[i]=rsList.get(i-2).getId()+"";
+									occurs[i]=Occur.MUST_NOT;
+									fields[i]=Article.getMapedFieldName("id");
+								}
+							}
+							
+							rsList.addAll(searchService.searchArticle(searchWord,
+									occurs, fields, sortField, sortFieldType, reverse, isRelevancy, begin, end-rsList.size()));
 						}
 					}
 				}else{
 					//rsList中有预设的结果，就不再检索。没有预设结果才检索
 					if(rsList.size()==0){
-						//相关度大于30的加入rsList
-						rsList.addAll(luceneSearchTop(question, searchWord[1], end-rsList.size(), 30));
+						//相关度大于minScore的加入rsList
+						rsList.addAll(luceneSearchTop(question, searchWordList.get(1), end-rsList.size(), minScore));
 						if(rsList.size()<end){
-							rsList.addAll(searchService.searchArticle(searchWord, occurs, fields, sortField, sortFieldType, reverse, isRelevancy, begin, end));
+							//排除重复数据
+							String[] searchWord = new String[rsList.size()+2];
+							Occur[] occurs = new Occur[searchWord.length];
+							String[] fields = new String[searchWord.length];
+							for(int i=0;i<(rsList.size()+2);i++){
+								//前两个分别是检索词和分类，后边的是排除的ID
+								if(i<2){
+									searchWord[i]=searchWordList.get(i);
+									occurs[i]=occurList.get(i);
+									fields[i]=fieldList.get(i);
+								}else{
+									searchWord[i]=rsList.get(i-2).getId()+"";
+									occurs[i]=Occur.MUST_NOT;
+									fields[i]=Article.getMapedFieldName("id");
+								}
+							}
+							rsList.addAll(searchService.searchArticle(searchWord,
+									occurs, fields, sortField, sortFieldType, reverse, isRelevancy, begin, end-rsList.size()));
 						}
 					}
 				}
@@ -335,7 +346,11 @@ public class QAService {
 				String[] sjfl=qaSjfl.split(";");
 				for(String str:sjfl){
 					//赋值分类value
-					searchWord[1]=str;
+					if(searchWordList.size()>1){
+						searchWordList.set(1, "\""+str+"\"");
+					}else{
+						searchWordList.add("\""+str+"\"");
+					}
 					List<Article> rsList=qaResultMap.get(str);
 					if(rsList==null){
 						rsList=new ArrayList<Article>();
@@ -344,17 +359,52 @@ public class QAService {
 					if(isPageContinue){
 						if(rsList.size()<end){
 							//相关度大于指定分数的加入rsList
-							rsList.addAll(luceneSearchTop(question, searchWord[1], end-rsList.size(), 30));
+							rsList.addAll(luceneSearchTop(question,searchWordList.get(1), end-rsList.size(), minScore));
 							if(rsList.size()<end){
-								rsList.addAll(searchService.searchArticle(searchWord, occurs, fields, sortField, sortFieldType, reverse, isRelevancy, begin, end-rsList.size()));
+								//排除重复数据
+								String[] searchWord = new String[rsList.size()+2];
+								Occur[] occurs = new Occur[searchWord.length];
+								String[] fields = new String[searchWord.length];
+								for(int i=0;i<(rsList.size()+2);i++){
+									//前两个分别是检索词和分类，后边的是排除的ID
+									if(i<2){
+										searchWord[i]=searchWordList.get(i);
+										occurs[i]=occurList.get(i);
+										fields[i]=fieldList.get(i);
+									}else{
+										searchWord[i]=rsList.get(i-2).getId()+"";
+										occurs[i]=Occur.MUST_NOT;
+										fields[i]=Article.getMapedFieldName("id");
+									}
+								}
+								rsList.addAll(searchService.searchArticle(searchWord, occurs, fields, 
+										sortField, sortFieldType, reverse, isRelevancy, begin, end-rsList.size()));
 							}
 						}
 					}else{
 						if(rsList.size()==0){
-							//相关度大于30的加入rsList
-							rsList.addAll(luceneSearchTop(question, searchWord[1], end-rsList.size(), 30));
+							//相关度大于minScore的加入rsList
+							rsList.addAll(luceneSearchTop(question, searchWordList.get(1), end-rsList.size(), minScore));
 							if(rsList.size()<end){
-								rsList.addAll(searchService.searchArticle(searchWord, occurs, fields, sortField, sortFieldType, reverse, isRelevancy, begin, end));
+								//排除重复数据
+								String[] searchWord = new String[rsList.size()+2];
+								Occur[] occurs = new Occur[searchWord.length];
+								String[] fields = new String[searchWord.length];
+								for(int i=0;i<(rsList.size()+2);i++){
+									//前两个分别是检索词和分类，后边的是排除的ID
+									if(i<2){
+										searchWord[i]=searchWordList.get(i);
+										occurs[i]=occurList.get(i);
+										fields[i]=fieldList.get(i);
+									}else{
+										searchWord[i]=rsList.get(i-2).getId()+"";
+										occurs[i]=Occur.MUST_NOT;
+										fields[i]=Article.getMapedFieldName("id");
+									}
+								}
+								
+								rsList.addAll(searchService.searchArticle(searchWord, occurs,
+										fields, sortField, sortFieldType, reverse, isRelevancy, begin, end-rsList.size()));
 							}
 						}
 					}
@@ -369,13 +419,13 @@ public class QAService {
 	
 	
 	//先按照相似度查询，返回评分大于指定分数的检索结果
-	private List<Article> luceneSearchTop(String question,String category,int end,int minScore){
+	private List<Article> luceneSearchTop(String question,String category,int end,float minScore){
 		List<Article> rsList=new ArrayList<Article>();
 		
 		
 		// 分类作为必须包含的字段进行检索，如下三个变量长度必须相同
 
-		String[] searchWord = new String[stopWordList.size()+2];
+		String[] searchWord = new String[2];
 		Occur[] occurs = new Occur[searchWord.length];
 		String[] fields = new String[searchWord.length];
 		searchWord[0]=question;
@@ -383,11 +433,6 @@ public class QAService {
 		occurs[1]=Occur.MUST;
 		fields[0]=Article.getMapedFieldName("title");
 		fields[1]=Article.getMapedFieldName("category");
-		for(int i=0;i<stopWordList.size();i++){
-			searchWord[i+2]=stopWordList.get(i);
-			occurs[i+2]=Occur.MUST_NOT;
-			fields[i+2]=Article.getMapedFieldName("title");
-		}
 		
 		
 		//排序参数

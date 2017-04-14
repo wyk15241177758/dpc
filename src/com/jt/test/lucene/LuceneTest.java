@@ -205,9 +205,9 @@ public class LuceneTest {
     }
     
     public static void SearchTest2(){
-    	String questionStr="请问怎么办理社保";
+    	String questionStr="\"推进\" \"意见\" \"公开\"";
     	
-    	List<Document> daoSearchList=null;
+    	List<Article> daoSearchList=null;
     	
     	LuceneSearchService searchService= new LuceneSearchService();
 		try {
@@ -226,15 +226,17 @@ public class LuceneTest {
 
 		// 分类作为必须包含的字段进行检索，如下三个变量长度必须相同
 
-		String[] searchWord = new String[2];
+		String[] searchWord = new String[3];
 		Occur[] occurs = new Occur[searchWord.length];
 		String[] fields = new String[searchWord.length];
 		searchWord[0]=questionStr;
+		searchWord[2]="\"29726\"";
 		occurs[0]=Occur.MUST;
 		occurs[1]=Occur.MUST;
+		occurs[2]=Occur.MUST_NOT;
 		fields[0]=Article.getMapedFieldName("title");
 		fields[1]=Article.getMapedFieldName("category");
-		
+		fields[2]=Article.getMapedFieldName("id");
 		
 		//排序参数
 		String[] sortField={Article.getMapedFieldName("date")};
@@ -250,17 +252,14 @@ public class LuceneTest {
 			for(String str:sjfl){
 				//赋值分类value
 				searchWord[1]="\""+str+"\"";
-				List<Article> rsList=qaResultMap.get(str);
-				if(rsList==null){
-					rsList=new ArrayList<Article>();
-				}
-				daoSearchList=searchService.getDao().searchTest(searchWord, occurs, fields, 
-						sortField, sortFieldType, reverse, isRelevancy, 0, 5);
+				daoSearchList=searchService.getDao().searchArticle(searchWord, 
+						occurs, fields, sortField, sortFieldType, reverse, isRelevancy, 
+						0,5, 0);
 			}
 		}
 		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
-		for (Document doc: daoSearchList) {
-			Article article=DocumentUtils.document2Ariticle(doc);
+		System.out.println(daoSearchList.size());
+		for (Article article: daoSearchList) {
 			System.out.println("date=["+sdf.format(article.getDate())+"] article:"+article);
 		}
 		

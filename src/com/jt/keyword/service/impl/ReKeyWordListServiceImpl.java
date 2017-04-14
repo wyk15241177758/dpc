@@ -261,7 +261,7 @@ public class ReKeyWordListServiceImpl implements  RekeyWordListService{
    		boolean isRelevancy = true;
    		int i=0;
    		while (true) {
-   			List<Document> list=dao.search(queryStr, occurs, searchField, sortField, sortFieldType, reverse, isRelevancy, i*1000,1000);
+   			List<Document> list=dao.search(queryStr, occurs, searchField, sortField, sortFieldType, reverse, isRelevancy, i*1000,1000,0);
    	   		if(list==null||list.size()==0)
    	   			break;
    			for(Document a:list){
@@ -317,7 +317,7 @@ public class ReKeyWordListServiceImpl implements  RekeyWordListService{
    		boolean isRelevancy = true;
    		int i=0;
    		while (true) {
-   			List<Document> list=dao.search(queryStr, occurs, searchField, sortField, sortFieldType, reverse, isRelevancy, i*1000,1000);
+   			List<Document> list=dao.search(queryStr, occurs, searchField, sortField, sortFieldType, reverse, isRelevancy, i*1000,1000,0);
    	   		if(list==null||list.size()==0)
    	   			break;
    			for(Document a:list){
@@ -374,7 +374,7 @@ public class ReKeyWordListServiceImpl implements  RekeyWordListService{
    		boolean isRelevancy = true;
    		int i=0;
    		while (true) {
-   			List<Document> list=dao.search(queryStr, occurs, searchField, sortField, sortFieldType, reverse, isRelevancy, i*1000,1000);
+   			List<Document> list=dao.search(queryStr, occurs, searchField, sortField, sortFieldType, reverse, isRelevancy, i*1000,1000,0);
    	   		if(list==null||list.size()==0)
    	   			break;
    			for(Document a:list){
@@ -431,7 +431,7 @@ public class ReKeyWordListServiceImpl implements  RekeyWordListService{
    		boolean isRelevancy = true;
    		int i=0;
    		while (true) {
-   			List<Document> list=dao.search(queryStr, occurs, searchField, sortField, sortFieldType, reverse, isRelevancy, i*1000,1000);
+   			List<Document> list=dao.search(queryStr, occurs, searchField, sortField, sortFieldType, reverse, isRelevancy, i*1000,1000,0);
    	   		if(list==null||list.size()==0)
    	   			break;
    			for(Document a:list){

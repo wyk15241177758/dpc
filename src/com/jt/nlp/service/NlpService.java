@@ -15,6 +15,7 @@ import org.apdplat.qa.parser.WordParser;
 import org.apdplat.qa.questiontypeanalysis.patternbased.MainPartExtracter;
 import org.apdplat.qa.questiontypeanalysis.patternbased.QuestionStructure;
 import org.apdplat.word.WordSegmenter;
+import org.apdplat.word.recognition.StopWord;
 import org.apdplat.word.segmentation.Word;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,13 +48,23 @@ public class NlpService {
 	 * @return
 	 */
 	public List<Word> getMainPartWords(String question) {
+		//先排除停用词
+		List<Word> list=WordSegmenter.seg(question);
+		question="";
+		for(Word word:list){
+			question+=word.getText();
+		}
+		LOG.info("排除停用词的检索词=["+question+"]");
 		QuestionStructure qs = mainPartExtracter.getMainPart(question);
 		String mainPart = qs.getMainPart();
 		if(mainPart==null){
-			return null;
+			LOG.info("未能识别主谓宾 返回检索词=[" + list + "]");
+			return list;
+		}else{
+			list=WordSegmenter.seg(mainPart);
 		}
-		List<Word> list=WordSegmenter.seg(mainPart);
-		LOG.info("question=[" + question + "] 排除停用词之后性的主谓宾=[" + list + "]");
+		
+		LOG.info("主谓宾=[" + list + "]");
 		return list;
 	}
 
@@ -170,16 +181,27 @@ public class NlpService {
 		return particleList;
 	}
 	public static void main(String[] args) {
-		NlpService service = new NlpService();
+		Word word=new Word("请问");
+		List<Word> list=new ArrayList<Word>();
+		list.add(word);
+		word=new Word("社保");
+		list.add(word);
+		word=new Word("怎么");
+		list.add(word);
+		word=new Word("办理");
+		list.add(word);
+		StopWord.filterStopWords(list);
+		System.out.println(list);;
+//		NlpService service = new NlpService();
 //		String[] arr = { "杨浦有什么地方好玩？", "孩子转学需要什么手续？", "我想自主创业，政府有什么政策？", "噪音扰民怎么办?", "上海怎么办理居住证 " };
-		String[] arr = {"中国" };
-		for (String str : arr) {
-			System.out.println("问题:" + str + "----------begin");
-			Set<String> set = service.getSearchWords(str);
-			for (String s : set) {
-				System.out.println(s);
-			}
-			System.out.println("问题:" + str + "----------end");
-		}
+//		String[] arr = {"中国" };
+//		for (String str : arr) {
+//			System.out.println("问题:" + str + "----------begin");
+//			Set<String> set = service.getSearchWords(str);
+//			for (String s : set) {
+//				System.out.println(s);
+//			}
+//			System.out.println("问题:" + str + "----------end");
+//		}
 	}
 }

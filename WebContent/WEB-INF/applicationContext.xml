@@ -215,6 +215,7 @@
 		<property name="sPageContinue" value="${qa.isPageContinue}"></property>
 		<property name="noParticipleWordResource" value="classpath:/noParticiple.dict"></property>
 		<property name="stopWordResource" value="classpath:/stopWord.dict"></property>
+		<property name="minScore" value="${qa.minScore}"></property>
 	</bean>
 
 

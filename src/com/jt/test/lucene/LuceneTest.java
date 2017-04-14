@@ -154,7 +154,7 @@ public class LuceneTest {
    		boolean[] reverse={true};
    		boolean isRelevancy = true;
    		
-   		List<Document> list=dao.search(queryStr, occurs, searchField, null, null, reverse, isRelevancy, 0,100);
+   		List<Document> list=dao.search(queryStr, occurs, searchField, null, null, reverse, isRelevancy, 0,100,0);
    		for(Document a:list){
    			System.out.println(a);
    		}
@@ -193,7 +193,7 @@ public class LuceneTest {
    		boolean[] reverse={true};
    		boolean isRelevancy = true;
    		
-   		List<Document> list=dao.search(queryStr, occurs, searchField, sortField, sortFieldType, reverse, isRelevancy, 0,100);
+   		List<Document> list=dao.search(queryStr, occurs, searchField, sortField, sortFieldType, reverse, isRelevancy, 0,100,0);
    		for(Document a:list){
    			System.out.println(a);
    		}

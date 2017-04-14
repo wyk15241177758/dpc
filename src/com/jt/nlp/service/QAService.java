@@ -45,6 +45,8 @@ public class QAService {
 	//停用词词典
 	private Resource stopWordResource;
 	private List<String> stopWordList;
+	//NLP之前相似性检索，返回大于指定分数的数据
+	private float minScore;
 	//存储场景的关联分类
 //	private Set<String> sceneSjflSet;
 //	private Map<String,List<Article>> qaResultMap;
@@ -307,12 +309,22 @@ public class QAService {
 				}
 				//配置项，如果已有预设页面，是否还继续做检索
 				if(isPageContinue){
+					//rsList没有达到结果上限则继续检索
 					if(rsList.size()<end){
-						rsList.addAll(searchService.searchArticle(searchWord, occurs, fields, sortField, sortFieldType, reverse, isRelevancy, begin, end-rsList.size()));
+						//相关度大于30的加入rsList
+						rsList.addAll(luceneSearchTop(question, searchWord[1], end-rsList.size(), 30));
+						if(rsList.size()<end){
+							rsList.addAll(searchService.searchArticle(searchWord, occurs, fields, sortField, sortFieldType, reverse, isRelevancy, begin, end-rsList.size()));
+						}
 					}
 				}else{
+					//rsList中有预设的结果，就不再检索。没有预设结果才检索
 					if(rsList.size()==0){
-						rsList.addAll(searchService.searchArticle(searchWord, occurs, fields, sortField, sortFieldType, reverse, isRelevancy, begin, end));
+						//相关度大于30的加入rsList
+						rsList.addAll(luceneSearchTop(question, searchWord[1], end-rsList.size(), 30));
+						if(rsList.size()<end){
+							rsList.addAll(searchService.searchArticle(searchWord, occurs, fields, sortField, sortFieldType, reverse, isRelevancy, begin, end));
+						}
 					}
 				}
 				qaResultMap.put(str, rsList);
@@ -331,11 +343,19 @@ public class QAService {
 					//配置项，如果已有预设页面，是否还继续做检索
 					if(isPageContinue){
 						if(rsList.size()<end){
-							rsList.addAll(searchService.searchArticle(searchWord, occurs, fields, sortField, sortFieldType, reverse, isRelevancy, begin, end-rsList.size()));
+							//相关度大于指定分数的加入rsList
+							rsList.addAll(luceneSearchTop(question, searchWord[1], end-rsList.size(), 30));
+							if(rsList.size()<end){
+								rsList.addAll(searchService.searchArticle(searchWord, occurs, fields, sortField, sortFieldType, reverse, isRelevancy, begin, end-rsList.size()));
+							}
 						}
 					}else{
 						if(rsList.size()==0){
-							rsList.addAll(searchService.searchArticle(searchWord, occurs, fields, sortField, sortFieldType, reverse, isRelevancy, begin, end));
+							//相关度大于30的加入rsList
+							rsList.addAll(luceneSearchTop(question, searchWord[1], end-rsList.size(), 30));
+							if(rsList.size()<end){
+								rsList.addAll(searchService.searchArticle(searchWord, occurs, fields, sortField, sortFieldType, reverse, isRelevancy, begin, end));
+							}
 						}
 					}
 					qaResultMap.put(str, rsList);
@@ -349,23 +369,16 @@ public class QAService {
 	
 	
 	//先按照相似度查询，返回评分大于指定分数的检索结果
-	private List<Article> luceneSearchTop(Set<String> questionSet,String category,int score){
+	private List<Article> luceneSearchTop(String question,String category,int end,int minScore){
 		List<Article> rsList=new ArrayList<Article>();
-		String questionStr="";
-		//相似性检索还是需要lucene自动分词
-		for (String str : questionSet) {
-			questionStr += str + " ";
-		}
 		
-		String[] questionArr=new String[questionSet.size()];
-		questionSet.toArray(questionArr);
 		
 		// 分类作为必须包含的字段进行检索，如下三个变量长度必须相同
 
 		String[] searchWord = new String[stopWordList.size()+2];
 		Occur[] occurs = new Occur[searchWord.length];
 		String[] fields = new String[searchWord.length];
-		searchWord[0]=questionStr;
+		searchWord[0]=question;
 		occurs[0]=Occur.MUST;
 		occurs[1]=Occur.MUST;
 		fields[0]=Article.getMapedFieldName("title");
@@ -383,7 +396,10 @@ public class QAService {
 		boolean[] reverse={true};
 		boolean isRelevancy = true;
 		
-		
+		//赋值分类value
+		searchWord[1]=category;
+		rsList.addAll(searchService.searchArticle(searchWord, occurs, fields, sortField, 
+				sortFieldType, reverse, isRelevancy, 0,end,minScore));
 		return rsList;
 	}
 
@@ -406,6 +422,14 @@ public class QAService {
 
 	public void setSceneWordService(SceneWordService sceneWordService) {
 		this.sceneWordService = sceneWordService;
+	}
+
+	public float getMinScore() {
+		return minScore;
+	}
+
+	public void setMinScore(float minScore) {
+		this.minScore = minScore;
 	}
 
 	public static void main(String[] args) {

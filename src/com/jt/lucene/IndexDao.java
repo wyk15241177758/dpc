@@ -555,10 +555,11 @@ public class IndexDao {
 			
 			//必须在评分小于指定分数时直接break
 			for (int i = firstResult; list.size() < endIndex&&i<hits.length; i++) {
+				Explanation ex=isearcher.explain(query,topDocs.scoreDocs[i].doc);
 				Document hitDoc = isearcher.doc(hits[i].doc);
+				hitDoc.add(new Field("SCORE", ex.getValue()+"",TextField.TYPE_STORED));
 				//是否大于指定分数才加入检索结果，minScore为0不判断
 				if(minScore>0){
-					Explanation ex=isearcher.explain(query,topDocs.scoreDocs[i].doc);
 //					System.out.println("title=["+hitDoc.get("XQ_TITLE")+"] value=["+ex.getValue()+"]");
 					//得分大于最小得分才返回
 					if(ex.getValue()>minScore){

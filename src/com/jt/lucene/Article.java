@@ -11,11 +11,14 @@ import java.util.HashMap;
  * @version 1.0.0
  */
 public class Article {
+
 	@Override
 	public String toString() {
-		return "Article [id=" + id + ", title=" + title + ", url=" + url + ", channel=" + channel + ", site=" + site
-				+ ", category=" + category + ", date=" + date + "]";
+		return "Article [id=" + id + ", title=" + title + ", url=" + url + ", html=" + html + ", channel=" + channel
+				+ ", channelUrl=" + channelUrl + ", site=" + site + ", category=" + category + ", date=" + date
+				+ ", keyWord=" + keyWord + ", score=" + score + "]";
 	}
+
 	private Long id;
 	//标题
 	private String title;
@@ -29,6 +32,8 @@ public class Article {
 	private String category;//分类
 	private Date date;
 	private String keyWord;//标签
+	private float score;//得分
+	
 	//返回与jtcrawler表的字段对应关系，必须小写
 	public static String getMapedFieldName(String articleField) {
 		if(articleField.equalsIgnoreCase("id")){
@@ -124,6 +129,14 @@ public class Article {
 	}
 	public void setHtml(String html) {
 		this.html = html;
+	}
+
+	public float getScore() {
+		return score;
+	}
+
+	public void setScore(float score) {
+		this.score = score;
 	}
 	
 }

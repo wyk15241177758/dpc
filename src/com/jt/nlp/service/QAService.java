@@ -12,11 +12,16 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.SortField;
@@ -205,6 +210,7 @@ public class QAService {
 			article.setTitle(page.getPageTitle());
 			article.setUrl(page.getPageLink());
 			article.setHtml(page.getHtml());
+			article.setScore(100);
 			articleList.add(article);
 			map.put(pageSjfl[i], articleList);
 		}
@@ -409,6 +415,33 @@ public class QAService {
 						}
 					}
 					qaResultMap.put(str, rsList);
+				}
+				
+				
+				//根据平均分对分类排序
+
+				List<Map.Entry<String, List<Article>>> list=new ArrayList<>(qaResultMap.entrySet());
+				
+				Collections.sort(list, new Comparator<Map.Entry<String, List<Article>>>() {
+					@Override
+					public int compare(Entry<String, List<Article>> o1, Entry<String, List<Article>> o2) {
+						float sum1=0;
+						float sum2=0;
+						for(Article article:o1.getValue()){
+							sum1+=article.getScore();
+						}
+						for(Article article:o2.getValue()){
+							sum2+=article.getScore();
+						}
+//						System.out.println("key=["+o1.getKey()+"] a1=["+(sum1/o1.getValue().size())+"]"
+//								+ "key=["+o2.getKey()+"] a2=["+(sum2/o2.getValue().size())+"]");
+						return (int)(sum2/o2.getValue().size()-sum1/o1.getValue().size());
+					}
+				});
+				
+				qaResultMap.clear();
+				for(Map.Entry<String, List<Article>> entry:list){
+					qaResultMap.put(entry.getKey(), entry.getValue());
 				}
 			}
 		}

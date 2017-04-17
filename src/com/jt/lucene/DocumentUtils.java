@@ -61,6 +61,12 @@ public class DocumentUtils {
 		article.setChannelUrl(getColumnIgnoreCase(doc, article.getMapedFieldName("channelUrl")));
 		article.setSite(getColumnIgnoreCase(doc, article.getMapedFieldName("site")));
 		article.setKeyWord(getColumnIgnoreCase(doc,article.getMapedFieldName("keyWord")));
+	
+		try {
+			article.setScore(Float.parseFloat(doc.get("SCORE")));
+		} catch (Exception e) {
+			//e.printStackTrace();
+		}
 		return article;
 	}
 	public static Document article2Document(Article article){

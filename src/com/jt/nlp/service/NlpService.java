@@ -55,8 +55,13 @@ public class NlpService {
 			question+=word.getText();
 		}
 		LOG.info("排除停用词的检索词=["+question+"]");
-		QuestionStructure qs = mainPartExtracter.getMainPart(question);
-		String mainPart = qs.getMainPart();
+		String mainPart=null;
+		try {
+			QuestionStructure qs = mainPartExtracter.getMainPart(question);
+			mainPart = qs.getMainPart();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		if(mainPart==null){
 			LOG.info("未能识别主谓宾 返回检索词=[" + list + "]");
 			return list;
@@ -80,7 +85,7 @@ public class NlpService {
 		List<String> splitedQ = NlpUtil.splitQuestion(question);
 		for (String str : splitedQ) {
 			List<Word> mainPartWords = getMainPartWords(str);
-			if(mainPartWords==null){
+			if(mainPartWords==null||mainPartWords.size()==0){
 				set.add(str);
 			}else{
 				set.addAll(doFilterWord(mainPartWords));

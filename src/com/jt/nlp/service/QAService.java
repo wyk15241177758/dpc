@@ -425,17 +425,21 @@ public class QAService {
 				Collections.sort(list, new Comparator<Map.Entry<String, List<Article>>>() {
 					@Override
 					public int compare(Entry<String, List<Article>> o1, Entry<String, List<Article>> o2) {
-						float sum1=0;
-						float sum2=0;
+						float max1=0;
+						float max2=0;
 						for(Article article:o1.getValue()){
-							sum1+=article.getScore();
+							if(article.getScore()>max1){
+								max1=article.getScore();
+							}
 						}
 						for(Article article:o2.getValue()){
-							sum2+=article.getScore();
+							if(article.getScore()>max2){
+								max2=article.getScore();
+							}
 						}
 //						System.out.println("key=["+o1.getKey()+"] a1=["+(sum1/o1.getValue().size())+"]"
 //								+ "key=["+o2.getKey()+"] a2=["+(sum2/o2.getValue().size())+"]");
-						return (int)(sum2/o2.getValue().size()-sum1/o1.getValue().size());
+						return (int)(max2-max1);
 					}
 				});
 				

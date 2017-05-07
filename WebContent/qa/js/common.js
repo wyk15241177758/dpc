@@ -15,6 +15,7 @@ var qaNumLimitNews=18;
 //qa非新闻回复字数限制
 var qaNumLimit=24;
 
+
 $(function() {
 
 	//点击展开/隐藏栏目导航
@@ -386,7 +387,7 @@ function qaSearch(question) {
 	var param = {
 		"question" : encodeURIComponent(question),
 		"begin" : 0,
-		"end" : 10,
+		"end" : 20,
 		"searchHisId" : searchHisId,
 		"isStorgeHis" : "true"
 	};
@@ -428,10 +429,19 @@ function changeChnlUrl(url) {
 	return url.replace(/\$page\[(.*?)-.*?\]/, "$1").replace(/\$page/, "1");
 }
 
+//获得栏目导航信息
 function getChannels(msg) {
 	var channelObj = {};
+	var titleJson={}
 	for (i in msg) {
 		for (var j = 0; j < msg[i].length; j++) {
+			//过滤掉重复标题
+			var fullTitle=msg[i][j].title;
+			if(typeof(titleJson[fullTitle])!='undefined'){
+				continue;
+			}else{
+				titleJson[fullTitle]="";
+			}
 			if (typeof (msg[i][j].channel) != 'undefined'
 					&& typeof (msg[i][j].channelUrl) != 'undefined') {
 				msg[i][j].channel = msg[i][j].channel.replace(
@@ -461,6 +471,9 @@ function addAnswer(question, qaMsg) {
 	var channelLi = "";
 	var msg = qaMsg.msg;
 	var index = 0;
+	//重复标题
+	var titleJson={}
+	
 	if (qaMsg.sig) {
 		var channelObj = getChannels(msg);
 		for (i in channelObj) {
@@ -488,56 +501,29 @@ function addAnswer(question, qaMsg) {
 			// 遍历分类
 			if (index == 0) {
 				categoryLi = "<li class='slected2'>" + i + "</li>"
-				for (var j = 0; j < msg[i].length; j++) {
-					//qa回复字数限制
-					var title=msg[i][j].title;
-					var fullTitle=msg[i][j].title;
-					var qaNumLimitTrue=qaNumLimit;
-					if(isInclude(xinwen,i)){
-						qaNumLimitTrue=qaNumLimitNews;
-					}
-					if(title.length>qaNumLimitTrue){
-						title=title.substring(0,qaNumLimitTrue)+"...";
-					}
-					// 如果有预设页面html则优先展示
-					if (msg[i][j].html != undefined && msg[i][j].html != null
-							&& msg[i][j].html.length > 0) {
-						curQaDiv += msg[i][j].html;
-					} else {
-						if (msg[i][j].url.indexOf("http") == -1) {
-							curQaLi += "<li><a title='"+fullTitle+"' href='http://" + msg[i][j].url
-									+ "' target='_blank'>" + title
-									+ "</a>{date}</li>"
-						} else {
-							curQaLi += "<li><a title='"+fullTitle+"' href='" + msg[i][j].url
-									+ "' target='_blank'>" + title
-									+ "</a>{date}</li>"
-						}
-						// 新闻类型的显示时间
-						if (isInclude(xinwen,i) && msg[i][j].date != undefined) {
-							curQaLi = curQaLi.replace(/\{date\}/g, "<span>"
-									+ msg[i][j].date + "</span>");
-						} else {
-							curQaLi = curQaLi.replace(/\{date\}/g, "");
-						}
-					}
-				}
-				qaDiv = "<div class='container'> " + curQaDiv
-						+ "<ul class='news'> " + curQaLi + " </ul> </div>";
-			} else {
+			}else{
 				categoryLi += "<li>" + i + "</li>"
-				for (var j = 0; j < msg[i].length; j++) {
+			}
+			
+				for (var j = 0; j < msg[i].length&&j<10; j++) {
 					//qa回复字数限制
 					var title=msg[i][j].title;
 					var fullTitle=msg[i][j].title;
 					var qaNumLimitTrue=qaNumLimit;
-					if(isInclude(xinwen,i)){
-						qaNumLimitTrue=qaNumLimitNews;
-					}
-					if(title.length>qaNumLimitTrue){
-						title=title.substring(0,qaNumLimitTrue)+"...";
+					
+					//过滤掉重复标题
+					if(typeof(titleJson[fullTitle])!='undefined'){
+						continue;
+					}else{
+						titleJson[fullTitle]="";
 					}
 					
+					if(isInclude(xinwen,i)){
+						qaNumLimitTrue=qaNumLimitNews;
+					}
+					if(title.length>qaNumLimitTrue){
+						title=title.substring(0,qaNumLimitTrue)+"...";
+					}
 					// 如果有预设页面html则优先展示
 					if (msg[i][j].html != undefined && msg[i][j].html != null
 							&& msg[i][j].html.length > 0) {
@@ -545,7 +531,7 @@ function addAnswer(question, qaMsg) {
 					} else {
 						if (msg[i][j].url.indexOf("http") == -1) {
 							curQaLi += "<li><a title='"+fullTitle+"' href='http://" + msg[i][j].url
-									+ "' target='_blank'>" +title
+									+ "' target='_blank'>" + title
 									+ "</a>{date}</li>"
 						} else {
 							curQaLi += "<li><a title='"+fullTitle+"' href='" + msg[i][j].url
@@ -561,9 +547,13 @@ function addAnswer(question, qaMsg) {
 						}
 					}
 				}
-				qaDiv += "<div class='container hide'>" + curQaDiv
-						+ " <ul class='news'> " + curQaLi + " </ul> </div>";
-			}
+				if (index == 0) {
+					qaDiv = "<div class='container'> " + curQaDiv
+						+ "<ul class='news'> " + curQaLi + " </ul> </div>";
+				}else{
+					qaDiv += "<div class='container hide'>" + curQaDiv
+					+ " <ul class='news'> " + curQaLi + " </ul> </div>";
+				}
 			index++;
 		}
 	} else {

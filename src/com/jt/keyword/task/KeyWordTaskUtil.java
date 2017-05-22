@@ -102,7 +102,7 @@ public KeyWordTaskUtil(){
     		LOG.debug("["+title+"|"+xqid+"]");
     		for (int i = 0; i < ParamUtil.keywords.size(); i++) {
 				if(ParamUtil.keywords.get(i)!=null&&ParamUtil.keywords.get(i).getWordvalue()!=null){
-					if(title.indexOf(ParamUtil.keywords.get(i).getWordvalue())>0){
+					if(title.indexOf(ParamUtil.keywords.get(i).getWordvalue())!=-1){
 						LOG.info(ParamUtil.keywords.get(i).getWordvalue());
 						if (ParamUtil.keywords.get(i).floor==0) {
 	                    	   set.add(ParamUtil.keywords.get(i).wordvalue);

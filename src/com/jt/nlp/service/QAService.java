@@ -160,7 +160,7 @@ public class QAService {
 			// 循环所有的场景映射词，其入口词与分词之后的问题匹配，简单的indexOf，
 			// 用equals太严格。匹配到就把对应的出口词按照分号分割，压入返回的set
 			for (SceneWord sceneWord : sceneWordList) {
-				if (sceneWord.getEnterWords().indexOf(str) != -1) {
+				if (sceneWord.getEnterWords().equalsIgnoreCase(str)) {
 					sceneWordSet.addAll(Arrays.asList(sceneWord.getOutWords().split(";")));
 					//将场景关联的分类放入list，此后的检索只遍历此list（如果有值）
 					String sceneSjfl=sceneWord.getSjfl();

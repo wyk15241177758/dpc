@@ -160,24 +160,29 @@ public class QAService {
 			// 循环所有的场景映射词，其入口词与分词之后的问题匹配，简单的indexOf，
 			// 用equals太严格。匹配到就把对应的出口词按照分号分割，压入返回的set
 			for (SceneWord sceneWord : sceneWordList) {
-				if (sceneWord.getEnterWords().equalsIgnoreCase(str)) {
-					sceneWordSet.addAll(Arrays.asList(sceneWord.getOutWords().split(";")));
-					//将场景关联的分类放入list，此后的检索只遍历此list（如果有值）
-					String sceneSjfl=sceneWord.getSjfl();
-					if(sceneSjfl!=null&&sceneSjfl.length()>0){
-						sceneSjflList.addAll(Arrays.asList(sceneSjfl.split(";")));
-					}
-					//是否有关联页面，如果有则按照当前场景的关联分类筛选，不属于当前场景关联页面子类的过滤掉
-					List<ScenePage> pageList=sceneWord.getScenePageList();
-					if(pageList!=null&&pageList.size()>0){
-						for(int i=0;i<pageList.size();i++){
-							ScenePage curPage=pageList.get(i);
-							if(isContainSjfl(sceneSjfl, curPage.getSjfl())){
-								pushQaRsMap(curPage,qaResultMap);
+					String[] enterWordsArr=sceneWord.getEnterWords().split(";");
+					for(String curEnterWord:enterWordsArr){
+						if (curEnterWord.equalsIgnoreCase(str)) {
+							sceneWordSet.addAll(Arrays.asList(sceneWord.getOutWords().split(";")));
+							//将场景关联的分类放入list，此后的检索只遍历此list（如果有值）
+							String sceneSjfl=sceneWord.getSjfl();
+							if(sceneSjfl!=null&&sceneSjfl.length()>0){
+								sceneSjflList.addAll(Arrays.asList(sceneSjfl.split(";")));
 							}
+							//是否有关联页面，如果有则按照当前场景的关联分类筛选，不属于当前场景关联页面子类的过滤掉
+							List<ScenePage> pageList=sceneWord.getScenePageList();
+							if(pageList!=null&&pageList.size()>0){
+								for(int i=0;i<pageList.size();i++){
+									ScenePage curPage=pageList.get(i);
+									if(isContainSjfl(sceneSjfl, curPage.getSjfl())){
+										pushQaRsMap(curPage,qaResultMap);
+									}
+								}
+							}
+							//同一个场景的入口次有一个命中就把出口词压入set，并break本次场景的循环
+							break;
 						}
 					}
-				}
 			}
 		}
 		return sceneWordSet;

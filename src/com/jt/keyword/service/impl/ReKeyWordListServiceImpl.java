@@ -483,7 +483,7 @@ public class ReKeyWordListServiceImpl implements  RekeyWordListService{
    		String[] sortField= {Article.getMapedFieldName("date")};
    		SortField.Type[] sortFieldType={SortField.Type.LONG};
    		boolean[] reverse={true};
-   		boolean isRelevancy = true;
+   		boolean isRelevancy = false;
    		Map<String, Object> result = dao.searchRs(queryStr, occurs, searchField, sortField, sortFieldType, reverse, isRelevancy, (pageNum-1)*pageSize, pageSize);
 		Map<String, List<CountResult>> map = countResultsLC(keyword);
 

@@ -369,7 +369,8 @@ public class QAManager {
 			pw.print(gson.toJson(msg));
 			return;
 		}
-		
+		//替换特殊字符
+		title=LuceneUtils.escapeQueryChars(title);	
 		String[] arrTitle=new String[1];
 		arrTitle[0]=title;
 		Occur[] occurs ={Occur.MUST};

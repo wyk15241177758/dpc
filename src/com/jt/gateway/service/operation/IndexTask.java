@@ -4,7 +4,6 @@ import java.io.File;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -162,7 +161,7 @@ public class IndexTask extends ApplicationObjectSupport implements Job {
 				for (GwField df : list) {
 					// 数据库中某些字段为空则跳过，
 					if (map.get(df.getName()) == null) {
-						logger.info(df.getName()+"字段为空，跳过");
+						logger. debug(df.getName()+"字段为空，跳过");
 						continue;
 					}
 					logger.debug("value=[" + map.get(df.getName()).toString() + "]" + " type= ["

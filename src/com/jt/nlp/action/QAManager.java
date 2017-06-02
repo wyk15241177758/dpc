@@ -121,7 +121,12 @@ public class QAManager {
 		if(channel==null||channel.length()==0){
 			msg.setSig(false);
 			msg.setMsg("条件为空");
-			pw.print(gson.toJson(msg));
+			String callback=request.getParameter("callback");
+			if(callback!=null&&callback.length()>0){
+				pw.print(callback+"("+gson.toJson(msg)+")");
+			}else{
+				pw.print(gson.toJson(msg));
+			}
 			return;
 		}
 		//Lucene检索条件
@@ -144,7 +149,13 @@ public class QAManager {
 			msg.setSig(false);
 			msg.setMsg("没有检索到结果");
 		}
-		pw.print(gson.toJson(msg));
+		String callback=request.getParameter("callback");
+		if(callback!=null&&callback.length()>0){
+			pw.print(callback+"("+gson.toJson(msg)+")");
+		}else{
+			pw.print(gson.toJson(msg));
+		}
+		
 	}
 
 	
@@ -247,7 +258,12 @@ public class QAManager {
 			msg.setSig(false);
 			msg.setMsg("没有检索到结果");
 		}
-		pw.print(gson.toJson(msg));
+		String callback=request.getParameter("callback");
+		if(callback!=null&&callback.length()>0){
+			pw.print(callback+"("+gson.toJson(msg)+")");
+		}else{
+			pw.print(gson.toJson(msg));
+		}
 	}
 	
 	/**
@@ -308,7 +324,13 @@ public class QAManager {
 				msg.setMsg(map);
 			}
 		}
-		pw.print(gson.toJson(msg));
+		String callback=request.getParameter("callback");
+		if(callback!=null&&callback.length()>0){
+			pw.print(callback+"("+gson.toJson(msg)+")");
+		}else{
+			pw.print(gson.toJson(msg));
+		}
+		
 		
 		//是否需要记录历史，默认为false
 		String isStorgeHis=CMyString.getStrNotNullor0(request.getParameter("isStorgeHis"), "false");
@@ -366,7 +388,12 @@ public class QAManager {
 			iEnd=5;
 		}
 		if(title==null||title.trim().length()==0){
-			pw.print(gson.toJson(msg));
+			String callback=request.getParameter("callback");
+			if(callback!=null&&callback.length()>0){
+				pw.print(callback+"("+gson.toJson(msg)+")");
+			}else{
+				pw.print(gson.toJson(msg));
+			}
 			return;
 		}
 		//替换特殊字符
@@ -385,7 +412,12 @@ public class QAManager {
 		list=qaService.getSearchService().search(arrTitle, occurs, searchField, orderField, orderFieldType, reverse, isRelevancy, iBegin, iEnd);
 		
 		if(list==null||list.size()==0||list.get(0)==null){
-			pw.print(gson.toJson(msg));
+			String callback=request.getParameter("callback");
+			if(callback!=null&&callback.length()>0){
+				pw.print(callback+"("+gson.toJson(msg)+")");
+			}else{
+				pw.print(gson.toJson(msg));
+			}
 			return;
 		}else{
 			//获得相关度最高的一篇文档，获得其标签
@@ -421,7 +453,13 @@ public class QAManager {
 		map_rs.put("list", list_rs);
 		msg.setSig(true);
 		msg.setMsg(map_rs);
-		pw.print(gson.toJson(msg));
+		String callback=request.getParameter("callback");
+		if(callback!=null&&callback.length()>0){
+			pw.print(callback+"("+gson.toJson(msg)+")");
+		}else{
+			pw.print(gson.toJson(msg));
+		}
+		
 		
 	}
 	

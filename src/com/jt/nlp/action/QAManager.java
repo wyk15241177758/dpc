@@ -420,6 +420,7 @@ public class QAManager {
 			}
 			return;
 		}else{
+			isRelevancy=false;
 			//获得相关度最高的一篇文档，获得其标签
 			keyWord=DocumentUtils.document2Ariticle(list.get(0)).getKeyWord();
 			if(keyWord!=null&&keyWord.trim().length()>0){

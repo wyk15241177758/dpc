@@ -33,6 +33,7 @@ public class Article {
 	private Date date;
 	private String keyWord;//标签
 	private float score;//得分
+	private String content;//正文
 	
 	//返回与jtcrawler表的字段对应关系，必须小写
 	public static String getMapedFieldName(String articleField) {
@@ -62,6 +63,9 @@ public class Article {
 		}
 		if(articleField.equalsIgnoreCase("keyWord")){
 			return "KEY_WORD";
+		}
+		if(articleField.equalsIgnoreCase("content")){
+			return "XQ_CONTENT";
 		}
 		return null;
 	}
@@ -137,6 +141,14 @@ public class Article {
 
 	public void setScore(float score) {
 		this.score = score;
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
 	}
 	
 }

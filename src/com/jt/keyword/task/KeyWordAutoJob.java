@@ -102,7 +102,7 @@ public class KeyWordAutoJob {
 	
 	public  List<Article>  query(int pagenum){
 		List<Article> list=new ArrayList<Article>();
-		String  sql="select XQ_ID,XQ_TITLE from  crawler_xq  limit ?,?";
+		String  sql="select XQ_ID,XQ_TITLE,XQ_CONTENT from  crawler_xq  limit ?,?";
 		Connection conn =  DataSourceUtil.getConnection();
 		PreparedStatement stmt=null;
 		ResultSet st=null;
@@ -116,8 +116,8 @@ public class KeyWordAutoJob {
 				Article  article=new Article();
 				article.setId(st.getLong("XQ_ID"));
 				article.setTitle(st.getString("XQ_TITLE"));
+				article.setContent(st.getString("XQ_CONTENT"));
 				list.add(article);
-
 			}
 			
 			

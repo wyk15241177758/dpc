@@ -111,24 +111,16 @@ public class NlpService {
 	}
 
 	/**
-	 * 必须符合此规则
+	 * 必须符合此规则，不再做过滤 
 	 * 
 	 * @param word
 	 * @return
 	 */
 	private Word baseFilterWord(Word word) {
-		if(word==null)return null;
-		// 词
-		String text = word.getText();
-		// 过滤只有一个字的词，返回null
-		if (text.length() < 2) {
-			return null;
-		} else {
-			return word;
-		}
+		return word;
 	}
 
-	// 处理过滤检索词
+	// 不再做过滤
 	private Set<String> doFilterWord(List<Word> mainPartWords) {
 		
 

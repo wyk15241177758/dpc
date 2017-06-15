@@ -363,6 +363,7 @@ public class QAManager {
 			e1.printStackTrace();
 			return;
 		}
+		String tag = request.getParameter("tag");
 		String title=request.getParameter("title");
 		String sBegin=request.getParameter("begin");
 		String sEnd=request.getParameter("end");
@@ -387,7 +388,7 @@ public class QAManager {
 		}catch(Exception e){
 			iEnd=5;
 		}
-		if(title==null||title.trim().length()==0){
+		if((title==null||title.trim().length()==0)&&(tag==null||tag.trim().length()==0)){
 			String callback=request.getParameter("callback");
 			if(callback!=null&&callback.length()>0){
 				pw.print(callback+"("+gson.toJson(msg)+")");
@@ -396,10 +397,7 @@ public class QAManager {
 			}
 			return;
 		}
-		//替换特殊字符
-		title=LuceneUtils.escapeQueryChars(title);	
-		String[] arrTitle=new String[1];
-		arrTitle[0]=title;
+		
 		Occur[] occurs ={Occur.MUST};
 		//根据标题搜索，获得相关度最高的一篇文档，再根据其标签相似性搜索
 		String [] searchField={Article.getMapedFieldName("title")};
@@ -409,38 +407,58 @@ public class QAManager {
 		boolean isRelevancy = true;
 		
 		
-		list=qaService.getSearchService().search(arrTitle, occurs, searchField, orderField, orderFieldType, reverse, isRelevancy, iBegin, iEnd);
-		
-		if(list==null||list.size()==0||list.get(0)==null){
-			String callback=request.getParameter("callback");
-			if(callback!=null&&callback.length()>0){
-				pw.print(callback+"("+gson.toJson(msg)+")");
-			}else{
-				pw.print(gson.toJson(msg));
-			}
-			return;
-		}else{
+		//如果有标签参数，则直接按照标签参数检索，支持传入多个标签，用英文逗号分隔。如果是多个标签则必须全部包含
+		if(tag!=null&&tag.length()>0){
 			isRelevancy=false;
-			//获得相关度最高的一篇文档，获得其标签
-			keyWord=DocumentUtils.document2Ariticle(list.get(0)).getKeyWord();
+			keyWord=tag;
 			if(keyWord!=null&&keyWord.trim().length()>0){
 				//根据其标签相似性搜索
-				String[] arrKeyWord=keyWord.split(";");
+				String[] arrKeyWord=keyWord.split(",");
 				occurs =new Occur[arrKeyWord.length];
 				searchField=new String[arrKeyWord.length];
 				for(int i=0;i<arrKeyWord.length;i++){
-					occurs[i]=Occur.SHOULD;
+					occurs[i]=Occur.MUST;
 					searchField[i]=Article.getMapedFieldName("keyWord");
 				}
 				list_keyWord=qaService.getSearchService().search(arrKeyWord, occurs, searchField, orderField, orderFieldType, reverse, isRelevancy, iBegin, iEnd);
 			}
+		}else{
+			//替换特殊字符
+			title=LuceneUtils.escapeQueryChars(title);	
+			String[] arrTitle=new String[1];
+			arrTitle[0]=title;
+			list=qaService.getSearchService().search(arrTitle, occurs, searchField, orderField, orderFieldType, reverse, isRelevancy, iBegin, iEnd);
+			
+			if(list==null||list.size()==0||list.get(0)==null){
+				String callback=request.getParameter("callback");
+				if(callback!=null&&callback.length()>0){
+					pw.print(callback+"("+gson.toJson(msg)+")");
+				}else{
+					pw.print(gson.toJson(msg));
+				}
+				return;
+			}else{
+				isRelevancy=false;
+				//获得相关度最高的一篇文档，获得其标签
+				keyWord=DocumentUtils.document2Ariticle(list.get(0)).getKeyWord();
+				if(keyWord!=null&&keyWord.trim().length()>0){
+					//根据其标签相似性搜索
+					String[] arrKeyWord=keyWord.split(";");
+					occurs =new Occur[arrKeyWord.length];
+					searchField=new String[arrKeyWord.length];
+					for(int i=0;i<arrKeyWord.length;i++){
+						occurs[i]=Occur.SHOULD;
+						searchField[i]=Article.getMapedFieldName("keyWord");
+					}
+					list_keyWord=qaService.getSearchService().search(arrKeyWord, occurs, searchField, orderField, orderFieldType, reverse, isRelevancy, iBegin, iEnd);
+				}
+			}
 		}
-		
 
 		//有标签的就显示标签 最相近且时间最新的几个数据，如果没有标签则相似性检索，也按照时间排序
 		if(list_keyWord!=null&&list_keyWord.size()!=0){
 			DocumentUtils.transCollection(list_keyWord, list_rs);
-		}else{
+		}else if(list!=null&&list.size()!=0){
 			DocumentUtils.transCollection(list, list_rs);
 		}
 		//排除自己，只删除一条
@@ -450,7 +468,14 @@ public class QAManager {
 				break;
 			}
 		}
-		map_rs.put("keyWord", keyWord);
+		if(list!=null&&list.size()>0){
+			Map<String,String> simDoc=new HashMap<String,String>();
+			Article curArticle=DocumentUtils.document2Ariticle(list.get(0));
+			map_rs.put("simDoc", curArticle);
+		}else{
+			map_rs.put("simTitle", "");
+		}
+		map_rs.put("tag", keyWord);
 		map_rs.put("list", list_rs);
 		msg.setSig(true);
 		msg.setMsg(map_rs);

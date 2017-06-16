@@ -414,6 +414,11 @@ public class QAManager {
 			if(keyWord!=null&&keyWord.trim().length()>0){
 				//根据其标签相似性搜索
 				String[] arrKeyWord=keyWord.split(",");
+				//不分词
+				for(int i=0;i<arrKeyWord.length;i++){
+					arrKeyWord[i]="\""+arrKeyWord[i]+"\"";
+				}
+				
 				occurs =new Occur[arrKeyWord.length];
 				searchField=new String[arrKeyWord.length];
 				for(int i=0;i<arrKeyWord.length;i++){
@@ -426,7 +431,7 @@ public class QAManager {
 			//替换特殊字符
 			title=LuceneUtils.escapeQueryChars(title);	
 			String[] arrTitle=new String[1];
-			arrTitle[0]=title;
+			arrTitle[0]="\""+title+"\"";
 			list=qaService.getSearchService().search(arrTitle, occurs, searchField, orderField, orderFieldType, reverse, isRelevancy, iBegin, iEnd);
 			
 			if(list==null||list.size()==0||list.get(0)==null){
@@ -444,6 +449,10 @@ public class QAManager {
 				if(keyWord!=null&&keyWord.trim().length()>0){
 					//根据其标签相似性搜索
 					String[] arrKeyWord=keyWord.split(";");
+					//不分词
+					for(int i=0;i<arrKeyWord.length;i++){
+						arrKeyWord[i]="\""+arrKeyWord[i]+"\"";
+					}
 					occurs =new Occur[arrKeyWord.length];
 					searchField=new String[arrKeyWord.length];
 					for(int i=0;i<arrKeyWord.length;i++){

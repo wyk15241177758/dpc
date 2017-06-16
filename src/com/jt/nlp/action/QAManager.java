@@ -456,7 +456,7 @@ public class QAManager {
 					occurs =new Occur[arrKeyWord.length];
 					searchField=new String[arrKeyWord.length];
 					for(int i=0;i<arrKeyWord.length;i++){
-						occurs[i]=Occur.SHOULD;
+						occurs[i]=Occur.MUST;
 						searchField[i]=Article.getMapedFieldName("keyWord");
 					}
 					list_keyWord=qaService.getSearchService().search(arrKeyWord, occurs, searchField, orderField, orderFieldType, reverse, isRelevancy, iBegin, iEnd);

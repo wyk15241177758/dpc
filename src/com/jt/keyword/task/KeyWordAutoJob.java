@@ -58,6 +58,7 @@ public class KeyWordAutoJob {
 	 * 更新数据到数据库
 	 */
 	public  void  updateData(){
+		
 		String  updateSql="update crawler_xq  set KEY_WORD=? where XQ_ID=?";
 		Connection conn = DataSourceUtil.getConnection();
 		PreparedStatement stmt=null;
@@ -65,16 +66,21 @@ public class KeyWordAutoJob {
 		try {
 			stmt=conn.prepareStatement(updateSql);
 			if(ParamUtil.parseWords!=null&&ParamUtil.parseWords.size()>0){
+				List<ParseWord> list=ParamUtil.parseWords;
+				LOG.info("需要更新的标签共["+list.size()+"]个");
 				for (int i = 0; i < ParamUtil.parseWords.size(); i++) {
                     stmt.setString(1, ParamUtil.parseWords.get(i).getWords());
                     stmt.setLong(2, ParamUtil.parseWords.get(i).getXqId());
                     stmt.addBatch();
                     if((i+1)%500==0){
+                    	LOG.info("++正在更新["+(i-499)+"-"+(i)+"]条数据++");
                     	stmt.executeBatch();
+                    	LOG.info("--结束更新["+(i-499)+"-"+(i)+"]条数据--");
                     }
-					
 				}
+				LOG.info("++正在更新剩余的数据++");
             	stmt.executeBatch();
+            	LOG.info("--结束更新剩余的数据--");
 				
 			}
 			

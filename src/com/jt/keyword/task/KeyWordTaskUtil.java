@@ -94,32 +94,26 @@ public KeyWordTaskUtil(){
      * @param articles
      */
     public static void parse(List<Article> articles){
-    	LOG.info("关键词打标开始 共["+articles.size()+"]条数据");
     	if(articles!=null&&articles.size()>0){
     		for(int j=0;j<articles.size();j++){
-    			if(j%1000==0&&j!=0){
-    				LOG.info("正在处理第"+j+"到第"+(j+1000)+"条数据");
-    			}
+
     		Set<String>  set=new HashSet<String>();
     		String   title=articles.get(j).getTitle();
     		String content=articles.get(j).getContent();
     		Long     xqid=articles.get(j).getId();
-    		LOG.debug("["+title+"|"+xqid+"]");
     		for (int i = 0; i < ParamUtil.keywords.size(); i++) {
 				if(ParamUtil.keywords.get(i)!=null&&ParamUtil.keywords.get(i).getWordvalue()!=null){
 					if((title.indexOf(ParamUtil.keywords.get(i).getWordvalue())!=-1)
 							||(content.indexOf(ParamUtil.keywords.get(i).getWordvalue())!=-1)){
-						LOG.info(ParamUtil.keywords.get(i).getWordvalue());
 						if (ParamUtil.keywords.get(i).floor==0) {
-	                    	   set.add(ParamUtil.keywords.get(i).wordvalue);
+							set.add(ParamUtil.keywords.get(i).wordvalue);
 						}
-                       if (ParamUtil.keywords.get(i).floor==1) {
-                    		if(ParamUtil.keywords.get(i).getParent()!=null){
+						if (ParamUtil.keywords.get(i).floor==1) {
+							if(ParamUtil.keywords.get(i).getParent()!=null){
 								set.add(ParamUtil.keywords.get(i).getParent().getWordvalue());
 							}
 						}
 					}
-					
 				}
 			}
     		String  word=unionKey(set);
@@ -129,7 +123,6 @@ public KeyWordTaskUtil(){
     		}
     		
     		}
-    		
     	}
     	
     }

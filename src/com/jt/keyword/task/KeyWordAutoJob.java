@@ -161,6 +161,7 @@ public class KeyWordAutoJob {
 			}
 			int  page=1;
 			while (true) {
+				LOG.info("正在处理第["+((page-1)*this.page)+"]到第"+(page*this.page)+"条数据");
 				List<Article> articles = query(page);
 			
 			   if(articles==null||articles.size()==0){

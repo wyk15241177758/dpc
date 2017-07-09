@@ -117,6 +117,7 @@ $(document).ready(function() {
     	})
 		//给弹出层赋值
 		var curSceneWordId=$(this).parent("td").parent("tr").attr("sceneWordId")
+//		var curSceneWordId=$("#leftScene > li.active > a > i").attr("sceneid");
 		setSceneWordValue(curSceneWordId);
 	})
 	

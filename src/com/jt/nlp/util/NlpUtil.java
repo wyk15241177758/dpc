@@ -18,7 +18,7 @@ public class NlpUtil {
 		return list;
 	}
 	public static void main(String[] args) {
-		String str="我想自主创业，政府有什么政策？";
+		String str="我想 自主'‘“创业，政府有什么政策？";
 		System.out.println(splitQuestion(str));
 	}
 }

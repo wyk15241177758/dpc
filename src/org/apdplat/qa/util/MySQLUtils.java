@@ -47,7 +47,7 @@ public class MySQLUtils {
     private static final String URL = "jdbc:mysql://127.0.0.1:3306/questionanswer?useUnicode=true&characterEncoding=utf8";
     //private static final String URL = "jdbc:mysql://127.0.0.1:3306/questionanswer_fulltext";
     private static final String USER = "root";
-    private static final String PASSWORD = "trsadmin";
+    private static final String PASSWORD = "root";
 
     static {
         try {

@@ -2,6 +2,12 @@ package com.jt.scene.bean;
 
 import java.util.Date;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
 /**
  * 预设场景对应的页面，可以指定多个
  * 
@@ -9,14 +15,26 @@ import java.util.Date;
  *
  * 2016年11月27日
  */
+@XmlAccessorType(XmlAccessType.FIELD)  
+@XmlRootElement(name = "scenepage")  
+@XmlType(propOrder = {})  
+
 public class ScenePage {
+	@XmlElement  
 	private Integer scenePageId;
+	@XmlElement  
 	private Integer sceneWordId;
+	@XmlElement  
 	private String pageTitle;
+	@XmlElement  
 	private String pageLink;
+	@XmlElement  
 	private String sjfl;
+	@XmlElement  
 	private String html;
+	@XmlElement  
 	private Date createTime;
+	@XmlElement  
 	private Date updateTime;
 	public ScenePage(){
 		

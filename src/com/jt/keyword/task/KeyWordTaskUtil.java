@@ -17,6 +17,7 @@ import com.jt.keyword.bean.KeyWord;
 import com.jt.keyword.util.DataSourceUtil;
 import com.jt.lucene.Article;
 
+
 /**
  * 
  * @author 邹许红
@@ -43,7 +44,9 @@ public KeyWordTaskUtil(){
 			words=words+string;
 			
            i++;
-           if(i==4){
+           //放大最大标签数量
+           if(i==100){
+        	   LOG.error("达到最大标签数量上限，break  传入的keyWords=["+new ArrayList<String>(keywords)+"]");
 				break;
 			}
 		}
@@ -101,16 +104,20 @@ public KeyWordTaskUtil(){
     		String   title=articles.get(j).getTitle();
     		String content=articles.get(j).getContent();
     		Long     xqid=articles.get(j).getId();
+    		
+    		
     		for (int i = 0; i < ParamUtil.keywords.size(); i++) {
-				if(ParamUtil.keywords.get(i)!=null&&ParamUtil.keywords.get(i).getWordvalue()!=null){
-					if((title.indexOf(ParamUtil.keywords.get(i).getWordvalue())!=-1)
-							||(content.indexOf(ParamUtil.keywords.get(i).getWordvalue())!=-1)){
-						if (ParamUtil.keywords.get(i).floor==0) {
-							set.add(ParamUtil.keywords.get(i).wordvalue);
+    			KeyWord curKeyWord=ParamUtil.keywords.get(i);
+				if(curKeyWord!=null&&curKeyWord.getWordvalue()!=null){
+					if((title.indexOf(curKeyWord.getWordvalue())!=-1)
+							||(content.indexOf(curKeyWord.getWordvalue())!=-1)){
+						
+						if (curKeyWord.floor==0) {
+							set.add(curKeyWord.wordvalue);
 						}
-						if (ParamUtil.keywords.get(i).floor==1) {
-							if(ParamUtil.keywords.get(i).getParent()!=null){
-								set.add(ParamUtil.keywords.get(i).getParent().getWordvalue());
+						if (curKeyWord.floor==1) {
+							if(curKeyWord.getParent()!=null){
+								set.add(curKeyWord.getParent().getWordvalue());
 							}
 						}
 					}
@@ -118,6 +125,7 @@ public KeyWordTaskUtil(){
 			}
     		String  word=unionKey(set);
     		LOG.debug(word);
+    		
     		if(StringUtils.isNotBlank(word)){
     			ParamUtil.parseWords.add(new ParseWord(xqid, word));
     		}

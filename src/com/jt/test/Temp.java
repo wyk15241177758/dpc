@@ -18,11 +18,33 @@ public class Temp {
 	public void setTest(Integer test) {
 		this.test = test;
 	}
+	
+	
+	public boolean isZs(int N){
+		boolean isZhishu=true;
+		for(int i=1;i<=N;i++){
+			if(N%i==0){
+				if(i!=1&&i!=N){
+					isZhishu=false;
+					break;					
+				}
+			}
+		}
+		return isZhishu;
+	}
+	public void getZs(int N){
+		for(int i=1,j=1;i<=N;j++){
+			
+			if(isZs(j)){
+				System.out.println(j);
+				i++;
+			}
+		}
+	}
 
 	public static void main(String[] args) throws Exception {
-		String date="2012-12-07 11:22:33";
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		System.out.println(sdf.parse(date.toString()).getTime());;
+		Temp t=new Temp();
+		t.getZs(8);
 
 	}
 }

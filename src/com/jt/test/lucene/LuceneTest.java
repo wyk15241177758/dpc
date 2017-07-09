@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.lucene.document.Document;
@@ -38,7 +37,7 @@ import com.jt.lucene.LuceneUtilsGw;
 import com.jt.nlp.service.LuceneSearchService;
 
 public class LuceneTest {
-    private static String indexPath = "D:\\indexpath";    // 索引保存目录
+    private static String indexPath = "D:\\indexpath_test";    // 索引保存目录
     private static LuceneUtilsGw util=null;
     
 	public static void addLongPoint(Document document, String name, long value) {
@@ -173,20 +172,13 @@ public class LuceneTest {
           
           try {
    		IndexDao dao=new IndexDao(indexPath);
-   		String[] queryStr={"\"刘和生\""};
-//   		List<Document> list=dao.search(queryStr, Occur.SHOULD, "xq_title",null,null, false, 0, -1);
-//   		for(Document doc:list){
-//   			System.out.println(doc.getValues("xq_title")[0]);
-//   			
-//   		}
-   		//检索参数
+   		String[] queryStr={"\"刘和生 \""};
+
+   	//检索参数
    		String [] searchField=new String[queryStr.length];
    		Occur[] occurs = new Occur[queryStr.length]; 
-   		for(int i=0;i<searchField.length;i++){
-   			searchField[i]="XQ_TITLE";
-   			occurs[i]=Occur.MUST;
-   		}
-   			
+   		searchField[0]="KEY_WORD";
+		occurs[0]=Occur.MUST;
    		//排序参数
    		String[] sortField= {Article.getMapedFieldName("date")};
    		SortField.Type[] sortFieldType={SortField.Type.LONG};
@@ -194,7 +186,10 @@ public class LuceneTest {
    		boolean isRelevancy = true;
    		
    		List<Document> list=dao.search(queryStr, occurs, searchField, sortField, sortFieldType, reverse, isRelevancy, 0,100,0);
-   		for(Document a:list){
+   		List<Article> articleList=new ArrayList<Article>();
+   		DocumentUtils.transCollection(list, articleList);
+   		
+   		for(Article a:articleList){
    			System.out.println(a);
    		}
 
@@ -202,6 +197,27 @@ public class LuceneTest {
           } catch (IOException e1) {
    		e1.printStackTrace();
    	}
+// 		List<Document> list=dao.search(queryStr, Occur.SHOULD, "xq_title",null,null, false, 0, -1);
+// 		for(Document doc:list){
+// 			System.out.println(doc.getValues("xq_title")[0]);
+// 			
+// 		}
+ 		//检索参数
+// 		String [] searchField=new String[queryStr.length];
+// 		Occur[] occurs = new Occur[queryStr.length]; 
+// 		for(int i=0;i<searchField.length;i++){
+// 			searchField[i]="XQ_TITLE";
+// 			occurs[i]=Occur.MUST;
+// 		}
+// 			
+// 		//排序参数
+// 		String[] sortField= {Article.getMapedFieldName("date")};
+// 		SortField.Type[] sortFieldType={SortField.Type.LONG};
+// 		boolean[] reverse={true};
+// 		boolean isRelevancy = true;
+// 		
+// 		List<Document> list=dao.search(queryStr, occurs, searchField, sortField, sortFieldType, reverse, isRelevancy, 0,100,0);
+ 		
     }
     
     public static void SearchTest2(){
@@ -328,6 +344,6 @@ public class LuceneTest {
 //		}
 //    	createIndex();
 //    	SearchAllTest();
-    	SearchTest2();
+    	SearchTest();
     }
 }

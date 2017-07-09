@@ -1,9 +1,10 @@
 package com.jt.gateway.service.management.util;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -144,27 +145,21 @@ public class JobParamUtil {
 				return msg;
 			}
 			//包括是否连接正常、字段是否存在
-			sql="select count(1) from information_schema.`COLUMNS` where table_name='"+
-					jobInf.getSqlTable()+"' and (";
-			for(int i=0;i<gwFields.size();i++){
-				GwField df=gwFields.get(i);
-				if(i==0){
-					sql+="column_name='"+df.getName()+"'";
-				}else{
-					sql+=" or column_name='"+df.getName()+"'";
-				}
-			}
-			sql+=")";
-				try {
-					int num=dao.executeQueryForCount(sql);
-					if(num!=gwFields.size()){
-						msg=new PageMsg(false,"推送任务配置字段数量为["+gwFields.size()+"] 不等于 数据库查询获得字段数量["+num+"]，请检查sql=["+sql+"]");
+			sql="select * from "+jobInf.getSqlDb()+"."+jobInf.getSqlTable()+" limit 1,1";
+			
+			try {
+				Map<String,Object> map=dao.executeQueryForMap(sql);
+				for(GwField field:gwFields){
+					if(!map.containsKey(field.getName())){
+						msg=new PageMsg(false,"数据库不包含["+field.getName()+"]字段，请检查配置");
 						return msg;
 					}
-				} catch(Exception e){
-					msg=new PageMsg(false,"数据库表名或字段错误，错误信息:["+e.getMessage()+"]");
-					return msg;
 				}
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 		return msg;
 	}

@@ -85,8 +85,9 @@ public class SceneWordServiceImpl  extends BasicServicveImpl implements SceneWor
 	
 	public SceneWord getSceneWordById(Integer sceneWordId){ 
 		List<SceneWord> list=new ArrayList<SceneWord>();
+		//TODO
 		list=this.dao.query("from com.jt.scene.bean.SceneWord where sceneWordId='"+sceneWordId+"'");
-		if(list.size()!=0){
+		if(null!=list&&list.size()!=0){
 			for(SceneWord sceneWord:list){
 				List<ScenePage> scenePageList=scenePageService.getScenePages(sceneWord.getSceneWordId());
 				sceneWord.setScenePageList(scenePageList);
@@ -110,6 +111,7 @@ public class SceneWordServiceImpl  extends BasicServicveImpl implements SceneWor
 	//获得指定场景words
 	public List<SceneWord> getWordsBySceneName(String sceneName){
 		List<SceneWord> list=new ArrayList<SceneWord>();
+		//TODO
 		list=this.dao.query("from com.jt.scene.bean.SceneWord where sceneName='"+sceneName+"'");
 		for(SceneWord sceneWord:list){
 			List<ScenePage> scenePageList=scenePageService.getScenePages(sceneWord.getSceneWordId());
@@ -121,6 +123,7 @@ public class SceneWordServiceImpl  extends BasicServicveImpl implements SceneWor
 	//获得指定场景words
 	public List<SceneWord> getWordsBySceneId(Integer sceneId){
 		List<SceneWord> list=new ArrayList<SceneWord>();
+		//TODO
 		list=this.dao.query("from com.jt.scene.bean.SceneWord where sceneId='"+sceneId+"'");
 		for(SceneWord sceneWord:list){
 			List<ScenePage> scenePageList=scenePageService.getScenePages(sceneWord.getSceneWordId());

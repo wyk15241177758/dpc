@@ -25,13 +25,14 @@ public class LoginAct {
 
 		model.addAttribute("msg", "请输入用户名密码！");
 		model.addAttribute("success", false);
-
+System.out.println("get");
 		return "redirect:/gateway/login.html";
 	}
 
 	@RequestMapping(value = { "/login.act" }, method = { org.springframework.web.bind.annotation.RequestMethod.POST })
 	public String login(String username, String pwd, HttpServletRequest request, HttpServletResponse response,
 			ModelMap model) {
+		System.out.println("post");
 		if (!"admin".equals(username)) {
 			model.addAttribute("msg", "不存在该用户！");
 			model.addAttribute("success", false);

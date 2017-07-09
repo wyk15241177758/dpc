@@ -3,6 +3,13 @@ package com.jt.scene.bean;
 import java.util.Date;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
 /**
  * 预设场景，包括场景名称、入口词、出口词。其中入口词和出口词都是多个词的组合，使用英文分号分割
  * 
@@ -10,15 +17,29 @@ import java.util.List;
  *
  * 2016年11月27日
  */
+@XmlAccessorType(XmlAccessType.FIELD)  
+@XmlRootElement(name = "sceneword")  
+@XmlType(propOrder = {})  
+
 public class SceneWord {
+	@XmlElement  
 	private Integer sceneWordId;
+	@XmlElement
 	private Integer sceneId;
+	@XmlElement
 	private String sceneName;
+	@XmlElement
 	private String enterWords;
+	@XmlElement
 	private String outWords;
+	@XmlElement
 	private Date createTime;
+	@XmlElement
 	private Date updateTime;
+	@XmlElement
 	private String sjfl;
+	@XmlElementWrapper(name = "scenePageList11")
+	@XmlElement(name = "scenePage222")
 	private List<ScenePage> scenePageList;
 	public SceneWord(){
 		
@@ -43,7 +64,8 @@ public class SceneWord {
 
 
 
-
+	@XmlElementWrapper(name = "scenePageList11")
+	@XmlElement(name = "scenePage222")
 	public List<ScenePage> getScenePageList() {
 		return scenePageList;
 	}
